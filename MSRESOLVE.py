@@ -191,7 +191,7 @@ def LowerBoundThresholdFilter (ExperimentData,massesToLowerBoundThresholdFilter,
 #this is done by finding those lines that have an issue and then getting the average of those two lines and 
 #inserts this average row in between these two respective rows, then putting averages up until there is no jump 
 #greater than 100%
-def Interpolater (data,abscissa,dataRangeSpecifierYorN = [],datafromcsv = [],MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001):
+def Interpolater (data,abscissa, MaxAllowedDeltaYRatio, IgnorableDeltaYThreshold, dataRangeSpecifierYorN = [],datafromcsv = []):
 #### The comments in this function are no longer completely accurate since we have added some absolute values and deltas where they were not before.
 #### ( Look at the version XXXXXX of the program to see what this function looked like previously )
 #The current Interpolater function, while functional, suffers from two serious performance issues. 
@@ -211,7 +211,6 @@ def Interpolater (data,abscissa,dataRangeSpecifierYorN = [],datafromcsv = [],Max
     #previous term*2 The place_holder object allows the function to know how many times the loop has added a row,
     #thereby knowing the size of the new array. the if statement doesn't allow the last row_counter to be checked 
     #since there is not going to be a row beyond the length of the array
-    
     for column_counter in range(len(data[0,:])):#array-indexed for loop
         place_holder = 0 #reset after each column
         place_holder2 = 0
@@ -1073,9 +1072,9 @@ def DataInputPreProcessing(ExperimentData):
         if G.dataRangeSpecifierYorN == 'yes':#if the datafromcsv file does not exist(in the case that it is not chosen) then the function call cannot include it
             #Gathering data from the datarange csv
             ExperimentData.datafromcsv = genfromtxt( '%s' %G.csvFileName, delimiter=',',skip_header=1) 
-            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times, G.dataRangeSpecifierYorN, ExperimentData.datafromcsv)
+            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold, G.dataRangeSpecifierYorN, ExperimentData.datafromcsv)
         else:
-            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times)
+            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
         print('Interpolater Finished')
         ExperimentData.ExportCollector("Interpolater")
         
@@ -2899,10 +2898,10 @@ def main():
         ExperimentData = RatioFinder(ReferenceData, ExperimentData, G.concentrationFinder,
                                       G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
         
+        print(len(ExperimentData.workingData[:,0]))
         for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time   
             #This print statement was used to track the progress of the program during long analysis runs
-
-            if timeIndex in (100, 200, 300, 400, 500, 600, 700, 800, 900):
+            if ((timeIndex % 100) == 0 and timeIndex != 0):
                 print(timeIndex)
 
             ## TODO: Find out why RawSignalsArrayMaker() takes longer to run when preprocessed data is

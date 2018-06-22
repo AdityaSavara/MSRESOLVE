@@ -54,13 +54,13 @@ backgroundMassFragment = []
 backgroundSlopes = []
 backgroundIntercepts = []
 
-#TODO make a variable to enable the user to specify the 
-# maximum ratio of change between two data points. [default value of 2 ] ? 
-# the above TODO should be easy since the number 2 is hardcoded in the interpolator function(s). We just need to access G.marginalChangeRestriction
 #//Data Solving Restrictions - Marginal Change Restrictor//
 #To input data ranges for certain molecules, input below
-interpolateYorN = 'no'
-
+interpolateYorN = 'yes'
+#These factors are used to determine the search parameters for the brute force analysis method
+# However, it is also needed for the interpolater which allows the data ranges to be small enough to be solvable by brute force
+marginalChangeRestriction = 2.0
+ignorableDeltaYThreshold = 0.01
 
 #//Data Solving Restrictions - Brute Solving Restrictions 
 #dataLowerBound and dataUpperbound put absolute bounds on the values brute searches for across all time points.
