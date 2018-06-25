@@ -1469,13 +1469,13 @@ def InverseMethod(matching_correction_values,rawsignalsarrayline,monitored_refer
 #this function will be used more, probably, but it basically just gets each number to the power of -1, or, in other words, the 
 #reciprocal, it has two different options- for 1D arrays and 2D arrays
 #Except this function was edited in order to specifically serve the needs of the distinguished inverse function
-def ArrayInverserEdited(array):
+def ArrayInverserEdited(array, column):
     length = len(array)
     numbers = []
     for lengthcounter in range(length):#array-indexed for loop
         if array[lengthcounter] != 0: #if the value is zero, then the final value will be zero as well: it doesn't have to be changed
-            numbers.append(abs(array[lengthcounter]**float(-1)*array[0]-1))
-    editted = sum(numbers)*array[0]
+            numbers.append(abs(array[lengthcounter]**float(-1)*array[column]-1))
+    editted = sum(numbers)*array[column]
     return editted
         
     
@@ -1483,7 +1483,7 @@ def ArrayInverserEdited(array):
 #function as a nested function; thus, this function had to be made specifically for ImportantAbscissaIdentifier
 def InputFunc():
     if len(G.sensitivityThresholdValue) == 0:#if the value is not in the data edit file
-        G.sensitivityThresholdValue = [5]
+        G.sensitivityThresholdValue = [1]
     elif len(G.sensitivityThresholdValue) > 1:
         G.sensitivityThresholdValue = G.sensitivityThresholdValue[0]
     return G.sensitivityThresholdValue
@@ -1495,33 +1495,37 @@ def ImportantAbscissaIdentifier(data,data2,data3):
     sensitivityThresholdValue = InputFunc ()
     row_num = len(data[:,0])
     column_num = len(data[0,:])
+    #all values below the specified relative intensity must be set the minThreshold value
+    #This is because a subfunction attempts to divide by each value
     for columncounter in range(column_num):#array-indexed for loop
         for rowcounter in range(row_num):#array-indexed for loop
-            if data[rowcounter,columncounter] < sensitivityThresholdValue: #all values below the specified relative intensity must be set to zero
+            if data[rowcounter,columncounter] < sensitivityThresholdValue: 
                 data[rowcounter,columncounter] = sensitivityThresholdValue[0]
+                
     distinguishedorder = []
     answers = []
     answers2 = []
     answers3 = []
     order = []
+    
     #the function is basically one big for loop, but this first half determines the actual which rows are chosen, while the second
     #half merely gets the correct indexes from each row of the data. This value is based on getting the sum of the ratios minus one
     #while making all zeros into the sensitivityThresholdValue for the sake of the function here.
-    data = sorted(data,key = lambda a:a[columncounter])
     for columncounter in range(column_num):#array-indexed for loop (for each column)
         distinguishers = []
         for rowcounter in range(row_num):#array-indexed for loop
-            editted = ArrayInverserEdited(data[rowcounter])
+            # the "Significance" of each fragment-molecule pair is calculated
+            editted = ArrayInverserEdited(data[rowcounter], columncounter)
             distinguishers.append(editted)
+            
             if rowcounter == row_num-1:#at the end of the row
                 distinguished = []
                 for distinguishersnum in range(len(distinguishers)):#array-indexed for loop
-                    for positionfinder in range(len(distinguishers)):#array-indexed for loop
-                        if distinguishers[positionfinder] == max(distinguishers): #the loop finds a list of the best position to worst, an order
-                            distinguished.append(positionfinder)
-                            distinguishers[positionfinder] = -distinguishers[positionfinder]
-                            break #this is done to get the next position-so you won't find two positions in one loop
+                    index = distinguishers.index(max(distinguishers)) #finds a list of the best position to worst, an order
+                    distinguished.append(index)
+                    distinguishers[index] = 0.0
                 distinguishedorder.append(distinguished)
+            
         #this second half of the loop gets each different row that has been chosen as ideal, and puts this row into a list, which 
         #is added to each time the whole loop runs through a column, getting the most ideal row that has not already been used, and
         #adding this to the list, the for loops are broken once one is found, and the whole loop starts over again
@@ -1547,31 +1551,19 @@ def ImportantAbscissaIdentifier(data,data2,data3):
                             break
                 if len(answers) == len(distinguishedorder):#these loops are broken if the answers have been appended enough
                     break
-    #This section stacks the chosen rows into an array, and replaces the 5's that were chosen as threshold values into 0s again, to be
+    #This section stacks the chosen rows from lists into arrays, and replaces the minThreshold's that were chosen as threshold values with 0s, to be
     #used by the sls function for solving
-    if len(answers) == 1:#if there is only one row
-        answers = numpy.array(answers)
-        answers2 = numpy.array(answers2)
-        answers3 = numpy.array(answers3)
-    else:
-        answersholder = answers[0]
-        for answercounter in range(len(answers)-1):#array-indexed for loop
-            answersholder = numpy.vstack([answersholder,answers[answercounter+1]])
-        answers = answersholder
-        answersholder2 = answers2[0]
-        for answercounter in range(len(answers2)-1):#array-indexed for loop
-            answersholder2 = numpy.vstack([answersholder2,answers2[answercounter+1]])
-        answers2 = answersholder2
-        answersholder3 = answers3[0]
-        for answercounter in range(len(answers3)-1):#array-indexed for loop
-            answersholder3 = numpy.vstack([answersholder3,answers3[answercounter+1]])
-        answers3 = answersholder3
-        row_num = len(answers[:,0])
-        column_num = len(answers[0,:])
-        for columncounter in range(column_num):#array-indexed for loop
-            for rowcounter in range(row_num):#array-indexed for loop
-                if answers[rowcounter,columncounter] <= sensitivityThresholdValue[0]: #if there are any values lower than the threshold they are set to 0.
-                    answers[rowcounter,columncounter] = 0
+    answers = numpy.asarray(answers)
+    answers2 = numpy.asarray(answers2)
+    answers3 = numpy.asarray(answers3)
+       
+    row_num = len(answers[:,0])
+    column_num = len(answers[0,:])
+    for columncounter in range(column_num):#array-indexed for loop
+        for rowcounter in range(row_num):#array-indexed for loop
+            if answers[rowcounter,columncounter] <= sensitivityThresholdValue[0]: #if there are any values lower than the threshold they are set to 0.
+                answers[rowcounter,columncounter] = 0
+    #The shortened arrays are finally returned to the Inverse Method solver                
     return answers,answers2,answers3
     
     
@@ -2898,7 +2890,6 @@ def main():
         ExperimentData = RatioFinder(ReferenceData, ExperimentData, G.concentrationFinder,
                                       G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
         
-        print(len(ExperimentData.workingData[:,0]))
         for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time   
             #This print statement was used to track the progress of the program during long analysis runs
             if ((timeIndex % 100) == 0 and timeIndex != 0):
@@ -2921,6 +2912,7 @@ def main():
                 
                 if G.answer == 'inverse':#user input, the inverse method
                     if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
+
                         solutions = InverseMethodDistinguished(ReferenceData.monitored_reference_intensities,ReferenceData.matching_correction_values,rawsignalsarrayline)
                     else:
                         solutions = InverseMethod(ReferenceData.matching_correction_values,rawsignalsarrayline,ReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,ReferenceData.molecules,'composition')
