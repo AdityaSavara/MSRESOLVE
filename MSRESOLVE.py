@@ -2890,8 +2890,7 @@ def main():
         ExperimentData = RatioFinder(ReferenceData, ExperimentData, G.concentrationFinder,
                                       G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
         
-        print(len(ExperimentData.workingData[:,0]))
-        for timeIndex in range(2):#the loop that runs the program to get a set of signals/concentrations for each time   
+        for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time   
             #This print statement was used to track the progress of the program during long analysis runs
             if ((timeIndex % 100) == 0 and timeIndex != 0):
                 print(timeIndex)
@@ -2913,11 +2912,6 @@ def main():
                 
                 if G.answer == 'inverse':#user input, the inverse method
                     if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                        print(ReferenceData.monitored_reference_intensities)
-                        print("#2")
-                        print(ReferenceData.matching_correction_values)
-                        print("#3")
-                        print(rawsignalsarrayline)
 
                         solutions = InverseMethodDistinguished(ReferenceData.monitored_reference_intensities,ReferenceData.matching_correction_values,rawsignalsarrayline)
                     else:
