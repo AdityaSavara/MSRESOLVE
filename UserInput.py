@@ -201,3 +201,16 @@ generatePercentages = 'no'
 checkpoint = ''
 start = ''
 timeSinceLastCheckpoint = ''
+
+
+__var_list__ = ['referenceFileName','form','collectedFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+				'specificMassFragments','chosenMassFragments','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
+				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
+				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
+				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','referenceChanger','chosenMolecules','chosenMoleculesMF',
+				'chosenTimes','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
+				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
+				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
+				'uniqueOrCommon','slsFinisher','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
+				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName',
+				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']
