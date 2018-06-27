@@ -30,11 +30,11 @@ YYYYData = np.array([[1,2,3,4,5,6,7,8,9,10,11,12,13,14],
                     [3,3,3,3,3,3,3,3,3,33,33,33,33,33],
                     [4,4,4,4,4,4,4,4,4,44,44,44,44,44],
                     [5,5,5,5,5,5,5,5,5,55,55,55,55,55]])
-DataAbs = np.array([2,18,26,27,28,29,31,39,41,44,45,56,57,70])
-AbsValuesToKeep = [2, 18]
+DataAbscissa = np.array(['2','18','26','27','28','29','31','39','41','44','45','56','57','70'])
+AbscissaValuesToKeep = ['2','18']
 
 #output
-output = KeepOnlySelectedYYYYColumns(YYYYData,DataAbs,AbsValuesToKeep)
+output = KeepOnlySelectedYYYYColumns(YYYYData,DataAbscissa,AbscissaValuesToKeep)
 resultObj = output
 
 #String is provided
