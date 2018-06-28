@@ -25,18 +25,16 @@ import numpy as np
 #2) getting the prefix (or suffix) arugument for check_results. This is just for the output filenames.
 suffix=return_digit_from_filename()
 #3) provide the input for the function you want to test (you can also import it from a pickled object, for example)
-#data = np.array([[0., 1.5, 3.4, 5., 6.5, 7.1, 7.5],
-#                 [0.1, 0.2, 0.45, .45, .55, .65, 0.69]])
-data = np.array([[0., 1., 2.],
-                 [0., 1., 2.]])
+data = np.array([[0., 1.5, 3.4, 5., 6.5, 7.1, 7.5],
+                 [0.1, 0.2, 0.45, .45, .55, .65, 0.69]])
 data = data.transpose()
-abscissa = np.array([1., 2., 3.])
+abscissa = np.array([1., 2., 3., 4., 5., 6., 7.])
 headers = [34, 35]
 dataSmootherChoice = 'timerange'
 dataSmootherTimeRadius = 2
 dataSmootherPointRadius = 2
-headersToConfineTo = []
-polynomialOrder = 1
+headersToConfineTo = [34]
+polynomialOrder = 2
 
 #4) get the output of the function, which is what will typically be checked. 
 output = DataSmoother(data,abscissa,headers,dataSmootherChoice,dataSmootherTimeRadius,dataSmootherPointRadius,headersToConfineTo,polynomialOrder)
