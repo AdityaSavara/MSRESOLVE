@@ -31,7 +31,7 @@ YYYYData = np.array([[1,2,3,4,5,6,7,8,9,10,11,12,13,14],
                     [4,4,4,4,4,4,4,4,4,44,44,44,44,44],
                     [5,5,5,5,5,5,5,5,5,55,55,55,55,55]])
 headerValues = np.array(['2','18','26','27','28','29','31','39','41','44','45','56','57','70'])
-headerValuesToKeep = ['2','18','27','28','31','39','41','44','57','70']
+headerValuesToKeep = ['2','18']
 
 #output
 output = KeepOnlySelectedYYYYColumns(YYYYData,headerValues,headerValuesToKeep)
