@@ -13,7 +13,7 @@ polynomialOrder is just the order the user wants to use to fit the data.
 
 *NOTE* dataSmootherPointRadius is not actually used in the function.  Rather dataSmootherTimeRadius is used in both scenarios.  So if you are using pointrange, the radius defined by the user should be placed in the dataSmootherTimeRadius variable.
 
-For these two unit tests, data is array of two columns and seven rows, and abscissa being a one-dimensional array of seven values.
+For the test1 and test2, the data is an array of two columns and seven rows, and abscissa being a one-dimensional array of seven values.
 Test1 uses timerange and time radius set to 2 with polynomial order of 2.  So we expect dataSmoother to fit points in data to a 2nd degree polynomial using the two times before and the two times after the data point being changed.
 
 Test2 sets headersToConfineTo to [34] so we expect only the first column to change.
