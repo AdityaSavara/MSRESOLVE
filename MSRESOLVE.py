@@ -740,6 +740,9 @@ def  TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
     return None
 
 
+#TODO move DataSmoother into XYYYDataFunctionsSG
+#delete DataSmoother from MSRESOLVE
+#update the comments within the function to make note this was written with mass spectrometry data so the comments are not very general
 '''
 The DataSmoothing function 'smoothes' data over a certain time or datapoint ranges:
 it goes through each mass fragment at a certain time and determines a polynomial that modeles the datapoints around
