@@ -247,6 +247,11 @@ def KeepOnlySelectedYYYYColumns(YYYYData, DataAbscissa, AbscissaValuesToKeep):
 
     return (YYYYData, DataAbscissa)
 
+#TODO: make a function KeepOnlyYYYYRows() that is very similar to this one.
+# It may be useful and could replace some of the functionality of ArrayBuilder()
+# and UnecessaryMoleculesDeleter()
+    
+
 '''
 The DataSmoothing function 'smoothes' data over a certain time or datapoint ranges:
 it goes through each mass fragment at a certain time and determines a polynomial that modeles the datapoints around
