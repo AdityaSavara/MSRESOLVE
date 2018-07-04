@@ -32,7 +32,7 @@ chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] #enter the mass fr
 
 #//Molecule Likelihoods//
 #To specify the percentage chance of detecting a particular molecule. This must be the same length as the number of molecules in the reference file, or have no value.
-moleculeLikelhoods = [] #This should be like this [], or like this: [0.8, 1.0, 0.01,... 1.0] where the decimals are the user's guess of the likelihood of each molecule being present.
+moleculeLikelihoods = [] #This should be like this [], or like this: [0.8, 1.0, 0.01,... 1.0] where the decimals are the user's guess of the likelihood of each molecule being present.
 
 #TODO 2/3/18: 
 # Change so that late baseline times are omitted with a blank list for that mass (or all masses) rather than with zeros, 
@@ -208,7 +208,7 @@ timeSinceLastCheckpoint = ''
 
 
 __var_list__ = ['referenceFileName','form','collectedFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
-				'specificMassFragments','chosenMassFragments','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
+				'specificMassFragments','chosenMassFragments', 'moleculeLikelihoods', 'linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
 				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','referenceChanger','chosenMolecules','chosenMoleculesMF',
