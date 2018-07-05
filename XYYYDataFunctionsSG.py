@@ -219,6 +219,8 @@ Values(numbers) that are in DataAbscissa and not in AbscissaValuesToKeep are del
 from DataAbscissa. Further the columns of YYYYData correspond to the DataAbscissa array,
 i.e. shape(YYYData)[1] = len(DataAbscissa). When a value is removed from 
 DataAbscissa the corresponding column is removed from YYYYData. 
+Note that what we refer to as a "column" in this context is like a "row" in excel,
+due to python arrays typically being transposed relative to excel spreadsheets.
 
 Parameters:
 YYYYData- A 2-d numpy array, shape(YYYYData) = (*, len(DataAbscissa)), i.e. the columns
