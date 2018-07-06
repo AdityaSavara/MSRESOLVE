@@ -219,6 +219,8 @@ Values(numbers) that are in DataAbscissa and not in AbscissaValuesToKeep are del
 from DataAbscissa. Further the columns of YYYYData correspond to the DataAbscissa array,
 i.e. shape(YYYData)[1] = len(DataAbscissa). When a value is removed from 
 DataAbscissa the corresponding column is removed from YYYYData. 
+Note that what we refer to as a "column" in this context is like a "row" in excel,
+due to python arrays typically being transposed relative to excel spreadsheets.
 
 Parameters:
 YYYYData- A 2-d numpy array, shape(YYYYData) = (*, len(DataAbscissa)), i.e. the columns
@@ -250,3 +252,66 @@ def KeepOnlySelectedYYYYColumns(YYYYData, DataAbscissa, AbscissaValuesToKeep):
 #TODO: make a function KeepOnlyYYYYRows() that is very similar to this one.
 # It may be useful and could replace some of the functionality of ArrayBuilder()
 # and UnecessaryMoleculesDeleter()
+    
+
+'''
+The DataSmoothing function 'smoothes' data over a certain time or datapoint ranges:
+it goes through each mass fragment at a certain time and determines a polynomial that modeles the datapoints around
+that mass fragment (within point or time radius). Then applies this determined polynomial to recalculate the value of the datapoint.
+after all datapoint of a certain time are analyze the function then resets on the next datapoint. 
+NOTE: The comments in this function were written in context with mass spectrometry so they are not very general
+'''
+def DataSmoother(data,abscissa,headers,dataSmootherChoice,dataSmootherTimeRadius,dataSmootherPointRadius,headersToConfineTo,polynomialOrder = 1):
+    smoothedData = copy.deepcopy(data)
+
+    ## Option # 1
+    #This if statement is for the first two possibilities- if the user does not only want a specific point
+    #moved, but rather, all of the abscissa points changed, i.e. all mass series in data smoothed for XYY data
+    if headersToConfineTo == []:
+
+        # Get a list of time and data windows for each time in the abscissa
+        # these windows are used to perform the smoothing
+        (dataWindowsXvaluesInArrays, dataWindowsYYYYvaluesInArrays) = GetDataWindows(data,abscissa, dataSmootherTimeRadius, dataSmootherChoice)
+
+
+        # replace data points with their smoothed counterparts creating 'smoothedData'
+        for timecounter, timeslist in enumerate(dataWindowsXvaluesInArrays):
+            
+            currentWindowAsArray = dataWindowsYYYYvaluesInArrays[timecounter]
+            # Smooth the data
+            smoothedData[timecounter,:] = DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray, abscissa[timecounter], polynomialOrder)
+   
+
+    ## Option #2
+    # if only specific masses in the data should be smoothed
+    # the masses to be smoothed are listed in headersToConfineTo
+    elif headersToConfineTo != []:
+        # 'extractedData' is 'data' with the columns that will not be smoothed removed
+        # 'extractedColumnTracker' is a list of 1 and 0 the same length as 'headers'
+        # there is a 1 where the mass data is to be smoothed and a 0 when the mass data should not be smoothed
+        (extractedData,extractedColumnTracker) = GetRelevantData(data, abscissa, headers, headersToConfineTo)
+
+        # Now everything proceeds exactly as in Option #1, but use 'extractedData' rather
+        # than 'data' and after we find 'smoothedExtractedDataData'
+        # we will use it to replace the unsmoothed sections of 'data' where required
+        # thus forming 'smoothedData'
+
+        # Get a list of time and data windows for each time in the abscissa
+        # these windows are used to perform the smoothing
+        (dataWindowsXvaluesInArrays, dataWindowsYYYYvaluesInArrays) = GetDataWindows(extractedData,abscissa, dataSmootherTimeRadius, dataSmootherChoice)
+
+
+        # replace extractedData points with their smoothed counterparts creating 'smoothedData'
+        smoothedExtractedData = numpy.zeros(extractedData.shape)
+        for timecounter, timeslist in enumerate(dataWindowsXvaluesInArrays):
+            
+            currentWindowAsArray = dataWindowsYYYYvaluesInArrays[timecounter]
+            # Smooth the data
+            smoothedExtractedData[timecounter,:] = DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray, abscissa[timecounter], polynomialOrder)
+    
+        # Now construct smoothedData from tempSmootedData, data and extractedColumnTracker
+        # i.e. combine the columns we just smoothed with the columns that didnt need smoothing
+        # and do it in the proper/original order
+        smoothedData = ReconstructSmoothedData(smoothedData, smoothedExtractedData, extractedColumnTracker)
+           
+    return smoothedData
