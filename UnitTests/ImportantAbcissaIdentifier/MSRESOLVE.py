@@ -1468,19 +1468,19 @@ def InverseMethod(matching_correction_values,rawsignalsarrayline,monitored_refer
     
 
 #this function finds the significance of a specified value in an array to the array as a whole
-def IndElemSignificanceCalculator(array, column, moleculesLikelihood):
-    length = len(array)
+def IndElemSignificanceCalculator(dataArray, column, moleculesLikelihood):
+    length = len(dataArray)
     #variable to hold the terms in the summation
     numbers = []
     #for each value in the array
     for moleculecounter in range(length):
-        if array[moleculecounter] != 0: #if the value is zero, then the final value will be zero as well: it doesn't have to be changed
+        if dataArray[moleculecounter] != 0: #if the value is zero, then the final value will be zero as well: it doesn't have to be changed
             #calculates the unweighted ratio of each value, scaled by the likelihood of that molecule 
-            summationTerm = abs((moleculesLikelihood[moleculecounter]*array[moleculecounter])**float(-1)*(array[column]*moleculesLikelihood[column]-1))
+            summationTerm = abs((moleculesLikelihood[moleculecounter]*dataArray[moleculecounter])**float(-1)*(dataArray[column]*moleculesLikelihood[column]-1))
             numbers.append(summationTerm)
     #the following line can be replace with code such as "significance = (sum(numbers)**SumCoeffient)*(array[column]**ValueCoefficent)"
     # if you would like to add coefficents to increase or decrease the weighting of each term
-    significance = sum(numbers)*array[column]*moleculesLikelihood[column]
+    significance = sum(numbers)*dataArray[column]*moleculesLikelihood[column]
     return significance
 
 #This function compiles a list of the significances of each row to a particular column 
