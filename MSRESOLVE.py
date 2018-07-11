@@ -2524,8 +2524,8 @@ def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', data
                 #row indicies are only written in if they were given
                 #otherwise they are assumed to be in the data
                 if (col == 0 and len(rowIndex) != 0) :
-                    f.write('%.8s,'%(rowIndex[row]))
-                f.write('%.10s,'%(data[row,col]))
+                    f.write('%.8E,'%(rowIndex[row]))
+                f.write('%.10E,'%(data[row,col]))
             f.write('\n')
 
 #Export Statement for testing
