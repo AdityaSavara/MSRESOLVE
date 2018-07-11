@@ -2739,7 +2739,10 @@ def main():
     G.checkpoint = timeit.default_timer()
     CreateLogFile()
     
-    #initalize the data classes with the data from given Excel files 
+    #initalize the data classes with the data from given Excel files
+    #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
+    global ReferenceData
+    global ExperimentData
     ExperimentData = MSData(G.collectedFileName)
     ReferenceData = MSReference(G.referenceFileName, G.form)
 
