@@ -28,7 +28,7 @@ def return_digit_from_filename():
 #2) getting the prefix (or suffix) arugument for check_results. This is just for the output filenames.
 suffix=return_digit_from_filename()
 #3) provide the input for the function you want to test (you can also import it from a pickled object, for example)
-abscissa = np.array([10,16])
+abscissa = np.array([10.0,16])
 
 working_data = np.array(
     [[0,-5,-2],
@@ -36,7 +36,7 @@ working_data = np.array(
 
 #4) get the output of the function, which is what will typically be checked.
 
-outputNewInterpolater=intFunc.Interpolater_new(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001)
+outputNewInterpolater=intFunc.Interpolater_new(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001,cleanupSuperfluousInterpolatedRows=False)
 
 resultObj= outputNewInterpolater  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
