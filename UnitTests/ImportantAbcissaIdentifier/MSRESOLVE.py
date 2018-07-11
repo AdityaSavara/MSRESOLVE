@@ -599,11 +599,7 @@ def trimDataMasses(ExperimentData, ReferenceData):
     # and the corresponding colums from ExperimentData.workingData
     if G.specificMassFragments == 'yes':
         print("MassFragChooser")
-        if len(G.chosenMassFragments) < len(ReferenceData.molecules):
-            print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-            print("Mass fragment selection has been canceled")
-        else:
-            (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
+        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
                                                                                                             ExperimentData.mass_fragment_numbers,
                                                                                                             G.chosenMassFragments)
         ExperimentData.ExportCollector("MassFragChooser")
@@ -742,6 +738,7 @@ def  TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
             ExperimentData.workingData = numpy.delete(ExperimentData.workingData,timescounter-place_holder,axis = 0)
             place_holder = place_holder + 1
     return None
+
 
 ''' ScaleDown takes an array and scales every value by the same factor so that
 the largest value is below a chosen size.
