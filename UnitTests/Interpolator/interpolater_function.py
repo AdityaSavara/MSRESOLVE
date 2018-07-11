@@ -84,24 +84,25 @@ def Interpolater(data,abscissa,dataRangeSpecifierYorN = [],datafromcsv = [],MaxA
     return data,abscissa,datafromcsv
 
 
+#Commented out because no longer in use (slower than analytical Linear interpolater)
 #Uses a 1st degree polynomial fit to linearly interpolate values between 2 array-like objects or single values based on a point inserted between two other values. 
-def littleLinearInterpolator(array1,array2, xToInterpolateTo, interpolateBetweenValue1,interpolateBetweenValue2):
-    
-    def oneDegreeFit(yData,xData):
-        fitObject=numpy.polyfit(xData,yData,1)
-        return fitObject
-
-    #Puts the values into arrays to be used by polyfit()
-    xDataSingleArray=(interpolateBetweenValue1, interpolateBetweenValue2)
-    yDataListOfArrays=(array1,array2)
-    
-    #Generates the coeffecients created through a linear regression of the data provided to it
-    vectorOfFitObjects=oneDegreeFit(yDataListOfArrays,xDataSingleArray)
-    
-    #Generates an array or single value of the a y-point(s) that corelates with the x value to be interpolated to. 
-    vectorOfInterpolatedValues=numpy.polyval(vectorOfFitObjects,xToInterpolateTo)
-    
-    return vectorOfInterpolatedValues
+#def littleLinearInterpolator(array1,array2, xToInterpolateTo, interpolateBetweenValue1,interpolateBetweenValue2):
+#    
+#    def oneDegreeFit(yData,xData):
+#        fitObject=numpy.polyfit(xData,yData,1)
+#       return fitObject
+#
+#    #Puts the values into arrays to be used by polyfit()
+#    xDataSingleArray=(interpolateBetweenValue1, interpolateBetweenValue2)
+#    yDataListOfArrays=(array1,array2)
+#    
+#    #Generates the coeffecients created through a linear regression of the data provided to it
+#    vectorOfFitObjects=oneDegreeFit(yDataListOfArrays,xDataSingleArray)
+#    
+#    #Generates an array or single value of the a y-point(s) that corelates with the x value to be interpolated to. 
+#    vectorOfInterpolatedValues=numpy.polyval(vectorOfFitObjects,xToInterpolateTo)
+#    
+#    return vectorOfInterpolatedValues
 
 def analyticalLinearInterpolator (ordinateValues1, ordinateValues2, abscissaValueToInterpolateTo, abscissaValue1, abscissaValue2):
         slopesVector=(ordinateValues2-ordinateValues1)/(abscissaValue2-abscissaValue1)
@@ -248,7 +249,7 @@ def adjustForNearZerosAndZeros(data, abscissa, IgnorableDeltaYThreshold):
 
     return data,abscissa,zeroIndicesArray
 
-#DEPRECATED    
+#Commented out because no longer in use.
 ##Returns true when a sign change occurs between two values
 #def signChangePresent(value1,value2):
 #    signChangePresent=False
@@ -657,26 +658,6 @@ def Interpolater_new(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThr
             #correctly, the duplicatedAbscissaArray must be transposed.
             filled_data=numpy.multiply(numpy.transpose(duplicatedAbscissaArray),slopesVector)+interceptVector
             
-#DEPRECATED
-#            ####TODO test with this part deprecated
-#            # Now use abscissa_values_for_gap_combined to interpolate the data
-#            # for every column
-#            # Iterate through the columns of data
-#            ## TODO: Might be a way to speed this up more
-#            ## using the multi dimensional interpolate function from scipy
-#            filled_data = np.zeros((len(abscissa_values_for_gap_combined), len(current_row)))
-#            for (column_index,(lower_data,upper_data)) in enumerate(zip(current_row,next_row)):
-#                # interpolate each column with the modified_abscissa
-#                f = interpolate.interp1d([abscissa_current,abscissa_next]
-#                                         ,[lower_data,upper_data])
-#                filled_column = f(abscissa_values_for_gap_combined)
-#
-#                # put it into an array
-#                filled_data[:,column_index] = filled_column
-#                
-#            print('clint:', filled_data)
-
-
             #Step 4.c.v.3
             # Add the filled data and abscissa points to the
             # interpolated data and abscissa (we handle the
