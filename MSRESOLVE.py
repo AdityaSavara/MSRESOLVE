@@ -1025,7 +1025,7 @@ def DataInputPreProcessing(ExperimentData):
         
     if G.dataSmootherYorN == 'yes':
         print("DataSmoother")
-        ExperimentData.workingData = DataSmoother(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, G.dataSmootherChoice, G.dataSmootherTimeRadius, G.dataSmootherPointRadius, G.dataSmootherHeadersToConfineTo, G.polynomialOrder)
+        ExperimentData.workingData = DataFunctions.DataSmoother(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, G.dataSmootherChoice, G.dataSmootherTimeRadius, G.dataSmootherPointRadius, G.dataSmootherHeadersToConfineTo, G.polynomialOrder)
         ExperimentData.ExportCollector("DataSmoother")
 
     return ExperimentData
