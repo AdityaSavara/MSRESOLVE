@@ -2693,7 +2693,10 @@ def main():
     G.checkpoint = timeit.default_timer()
     CreateLogFile()
     
-    #initalize the data classes with the data from given Excel files 
+    #initalize the data classes with the data from given Excel files
+    #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
+    global ReferenceData
+    global ExperimentData
     ExperimentData = MSData(G.collectedFileName)
     ReferenceData = MSReference(G.referenceFileName, G.form)
 
@@ -2768,6 +2771,7 @@ def main():
                          "Or you are attempting to load pre-processed data without running data analysis")
 
     
+    #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
