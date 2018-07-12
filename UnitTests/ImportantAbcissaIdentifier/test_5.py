@@ -30,7 +30,7 @@ rawSignals=numpy.array([[10],
                         [30],
                         [40]])
                   
-moleculesLikelihood = [1,2,3]
+moleculesLikelihood = [1,0.5,0.375]
     
 sensitivityValues = []    
 
