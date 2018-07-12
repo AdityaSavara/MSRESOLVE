@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 Created on Wed Jun 13 08:07:13 2018
 
@@ -8,8 +7,7 @@ Created on Wed Jun 13 08:07:13 2018
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 #import your function
-import marginalChangeRestrictor as mcr
-import interpolateAccompanyingArrays as iaa
+import XYYYDataFunctionsSG as dataFunctions
 import numpy as np
 
 #get the suffix argument for check_results
@@ -30,8 +28,8 @@ concentrationBounds=np.array([[10,0.02,0.03,0.001,0.04,1,0.001],
 #ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
 
 #outputs with the function being tested using the input
-outputmarginalChangeRestrictor=mcr.marginalChangeRestrictor(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001,cleanupSuperfluousInterpolatedRows=True)
-outputInterpolateAccompanyingArrays=iaa.interpolateAccompanyingArrays(outputmarginalChangeRestrictor[1], concentrationBounds)
+outputmarginalChangeRestrictor=dataFunctions.marginalChangeRestrictor(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001,cleanupSuperfluousInterpolatedRows=True)
+outputInterpolateAccompanyingArrays=dataFunctions.interpolateAccompanyingArrays(outputmarginalChangeRestrictor[1], concentrationBounds)
 
 #places the object in a tuple
 resultObj = (outputInterpolateAccompanyingArrays)
