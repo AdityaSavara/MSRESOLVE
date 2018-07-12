@@ -2770,7 +2770,7 @@ def main():
         raise ValueError("The value of preProcessing is not set appropriately, it should be 'yes', 'skip' or 'load'." +
                          "Or you are attempting to load pre-processed data without running data analysis")
 
-    
+
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'
@@ -2778,7 +2778,6 @@ def main():
 
         # Reference Changer
         if G.extractReferencePatternFromDataOption == 'yes':
-            print("REFERENCE Changer")
             ReferenceData = ExtractReferencePatternFromData(ExperimentData, ReferenceData, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
             ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
             print('ReferencePatternChanger complete')
