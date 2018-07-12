@@ -8,7 +8,7 @@ Created on Wed Jun 13 08:07:13 2018
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 #import your function
-import marginalChangeRestrictor as mcr
+import XYYYDataFunctionsSG as dataFunctions
 import numpy as np
 
 #get the suffix argument for check_results
@@ -26,7 +26,7 @@ working_data = np.array(
 #ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
 
 #outputs with the function being tested using the input
-outputmarginalChangeRestrictor=mcr.marginalChangeRestrictor(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001,cleanupSuperfluousInterpolatedRows=False)
+outputmarginalChangeRestrictor=dataFunctions.marginalChangeRestrictor(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001,cleanupSuperfluousInterpolatedRows=False)
 
 #places the object in a tuple
 resultObj = (outputmarginalChangeRestrictor)
