@@ -10,7 +10,7 @@ import UnitTesterSG as ut
 import XYYYDataFunctionsSG as dataFunctions
 import numpy as np
 import sys
-sys.path.insert(1, “..\\lib”)
+sys.path.insert(1, "..\\lib")
 
 #get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
