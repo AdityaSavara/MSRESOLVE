@@ -438,41 +438,52 @@ def ReferenceThreshold(reference,referenceValueThreshold):
 #the right time and then gets each number following the first, and finds its ratio
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
-def ReferenceChanger (ExperimentData, ReferenceData, chosenMolecules,chosenMoleculesMF,chosenTimes):
+def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
     ## WARNING: the ReferenceChanger function has not been tested in a long time,
     ## and may have been tested on data without multiple molecules present in the
     ## reference file, so it may may not be working properly
-    
-    for chosenmoleculescounter in range(len(chosenMolecules)):#array-indexed for loop
-        rationumbers = []
+    copyOfReferenceData = copy.deepcopy(ReferenceData)    
+    for chosenmoleculescounter in range(len(rpcChosenMolecules)):#array-indexed for loop
+        extractedIntensities = []
+        allExtractedIntensities = []
         massfragindexer = []
-        for moleculecounter in range(len(ReferenceData.molecules)):#array-indexed for loop
-            if ReferenceData.molecules[moleculecounter] == chosenMolecules[chosenmoleculescounter]:#finds index of molecule
-                if len(chosenMoleculesMF[chosenmoleculescounter]) == 1:#if only one number is given then the function changes all the other values according to this one
+        for moleculecounter in range(len(copyOfReferenceData.molecules)):#array-indexed for loop
+            if copyOfReferenceData.molecules[moleculecounter] == rpcChosenMolecules[chosenmoleculescounter]:#finds index of molecule
+                if len(rpcChosenMoleculesMF[chosenmoleculescounter]) == 1:#if only one number is given then the function changes all the other values according to this one
                     for x in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
                         if ExperimentData.mass_fragment_numbers[x] != 0:#finds the other mass fragments and appends them
-                            chosenMoleculesMF[chosenmoleculescounter].append(ExperimentData.mass_fragment_numbers[x])
-                            chosenTimes[chosenmoleculescounter].append(chosenTimes[chosenmoleculescounter][0])
-                            if ExperimentData.mass_fragment_numbers[x] == chosenMoleculesMF[chosenmoleculescounter][0]:#if the mass fragment is equal to the one being checked with, it is not need so it is deleted
-                                chosenMoleculesMF[chosenmoleculescounter].pop()
-                                chosenTimes[chosenmoleculescounter].pop()
-                for numberscounter in range(len(chosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
-                    for mfcounter in range(len(ReferenceData.mass_fragment_numbers_monitored)): #checks whole input list (or list that was made by previous loop)
-                        if chosenMoleculesMF[chosenmoleculescounter][numberscounter] == ReferenceData.mass_fragment_numbers_monitored[mfcounter]:#gets index of mass fragment number
-                            massfragindexer.append(mfcounter)
-                for numberscounter in range(len(chosenMoleculesMF[chosenmoleculescounter])):
-                    for mfcounter in range(len(ExperimentData.mass_fragment_numbers)):
-                        if chosenMoleculesMF[chosenmoleculescounter][numberscounter] == ExperimentData.mass_fragment_numbers[mfcounter]:
+                            rpcChosenMoleculesMF[chosenmoleculescounter].append(ExperimentData.mass_fragment_numbers[x])
+                            rpcTimeRanges[chosenmoleculescounter].append(rpcTimeRanges[chosenmoleculescounter][0])
+                            if ExperimentData.mass_fragment_numbers[x] == rpcChosenMoleculesMF[chosenmoleculescounter][0]:#if the mass fragment is equal to the one being checked with, it is not need so it is deleted
+                                rpcChosenMoleculesMF[chosenmoleculescounter].pop()
+                                rpcTimeRanges[chosenmoleculescounter].pop()
+                for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
+                    for refMFCounter in range(len(copyOfReferenceData.mass_fragment_numbers_monitored)): #checks whole input list (or list that was made by previous loop)
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceData.mass_fragment_numbers_monitored[refMFCounter]:#gets index of mass fragment number
+                            massfragindexer.append(refMFCounter)
+                for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
+                    for refMFCounter in range(len(ExperimentData.mass_fragment_numbers)):
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == ExperimentData.mass_fragment_numbers[refMFCounter]:
                             for timecounter in range(len(ExperimentData.times)):#array-indexed for loop
-                                if chosenTimes[chosenmoleculescounter][numberscounter] == ExperimentData.times[timecounter]:#gets index of time
-                                    rationumbers.append(ExperimentData.workingData[timecounter,mfcounter])
-                for numberscounter in range(len(chosenMoleculesMF[chosenmoleculescounter])):
-                    if numberscounter > 0:#Basically, after the first mass frag, which won't change
-                        if rationumbers[numberscounter] != 0:#sometimes the input here will have to be zero
-                            ReferenceData.provided_reference_intensities[massfragindexer[numberscounter],moleculecounter+1] = (rationumbers[numberscounter]/float(rationumbers[0]))*ReferenceData.provided_reference_intensities[massfragindexer[0],moleculecounter+1] #changes the reference data based on ratio found in collected data
-                        else:
-                            ReferenceData.provided_reference_intensities[massfragindexer[numberscounter],moleculecounter+1] = 0 #if the ratio is zero, then the new reference value is also zero
-    return None
+                                if (rpcTimeRanges[chosenmoleculescounter][0] <= ExperimentData.times[timecounter]) and (rpcTimeRanges[chosenmoleculescounter][1] >= ExperimentData.times[timecounter]):#gets index of time
+                                    extractedIntensities.append(ExperimentData.workingData[timecounter,refMFCounter])
+                            #Place current extractedIntensities in a larger list using copy so it can be cleared without affecting allExtractedIntensities
+                            allExtractedIntensities.append(copy.copy(extractedIntensities))
+                            #clear extracted intensities for the next mass fragment
+                            extractedIntensities.clear()
+                #Convert list to an array
+                allExtractedIntensitiesArray = numpy.array(allExtractedIntensities)
+                #Initialize empty list to store average values
+                allExtractedIntensitiesAverage = []
+                #For loop to find the average intensity values
+                #Then store the average value in the allExtractedIntensityAverage list
+                for eachChosenMoleculesMF in range(len(allExtractedIntensitiesArray)):
+                    intensitiesAverage = numpy.average(allExtractedIntensitiesArray[eachChosenMoleculesMF])
+                    allExtractedIntensitiesAverage.append(intensitiesAverage)
+                #For loop to overwrite the reference file with the value of the reference signal of the chosen mass fragment with the product of the signal and the ratio of the averages
+                for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
+                    copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1]
+    return copyOfReferenceData
 
 '''
 RemoveUnreferencedMasses() is used to prune ExperimentData.workingData and ExperimentData.mass_fragment_numbers 
@@ -1091,36 +1102,37 @@ class MSData (object):
         #start the timer function
         self.previousTime = timeit.default_timer()
         #initalize debugging lists
-        self.runTimes = []
-        self.functionsUsed = []
-        self.record = []
+        #These lists are appended in parallel so a variable of the same index from each list will be related
+        self.runTimeAtExport = []
+        self.labelToExport = []
+        self.dataToExport = []
         self.experimentTimes = []
         
     def ExportCollector(self, callingFunction):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
-        self.runTimes.append(currentTime - self.previousTime)
+        self.runTimeAtExport.append(currentTime - self.previousTime)
         #record current time for next function's use
         self.previousTime = currentTime
         #add the name of the calling function to mark its use
-        self.functionsUsed.append(callingFunction) 
+        self.labelToExport.append(callingFunction) 
         
         if G.ExportAtEachStep == 'yes':
             #record data of experiment
-            self.record.append(self.workingData.copy())
+            self.dataToExport.append(self.workingData.copy())
             #record times from the data of the experiment
             self.experimentTimes.append(self.times.copy())
             
     def ExportMSData(self):
         print("\n Collected Export List:")
-        for savePoint in range(len(self.runTimes)):
-            print(self.functionsUsed[savePoint])
-            print(self.runTimes[savePoint])
+        for savePoint in range(len(self.runTimeAtExport)):
+            print(self.labelToExport[savePoint])
+            print(self.runTimeAtExport[savePoint])
             if G.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
-                filename = 'Exported%s%s.csv'%(savePoint, self.functionsUsed[savePoint]) #FIXME: for DataSmoother, and some others, the debug output has a "Time" header but the time is not exported.
-                data = self.record[savePoint]
+                filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint]) #FIXME: for DataSmoother, and some others, the debug output has a "Time" header but the time is not exported.
+                data = self.dataToExport[savePoint]
                 abscissa = self.experimentTimes[savePoint]
                 colIndex = ['m%s'% int(y) for y in self.mass_fragment_numbers]
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
@@ -1194,42 +1206,43 @@ class MSReference (object):
             '''generate list of massfragments monitored '''
             self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
             
-        '''Initalize debugging variables'''
+        '''Initializing Export Collector Variables'''
         #start the timer function
         self.previousTime = timeit.default_timer()
         #initalize debugging lists
-        self.runTimes = []
-        self.functionsUsed = []
-        self.record = []
+        #These lists are appended in parallel so a variable of the same index from each list will be related
+        self.runTimeAtExport = []
+        self.labelToExport = []
+        self.dataToExport = []
         #self.experimentTimes = []
             
     def ExportCollector(self, callingFunction, use_provided_reference_intensities = False):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
-        self.runTimes.append(currentTime - self.previousTime)
+        self.runTimeAtExport.append(currentTime - self.previousTime)
         #record current time for next function's use
         self.previousTime = currentTime
         #add the name of the calling function to mark its use
-        self.functionsUsed.append(callingFunction) 
+        self.labelToExport.append(callingFunction) 
         
         if G.ExportAtEachStep == 'yes':
             #record data of experiment
             if use_provided_reference_intensities:
-                self.record.append(self.provided_reference_intensities.copy())
+                self.dataToExport.append(self.provided_reference_intensities.copy())
             elif not use_provided_reference_intensities:
-                self.record.append(self.standardized_reference_intensities.copy())
+                self.dataToExport.append(self.standardized_reference_intensities.copy())
             
     def ExportFragmentationPatterns(self):
         print("\n Reference Debugging List:")
-        for savePoint in range(len(self.runTimes)):
-            print(self.functionsUsed[savePoint])
-            print(self.runTimes[savePoint])
+        for savePoint in range(len(self.runTimeAtExport)):
+            print(self.labelToExport[savePoint])
+            print(self.runTimeAtExport[savePoint])
             if G.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
-                filename = 'Exported%s%s.csv'%(savePoint, self.functionsUsed[savePoint])
-                data = self.record[savePoint]
-                colIndex = ['m%s'% y for y in self.electronnumbers]
+                filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
+                data = self.dataToExport[savePoint]
+                colIndex = ['%s'% y for y in self.molecules]
                 ExportXYYYData(filename,data,colIndex)
 
     # This class function removes all rows of zeros from
@@ -2674,11 +2687,11 @@ def PrintLogFile():
             f6.write('higherBound = %s \n'%(G.dataUpperBound))
             f6.write('increments = %s \n'%(G.increments))
         f6.write('permutationNum = %s \n'%(G.permutationNum))
-    if G.referenceChanger == 'yes':
-        f6.write('referenceChanger = %s \n'%(G.referenceChanger))
-        f6.write('chosenMolecules = %s \n'%(G.chosenMolecules))
-        f6.write('chosenMoleculesMF = %s \n'%(G.chosenMoleculesMF))
-        f6.write('chosenTimes = %s \n'%(G.chosenTimes))  
+    if G.extractReferencePatternFromDataOption == 'yes':
+        f6.write('extractReferencePatternFromDataOption = %s \n'%(G.extractReferencePatternFromDataOption))
+        f6.write('rpcMoleculesToChange = %s \n'%(G.rpcMoleculesToChange))
+        f6.write('rpcMoleculesToChangeMF = %s \n'%(G.rpcMoleculesToChangeMF))
+        f6.write('rpcTimeRanges = %s \n'%(G.rpcTimeRanges))
     if G.minimalReferenceValue == 'yes':
         f6.write('minimalReferenceValue = %s \n'%(G.minimalReferenceValue))
         f6.write('referenceValueThreshold = %s \n'%(G.referenceValueThreshold))
@@ -2816,16 +2829,17 @@ def main():
         raise ValueError("The value of preProcessing is not set appropriately, it should be 'yes', 'skip' or 'load'." +
                          "Or you are attempting to load pre-processed data without running data analysis")
 
-    
+
+    #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
 
         # Reference Changer
-        if G.referenceChanger == 'yes':
-            ReferenceChanger(ExperimentData, ReferenceData, G.chosenMolecules, G.chosenMoleculesMF, G.chosenTimes)
-            ReferenceData.ExportCollector('ReferenceChanger',use_provided_reference_intensities = True)
-            print('ReferenceChanger complete')
+        if G.extractReferencePatternFromDataOption == 'yes':
+            ReferenceData = ExtractReferencePatternFromData(ExperimentData, ReferenceData, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
+            ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
+            print('ReferencePatternChanger complete')
                 
         # Some initial preprocessing on the reference data
         ReferenceData = ReferenceInputPreProcessing(ReferenceData)

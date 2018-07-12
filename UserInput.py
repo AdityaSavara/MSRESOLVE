@@ -60,7 +60,7 @@ backgroundIntercepts = []
 
 #//Data Solving Restrictions - Marginal Change Restrictor//
 #To input data ranges for certain molecules, input below
-interpolateYorN = 'yes'
+interpolateYorN = 'no'
 #These factors are used to determine the search parameters for the brute force analysis method
 # However, it is also needed for the interpolater which allows the data ranges to be small enough to be solvable by brute force
 marginalChangeRestriction = 2.0
@@ -109,10 +109,10 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
 
 #//Reference Changer//
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
-referenceChanger = 'no'
-chosenMolecules = ['H2O']
-chosenMoleculesMF = [[18]]
-chosenTimes = [[200,400]]
+extractReferencePatternFromDataOption = 'yes'
+rpcMoleculesToChange = ['Crotyl Alcohol']
+rpcMoleculesToChangeMF = [[57,70]]
+rpcTimeRanges = [[300,500]]
 
 
 #//Reference Mass Fragmentation Threshold//
@@ -166,7 +166,7 @@ negativeAnalyzerYorN = 'no'
 
 #//Data Analysis Methods
 #Below the path for the analysis of the data; sls or inverse
-answer = 'sls'	#'inverse' or 'sls'; sls is suggested
+answer = 'inverse'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'unique'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
@@ -211,8 +211,8 @@ __var_list__ = ['referenceFileName','form','collectedFileName','preProcessing','
 				'specificMassFragments','chosenMassFragments', 'moleculeLikelihoods', 'linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
-				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','referenceChanger','chosenMolecules','chosenMoleculesMF',
-				'chosenTimes','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
+				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
+				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
 				'uniqueOrCommon','slsFinisher','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
