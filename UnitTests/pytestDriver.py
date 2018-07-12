@@ -11,6 +11,7 @@ for elem in listOfDirectoriesAndFiles:
 
 #This loop goes into each directories, runs the specified command, and comes back.
 for directory in directoryList:
+    print("Changing directory to"+directory)
     os.chdir(directory)
     os.system("pytest")
     os.chdir("..")
