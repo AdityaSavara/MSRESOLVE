@@ -184,76 +184,7 @@ def LowerBoundThresholdFilter (ExperimentData,massesToLowerBoundThresholdFilter,
                             ExperimentData.workingData[:,measured_masses_counter][point[0]] = 0.0 #this changes the value to 0.0 at index given by point[0] within the array of masses.
     #return collected #no return is necessary. this is implied. the function takes a "pointer/reference" to the collected array and then modifies it directly.    
     
-    
-# The comments in this function are no longer completely accurate since we have added some absolute values and deltas where they were not before.
-# ( Look at the version of the program XXXXXX to see what this function looked like previously )
-# this function makes sure that the data cannot change by more than a factor of two from one time to another
-#this is done by finding those lines that have an issue and then getting the average of those two lines and 
-#inserts this average row in between these two respective rows, then putting averages up until there is no jump 
-#greater than 100%
-def Interpolater (data,abscissa, MaxAllowedDeltaYRatio, IgnorableDeltaYThreshold, dataRangeSpecifierYorN = [],datafromcsv = []):
-#### The comments in this function are no longer completely accurate since we have added some absolute values and deltas where they were not before.
-#### ( Look at the version XXXXXX of the program to see what this function looked like previously )
-#The current Interpolater function, while functional, suffers from two serious performance issues. 
-#
-#First, the use of repeated insert statements is slow, because it requires that the array be reconstructed for each insertion.
-#This is because arrays are of fixed length. Solution: As the array is checked, maintain a new list of points that includes 
-#both the original data and any added points using 'list'.append(). At the end of the program, convert this list to an array
-#and save it under the name of the old array.
-#
-#Second, the current loops instruct the program to check every jump and insert an average if necessary. 
-#However, this means that if there were, for example, a 40 fold jump, the program would have to iterate through 
-#all points 5 times to resolve the problem. Solution: Resolve each jump completely in turn, by maintaining 
-#a pointer to the base of the jump until enough pointers have been added. 
-#In this way, the program could only iterate once through the data.
-
-    #this first loop doesn't allow for jumps greater than 100%, the line saying it cannot equal more than the 
-    #previous term*2 The place_holder object allows the function to know how many times the loop has added a row,
-    #thereby knowing the size of the new array. the if statement doesn't allow the last row_counter to be checked 
-    #since there is not going to be a row beyond the length of the array
-    for column_counter in range(len(data[0,:])):#array-indexed for loop
-        place_holder = 0 #reset after each column
-        place_holder2 = 0
-        for row_counter in range(len(data[:,0])):#array-indexed for loop
-            if row_counter != len(data[:,0]) - (1+place_holder): #we don't want to go past the last row, because every row uses the average with the one after it
-                if abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]*MaxAllowedDeltaYRatio):#If one row has a changes of greater than 100% of the last, then an average is put between them
-
-
-                    while abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]*MaxAllowedDeltaYRatio):#If one row has a changes by a factor greater than 2, then an average is put between that and the next row, and averages keep getting placed there until there is no more jump that large
-                        if abs(data[row_counter+1+place_holder,column_counter] - data[row_counter+place_holder,column_counter]) > IgnorableDeltaYThreshold:#the additions are only made if the change is greater then 0.0001, (no tiny changes)
-                            data = numpy.insert(data,row_counter+place_holder+1,sum(data[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
-                            abscissa = numpy.insert(abscissa,row_counter+place_holder+1,sum(abscissa[(row_counter+place_holder):(row_counter+place_holder+2)])/2)
-                            if dataRangeSpecifierYorN == 'yes': #this is for the datarangespecifier function, to make the csv file as long as the input csv file
-                                datafromcsv = numpy.insert(datafromcsv,row_counter+place_holder+1,sum(datafromcsv[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
-                            place_holder2 = place_holder2 + 1
-                            
-                        else:
-                            break
-                    place_holder = place_holder2 #keeps the array in check since many rows are being added (for all rows added the index is changed)
-    #this loop is very similar to the first, but it makes sure that there is no decrease greater than 50 %, a factor
-    #of 2 just as above, so that values cannot be less than half the value before, furthermore, the place_holder changes
-    #a little bit- in this way- it changes the index of the two values that get checked, since the average can't be more 
-    #than 50% below the higher value, you must check the average versus the lower value - which means changing the index
-    #in the previous loop, this index grew but did not affect its own loop, but only the outer loops, in this nested loop,
-    #the index actually affects the loop itself
-    
-    for column_counter in range(len(data[0,:])):#array-indexed for loop
-        place_holder = 0
-        place_holder2 = 0
-        for row_counter in range(len(data[:,0])):#array-indexed for loop
-            if row_counter != len(data[:,0]) - (1+place_holder):#same comments as above, symmetrical code
-                if abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]/MaxAllowedDeltaYRatio):
-                    while abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]/MaxAllowedDeltaYRatio):
-                        if abs(data[row_counter+place_holder,column_counter] - data[row_counter+1+place_holder,column_counter]) > IgnorableDeltaYThreshold:
-                            data = numpy.insert(data,row_counter+place_holder+1,sum(data[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
-                            abscissa = numpy.insert(abscissa,row_counter+place_holder+1,sum(abscissa[(row_counter+place_holder):(row_counter+place_holder+2)])/2)
-                            if dataRangeSpecifierYorN == 'yes':
-                                datafromcsv = numpy.insert(datafromcsv,row_counter+place_holder+1,sum(datafromcsv[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
-                            place_holder = place_holder + 1
-                        else:
-                            break
-    return [data,abscissa,datafromcsv]
-    
+       
 '''
 This function simply searchs two arrays and returns an array with any and all 
 overlapping numbers
@@ -1016,18 +947,19 @@ def DataInputPreProcessing(ExperimentData):
         
     #displays mid-preprocessing graph    
     if G.grapher == 'yes':
-        print("Pre-Interpolation Graph")
+        print("Pre-marginalChangeRestrictor Graph")
         Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph')
 
     if G.interpolateYorN == 'yes':
         if G.dataRangeSpecifierYorN == 'yes':#if the datafromcsv file does not exist(in the case that it is not chosen) then the function call cannot include it
             #Gathering data from the datarange csv
             ExperimentData.datafromcsv = genfromtxt( '%s' %G.csvFileName, delimiter=',',skip_header=1) 
-            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold, G.dataRangeSpecifierYorN, ExperimentData.datafromcsv)
+            [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
+            ExperimentData.datafromcsv=DataFunctions.interpolateAccompanyingArrays(ExperimentData.times, ExperimentData.datafromcsv)
         else:
-            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
-        print('Interpolater Finished')
-        ExperimentData.ExportCollector("Interpolater")
+            [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
+        print('Marginal Change Restrictor Finished')
+        ExperimentData.ExportCollector("Marginal Change Restrictor")
         
     if G.timeRangeLimit == 'yes':
         print('Timechooser')
