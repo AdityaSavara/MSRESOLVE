@@ -11,6 +11,27 @@ import copy
 from nestedObjectsFunctions import *
 import pickle
 
+'''
+This function takes in two arrarys (or iterables) and compares them using functions from the nestedObjectsFunctions module
+'''
+def compareNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays):
+        #Taking the difference of two arrays will yield in all elements being zero if the arrays are the same
+        #If arrays are of different shape they will not be equal and the subtraction between the two will result in an error
+    try:    
+                    #Initializing diffOfArrays since it is needed for the subtractNested function
+        diffOfArrays = nested_iter_to_nested_list(copy.deepcopy(firstInComparisonArray))
+        #If the arrays are the same, subtractNested overwrites diffOfArrays with all zeros
+        subtractNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays)
+    except:
+        return False
+    #The difference sum keeps adding all the values until it no longer has an array
+    sumOfDifference = sumNestedAbsValues(diffOfArrays)
+    #If the two arrays are equal, then the sum of the differences Array should be zero
+    if sumOfDifference == 0:
+        return True
+    else:
+        return False
+
 
 '''
 customCompare takes in two values and compares them based on their types
@@ -27,39 +48,36 @@ def customCompare(firstInComparison,secondInComparison):
     if ((type(firstInComparison) != str) and (type(secondInComparison) != str)):
         #checks to see if both variables are iterable and converts them into numpy arrays
         if isinstance(firstInComparison,collections.Iterable) and isinstance(secondInComparison,collections.Iterable):
-            firstInComparisonArray = np.array(firstInComparison)
-            secondInComparisonArray = np.array(secondInComparison)
-            #If arrays are not nested then simple subtraction using the - operator will work
-            #Otherwise use nested array functions
             try:
-                #diffOfArrays will be an array of zeros if the two arrays are equal
-                diffOfArrays = firstInComparisonArray - secondInComparisonArray
-                #take the sum of the differences
-                sumOfDifference = sumNestedAbsValues(diffOfArrays)
-                #If the sum of differences is 0 then the two arrays must be the same
-                #Otherwise they have different values and customCompare returns False
-                if sumOfDifference == 0:
-                    return True
-                else:
-                    return False
+                firstInComparisonArray = np.array(firstInComparison)
+                secondInComparisonArray = np.array(secondInComparison)
+                #If arrays are not nested then simple subtraction using the - operator will work
+                #Otherwise use nested array functions
+                try:
+                    #diffOfArrays will be an array of zeros if the two arrays are equal
+                    diffOfArrays = firstInComparisonArray - secondInComparisonArray
+                    #take the sum of the differences
+                    sumOfDifference = sumNestedAbsValues(diffOfArrays)
+                    #If the sum of differences is 0 then the two arrays must be the same
+                    #Otherwise they have different values and customCompare returns False
+                    if sumOfDifference == 0:
+                        return True
+                    else:
+                        return False
+                except: 
+                    if compareNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays):
+                        return True
+                    else:
+                        return False
+            #Try to convert to an array, if this can not be done it is probably a nested tuple or nested list
+            #Functions in the nestedObjectFunctions module do work with nested tuples and lists so the except statement tells the code to do just that
             except:
-                    #Taking the difference of two arrays will yield in all elements being zero if the arrays are the same
-                    #If arrays are of different shape they will not be equal and the subtraction between the two will result in an error
-                try:    
-                    #Initializing diffOfArrays since it is needed for the subtractNested function
-                    diffOfArrays = nested_iter_to_nested_list(copy.deepcopy(firstInComparisonArray))
-                    #If the arrays are the same, subtractNested overwrites diffOfArrays with all zeros
-                    subtractNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays)
-                except:
-                    return False
-                #The difference sum keeps adding all the values until it no longer has an array
-                sumOfDifference = sumNestedAbsValues(diffOfArrays)
-                #If the two arrays are equal, then the sum of the differences Array should be zero
-                if sumOfDifference == 0:
+                diffOfArrays = copy.deepcopy(firstInComparison)
+                if compareNested(firstInComparison,secondInComparison,diffOfArrays):
                     return True
                 else:
                     return False
-                
+
 
         #checks to see if one, not both, of the variables are iterable
         #this is for the case with one variable being None
@@ -80,7 +98,7 @@ def customCompare(firstInComparison,secondInComparison):
             return False
 
 
-def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix=''):
+def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix='', allowOverwrite = True):
     calculated_resultObj_pickledfile='{}calculated_resultObj{}.p'.format(prefix,suffix)
     calculated_resultStr_file='{}calculated_resultStr{}.txt'.format(prefix,suffix)
     expected_result_file='{}expected_resultObj{}.p'.format(prefix,suffix)
@@ -122,26 +140,33 @@ def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix=
         expected_resultObj_unpacked=None
     #compare the expected result to the calculated result, both obj and str
     if customCompare(expected_resultObj_unpacked,calculated_resultObj_unpacked) == True:
+        match = True
         print('Expected result matches calculated_result.')
     else:
         print('Expected result does not match calculated_result. (or is nested)')
+        match = False
     if expected_resultStr_read==calculated_resultStr_read:
         print('Expected result string matches calculated_result string')
     else:
+        match = False
         print('Expected result string (top) does not match calculated_result string (bottom)')
         print(expected_resultStr_read)
         print(calculated_resultStr_read)
-        overwritechoice=str(input('Overwrite (or create) the expected result file from the calculated results provided (Y or N)? '))
-        if str(overwritechoice)=='Y':
-            #pickling the calculated result into the expected result file
-            with open(expected_result_file,'wb') as expected_resultObj:
-                pickle.dump(calculated_resultObj_unpacked,expected_resultObj)
-            with open(expected_resultStr_file,'w') as expected_resultStr:
-                expected_resultStr.write(calculated_resultStr_read)
-        elif str(overwritechoice)=='N':
-            pass    
-        else:
-            print("Error: Only Y or N allowed. Please run program again.")
+        #the if statement is to prevent pytest from needing user input 
+        if allowOverwrite:
+            overwritechoice=str(input('Overwrite (or create) the expected result file from the calculated results provided (Y or N)? '))
+            if str(overwritechoice)=='Y':
+                #pickling the calculated result into the expected result file
+                with open(expected_result_file,'wb') as expected_resultObj:
+                    pickle.dump(calculated_resultObj_unpacked,expected_resultObj)
+                with open(expected_resultStr_file,'w') as expected_resultStr:
+                    expected_resultStr.write(calculated_resultStr_read)
+            elif str(overwritechoice)=='N':
+                pass    
+            else:
+                print("Error: Only Y or N allowed. Please run program again.")
+            
+    return match
 			
 # skip running the whole program and just set the expected result
 def set_expected_result(expected_result_obj,expected_result_str='',
@@ -153,13 +178,26 @@ def set_expected_result(expected_result_obj,expected_result_str='',
     with open(expected_result_str_file,'w') as expected_result_file:
         expected_result_file.write(expected_result_str)
 
+
+#Extracting the digit from the file name to use as prefix/suffix in check_results
+def returnDigitFromFilename(currentFile):
+    import os
+    filename = os.path.basename(currentFile)
+    import re
+    listOfNumbers = re.findall('\d+',filename)
+    extractedDigit = listOfNumbers[0]
+    return extractedDigit
+
+
 if __name__=="__main__":
     import os
     working_dir=os.getcwd()
     number_of_files=len(os.listdir(working_dir))
     for  i in range(1,number_of_files+1):
         try:
-            print("Trying Test" + str(i))
-            exec('import test{}'.format(i))
+            print("Trying test_" + str(i))
+            exec('import test_{}'.format(i))
+            exec('test_{}.test_Run(allowOverwrite = True)'.format(i))
         except ImportError:
             pass
+
