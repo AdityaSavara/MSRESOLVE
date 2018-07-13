@@ -112,9 +112,12 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
 extractReferencePatternFromDataOption = 'yes'
 rpcMoleculesToChange = ['Crotyl Alcohol']
+#rpcTimeRanges and rpcMoleculesToChangeMF are nested lists.  Each nested list corresponds to a molecule in rpcMoleculesToChange
+#To make this easier to visualize, each nested list is placed on its own line so the first line refers to the first molecule, second line refers to the second molecule and so on
 rpcTimeRanges = [
-                 [57,70],
+                 [300,500],
                 ]
+#The first mass fragment is the base fragment and it will not be changed.  The fragments following the first one are all altered based on the signal of the first fragment from the collected data
 rpcMoleculesToChangeMF = [
                           [70,57],
                          ]
