@@ -33,6 +33,7 @@ chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] #enter the mass fr
 #//Molecule Likelihoods//
 #To specify the percentage chance of detecting a particular molecule. This must be the same length as the number of molecules in the reference file, or have no value.
 moleculeLikelihoods = [] #This should be like this [], or like this: [0.8, 1.0, 0.01,... 1.0] where the decimals are the user's guess of the likelihood of each molecule being present.
+sensitivityValues = []
 
 #TODO 2/3/18: 
 # Change so that late baseline times are omitted with a blank list for that mass (or all masses) rather than with zeros, 
@@ -109,7 +110,7 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
 
 #//Reference Changer//
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
-extractReferencePatternFromDataOption = 'yes'
+extractReferencePatternFromDataOption = 'no'
 rpcMoleculesToChange = ['Crotyl Alcohol']
 rpcMoleculesToChangeMF = [[57,70]]
 rpcTimeRanges = [[300,500]]

@@ -1457,7 +1457,7 @@ def ListLengthChecker(aList, desiredLength, defaultNum):
 #this function is going to be used by multiple sections of the code, including the updated sls method and a secondary inverse method
 #this is a new way of selecting the most important rows, for each molecule, based on that molecules ratios with the other molecules 
 #in that row and that molecules own value
-def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculesLikelihood,sensitivityValues):
+def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeLikelihoods,sensitivityValues):
     #the shape of the referenceData is found 
     row_num = len(refMassFrags[:,0])
     column_num = len(refMassFrags[0,:])
@@ -1466,7 +1466,7 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,molecules
     sensitivityValues = ListLengthChecker(sensitivityValues, column_num, 1)
    
     #the moleculesLikelihood is corrected if it wasn't entered by the use.
-    moleculesLikelihood = ListLengthChecker(moleculesLikelihood, column_num, 1)
+    moleculeLikelihoods = ListLengthChecker(moleculeLikelihoods, column_num, 1)
     
     #all values below the specified relative intensity must be set the minThreshold value
     #This is because a subfunction attempts to divide by each value
@@ -1476,7 +1476,7 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,molecules
                 refMassFrags[rowcounter,columncounter] = 0 #sensitivityThresholdValue[0]
                 
     #The correct order of the needed rows is determined by this function
-    order = ImportantAbscissaIdentifier(refMassFrags,moleculesLikelihood)
+    order = ImportantAbscissaIdentifier(refMassFrags,moleculeLikelihoods)
     
     #empty lists to store results i.e. shortened arrays
     shortRefMassFrags = []
@@ -1509,7 +1509,7 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,molecules
     
 #this function takes the data from important abscissa identifier and 
 def InverseMethodDistinguished(monitored_reference_intensities,matching_correction_values,rawsignalsarrayline):
-    monitored_reference_intensities,matching_correction_values,rawsignalsarrayline = DistinguishedArrayChooser (monitored_reference_intensities,matching_correction_values,rawsignalsarrayline)
+    monitored_reference_intensities,matching_correction_values,rawsignalsarrayline = DistinguishedArrayChooser (monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, G.moleculeLikelihoods,G.sensitivityValues)
     if numpy.linalg.det(matching_correction_values) != 0:#only solves if determinant is not equal to zero
         solutions = numpy.linalg.solve(matching_correction_values,rawsignalsarrayline)
     else:
