@@ -14,4 +14,4 @@ for directory in directoryList:
     print("Changing directory to"+directory)
     os.chdir(directory)
     os.system("python UnitTesterSG.py")
-os.chdir("..")
+    os.chdir("..")
