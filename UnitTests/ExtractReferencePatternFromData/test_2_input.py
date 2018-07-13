@@ -15,7 +15,7 @@ dataSimulation='yes'
 
 #//Graphing//
 #option allowing you to view a graph of determined concentrations
-grapher = 'yes' #yes will graph function no will not
+grapher = 'no' #yes will graph function no will not
 
 
 #//Time Range//
