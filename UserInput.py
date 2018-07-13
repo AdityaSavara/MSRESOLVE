@@ -110,10 +110,15 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
 
 #//Reference Changer//
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
-extractReferencePatternFromDataOption = 'no'
+extractReferencePatternFromDataOption = 'yes'
 rpcMoleculesToChange = ['Crotyl Alcohol']
-rpcMoleculesToChangeMF = [[57,70]]
-rpcTimeRanges = [[300,500]]
+rpcTimeRanges = [
+                 [57,70],
+                ]
+rpcMoleculesToChangeMF = [
+                          [70,57],
+                         ]
+
 
 
 #//Reference Mass Fragmentation Threshold//
