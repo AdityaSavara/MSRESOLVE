@@ -108,12 +108,20 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
 
 
-#//Reference Changer//
+#//Reference Pattern Changer // (rpc)
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
-extractReferencePatternFromDataOption = 'no'
+extractReferencePatternFromDataOption = 'yes'
 rpcMoleculesToChange = ['Crotyl Alcohol']
-rpcMoleculesToChangeMF = [[57,70]]
-rpcTimeRanges = [[300,500]]
+#rpcTimeRanges and rpcMoleculesToChangeMF are nested lists.  Each nested list corresponds to a molecule in rpcMoleculesToChange
+#To make this easier to visualize, each nested list is placed on its own line so the first line refers to the first molecule, second line refers to the second molecule and so on
+rpcTimeRanges = [
+                 [300,500], #For each molecule to be changed, a pair of times is required.
+                ]
+#The first mass fragment is the base fragment and it will not be changed.  The fragments following the first one are all altered based on the signal of the first fragment from the collected data
+rpcMoleculesToChangeMF = [
+                          [70,57], #For each molecule for using the rpc on, make a new line with a list of masses (length of each should be greater than 1).
+                         ]
+
 
 
 #//Reference Mass Fragmentation Threshold//
