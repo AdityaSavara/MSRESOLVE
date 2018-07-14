@@ -667,7 +667,7 @@ def form_new_abscissa(lower_point, upper_point,
 #The marginalChangeRestrictor prevents two points from differing by more than the factor marginalChangeRestriction by inserting 
 #an interpolated abscissa value and the corresponding interpolated YYYdata.
 #NOTE: rows refer to the YYY data corresponding to each abscissa value.
-def marginalChangeRestrictor(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold=0.0001, cleanupSuperfluousInterpolatedRows=True):
+def marginalChangeRestrictor(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold=0.0001, cleanupSuperfluousInterpolatedRows=True, extraOutput=False):
     
     # First probably should make sure that the abscissa and the data
     # have the same number of rows (abscissa should index the rows of data)
@@ -943,17 +943,19 @@ def marginalChangeRestrictor(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableD
     else:
         data = numpy.multiply(data,zeroIndicesArray)
 
-
+    #For unit tester purposes, unit tester will also compare the insertion indices
+    if extraOutput:
+        return data, abscissa, insertion_indices    
     #Step 6
-    return data, abscissa, insertion_indices
+    return data, abscissa
 
 #interpolateAccompanyingArrays is a preprocessing step that changes the abscissa of the accompanying concentration bounds file to 
 #match that of the interpolated data. When the times do not match that of the marginalChangeRestricted_abscissa, it will add a new row full of 
 #linearInterpolations across the YYY columns of the bounds and other data contained in the accompanyingArray file.
 
-#When used, the marginalChangeRestricted_abscissa must be ordered. The abscissa in the accompanyingArray must match that of the actual data 
-#pre-marginalChangeRestrictor. The first and last number in the csv file must match that of the abscissa. The accompanying array cannot contain a 
-#header. The original intention of this function was to expand the concentrationBoundsFromCSV to have the same abscissa as the data following the
+#The abscissa in the accompanyingArray must match that of the actual data pre-marginalChangeRestrictor.
+#The first and last number in the csv file must match that of the marginalChangeRestricted_abscissa. 
+#The original intention of this function was to expand the concentrationBoundsFromCSV to have the same abscissa as the data following the
 #marginalChangeRestrictor, but the function could be potentially used for additional accompanying arrays that need a matching abscissa.
 
 def interpolateAccompanyingArrays(marginalChangeRestricted_abscissa, accompanyingArray):

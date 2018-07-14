@@ -667,7 +667,7 @@ def form_new_abscissa(lower_point, upper_point,
 #The marginalChangeRestrictor prevents two points from differing by more than the factor marginalChangeRestriction by inserting 
 #an interpolated abscissa value and the corresponding interpolated YYYdata.
 #NOTE: rows refer to the YYY data corresponding to each abscissa value.
-def marginalChangeRestrictor(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold=0.0001, cleanupSuperfluousInterpolatedRows=True):
+def marginalChangeRestrictor(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold=0.0001, cleanupSuperfluousInterpolatedRows=True, extraOutput=False):
     
     # First probably should make sure that the abscissa and the data
     # have the same number of rows (abscissa should index the rows of data)
@@ -943,7 +943,9 @@ def marginalChangeRestrictor(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableD
     else:
         data = numpy.multiply(data,zeroIndicesArray)
 
-
+    #For unit tester purposes, unit tester will also compare the insertion indices
+    if extraOutput:
+        return data, abscissa, insertion_indices    
     #Step 6
     return data, abscissa
 
