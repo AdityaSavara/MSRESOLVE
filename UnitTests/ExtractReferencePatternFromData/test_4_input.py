@@ -15,7 +15,7 @@ dataSimulation='yes'
 
 #//Graphing//
 #option allowing you to view a graph of determined concentrations
-grapher = 'yes' #yes will graph function no will not
+grapher = 'no' #yes will graph function no will not
 
 
 #//Time Range//
@@ -33,7 +33,6 @@ chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] #enter the mass fr
 #//Molecule Likelihoods//
 #To specify the percentage chance of detecting a particular molecule. This must be the same length as the number of molecules in the reference file, or have no value.
 moleculeLikelihoods = [] #This should be like this [], or like this: [0.8, 1.0, 0.01,... 1.0] where the decimals are the user's guess of the likelihood of each molecule being present.
-sensitivityValues = []
 
 #TODO 2/3/18: 
 # Change so that late baseline times are omitted with a blank list for that mass (or all masses) rather than with zeros, 
@@ -108,20 +107,12 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
 
 
-#//Reference Pattern Changer // (rpc)
+#//Reference Changer//
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
 extractReferencePatternFromDataOption = 'yes'
-rpcMoleculesToChange = ['Crotyl Alcohol']
-#rpcTimeRanges and rpcMoleculesToChangeMF are nested lists.  Each nested list corresponds to a molecule in rpcMoleculesToChange
-#To make this easier to visualize, each nested list is placed on its own line so the first line refers to the first molecule, second line refers to the second molecule and so on
-rpcTimeRanges = [
-                 [300,500], #For each molecule to be changed, a pair of times is required.
-                ]
-#The first mass fragment is the base fragment and it will not be changed.  The fragments following the first one are all altered based on the signal of the first fragment from the collected data
-rpcMoleculesToChangeMF = [
-                          [70,57], #For each molecule for using the rpc on, make a new line with a list of masses (length of each should be greater than 1).
-                         ]
-
+rpcMoleculesToChange = ['Crotyl Alcohol','CO2']
+rpcMoleculesToChangeMF = [[57,70],[28,44]]
+rpcTimeRanges = [[300,600],[300,600]]
 
 
 #//Reference Mass Fragmentation Threshold//
@@ -175,13 +166,13 @@ negativeAnalyzerYorN = 'no'
 
 #//Data Analysis Methods
 #Below the path for the analysis of the data; sls or inverse
-answer = 'inverse'	#'inverse' or 'sls'; sls is suggested
-uniqueOrCommon = 'unique'	#'unique' or 'common'; common is suggested
+answer = 'sls'	#'inverse' or 'sls'; sls is suggested
+uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
-SLSUniquePrint = 'yes'
+SLSUniquePrint = 'no'
 SLSUniqueExport = 'SLSUniqueOrder.csv'
 
 

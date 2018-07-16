@@ -6,6 +6,9 @@ Created on Mon Jul  2 14:16:13 2018
 """
 #THE FOLLOWING LINES ARE MANDATORY FOR THE CODE
 #importing the functions from UnitTesterSG module
+import sys
+sys.path.insert(1,"..\\lib")
+
 import UnitTesterSG 
 import numpy
 
@@ -30,12 +33,12 @@ rawSignals=numpy.array([[10],
                         [30],
                         [40]])
                   
-moleculesLikelihood = [1,0.5,0.75]
+moleculesLikelihood = [1,0.5,0.375]
     
 sensitivityValues = []    
 
 #4) get the output of the function, which is what will typically be checked. 
-output = DistinguishedArrayChooser(rawSignals,correctionValues,rawSignals, moleculesLikelihood, sensitivityValues)
+output = DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals, moleculesLikelihood, sensitivityValues)
 #print(output)
 resultObj= output #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
