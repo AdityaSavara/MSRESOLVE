@@ -6,6 +6,7 @@ Created on Wed Jul 11 13:26:37 2018
 """
 import sys
 sys.path.insert(1, "..\\lib")
+sys.path.insert(1, "..")
 
 #This test file tests the extractReferencePatternFromData feature
 
