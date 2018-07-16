@@ -184,76 +184,7 @@ def LowerBoundThresholdFilter (ExperimentData,massesToLowerBoundThresholdFilter,
                             ExperimentData.workingData[:,measured_masses_counter][point[0]] = 0.0 #this changes the value to 0.0 at index given by point[0] within the array of masses.
     #return collected #no return is necessary. this is implied. the function takes a "pointer/reference" to the collected array and then modifies it directly.    
     
-    
-# The comments in this function are no longer completely accurate since we have added some absolute values and deltas where they were not before.
-# ( Look at the version of the program XXXXXX to see what this function looked like previously )
-# this function makes sure that the data cannot change by more than a factor of two from one time to another
-#this is done by finding those lines that have an issue and then getting the average of those two lines and 
-#inserts this average row in between these two respective rows, then putting averages up until there is no jump 
-#greater than 100%
-def Interpolater (data,abscissa, MaxAllowedDeltaYRatio, IgnorableDeltaYThreshold, dataRangeSpecifierYorN = [],datafromcsv = []):
-#### The comments in this function are no longer completely accurate since we have added some absolute values and deltas where they were not before.
-#### ( Look at the version XXXXXX of the program to see what this function looked like previously )
-#The current Interpolater function, while functional, suffers from two serious performance issues. 
-#
-#First, the use of repeated insert statements is slow, because it requires that the array be reconstructed for each insertion.
-#This is because arrays are of fixed length. Solution: As the array is checked, maintain a new list of points that includes 
-#both the original data and any added points using 'list'.append(). At the end of the program, convert this list to an array
-#and save it under the name of the old array.
-#
-#Second, the current loops instruct the program to check every jump and insert an average if necessary. 
-#However, this means that if there were, for example, a 40 fold jump, the program would have to iterate through 
-#all points 5 times to resolve the problem. Solution: Resolve each jump completely in turn, by maintaining 
-#a pointer to the base of the jump until enough pointers have been added. 
-#In this way, the program could only iterate once through the data.
-
-    #this first loop doesn't allow for jumps greater than 100%, the line saying it cannot equal more than the 
-    #previous term*2 The place_holder object allows the function to know how many times the loop has added a row,
-    #thereby knowing the size of the new array. the if statement doesn't allow the last row_counter to be checked 
-    #since there is not going to be a row beyond the length of the array
-    for column_counter in range(len(data[0,:])):#array-indexed for loop
-        place_holder = 0 #reset after each column
-        place_holder2 = 0
-        for row_counter in range(len(data[:,0])):#array-indexed for loop
-            if row_counter != len(data[:,0]) - (1+place_holder): #we don't want to go past the last row, because every row uses the average with the one after it
-                if abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]*MaxAllowedDeltaYRatio):#If one row has a changes of greater than 100% of the last, then an average is put between them
-
-
-                    while abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]*MaxAllowedDeltaYRatio):#If one row has a changes by a factor greater than 2, then an average is put between that and the next row, and averages keep getting placed there until there is no more jump that large
-                        if abs(data[row_counter+1+place_holder,column_counter] - data[row_counter+place_holder,column_counter]) > IgnorableDeltaYThreshold:#the additions are only made if the change is greater then 0.0001, (no tiny changes)
-                            data = numpy.insert(data,row_counter+place_holder+1,sum(data[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
-                            abscissa = numpy.insert(abscissa,row_counter+place_holder+1,sum(abscissa[(row_counter+place_holder):(row_counter+place_holder+2)])/2)
-                            if dataRangeSpecifierYorN == 'yes': #this is for the datarangespecifier function, to make the csv file as long as the input csv file
-                                datafromcsv = numpy.insert(datafromcsv,row_counter+place_holder+1,sum(datafromcsv[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
-                            place_holder2 = place_holder2 + 1
-                            
-                        else:
-                            break
-                    place_holder = place_holder2 #keeps the array in check since many rows are being added (for all rows added the index is changed)
-    #this loop is very similar to the first, but it makes sure that there is no decrease greater than 50 %, a factor
-    #of 2 just as above, so that values cannot be less than half the value before, furthermore, the place_holder changes
-    #a little bit- in this way- it changes the index of the two values that get checked, since the average can't be more 
-    #than 50% below the higher value, you must check the average versus the lower value - which means changing the index
-    #in the previous loop, this index grew but did not affect its own loop, but only the outer loops, in this nested loop,
-    #the index actually affects the loop itself
-    
-    for column_counter in range(len(data[0,:])):#array-indexed for loop
-        place_holder = 0
-        place_holder2 = 0
-        for row_counter in range(len(data[:,0])):#array-indexed for loop
-            if row_counter != len(data[:,0]) - (1+place_holder):#same comments as above, symmetrical code
-                if abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]/MaxAllowedDeltaYRatio):
-                    while abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]/MaxAllowedDeltaYRatio):
-                        if abs(data[row_counter+place_holder,column_counter] - data[row_counter+1+place_holder,column_counter]) > IgnorableDeltaYThreshold:
-                            data = numpy.insert(data,row_counter+place_holder+1,sum(data[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
-                            abscissa = numpy.insert(abscissa,row_counter+place_holder+1,sum(abscissa[(row_counter+place_holder):(row_counter+place_holder+2)])/2)
-                            if dataRangeSpecifierYorN == 'yes':
-                                datafromcsv = numpy.insert(datafromcsv,row_counter+place_holder+1,sum(datafromcsv[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
-                            place_holder = place_holder + 1
-                        else:
-                            break
-    return [data,abscissa,datafromcsv]
-    
+       
 '''
 This function simply searchs two arrays and returns an array with any and all 
 overlapping numbers
@@ -438,41 +369,52 @@ def ReferenceThreshold(reference,referenceValueThreshold):
 #the right time and then gets each number following the first, and finds its ratio
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
-def ReferenceChanger (ExperimentData, ReferenceData, chosenMolecules,chosenMoleculesMF,chosenTimes):
+def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
     ## WARNING: the ReferenceChanger function has not been tested in a long time,
     ## and may have been tested on data without multiple molecules present in the
     ## reference file, so it may may not be working properly
-    
-    for chosenmoleculescounter in range(len(chosenMolecules)):#array-indexed for loop
-        rationumbers = []
+    copyOfReferenceData = copy.deepcopy(ReferenceData)    
+    for chosenmoleculescounter in range(len(rpcChosenMolecules)):#array-indexed for loop
+        extractedIntensities = []
+        allExtractedIntensities = []
         massfragindexer = []
-        for moleculecounter in range(len(ReferenceData.molecules)):#array-indexed for loop
-            if ReferenceData.molecules[moleculecounter] == chosenMolecules[chosenmoleculescounter]:#finds index of molecule
-                if len(chosenMoleculesMF[chosenmoleculescounter]) == 1:#if only one number is given then the function changes all the other values according to this one
+        for moleculecounter in range(len(copyOfReferenceData.molecules)):#array-indexed for loop
+            if copyOfReferenceData.molecules[moleculecounter] == rpcChosenMolecules[chosenmoleculescounter]:#finds index of molecule
+                if len(rpcChosenMoleculesMF[chosenmoleculescounter]) == 1:#if only one number is given then the function changes all the other values according to this one
                     for x in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
                         if ExperimentData.mass_fragment_numbers[x] != 0:#finds the other mass fragments and appends them
-                            chosenMoleculesMF[chosenmoleculescounter].append(ExperimentData.mass_fragment_numbers[x])
-                            chosenTimes[chosenmoleculescounter].append(chosenTimes[chosenmoleculescounter][0])
-                            if ExperimentData.mass_fragment_numbers[x] == chosenMoleculesMF[chosenmoleculescounter][0]:#if the mass fragment is equal to the one being checked with, it is not need so it is deleted
-                                chosenMoleculesMF[chosenmoleculescounter].pop()
-                                chosenTimes[chosenmoleculescounter].pop()
-                for numberscounter in range(len(chosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
-                    for mfcounter in range(len(ReferenceData.mass_fragment_numbers_monitored)): #checks whole input list (or list that was made by previous loop)
-                        if chosenMoleculesMF[chosenmoleculescounter][numberscounter] == ReferenceData.mass_fragment_numbers_monitored[mfcounter]:#gets index of mass fragment number
-                            massfragindexer.append(mfcounter)
-                for numberscounter in range(len(chosenMoleculesMF[chosenmoleculescounter])):
-                    for mfcounter in range(len(ExperimentData.mass_fragment_numbers)):
-                        if chosenMoleculesMF[chosenmoleculescounter][numberscounter] == ExperimentData.mass_fragment_numbers[mfcounter]:
+                            rpcChosenMoleculesMF[chosenmoleculescounter].append(ExperimentData.mass_fragment_numbers[x])
+                            rpcTimeRanges[chosenmoleculescounter].append(rpcTimeRanges[chosenmoleculescounter][0])
+                            if ExperimentData.mass_fragment_numbers[x] == rpcChosenMoleculesMF[chosenmoleculescounter][0]:#if the mass fragment is equal to the one being checked with, it is not need so it is deleted
+                                rpcChosenMoleculesMF[chosenmoleculescounter].pop()
+                                rpcTimeRanges[chosenmoleculescounter].pop()
+                for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
+                    for refMFCounter in range(len(copyOfReferenceData.mass_fragment_numbers_monitored)): #checks whole input list (or list that was made by previous loop)
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceData.mass_fragment_numbers_monitored[refMFCounter]:#gets index of mass fragment number
+                            massfragindexer.append(refMFCounter)
+                for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
+                    for refMFCounter in range(len(ExperimentData.mass_fragment_numbers)):
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == ExperimentData.mass_fragment_numbers[refMFCounter]:
                             for timecounter in range(len(ExperimentData.times)):#array-indexed for loop
-                                if chosenTimes[chosenmoleculescounter][numberscounter] == ExperimentData.times[timecounter]:#gets index of time
-                                    rationumbers.append(ExperimentData.workingData[timecounter,mfcounter])
-                for numberscounter in range(len(chosenMoleculesMF[chosenmoleculescounter])):
-                    if numberscounter > 0:#Basically, after the first mass frag, which won't change
-                        if rationumbers[numberscounter] != 0:#sometimes the input here will have to be zero
-                            ReferenceData.provided_reference_intensities[massfragindexer[numberscounter],moleculecounter+1] = (rationumbers[numberscounter]/float(rationumbers[0]))*ReferenceData.provided_reference_intensities[massfragindexer[0],moleculecounter+1] #changes the reference data based on ratio found in collected data
-                        else:
-                            ReferenceData.provided_reference_intensities[massfragindexer[numberscounter],moleculecounter+1] = 0 #if the ratio is zero, then the new reference value is also zero
-    return None
+                                if (rpcTimeRanges[chosenmoleculescounter][0] <= ExperimentData.times[timecounter]) and (rpcTimeRanges[chosenmoleculescounter][1] >= ExperimentData.times[timecounter]):#gets index of time
+                                    extractedIntensities.append(ExperimentData.workingData[timecounter,refMFCounter])
+                            #Place current extractedIntensities in a larger list using copy so it can be cleared without affecting allExtractedIntensities
+                            allExtractedIntensities.append(copy.copy(extractedIntensities))
+                            #clear extracted intensities for the next mass fragment
+                            extractedIntensities.clear()
+                #Convert list to an array
+                allExtractedIntensitiesArray = numpy.array(allExtractedIntensities)
+                #Initialize empty list to store average values
+                allExtractedIntensitiesAverage = []
+                #For loop to find the average intensity values
+                #Then store the average value in the allExtractedIntensityAverage list
+                for eachChosenMoleculesMF in range(len(allExtractedIntensitiesArray)):
+                    intensitiesAverage = numpy.average(allExtractedIntensitiesArray[eachChosenMoleculesMF])
+                    allExtractedIntensitiesAverage.append(intensitiesAverage)
+                #For loop to overwrite the reference file with the value of the reference signal of the chosen mass fragment with the product of the signal and the ratio of the averages
+                for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
+                    copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1]
+    return copyOfReferenceData
 
 '''
 RemoveUnreferencedMasses() is used to prune ExperimentData.workingData and ExperimentData.mass_fragment_numbers 
@@ -599,7 +541,11 @@ def trimDataMasses(ExperimentData, ReferenceData):
     # and the corresponding colums from ExperimentData.workingData
     if G.specificMassFragments == 'yes':
         print("MassFragChooser")
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
+        if len(G.chosenMassFragments) < len(ReferenceData.molecules):
+            print("Selected Mass Fragments are too few to solve for the number of molecules provided")
+            print("Mass fragment selection has been canceled")
+        else:
+            (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
                                                                                                             ExperimentData.mass_fragment_numbers,
                                                                                                             G.chosenMassFragments)
         ExperimentData.ExportCollector("MassFragChooser")
@@ -738,7 +684,6 @@ def  TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
             ExperimentData.workingData = numpy.delete(ExperimentData.workingData,timescounter-place_holder,axis = 0)
             place_holder = place_holder + 1
     return None
-
 
 ''' ScaleDown takes an array and scales every value by the same factor so that
 the largest value is below a chosen size.
@@ -1002,18 +947,19 @@ def DataInputPreProcessing(ExperimentData):
         
     #displays mid-preprocessing graph    
     if G.grapher == 'yes':
-        print("Pre-Interpolation Graph")
+        print("Pre-marginalChangeRestrictor Graph")
         Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph')
 
     if G.interpolateYorN == 'yes':
         if G.dataRangeSpecifierYorN == 'yes':#if the datafromcsv file does not exist(in the case that it is not chosen) then the function call cannot include it
             #Gathering data from the datarange csv
             ExperimentData.datafromcsv = genfromtxt( '%s' %G.csvFileName, delimiter=',',skip_header=1) 
-            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold, G.dataRangeSpecifierYorN, ExperimentData.datafromcsv)
+            [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
+            ExperimentData.datafromcsv=DataFunctions.interpolateAccompanyingArrays(ExperimentData.times, ExperimentData.datafromcsv)
         else:
-            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
-        print('Interpolater Finished')
-        ExperimentData.ExportCollector("Interpolater")
+            [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
+        print('Marginal Change Restrictor Finished')
+        ExperimentData.ExportCollector("Marginal Change Restrictor")
         
     if G.timeRangeLimit == 'yes':
         print('Timechooser')
@@ -1022,7 +968,7 @@ def DataInputPreProcessing(ExperimentData):
         
     if G.dataSmootherYorN == 'yes':
         print("DataSmoother")
-        ExperimentData.workingData = DataSmoother(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, G.dataSmootherChoice, G.dataSmootherTimeRadius, G.dataSmootherPointRadius, G.dataSmootherHeadersToConfineTo, G.polynomialOrder)
+        ExperimentData.workingData = DataFunctions.DataSmoother(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, G.dataSmootherChoice, G.dataSmootherTimeRadius, G.dataSmootherPointRadius, G.dataSmootherHeadersToConfineTo, G.polynomialOrder)
         ExperimentData.ExportCollector("DataSmoother")
 
     return ExperimentData
@@ -1088,36 +1034,37 @@ class MSData (object):
         #start the timer function
         self.previousTime = timeit.default_timer()
         #initalize debugging lists
-        self.runTimes = []
-        self.functionsUsed = []
-        self.record = []
+        #These lists are appended in parallel so a variable of the same index from each list will be related
+        self.runTimeAtExport = []
+        self.labelToExport = []
+        self.dataToExport = []
         self.experimentTimes = []
         
     def ExportCollector(self, callingFunction):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
-        self.runTimes.append(currentTime - self.previousTime)
+        self.runTimeAtExport.append(currentTime - self.previousTime)
         #record current time for next function's use
         self.previousTime = currentTime
         #add the name of the calling function to mark its use
-        self.functionsUsed.append(callingFunction) 
+        self.labelToExport.append(callingFunction) 
         
         if G.ExportAtEachStep == 'yes':
             #record data of experiment
-            self.record.append(self.workingData.copy())
+            self.dataToExport.append(self.workingData.copy())
             #record times from the data of the experiment
             self.experimentTimes.append(self.times.copy())
             
     def ExportMSData(self):
         print("\n Collected Export List:")
-        for savePoint in range(len(self.runTimes)):
-            print(self.functionsUsed[savePoint])
-            print(self.runTimes[savePoint])
+        for savePoint in range(len(self.runTimeAtExport)):
+            print(self.labelToExport[savePoint])
+            print(self.runTimeAtExport[savePoint])
             if G.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
-                filename = 'Exported%s%s.csv'%(savePoint, self.functionsUsed[savePoint]) #FIXME: for DataSmoother, and some others, the debug output has a "Time" header but the time is not exported.
-                data = self.record[savePoint]
+                filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint]) #FIXME: for DataSmoother, and some others, the debug output has a "Time" header but the time is not exported.
+                data = self.dataToExport[savePoint]
                 abscissa = self.experimentTimes[savePoint]
                 colIndex = ['m%s'% int(y) for y in self.mass_fragment_numbers]
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
@@ -1191,42 +1138,43 @@ class MSReference (object):
             '''generate list of massfragments monitored '''
             self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
             
-        '''Initalize debugging variables'''
+        '''Initializing Export Collector Variables'''
         #start the timer function
         self.previousTime = timeit.default_timer()
         #initalize debugging lists
-        self.runTimes = []
-        self.functionsUsed = []
-        self.record = []
+        #These lists are appended in parallel so a variable of the same index from each list will be related
+        self.runTimeAtExport = []
+        self.labelToExport = []
+        self.dataToExport = []
         #self.experimentTimes = []
             
     def ExportCollector(self, callingFunction, use_provided_reference_intensities = False):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
-        self.runTimes.append(currentTime - self.previousTime)
+        self.runTimeAtExport.append(currentTime - self.previousTime)
         #record current time for next function's use
         self.previousTime = currentTime
         #add the name of the calling function to mark its use
-        self.functionsUsed.append(callingFunction) 
+        self.labelToExport.append(callingFunction) 
         
         if G.ExportAtEachStep == 'yes':
             #record data of experiment
             if use_provided_reference_intensities:
-                self.record.append(self.provided_reference_intensities.copy())
+                self.dataToExport.append(self.provided_reference_intensities.copy())
             elif not use_provided_reference_intensities:
-                self.record.append(self.standardized_reference_intensities.copy())
+                self.dataToExport.append(self.standardized_reference_intensities.copy())
             
     def ExportFragmentationPatterns(self):
         print("\n Reference Debugging List:")
-        for savePoint in range(len(self.runTimes)):
-            print(self.functionsUsed[savePoint])
-            print(self.runTimes[savePoint])
+        for savePoint in range(len(self.runTimeAtExport)):
+            print(self.labelToExport[savePoint])
+            print(self.runTimeAtExport[savePoint])
             if G.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
-                filename = 'Exported%s%s.csv'%(savePoint, self.functionsUsed[savePoint])
-                data = self.record[savePoint]
-                colIndex = ['m%s'% y for y in self.electronnumbers]
+                filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
+                data = self.dataToExport[savePoint]
+                colIndex = ['%s'% y for y in self.molecules]
                 ExportXYYYData(filename,data,colIndex)
 
     # This class function removes all rows of zeros from
@@ -1509,7 +1457,7 @@ def ListLengthChecker(aList, desiredLength, defaultNum):
 #this function is going to be used by multiple sections of the code, including the updated sls method and a secondary inverse method
 #this is a new way of selecting the most important rows, for each molecule, based on that molecules ratios with the other molecules 
 #in that row and that molecules own value
-def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculesLikelihood,sensitivityValues):
+def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeLikelihoods,sensitivityValues):
     #the shape of the referenceData is found 
     row_num = len(refMassFrags[:,0])
     column_num = len(refMassFrags[0,:])
@@ -1518,7 +1466,7 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,molecules
     sensitivityValues = ListLengthChecker(sensitivityValues, column_num, 1)
    
     #the moleculesLikelihood is corrected if it wasn't entered by the use.
-    moleculesLikelihood = ListLengthChecker(moleculesLikelihood, column_num, 1)
+    moleculeLikelihoods = ListLengthChecker(moleculeLikelihoods, column_num, 1)
     
     #all values below the specified relative intensity must be set the minThreshold value
     #This is because a subfunction attempts to divide by each value
@@ -1528,7 +1476,7 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,molecules
                 refMassFrags[rowcounter,columncounter] = 0 #sensitivityThresholdValue[0]
                 
     #The correct order of the needed rows is determined by this function
-    order = ImportantAbscissaIdentifier(refMassFrags,moleculesLikelihood)
+    order = ImportantAbscissaIdentifier(refMassFrags,moleculeLikelihoods)
     
     #empty lists to store results i.e. shortened arrays
     shortRefMassFrags = []
@@ -1561,7 +1509,7 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,molecules
     
 #this function takes the data from important abscissa identifier and 
 def InverseMethodDistinguished(monitored_reference_intensities,matching_correction_values,rawsignalsarrayline):
-    monitored_reference_intensities,matching_correction_values,rawsignalsarrayline = DistinguishedArrayChooser (monitored_reference_intensities,matching_correction_values,rawsignalsarrayline)
+    monitored_reference_intensities,matching_correction_values,rawsignalsarrayline = DistinguishedArrayChooser (monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, G.moleculeLikelihoods,G.sensitivityValues)
     if numpy.linalg.det(matching_correction_values) != 0:#only solves if determinant is not equal to zero
         solutions = numpy.linalg.solve(matching_correction_values,rawsignalsarrayline)
     else:
@@ -2671,11 +2619,11 @@ def PrintLogFile():
             f6.write('higherBound = %s \n'%(G.dataUpperBound))
             f6.write('increments = %s \n'%(G.increments))
         f6.write('permutationNum = %s \n'%(G.permutationNum))
-    if G.referenceChanger == 'yes':
-        f6.write('referenceChanger = %s \n'%(G.referenceChanger))
-        f6.write('chosenMolecules = %s \n'%(G.chosenMolecules))
-        f6.write('chosenMoleculesMF = %s \n'%(G.chosenMoleculesMF))
-        f6.write('chosenTimes = %s \n'%(G.chosenTimes))  
+    if G.extractReferencePatternFromDataOption == 'yes':
+        f6.write('extractReferencePatternFromDataOption = %s \n'%(G.extractReferencePatternFromDataOption))
+        f6.write('rpcMoleculesToChange = %s \n'%(G.rpcMoleculesToChange))
+        f6.write('rpcMoleculesToChangeMF = %s \n'%(G.rpcMoleculesToChangeMF))
+        f6.write('rpcTimeRanges = %s \n'%(G.rpcTimeRanges))
     if G.minimalReferenceValue == 'yes':
         f6.write('minimalReferenceValue = %s \n'%(G.minimalReferenceValue))
         f6.write('referenceValueThreshold = %s \n'%(G.referenceValueThreshold))
@@ -2736,7 +2684,10 @@ def main():
     G.checkpoint = timeit.default_timer()
     CreateLogFile()
     
-    #initalize the data classes with the data from given Excel files 
+    #initalize the data classes with the data from given Excel files
+    #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
+    global ReferenceData
+    global ExperimentData
     ExperimentData = MSData(G.collectedFileName)
     ReferenceData = MSReference(G.referenceFileName, G.form)
 
@@ -2810,16 +2761,17 @@ def main():
         raise ValueError("The value of preProcessing is not set appropriately, it should be 'yes', 'skip' or 'load'." +
                          "Or you are attempting to load pre-processed data without running data analysis")
 
-    
+
+    #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
 
         # Reference Changer
-        if G.referenceChanger == 'yes':
-            ReferenceChanger(ExperimentData, ReferenceData, G.chosenMolecules, G.chosenMoleculesMF, G.chosenTimes)
-            ReferenceData.ExportCollector('ReferenceChanger',use_provided_reference_intensities = True)
-            print('ReferenceChanger complete')
+        if G.extractReferencePatternFromDataOption == 'yes':
+            ReferenceData = ExtractReferencePatternFromData(ExperimentData, ReferenceData, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
+            ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
+            print('ReferencePatternChanger complete')
                 
         # Some initial preprocessing on the reference data
         ReferenceData = ReferenceInputPreProcessing(ReferenceData)
