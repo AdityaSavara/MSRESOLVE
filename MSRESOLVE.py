@@ -2797,7 +2797,8 @@ def main():
                 
         # Reset the checkpoint timer for the data analysis section
         G.checkpoint = timeit.default_timer()
-
+	
+        ##Start: Preparing data for data analysis based on user input choices
         # If we are only interested in a subset of the MS data
         # remove the irrelevant mass data series from ExperimentData.mass_fragment_numbers
         # and the corresponding colums from ExperimentData.workingData
@@ -2833,6 +2834,7 @@ def main():
         # Calculate a coefficient for doing a unit conversion on concentrations
         ExperimentData = RatioFinder(ReferenceData, ExperimentData, G.concentrationFinder,
                                       G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
+	##End: Preparing data for data analysis based on user input choices
         
         for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time   
             #This print statement was used to track the progress of the program during long analysis runs
