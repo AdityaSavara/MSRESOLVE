@@ -184,7 +184,76 @@ def LowerBoundThresholdFilter (ExperimentData,massesToLowerBoundThresholdFilter,
                             ExperimentData.workingData[:,measured_masses_counter][point[0]] = 0.0 #this changes the value to 0.0 at index given by point[0] within the array of masses.
     #return collected #no return is necessary. this is implied. the function takes a "pointer/reference" to the collected array and then modifies it directly.    
     
-       
+    
+#### The comments in this function are no longer completely accurate since we have added some absolute values and deltas where they were not before.
+#### ( Look at the version of the program XXXXXX to see what this function looked like previously )
+# this function makes sure that the data cannot change by more than a factor of two from one time to another
+#this is done by finding those lines that have an issue and then getting the average of those two lines and 
+#inserts this average row in between these two respective rows, then putting averages up until there is no jump 
+#greater than 100%
+def Interpolater (data,abscissa, MaxAllowedDeltaYRatio, IgnorableDeltaYThreshold, dataRangeSpecifierYorN = [],datafromcsv = []):
+#### The comments in this function are no longer completely accurate since we have added some absolute values and deltas where they were not before.
+#### ( Look at the version XXXXXX of the program to see what this function looked like previously )
+#The current Interpolater function, while functional, suffers from two serious performance issues. 
+#
+#First, the use of repeated insert statements is slow, because it requires that the array be reconstructed for each insertion.
+#This is because arrays are of fixed length. Solution: As the array is checked, maintain a new list of points that includes 
+#both the original data and any added points using 'list'.append(). At the end of the program, convert this list to an array
+#and save it under the name of the old array.
+#
+#Second, the current loops instruct the program to check every jump and insert an average if necessary. 
+#However, this means that if there were, for example, a 40 fold jump, the program would have to iterate through 
+#all points 5 times to resolve the problem. Solution: Resolve each jump completely in turn, by maintaining 
+#a pointer to the base of the jump until enough pointers have been added. 
+#In this way, the program could only iterate once through the data.
+
+    #this first loop doesn't allow for jumps greater than 100%, the line saying it cannot equal more than the 
+    #previous term*2 The place_holder object allows the function to know how many times the loop has added a row,
+    #thereby knowing the size of the new array. the if statement doesn't allow the last row_counter to be checked 
+    #since there is not going to be a row beyond the length of the array
+    for column_counter in range(len(data[0,:])):#array-indexed for loop
+        place_holder = 0 #reset after each column
+        place_holder2 = 0
+        for row_counter in range(len(data[:,0])):#array-indexed for loop
+            if row_counter != len(data[:,0]) - (1+place_holder): #we don't want to go past the last row, because every row uses the average with the one after it
+                if abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]*MaxAllowedDeltaYRatio):#If one row has a changes of greater than 100% of the last, then an average is put between them
+
+
+                    while abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]*MaxAllowedDeltaYRatio):#If one row has a changes by a factor greater than 2, then an average is put between that and the next row, and averages keep getting placed there until there is no more jump that large
+                        if abs(data[row_counter+1+place_holder,column_counter] - data[row_counter+place_holder,column_counter]) > IgnorableDeltaYThreshold:#the additions are only made if the change is greater then 0.0001, (no tiny changes)
+                            data = numpy.insert(data,row_counter+place_holder+1,sum(data[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
+                            abscissa = numpy.insert(abscissa,row_counter+place_holder+1,sum(abscissa[(row_counter+place_holder):(row_counter+place_holder+2)])/2)
+                            if dataRangeSpecifierYorN == 'yes': #this is for the datarangespecifier function, to make the csv file as long as the input csv file
+                                datafromcsv = numpy.insert(datafromcsv,row_counter+place_holder+1,sum(datafromcsv[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
+                            place_holder2 = place_holder2 + 1
+                            
+                        else:
+                            break
+                    place_holder = place_holder2 #keeps the array in check since many rows are being added (for all rows added the index is changed)
+    #this loop is very similar to the first, but it makes sure that there is no decrease greater than 50 %, a factor
+    #of 2 just as above, so that values cannot be less than half the value before, furthermore, the place_holder changes
+    #a little bit- in this way- it changes the index of the two values that get checked, since the average can't be more 
+    #than 50% below the higher value, you must check the average versus the lower value - which means changing the index
+    #in the previous loop, this index grew but did not affect its own loop, but only the outer loops, in this nested loop,
+    #the index actually affects the loop itself
+    
+    for column_counter in range(len(data[0,:])):#array-indexed for loop
+        place_holder = 0
+        place_holder2 = 0
+        for row_counter in range(len(data[:,0])):#array-indexed for loop
+            if row_counter != len(data[:,0]) - (1+place_holder):#same comments as above, symmetrical code
+                if abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]/MaxAllowedDeltaYRatio):
+                    while abs(data[row_counter+1+place_holder,column_counter]-data[row_counter+place_holder,column_counter]) > abs(data[row_counter+place_holder,column_counter]/MaxAllowedDeltaYRatio):
+                        if abs(data[row_counter+place_holder,column_counter] - data[row_counter+1+place_holder,column_counter]) > IgnorableDeltaYThreshold:
+                            data = numpy.insert(data,row_counter+place_holder+1,sum(data[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
+                            abscissa = numpy.insert(abscissa,row_counter+place_holder+1,sum(abscissa[(row_counter+place_holder):(row_counter+place_holder+2)])/2)
+                            if dataRangeSpecifierYorN == 'yes':
+                                datafromcsv = numpy.insert(datafromcsv,row_counter+place_holder+1,sum(datafromcsv[(row_counter+place_holder):(row_counter+place_holder+2),:])/2,axis = 0)
+                            place_holder = place_holder + 1
+                        else:
+                            break
+    return [data,abscissa,datafromcsv]
+    
 '''
 This function simply searchs two arrays and returns an array with any and all 
 overlapping numbers
@@ -541,11 +610,7 @@ def trimDataMasses(ExperimentData, ReferenceData):
     # and the corresponding colums from ExperimentData.workingData
     if G.specificMassFragments == 'yes':
         print("MassFragChooser")
-        if len(G.chosenMassFragments) < len(ReferenceData.molecules):
-            print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-            print("Mass fragment selection has been canceled")
-        else:
-            (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
+        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
                                                                                                             ExperimentData.mass_fragment_numbers,
                                                                                                             G.chosenMassFragments)
         ExperimentData.ExportCollector("MassFragChooser")
@@ -947,19 +1012,18 @@ def DataInputPreProcessing(ExperimentData):
         
     #displays mid-preprocessing graph    
     if G.grapher == 'yes':
-        print("Pre-marginalChangeRestrictor Graph")
+        print("Pre-Interpolation Graph")
         Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph')
 
     if G.interpolateYorN == 'yes':
         if G.dataRangeSpecifierYorN == 'yes':#if the datafromcsv file does not exist(in the case that it is not chosen) then the function call cannot include it
             #Gathering data from the datarange csv
             ExperimentData.datafromcsv = genfromtxt( '%s' %G.csvFileName, delimiter=',',skip_header=1) 
-            [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
-            ExperimentData.datafromcsv=DataFunctions.interpolateAccompanyingArrays(ExperimentData.times, ExperimentData.datafromcsv)
+            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold, G.dataRangeSpecifierYorN, ExperimentData.datafromcsv)
         else:
-            [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
-        print('Marginal Change Restrictor Finished')
-        ExperimentData.ExportCollector("Marginal Change Restrictor")
+            [ExperimentData.workingData, ExperimentData.times, ExperimentData.datafromcsv] = Interpolater(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
+        print('Interpolater Finished')
+        ExperimentData.ExportCollector("Interpolater")
         
     if G.timeRangeLimit == 'yes':
         print('Timechooser')
@@ -1351,165 +1415,110 @@ def InverseMethod(matching_correction_values,rawsignalsarrayline,monitored_refer
     return averagecomp
     
     
-
-#this function finds the significance of a specified value in an array to the array as a whole
-def IndElemSignificanceCalculator(dataArray, column, moleculesLikelihood):
-    length = len(dataArray)
-    #variable to hold the terms in the summation
+#this function will be used more, probably, but it basically just gets each number to the power of -1, or, in other words, the 
+#reciprocal, it has two different options- for 1D arrays and 2D arrays
+#Except this function was edited in order to specifically serve the needs of the distinguished inverse function
+def ArrayInverserEdited(array, column):
+    length = len(array)
     numbers = []
-    #for each value in the array
-    for moleculecounter in range(length):
-        if dataArray[moleculecounter] != 0: #if the value is zero, then the final value will be zero as well: it doesn't have to be changed
-            #calculates the unweighted ratio of each value, scaled by the likelihood of that molecule 
-            summationTerm = abs((moleculesLikelihood[moleculecounter]*dataArray[moleculecounter])**float(-1)*(dataArray[column]*moleculesLikelihood[column]-1))
-            numbers.append(summationTerm)
-    #the following line can be replace with code such as "significance = (sum(numbers)**SumCoeffient)*(array[column]**ValueCoefficent)"
-    # if you would like to add coefficents to increase or decrease the weighting of each term
-    significance = sum(numbers)*dataArray[column]*moleculesLikelihood[column]
-    return significance
-
-#This function compiles a list of the significances of each row to a particular column 
-def ElemSignificanceCalculator(anArray,columncounter, moleculesLikelihood):
-    #find the number of rows
-    row_num = len(anArray)
-    #empty list to store values
-    sigValuesList = []
-    #for each row...
-    for rowcounter in range(row_num):
-        # the "Significance" of that row to the column is calculated
-        sigValue = IndElemSignificanceCalculator(anArray[rowcounter], columncounter, moleculesLikelihood)
-        # the significance is stored in a list
-        sigValuesList.append(sigValue)
+    for lengthcounter in range(length):#array-indexed for loop
+        if array[lengthcounter] != 0: #if the value is zero, then the final value will be zero as well: it doesn't have to be changed
+            numbers.append(abs(array[lengthcounter]**float(-1)*array[column]-1))
+    editted = sum(numbers)*array[column]
+    return editted
         
-    return sigValuesList
-#this function sorts a list by its values, but returns the original indicies
-#in the sorted order, rather than the sorted values
-def ValueOrderedIndexSort(sigValuesList):
-     #sort by smallest to largest, return indicies
-     orderedSigIndices = numpy.argsort(sigValuesList)
-     #flip indicies, so it is now sorted by largest to smallest
-     orderedSigIndices = numpy.flipud(orderedSigIndices)
-     #return the sorted indicies
-     return orderedSigIndices
-
-# this is a sub-function of DistinguishedArrayChooser. It serves to determine, in order, the most significant rows in a data set
-# See Charles ProcDoc Summer 2018 page 3 for a mathamatical equation defining significance.     
-def ImportantAbscissaIdentifier(anArray, moleculesLikelihood):
-    #finding the size of the array
-    row_num = len(anArray[:,0])
-    column_num = len(anArray[0,:])
-    #defining order variables to be passed on
-    columnOrderList = [] #one order of rows for each column
-    overallOrder = [] #order of rows that should be used for the whole array
     
-    #search one column at a time
-    for columncounter in range(column_num):
-        
-        #each row is looped through to find the significance of each point
-        sigValuesList = ElemSignificanceCalculator(anArray, columncounter, moleculesLikelihood)
-        #the point indicies are ordered by size
-        OrderedSignIndices = ValueOrderedIndexSort(sigValuesList)
-        
-        #store the row indexs in order of most significant to least
-        columnOrderList.append(OrderedSignIndices)
-        #if I am trying to add the row for the first column, then I can do so 
-        #without worry because it cannot possibly be used already
-        if overallOrder == []:
-            overallOrder.append(columnOrderList[columncounter][0])
-        #if I am trying to add a row for a later column to the overall order
-        else:
-            #then I need to be careful that it isn't used before 
-            #I do this by checking it against the added rows
-            #for each row that could be added
-            for row_counter in range(row_num):
-                #if that row hasen't been used yet
-                if not columnOrderList[columncounter][row_counter] in overallOrder:
-                    #Then we append that row
-                    overallOrder.append(columnOrderList[columncounter][row_counter])
-                    #we are also done with that column, so we can go back up to the
-                    #beginning of the function for the next column
-                    break
-    #return the order of rows for the array                
-    return overallOrder
-                
-
-#List value checker simply confirms that a list matches the desired length 
-#If the lengths don't match, list checker will edit them, so that they do match
-#If non-obvious editing is required, a warning will also be printed to the user
-def ListLengthChecker(aList, desiredLength, defaultNum):
-    #true default: if user hasn't entered any values to the list
-    if len(aList) == 0:#if the value is not in the data edit file
-        aList = [defaultNum] * desiredLength
-    #Perfect operation: user has provided the correct number of values to the list
-    elif len(aList) == desiredLength:
-        pass
-    #if the list is one entry long, simply apply that value to all mssing spots
-    elif len(aList) == 1:
-        firstSensValue = aList[0]
-        aList = [firstSensValue] * desiredLength
-    #all other cases: warn user and simply use the first value for all entries
-    else:
-        firstSensValue = aList[0]
-        aList = [firstSensValue] * desiredLength
-        print("Warning, the distinguished inverse specifications that you have provided are of a different length than the number of molecules that you have provided.")
-    return aList
+#the function below, ImportantAbscissaIdentifier, needs to use a function for the function exec, as it is not allowed in the same 
+#function as a nested function; thus, this function had to be made specifically for ImportantAbscissaIdentifier
+def InputFunc():
+    if len(G.sensitivityThresholdValue) == 0:#if the value is not in the data edit file
+        G.sensitivityThresholdValue = [1]
+    elif len(G.sensitivityThresholdValue) > 1:
+        G.sensitivityThresholdValue = G.sensitivityThresholdValue[0]
+    return G.sensitivityThresholdValue
     
-#this function is going to be used by multiple sections of the code, including the updated sls method and a secondary inverse method
+#this function is going to be used by multiple sections of the code, including the update sls method and a secondary inverse method
 #this is a new way of selecting the most important rows, for each molecule, based on that molecules ratios with the other molecules 
 #in that row and that molecules own value
-def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeLikelihoods,sensitivityValues):
-    #the shape of the referenceData is found 
-    row_num = len(refMassFrags[:,0])
-    column_num = len(refMassFrags[0,:])
-    
-    #The acceptable threshold is determined by the SensitivityValue function
-    sensitivityValues = ListLengthChecker(sensitivityValues, column_num, 1)
-   
-    #the moleculesLikelihood is corrected if it wasn't entered by the use.
-    moleculeLikelihoods = ListLengthChecker(moleculeLikelihoods, column_num, 1)
-    
+def ImportantAbscissaIdentifier(data,data2,data3):
+    sensitivityThresholdValue = InputFunc ()
+    row_num = len(data[:,0])
+    column_num = len(data[0,:])
     #all values below the specified relative intensity must be set the minThreshold value
     #This is because a subfunction attempts to divide by each value
-    for columncounter in range(column_num):
-        for rowcounter in range(row_num):
-            if refMassFrags[rowcounter,columncounter] < sensitivityValues[columncounter]: 
-                refMassFrags[rowcounter,columncounter] = 0 #sensitivityThresholdValue[0]
+    for columncounter in range(column_num):#array-indexed for loop
+        for rowcounter in range(row_num):#array-indexed for loop
+            if data[rowcounter,columncounter] < sensitivityThresholdValue: 
+                data[rowcounter,columncounter] = sensitivityThresholdValue[0]
                 
-    #The correct order of the needed rows is determined by this function
-    order = ImportantAbscissaIdentifier(refMassFrags,moleculeLikelihoods)
+    distinguishedorder = []
+    answers = []
+    answers2 = []
+    answers3 = []
+    order = []
     
-    #empty lists to store results i.e. shortened arrays
-    shortRefMassFrags = []
-    shortCorrectionValues = []
-    shortRawSignals = []
-    
-    #add the correct row to each list
-    for row_num in order:
-        shortRefMassFrags.append(refMassFrags[row_num])
-        shortCorrectionValues.append(correctionValues[row_num])
-        shortRawSignals.append(rawSignals[row_num])
-              
-    #This section stacks the chosen rows from lists into arrays
-    shortRefMassFrags = numpy.asarray(shortRefMassFrags)
-    shortCorrectionValues = numpy.asarray(shortCorrectionValues)
-    shortRawSignals = numpy.asarray(shortRawSignals)
-    
-    #finding the size of the new array
-    row_num = len(shortRefMassFrags[:,0])
-    column_num = len(shortRefMassFrags[0,:])
-    #This section replaces the minThreshold's that were chosen as threshold values with 0s
-    for columncounter in range(column_num):
-        for rowcounter in range(row_num):
-            if shortRefMassFrags[rowcounter,columncounter] <= sensitivityValues[columncounter]: 
-                shortRefMassFrags[rowcounter,columncounter] = 0
-                
+    #the function is basically one big for loop, but this first half determines the actual which rows are chosen, while the second
+    #half merely gets the correct indexes from each row of the data. This value is based on getting the sum of the ratios minus one
+    #while making all zeros into the sensitivityThresholdValue for the sake of the function here.
+    for columncounter in range(column_num):#array-indexed for loop (for each column)
+        distinguishers = []
+        for rowcounter in range(row_num):#array-indexed for loop
+            # the "Significance" of each fragment-molecule pair is calculated
+            editted = ArrayInverserEdited(data[rowcounter], columncounter)
+            distinguishers.append(editted)
+            
+            if rowcounter == row_num-1:#at the end of the row
+                distinguished = []
+                for distinguishersnum in range(len(distinguishers)):#array-indexed for loop
+                    index = distinguishers.index(max(distinguishers)) #finds a list of the best position to worst, an order
+                    distinguished.append(index)
+                    distinguishers[index] = 0.0
+                distinguishedorder.append(distinguished)
+            
+        #this second half of the loop gets each different row that has been chosen as ideal, and puts this row into a list, which 
+        #is added to each time the whole loop runs through a column, getting the most ideal row that has not already been used, and
+        #adding this to the list, the for loops are broken once one is found, and the whole loop starts over again
+        if answers == []: #we are still in the first big for loop, but this only happens on the first index- after this answers will have values in it
+            answers.append(data[distinguishedorder[columncounter][0]])
+            answers2.append(data2[distinguishedorder[columncounter][0]])
+            answers3.append(data3[distinguishedorder[columncounter][0]])
+            order.append(distinguishedorder[columncounter][0])
+        else:
+            for correctioncounter in range(len(data)):#array-indexed for loop
+                truthvalueholder = []
+                for answercounter in range(len(answers)):#array-indexed for loop
+                    if all(answers[answercounter] == data[distinguishedorder[columncounter][correctioncounter]]):#an array of 1s and 0s is made, if only ones present (no rows in answer match chosen row exactly) then row is chosen
+                        truthvalueholder.append(0)
+                    else:
+                        truthvalueholder.append(1)
+                    if answercounter == len(answers)-1:#at the end of checking
+                        if all(numpy.array(truthvalueholder)==1):#if all values are 1 (all rows not same) no two different rows will be the same- so this does work
+                            answers.append(data[distinguishedorder[columncounter][correctioncounter]])
+                            answers2.append(data2[distinguishedorder[columncounter][correctioncounter]])
+                            answers3.append(data3[distinguishedorder[columncounter][correctioncounter]])
+                            order.append(distinguishedorder[columncounter][correctioncounter])
+                            break
+                if len(answers) == len(distinguishedorder):#these loops are broken if the answers have been appended enough
+                    break
+    #This section stacks the chosen rows from lists into arrays, and replaces the minThreshold's that were chosen as threshold values with 0s, to be
+    #used by the sls function for solving
+    answers = numpy.asarray(answers)
+    answers2 = numpy.asarray(answers2)
+    answers3 = numpy.asarray(answers3)
+       
+    row_num = len(answers[:,0])
+    column_num = len(answers[0,:])
+    for columncounter in range(column_num):#array-indexed for loop
+        for rowcounter in range(row_num):#array-indexed for loop
+            if answers[rowcounter,columncounter] <= sensitivityThresholdValue[0]: #if there are any values lower than the threshold they are set to 0.
+                answers[rowcounter,columncounter] = 0
     #The shortened arrays are finally returned to the Inverse Method solver                
-    return shortRefMassFrags,shortCorrectionValues,shortRawSignals
+    return answers,answers2,answers3
     
     
 #this function takes the data from important abscissa identifier and 
 def InverseMethodDistinguished(monitored_reference_intensities,matching_correction_values,rawsignalsarrayline):
-    monitored_reference_intensities,matching_correction_values,rawsignalsarrayline = DistinguishedArrayChooser (monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, G.moleculeLikelihoods,G.sensitivityValues)
+    monitored_reference_intensities,matching_correction_values,rawsignalsarrayline = ImportantAbscissaIdentifier (monitored_reference_intensities,matching_correction_values,rawsignalsarrayline)
     if numpy.linalg.det(matching_correction_values) != 0:#only solves if determinant is not equal to zero
         solutions = numpy.linalg.solve(matching_correction_values,rawsignalsarrayline)
     else:
@@ -2012,7 +2021,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,selectedcounter - place_holder2,axis = 1)
                                             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,selectedcounter - place_holder2)
                                             place_holder2 = place_holder2 + 1 #saves place when deleting
-                                    useablemassfrags,useablecorrections,useablerawsigs = DistinguishedArrayChooser (useablemassfrags,useablecorrections,useablerawsigs)
+                                    useablemassfrags,useablecorrections,useablerawsigs = ImportantAbscissaIdentifier (useablemassfrags,useablecorrections,useablerawsigs)
                                     if numpy.linalg.det(useablecorrections) != 0: #solves if det is not zero
                                         #the counter below is equal to zero so that the molecule chooser will just choose the solutions given in the last line
                                         #the molecules, correction and raw signals arrays here are fragments of the whole, using the function in the same way that
@@ -2469,8 +2478,8 @@ def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', data
                 #row indicies are only written in if they were given
                 #otherwise they are assumed to be in the data
                 if (col == 0 and len(rowIndex) != 0) :
-                    f.write('%.8E,'%(rowIndex[row]))
-                f.write('%.10E,'%(data[row,col]))
+                    f.write('%.8s,'%(rowIndex[row]))
+                f.write('%.10s,'%(data[row,col]))
             f.write('\n')
 
 #Export Statement for testing
@@ -2684,7 +2693,7 @@ def main():
     G.checkpoint = timeit.default_timer()
     CreateLogFile()
     
-    #initalize the data classes with the data from given Excel files
+    #initalize the data classes with the data from given Excel files 
     #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
     global ReferenceData
     global ExperimentData
@@ -2761,14 +2770,14 @@ def main():
         raise ValueError("The value of preProcessing is not set appropriately, it should be 'yes', 'skip' or 'load'." +
                          "Or you are attempting to load pre-processed data without running data analysis")
 
-
-    #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
+    
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
 
         # Reference Changer
         if G.extractReferencePatternFromDataOption == 'yes':
+            print("REFERENCE Changer")
             ReferenceData = ExtractReferencePatternFromData(ExperimentData, ReferenceData, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
             ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
             print('ReferencePatternChanger complete')
