@@ -6,6 +6,9 @@ Created on Mon Jul  2 14:16:13 2018
 """
 #THE FOLLOWING LINES ARE MANDATORY FOR THE CODE
 #importing the functions from UnitTesterSG module
+import sys
+sys.path.insert(1,"..\\lib")
+
 import UnitTesterSG 
 import numpy
 
