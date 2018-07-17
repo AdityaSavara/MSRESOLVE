@@ -6,6 +6,7 @@ Created on Wed Jun 13 08:07:13 2018
 import sys
 sys.path.insert(1, "..\\lib")
 sys.path.insert(1, "..")
+sys.path.insert(1, "..\..")
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 #import your function
