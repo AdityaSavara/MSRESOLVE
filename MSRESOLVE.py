@@ -370,9 +370,6 @@ def ReferenceThreshold(reference,referenceValueThreshold):
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
 def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
-    ## WARNING: the ReferenceChanger function has not been tested in a long time,
-    ## and may have been tested on data without multiple molecules present in the
-    ## reference file, so it may may not be working properly
     copyOfReferenceData = copy.deepcopy(ReferenceData)    
     for chosenmoleculescounter in range(len(rpcChosenMolecules)):#array-indexed for loop
         extractedIntensities = []
@@ -951,7 +948,7 @@ def DataInputPreProcessing(ExperimentData):
         Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph')
 
     if G.interpolateYorN == 'yes':
-	[ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
+        [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
         if G.dataRangeSpecifierYorN == 'yes':#if the datafromcsv file does not exist(in the case that it is not chosen) then the function call cannot include it
             #Gathering data from the datarange csv
             ExperimentData.datafromcsv = genfromtxt( '%s' %G.csvFileName, delimiter=',',skip_header=1) 
@@ -2769,7 +2766,7 @@ def main():
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
 
-        # Reference Changer
+        # Reference Pattern Changer
         if G.extractReferencePatternFromDataOption == 'yes':
             ReferenceData = ExtractReferencePatternFromData(ExperimentData, ReferenceData, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
             ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
