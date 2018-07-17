@@ -370,9 +370,6 @@ def ReferenceThreshold(reference,referenceValueThreshold):
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
 def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
-    ## WARNING: the ReferenceChanger function has not been tested in a long time,
-    ## and may have been tested on data without multiple molecules present in the
-    ## reference file, so it may may not be working properly
     copyOfReferenceData = copy.deepcopy(ReferenceData)    
     for chosenmoleculescounter in range(len(rpcChosenMolecules)):#array-indexed for loop
         extractedIntensities = []
@@ -2769,7 +2766,7 @@ def main():
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
 
-        # Reference Changer
+        # Reference Pattern Changer
         if G.extractReferencePatternFromDataOption == 'yes':
             ReferenceData = ExtractReferencePatternFromData(ExperimentData, ReferenceData, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
             ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
