@@ -667,7 +667,7 @@ def form_new_abscissa(lower_point, upper_point,
 #The marginalChangeRestrictor prevents two points from differing by more than the factor marginalChangeRestriction by inserting 
 #an interpolated abscissa value and the corresponding interpolated YYYdata.
 #NOTE: rows refer to the YYY data corresponding to each abscissa value.
-def marginalChangeRestrictor(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold=0.0001, cleanupSuperfluousInterpolatedRows=True):
+def marginalChangeRestrictor(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold=0.0001, cleanupSuperfluousInterpolatedRows=True, extraOutput=False):
     
     # First probably should make sure that the abscissa and the data
     # have the same number of rows (abscissa should index the rows of data)
@@ -943,7 +943,9 @@ def marginalChangeRestrictor(data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableD
     else:
         data = numpy.multiply(data,zeroIndicesArray)
 
-
+    #For unit tester purposes, unit tester will also compare the insertion indices
+    if extraOutput:
+        return data, abscissa, insertion_indices    
     #Step 6
     return data, abscissa
 
@@ -982,3 +984,37 @@ def interpolateAccompanyingArrays(marginalChangeRestricted_abscissa, accompanyin
         expandedArray=numpy.array(accompanyingList)        
                   
     return expandedArray
+
+'''RemoveSignals is used by itrative analysis post processing to subtract the signals for the solved molecules from the experimental data.'''
+def RemoveSignals(dataToExtractFrom, totalColumns, dataToExtract, columnsToSubtract):
+    #all inputs must be numpy arrays (2D(MxN),1D(N),2D(MxV),1D(V))
+    
+    #confirm that data lengths are the same
+    if (len(dataToExtractFrom[:,0]) != len(dataToExtract[:,0])):
+        print("Length of simulated data doesn't equal length of experimental data")
+        
+    #copy the row abscissa to be readded later
+    rowAbscissa = dataToExtractFrom[:,[0]]
+    #Remove row abscissa from each data set
+    dataToExtractFrom = dataToExtractFrom[:,1:]
+    dataToExtract = dataToExtract[:,1:]
+    
+    #confirm that total data sets are the same width
+    if (len(dataToExtractFrom[0,:]) != len(totalColumns)):
+        print("Number of signals in total experimental data doesn't match header")
+        
+     #confirm that solved data sets are the same width
+    if (len(dataToExtract[0,:]) != len(columnsToSubtract)):
+        print("Number of signals in solved experimental data doesn't match header")
+        
+    #for each solved column
+    for solvedColumnNumber in range(len(columnsToSubtract)):
+        #Find the matchng total data index
+        index = numpy.where(columnsToSubtract[solvedColumnNumber] == totalColumns)[0]
+        index= int(index)
+        #subtract that solved column from the total data
+        dataToExtractFrom[:,index] = dataToExtractFrom[:,index] - dataToExtract[:,solvedColumnNumber]
+    #add the row abscissa back into the total data
+    subtractedData = numpy.hstack((rowAbscissa,dataToExtractFrom))
+    #return the values
+    return subtractedData

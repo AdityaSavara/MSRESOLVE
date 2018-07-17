@@ -3,15 +3,15 @@ Created on Wed Jun 13 08:07:13 2018
 
 @author: Andrea
 """
-
-
+import sys
+sys.path.insert(1, "..\\lib")
+sys.path.insert(1, "..")
+sys.path.insert(1, "..\..")
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 #import your function
 import XYYYDataFunctionsSG as dataFunctions
 import numpy as np
-import sys
-sys.path.insert(1, "..\\lib")
 
 #get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
@@ -22,16 +22,20 @@ abscissa = np.array([10.0,16.0])
 working_data = np.array(
     [[0,-5,-2],
      [3,2,6]])
+    
+concentrationBounds=np.array([[10,0.02,0.03,0.001,0.04,1,0.001],
+                             [16,0.01,0.02,0.001,1,1.2,0.001]])
 
 #These two lines can hardcode the expected results. They are not required. 
 #expected_results = 6
 #ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
 
 #outputs with the function being tested using the input
-outputmarginalChangeRestrictor=dataFunctions.marginalChangeRestrictor(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001,cleanupSuperfluousInterpolatedRows=True)
+outputmarginalChangeRestrictor=dataFunctions.marginalChangeRestrictor(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001,extraOutput=True)
+outputInterpolateAccompanyingArrays=dataFunctions.interpolateAccompanyingArrays(outputmarginalChangeRestrictor[1], concentrationBounds)
 
 #places the object in a tuple
-resultObj = (outputmarginalChangeRestrictor)
+resultObj = (outputInterpolateAccompanyingArrays)
 
 #String is provided
 resultStr = str(resultObj)

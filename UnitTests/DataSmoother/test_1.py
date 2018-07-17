@@ -7,6 +7,8 @@ Created on Wed Nov 22 16:14:43 2017
 #THE FOLLOWING LINES ARE MANDATORY FOR THE CODE
 import sys
 sys.path.insert(1, "..\\lib")
+sys.path.insert(1, "..")
+sys.path.insert(1, "..\..")
 #importing the functions from UnitTesterSG module
 import UnitTesterSG as ut
 

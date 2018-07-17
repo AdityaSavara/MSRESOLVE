@@ -113,9 +113,9 @@ def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix=
     
     #if calculated_resultObj_unpacked==calculated_resultObj:
     if customCompare(calculated_resultObj_unpacked,calculated_resultObj) == True:
-        print('calculated_Results before and after pickling match.')
+        print('calculated_Results before and after pickling MATCH.')
     else:
-        print("calculated_Results before and after pickling don't match. (or is nested)")
+        print("calculated_Results before and after pickling DO NOT MATCH (or is nested and/or contains an unsupported datatype).")
     #Writing the string results:
     with open(calculated_resultStr_file,'w') as calculated_result_str:
         calculated_result_str.write(calculated_resultStr)
@@ -124,9 +124,9 @@ def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix=
         calculated_resultStr_read=str(calculated_result_str_after.read())
     #comparing calculated_results string before and after writing to text file
     if calculated_resultStr==calculated_resultStr_read:
-        print('String calculated_results before and after writing match.')
+        print('String calculated_results before and after writing MATCH.')
     else:
-        print("String calculated_results before and after writing don't match.")
+        print("String calculated_results before and after writing DO NOT MATCH.")
     #try and except are for asigning the expected results variable
     try:
         #checking the expected result string
@@ -141,31 +141,34 @@ def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix=
     #compare the expected result to the calculated result, both obj and str
     if customCompare(expected_resultObj_unpacked,calculated_resultObj_unpacked) == True:
         match = True
-        print('Expected result matches calculated_result.')
-    else:
-        print('Expected result does not match calculated_result. (or is nested)')
+        print('Expected result and calculated_result MATCH.')
+    else: #implies that customCompare returned false.
+        print("Expected result and calculated_result DO NOT MATCH (or is nested and/or contains an unsupported datatype).")
         match = False
     if expected_resultStr_read==calculated_resultStr_read:
-        print('Expected result string matches calculated_result string')
-    else:
+        print('Expected result string and calculated_result string MATCH')
+    else: #implies that expected results string does not match calculated result string.
         match = False
-        print('Expected result string (top) does not match calculated_result string (bottom)')
-        print(expected_resultStr_read)
-        print(calculated_resultStr_read)
-        #the if statement is to prevent pytest from needing user input 
-        if allowOverwrite:
-            overwritechoice=str(input('Overwrite (or create) the expected result file from the calculated results provided (Y or N)? '))
-            if str(overwritechoice)=='Y':
+        if match == False: #if either object or string comparison failed, we consider overwriting old files.
+            #the if statement is to prevent pytest from needing user input. Perhaps should be changed to "interactiveTesting = True" rather than allowOverwrite = True.
+            if allowOverwrite:
+                if expected_resultStr_read!=calculated_resultStr_read:	#We give the option the user to print out the strings if the string comparison failed.
+                    printStringsChoice=str(input('Expected result string does not match calculated_result string. Would you like to print them here now to inspect (Y or N)?'))
+                    if str(printStringsChoice) == 'Y':
+                        print('Expected result string (top) DOES NOT MATCH calculated_result string (bottom)')
+                        print(expected_resultStr_read)
+                        print(calculated_resultStr_read)
+                overwritechoice=str(input('Overwrite (or create) the expected result file from the calculated results provided (Y or N)? '))
+                if str(overwritechoice)=='Y':
                 #pickling the calculated result into the expected result file
-                with open(expected_result_file,'wb') as expected_resultObj:
-                    pickle.dump(calculated_resultObj_unpacked,expected_resultObj)
-                with open(expected_resultStr_file,'w') as expected_resultStr:
-                    expected_resultStr.write(calculated_resultStr_read)
-            elif str(overwritechoice)=='N':
-                pass    
-            else:
-                print("Error: Only Y or N allowed. Please run program again.")
-            
+                    with open(expected_result_file,'wb') as expected_resultObj:
+                        pickle.dump(calculated_resultObj_unpacked,expected_resultObj)
+                    with open(expected_resultStr_file,'w') as expected_resultStr:
+                        expected_resultStr.write(calculated_resultStr_read)
+                elif str(overwritechoice)=='N':
+                    pass    
+                else:
+                    print("Error: Only Y or N allowed. Please run program again.")            
     return match
 			
 # skip running the whole program and just set the expected result
@@ -188,16 +191,38 @@ def returnDigitFromFilename(currentFile):
     extractedDigit = listOfNumbers[0]
     return extractedDigit
 
+def runTestsInSubdirectories():
+    listOfDirectoriesAndFiles = os.listdir(".")
+    #Below is going to become a list of directories only in the next loop.
+    directoryList = []
+    for elem in listOfDirectoriesAndFiles:
+        if os.path.isdir(elem) == True:
+            directoryList.append(elem)
+    
+    #This loop goes into each directories, runs the specified command, and comes back.
+    for directory in directoryList:
+        print("\nChanging directory to "+directory)
+        os.chdir(directory)
+        listOfFilesInDirectory=os.listdir(".")\
+        
+        #Loops through each of the files in the directory and runs any file that begins with 'test_'
+        for name in listOfFilesInDirectory:
+            if "test_" in name:
+                print('\n'+ name)
+                os.system("python " + name)
+                
+        os.chdir("..")
+    
+    return
 
 if __name__=="__main__":
     import os
     working_dir=os.getcwd()
-    number_of_files=len(os.listdir(working_dir))
-    for  i in range(1,number_of_files+1):
-        try:
-            print("Trying test_" + str(i))
-            exec('import test_{}'.format(i))
-            exec('test_{}.test_Run(allowOverwrite = True)'.format(i))
-        except ImportError:
-            pass
+    filesInDirectory=os.listdir(working_dir)
+    for name in filesInDirectory:
+        if "test_"in name:
+            print('\n'+ name)
+            os.system("python " + name)
+            
+    runTestsInSubdirectories()
 

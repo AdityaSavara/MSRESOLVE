@@ -3,15 +3,16 @@ Created on Wed Jun 13 08:07:13 2018
 
 @author: Andrea
 """
-
-
+import sys
+sys.path.insert(1, "..\\lib")
+sys.path.insert(1, "..")
+sys.path.insert(1, "..\..")
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 #import your function
 import XYYYDataFunctionsSG as dataFunctions
 import numpy as np
-import sys
-sys.path.insert(1, "..\\lib")
+
 
 #get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
@@ -28,7 +29,7 @@ working_data = np.array(
 #ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
 
 #outputs with the function being tested using the input
-outputmarginalChangeRestrictor=dataFunctions.marginalChangeRestrictor(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001,cleanupSuperfluousInterpolatedRows=False)
+outputmarginalChangeRestrictor=dataFunctions.marginalChangeRestrictor(working_data,abscissa,MaxAllowedDeltaYRatio=2.0, IgnorableDeltaYThreshold = 0.0001,cleanupSuperfluousInterpolatedRows=False,extraOutput=True)
 
 #places the object in a tuple
 resultObj = (outputmarginalChangeRestrictor)

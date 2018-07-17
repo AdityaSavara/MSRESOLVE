@@ -370,9 +370,6 @@ def ReferenceThreshold(reference,referenceValueThreshold):
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
 def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
-    ## WARNING: the ReferenceChanger function has not been tested in a long time,
-    ## and may have been tested on data without multiple molecules present in the
-    ## reference file, so it may may not be working properly
     copyOfReferenceData = copy.deepcopy(ReferenceData)    
     for chosenmoleculescounter in range(len(rpcChosenMolecules)):#array-indexed for loop
         extractedIntensities = []
@@ -951,13 +948,15 @@ def DataInputPreProcessing(ExperimentData):
         Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph')
 
     if G.interpolateYorN == 'yes':
+        [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
         if G.dataRangeSpecifierYorN == 'yes':#if the datafromcsv file does not exist(in the case that it is not chosen) then the function call cannot include it
             #Gathering data from the datarange csv
             ExperimentData.datafromcsv = genfromtxt( '%s' %G.csvFileName, delimiter=',',skip_header=1) 
-            [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
+            #In order for the datafromcsv file to be used for the data analysis, it must be the same size as the interpolated data. The interpolate accompanying arrays
+	    #function matches the abscissa of the interpolated data with that of the accomanying data from csv file by interpolating the rest of the values between rows
+	    #for each abscissa value that needs to be inserted
             ExperimentData.datafromcsv=DataFunctions.interpolateAccompanyingArrays(ExperimentData.times, ExperimentData.datafromcsv)
-        else:
-            [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
+     
         print('Marginal Change Restrictor Finished')
         ExperimentData.ExportCollector("Marginal Change Restrictor")
         
@@ -2767,7 +2766,7 @@ def main():
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
 
-        # Reference Changer
+        # Reference Pattern Changer
         if G.extractReferencePatternFromDataOption == 'yes':
             ReferenceData = ExtractReferencePatternFromData(ExperimentData, ReferenceData, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
             ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
@@ -2797,7 +2796,8 @@ def main():
                 
         # Reset the checkpoint timer for the data analysis section
         G.checkpoint = timeit.default_timer()
-
+	
+        ##Start: Preparing data for data analysis based on user input choices
         # If we are only interested in a subset of the MS data
         # remove the irrelevant mass data series from ExperimentData.mass_fragment_numbers
         # and the corresponding colums from ExperimentData.workingData
@@ -2833,6 +2833,7 @@ def main():
         # Calculate a coefficient for doing a unit conversion on concentrations
         ExperimentData = RatioFinder(ReferenceData, ExperimentData, G.concentrationFinder,
                                       G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
+	##End: Preparing data for data analysis based on user input choices
         
         for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time   
             #This print statement was used to track the progress of the program during long analysis runs
