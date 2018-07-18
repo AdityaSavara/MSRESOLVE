@@ -520,7 +520,7 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def TrimDataMolecules(ReferenceData, chosenMolecules):
     #This if statement is only to mirror the trimDataMasses function
-    if G.specificMolecules == 'yes' or G.iterativeAnalysis:
+    if G.specificMolecules == 'yes':
         print("MoleculeChooser")
         #the copy is required because the keep only selected columns function is called twice with the same rows to clear
         copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
