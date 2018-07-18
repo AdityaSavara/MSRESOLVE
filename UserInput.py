@@ -4,6 +4,11 @@ referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the 
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
 
+#Iterative Analysis
+#Options are True, False, or '<name of iteration>'
+iterativeAnalysis = True
+#the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
+#the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
 #do you wish for the program to institute preproccessing and/or Data analysis?
 #note that preproccesing must be done at least once before being bypassed 
@@ -37,6 +42,8 @@ chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] #enter the mass fr
 #//Molecule Likelihoods//
 #To specify the percentage chance of detecting a particular molecule. This must be the same length as the number of molecules in the reference file, or have no value.
 moleculeLikelihoods = [] #This should be like this [], or like this: [0.8, 1.0, 0.01,... 1.0] where the decimals are the user's guess of the likelihood of each molecule being present.
+#//Sensivity Values//
+#Sensitivity values allow the user the specify the threshold of each molecule individually, or apply one threshold to all molecules 
 sensitivityValues = []
 
 #TODO 2/3/18: 
@@ -127,7 +134,6 @@ rpcMoleculesToChangeMF = [
                          ]
 
 
-
 #//Reference Mass Fragmentation Threshold//
 # if you want to exclude tiny fragmentation peaks
 minimalReferenceValue= 'no'
@@ -210,6 +216,8 @@ scaledConcentrationsPercentages = 'ScaledConcentrationPercentages.csv'
 concentrationsOutputName= 'ResolvedConcentrations.csv'
 simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 
+#Only used in iterative analysis
+TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 
 ExportAtEachStep = 'yes'
@@ -220,14 +228,14 @@ start = ''
 timeSinceLastCheckpoint = ''
 
 
-__var_list__ = ['referenceFileName','form','collectedFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish','specificMolecules', 'chosenMolecules',
-				'specificMassFragments','chosenMassFragments', 'moleculeLikelihoods', 'linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
+__var_list__ = ['referenceFileName','form','collectedFileName','iterativeAnalysis','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments', 'moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
 				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
 				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
-				'uniqueOrCommon','slsFinisher','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
-				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName',
+				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
+				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
 				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']
