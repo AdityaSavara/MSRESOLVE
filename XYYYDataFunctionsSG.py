@@ -231,7 +231,7 @@ AbscissaValuesToKeep- List of floats. NOTE: AbscissaValuesToKeep is not necessar
                       smaller than DataAbscissa, it may contain values not included
                       in DataAbscissa.
 '''
-def KeepOnlySelectedYYYYColumns(YYYYData, DataAbscissa, AbscissaValuesToKeep):
+def KeepOnlySelectedYYYYColumns(YYYYData, DataAbscissa, AbscissaValuesToKeep, Array1D = False):
     
     # list to track indices that should be deleted
     deletion_indices = []
@@ -246,7 +246,12 @@ def KeepOnlySelectedYYYYColumns(YYYYData, DataAbscissa, AbscissaValuesToKeep):
     # Now remove the unwanted values from DataAbsicssa
     # and the corresponding unwanted columns from YYYYData
     DataAbscissa = numpy.delete(DataAbscissa,deletion_indices)
-    YYYYData = numpy.delete(YYYYData,deletion_indices, axis=1)
+    #These three lines are to handle any one dimensional arrays that the function takes in
+    axis = 1
+    if Array1D:
+        axis = 0
+    #remove the data columns
+    YYYYData = numpy.delete(YYYYData,deletion_indices, axis)
 
     return (YYYYData, DataAbscissa)
 
