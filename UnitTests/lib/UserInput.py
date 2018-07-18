@@ -228,7 +228,7 @@ start = ''
 timeSinceLastCheckpoint = ''
 
 
-__var_list__ = ['referenceFileName','form','collectedFileName','iterativeAnalyis','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+__var_list__ = ['referenceFileName','form','collectedFileName','iterativeAnalysis','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
 				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments', 'moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
