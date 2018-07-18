@@ -24,6 +24,10 @@ timeRangeLimit = 'yes'	#if you wish to enable this function enter 'yes' otherwis
 timeRangeStart = 176  #start time (-int)
 timeRangeFinish = 900	#finish time (-int)
 
+#//Chosen Molecules
+#To choose only specific molecules to solve, input in a list of strings  below
+specificMolecules = 'yes'
+chosenMolecules = ['CO', 'CO2', 'H2O']
 
 #//Chosen Mass Fragments//
 #To choose only specific mass fragments from collected data, input below:
@@ -216,7 +220,7 @@ start = ''
 timeSinceLastCheckpoint = ''
 
 
-__var_list__ = ['referenceFileName','form','collectedFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+__var_list__ = ['referenceFileName','form','collectedFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish','specificMolecules', 'chosenMolecules',
 				'specificMassFragments','chosenMassFragments', 'moleculeLikelihoods', 'linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
