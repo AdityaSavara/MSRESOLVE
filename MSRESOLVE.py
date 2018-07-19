@@ -411,7 +411,7 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                 #For loop to overwrite the reference file with the value of the reference signal of the chosen mass fragment with the product of the signal and the ratio of the averages
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
                     copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1]
-    return copyOfReferenceData
+    return copyOfReferenceData.provided_reference_intensities
 
 '''
 RemoveUnreferencedMasses() is used to prune ExperimentData.workingData and ExperimentData.mass_fragment_numbers 
@@ -517,34 +517,7 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
                     
     #return [mass_fragment_numbers2,ExperimentData.workingData]
     
-#This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
-def TrimDataMolecules(ReferenceData, chosenMolecules):
-    #This if statement is only to mirror the trimDataMasses function
-    if G.specificMolecules == 'yes':
-        print("MoleculeChooser")
-        #the copy is required because the keep only selected columns function is called twice with the same rows to clear
-        copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
-        
-        #shorten the reference fragmentation pattern to the required length
-        (Temp_Reference_Data, ReferenceData.molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.provided_reference_intensities[:,1:],
-                                                                                                                        ReferenceData.molecules, chosenMolecules)  
-        #Shorten the electronnumbers to the correct values, using the copy of molecules 
-        ArrayOneD = True
-        (ReferenceData.electronnumbers, copy_molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
-        #add a second dimension to the reference data
-        newReferenceMF = numpy.reshape(ReferenceData.mass_fragment_numbers_monitored,(-1,1))
-        
-        #Add the abscissa back into the reference values
-        ReferenceData.provided_reference_intensities = numpy.hstack((newReferenceMF,Temp_Reference_Data))
-        
-        #remove any zero rows that may have been created
-        ReferenceData.ClearZeroRows()
-        #update the mass fragment list from the posibly shortened reference spectrums
-        ReferenceData.mass_fragment_numbers_monitored = ReferenceData.provided_reference_intensities[:,0]
-        
-        ReferenceData.ExportCollector("MoleculeChooser")
-    
-    return ReferenceData.provided_reference_intensities, ReferenceData.electronnumbers, ReferenceData.molecules, ReferenceData.mass_fragment_numbers_monitored
+
     
 '''
 trimDataMasses() is just a wrapper function for two calls to DataFunctions.KeepOnlySelectedYYYYColumns(). 
@@ -932,32 +905,30 @@ list of forms.  A list is generated containing MSReference objects created based
 on the referenceFileName and the corresponding form
 It allows MSRESOLVE to be backwards compatible with previous user input files
 '''
-def GenerateReferenceDataAndFormsList(referenceFileNames,forms,timeRanges):
+def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
+    #referencePatternForm can take values of 'xyyy' or 'xyxy' and must be a string
     ##If referenceFileName is a string or if form is a string then make them lists
     if isinstance(referenceFileNames,str):
         referenceFileNames = [referenceFileNames]
-    if isinstance(forms,str):
-        forms = [forms]
+    if isinstance(referencePatternForm,str):
+        referencePatternForm = [referencePatternForm]
     #If referenceFileNames and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
-    if len(forms) == 1 and len(referenceFileNames) == 1:
-        ReferenceDataAndFormsList = [MSReference(referenceFileNames[0],forms[0])]
-        return ReferenceDataAndFormsList
+    if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
+        ReferenceDataList = [MSReference(referenceFileNames[0],referencePatternForm[0])]
+        return ReferenceDataList
     #Otherwise we have multiple reference files and forms
-    #Print a warning if the user has more reference files than specified time ranges
-    if len(referenceFileNames) > len(timeRanges):
-        print("WARNING: There are more reference files given than time ranges")
     #If just one form is used, make a list of forms that is the same length as referenceFileNames
-    if len(forms) == 1:
+    if len(referencePatternForm) == 1:
         #Generate a copy of referenceFileNames to be overwritten with forms
         listOfForms = copy.copy(referenceFileNames)
         #replace each value with the given form
         for i in range(len(referenceFileNames)):
-            listOfForms[i] = forms[0]
+            listOfForms[i] = referencePatternForm[0]
     #If list of forms is the same length of referenceFileNames then each form should correspond to the referenceFile of the same index
-    elif len(forms) == len(referenceFileNames):
+    elif len(referencePatternForm) == len(referenceFileNames):
         #So just set listOfForms equal to forms
-        listOfForms = forms
+        listOfForms = referencePatternForm
     #Initialize ReferenceDataAndFormsList so it can be appended to
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
@@ -2750,12 +2721,15 @@ def main():
     
     #initalize the data classes with the data from given Excel files
     #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
-    global ReferenceDataAndFormsList
+    global ReferenceDataList
     global ExperimentData
     global currentReferenceData
     ExperimentData = MSData(G.collectedFileName)
-    ReferenceDataAndFormsList = GenerateReferenceDataAndFormsList(G.referenceFileName,G.form,G.referenceFileTimeRanges)
-    currentReferenceData = ReferenceDataAndFormsList[0]
+    ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
+    currentReferenceData = ReferenceDataList[0]
+    #Prints a warning if the user has more reference files than specified time ranges
+    if len(G.referenceFileName) > len(G.referencePatternTimeRanges):
+        print("WARNING: There are more reference files given than time ranges")
 
 
     # Skip preProcessing all together if we are loading analyzed data
@@ -2767,11 +2741,7 @@ def main():
         
     if(G.preProcessing == 'yes'):
 
-
-	# Trim the reference data according to the selected molecules list
-        (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules)
-        
-	# Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
+        # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
         (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
         
         # Perform the actual data preprocessing on ExperimentData
@@ -2837,31 +2807,36 @@ def main():
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
         #for loop to preprocess all MSReference objects
-        for i in range(len(ReferenceDataAndFormsList)):
+        for i in range(len(ReferenceDataList)):
             # Reference Pattern Changer
+            print("First", id(ReferenceDataList[i]) == id(currentReferenceData))
             if G.extractReferencePatternFromDataOption == 'yes':
-                ReferenceDataAndFormsList[i] = ExtractReferencePatternFromData(ExperimentData, ReferenceDataAndFormsList[i], G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
-                ReferenceDataAndFormsList[i].ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
+                ReferenceDataList[i].provided_reference_intensities = ExtractReferencePatternFromData(ExperimentData, ReferenceDataList[i], G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
+                ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
                 print('ReferencePatternChanger complete')
                     
+            print("Second", id(ReferenceDataList[i]) == id(currentReferenceData))
             # Some initial preprocessing on the reference data
-            ReferenceDataAndFormsList[i] = ReferenceInputPreProcessing(ReferenceDataAndFormsList[i])
-    
+            ReferenceDataList[i] = ReferenceInputPreProcessing(ReferenceDataList[i])
+            print("Third", id(ReferenceDataList[i]) == id(currentReferenceData))    
             # Set the ReferenceData.monitored_reference_intensities and
             # ReferenceData.matching_correction_values fields
             # based on the masses in ExperimentData.mass_fragment_numbers
-            ReferenceDataAndFormsList[i] = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceDataAndFormsList[i])
-    
+            ReferenceDataList[i] = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceDataList[i])
+            print("Fourth", id(ReferenceDataList[i]) == id(currentReferenceData))
             # Remove reference species that have no mass fragment data
             # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
             ## TODO: Consider changing this function to take the array directly i.e.
             ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
             ## like ReferenceData.standardized_reference_intensities
-            ReferenceDataAndFormsList[i] = UnnecessaryMoleculesDeleter(ReferenceDataAndFormsList[i])
-            ReferenceDataAndFormsList[i].ExportCollector('UnnecessaryMoleculesDeleter')
+            ReferenceDataList[i] = UnnecessaryMoleculesDeleter(ReferenceDataList[i])
+            print("Fifth", id(ReferenceDataList[i]) == id(currentReferenceData))
+            ReferenceDataList[i].ExportCollector('UnnecessaryMoleculesDeleter')
+            print("Sixth", id(ReferenceDataList[i]) == id(currentReferenceData))
     
             # Export the reference data files that have been stored by ReferenceData.ExportCollector
-            ReferenceDataAndFormsList[i].ExportFragmentationPatterns()
+            ReferenceDataList[i].ExportFragmentationPatterns()
+            print("Seventh", id(ReferenceDataList[i]) == id(currentReferenceData))
 
             
     if (G.dataAnalysis == 'yes'):
