@@ -9,6 +9,7 @@ Created on Mon Jul  2 14:16:13 2018
 import sys
 sys.path.insert(1, "..\\lib")
 sys.path.insert(1, "..")
+sys.path.insert(1, "..\..")
 import UnitTesterSG 
 import numpy
 
