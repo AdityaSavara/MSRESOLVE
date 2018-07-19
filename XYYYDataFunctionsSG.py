@@ -215,40 +215,41 @@ def ReconstructSmoothedData(unsmoothedData, smoothedExtractedData, extractedColu
 
 
 '''
-KeepOnlySelectedYYYYColumns() compares the values of DataAbscissa and AbscissaValuesToKeep.
-Values(numbers) that are in DataAbscissa and not in AbscissaValuesToKeep are deleted
-from DataAbscissa. Further the columns of YYYYData correspond to the DataAbscissa array,
-i.e. shape(YYYData)[1] = len(DataAbscissa). When a value is removed from 
-DataAbscissa the corresponding column is removed from YYYYData. 
-Note that what we refer to as a "column" in this context is like a "row" in excel,
-due to python arrays typically being transposed relative to excel spreadsheets.
-
+KeepOnlySelectedYYYYColumns() compares the values of DataHeaders and HeaderValuesToKeep.
+Values(numbers) that are in DataHeaders and not in HeaderValuesToKeep are deleted
+from DataHeaders. Further the columns of YYYYData correspond to the DataHeaders array,
+i.e. shape(YYYData)[1] = len(DataHeaders). When a value is removed from 
+DataHeaders the corresponding column is removed from YYYYData. 
 Parameters:
-YYYYData- A 2-d numpy array, shape(YYYYData) = (*, len(DataAbscissa)), i.e. the columns
-          of YYYYData correspond to the entries in DataAbscissa
-DataAbscissa- List of floats. (or 1-d numpy array)
-AbscissaValuesToKeep- List of floats. NOTE: AbscissaValuesToKeep is not necessarily 
-                      smaller than DataAbscissa, it may contain values not included
-                      in DataAbscissa.
+YYYYData- A 2-d numpy array, shape(YYYYData) = (*, len(DataHeaders)), i.e. the columns
+          of YYYYData correspond to the entries in DataHeaders
+DataHeaders- List of floats/strings/etc. (or 1-d numpy array)
+HeaderValuesToKeep- List of floats/strings/etc. NOTE: HeaderValuesToKeep is not necessarily 
+                      smaller than DataHeaders, it may contain values not included
+                      in DataHeaders.
 '''
-def KeepOnlySelectedYYYYColumns(YYYYData, DataAbscissa, AbscissaValuesToKeep):
+def KeepOnlySelectedYYYYColumns(YYYYData, DataHeaders, HeaderValuesToKeep, Array1D = False):
     
     # list to track indices that should be deleted
     deletion_indices = []
 
-    # loop through DataAbscissa, record the indices
+    # loop through DataHeaders, record the indices
     # of values not also found in AbscissaValuesToKeep
     # for deletion
-    for (valueIndex,value) in enumerate(DataAbscissa):
-        if value not in AbscissaValuesToKeep:
+    for (valueIndex,value) in enumerate(DataHeaders):
+        if value not in HeaderValuesToKeep:
             deletion_indices.append(valueIndex)
 
-    # Now remove the unwanted values from DataAbsicssa
+    # Now remove the unwanted values from DataHeaders
     # and the corresponding unwanted columns from YYYYData
-    DataAbscissa = numpy.delete(DataAbscissa,deletion_indices)
-    YYYYData = numpy.delete(YYYYData,deletion_indices, axis=1)
+    DataHeaders = numpy.delete(DataHeaders,deletion_indices)
+    axis = 1 #This is the appropriate value for a 2D array of YYYYData
+    if Array1D:
+        axis = 0 #This is the appropriate value for a 1D array of YData
+    #remove the data columns
+    YYYYData = numpy.delete(YYYYData,deletion_indices, axis)
 
-    return (YYYYData, DataAbscissa)
+    return (YYYYData, DataHeaders)
 
 #TODO: make a function KeepOnlyYYYYRows() that is very similar to this one.
 # It may be useful and could replace some of the functionality of ArrayBuilder()
