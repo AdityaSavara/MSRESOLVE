@@ -1164,7 +1164,23 @@ class MSReference (object):
             molecules = dfmolecules.as_matrix()
             #save as class object with type string
             self.molecules = molecules.astype(numpy.str)
-
+            
+            '''generate list of molecular weights'''
+            #select row of names
+            dfmolecularWeights = dataFrame.iloc[3][1:]
+            #convert to matrix
+            molecularWeights = dfmolecularWeights.as_matrix()
+            #save as class object with type float
+            self.molecularWeights = molecularWeights.astype(numpy.float)
+            
+            '''generate list of source information'''
+            #select row of names
+            dfsourceInfo = dataFrame.iloc[0][1:]
+            #convert to matrix
+            sourceInfo = dfsourceInfo.as_matrix()
+            #save as class object with type string
+            self.sourceInfo = sourceInfo.astype(numpy.str)
+            
             '''generate list of massfragments monitored '''
             self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
             
@@ -1196,6 +1212,22 @@ class MSReference (object):
             molecules = dfmolecules.as_matrix()
             #save as class object with type string
             self.molecules = molecules.astype(numpy.str)
+            
+            '''generate list of molecular weights'''
+            #select row of names
+            dfmolecularWeights = dataFrame.iloc[3][1::2]
+            #convert to matrix
+            molecularWeights = dfmolecularWeights.as_matrix()
+            #save as class object with type float
+            self.molecularWeights = molecularWeights.astype(numpy.float)
+            
+            '''generate list of source information'''
+            #select row of names
+            dfsourceInfo = dataFrame.iloc[0][1::2]
+            #convert to matrix
+            sourceInfo = dfsourceInfo.as_matrix()
+            #save as class object with type string
+            self.sourceInfo = sourceInfo.astype(numpy.str)
 
             '''generate list of massfragments monitored '''
             self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
@@ -1237,7 +1269,7 @@ class MSReference (object):
                 filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
                 data = self.dataToExport[savePoint]
                 colIndex = ['%s'% y for y in self.molecules]
-                ExportXYYYData(filename,data,colIndex)
+                ExportXYYYData(filename,data,colIndex, G.exportSuffix)
 
     # This class function removes all rows of zeros from
     # the XYYY sorted reference data.
@@ -2494,7 +2526,7 @@ def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayli
 ## created csv file. When pandas is used to read the csv this
 ## will result in the creation of a column of 'nan'
 ## ImportWorkingData() has been modified to remove this column
-def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None):
+def ExportXYYYData(outputFileName, data, colIndex, exportSuffix, abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None):
     formatedColIndex = colIndex
     if dataType == 'preProcessed' or dataType == 'simulated':
         formatedColIndex = ['m%s' % MFNumber for MFNumber in colIndex]
@@ -2505,6 +2537,9 @@ def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', data
         formatedColIndex = [molecule + label for molecule in colIndex]
 #If future applications of Export XYYY are desired, the new formats can be 
 #specified by additional keywords and if statements.
+
+    #the filename can have a suffix attached
+    outputFileName = outputFileName[:-4] + exportSuffix + outputFileName[-4:]
 
 #testing if file is open, and rename if it is
     #create list of name options
@@ -2518,25 +2553,23 @@ def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', data
             break
         except(IOError):
             pass
-    #opening Export file
-    with open(filename,'w') as f:
-        # creating header line
-        f.write(abscissaHeader + ',')
-        for col in range(len(formatedColIndex)):
-            f.write('%s,'%(formatedColIndex[col]))
-        f.write('\n')
-        #writing in all the data
-        for row in range(len(data[:,0])):
-            for col in range(len(data[0,:])):
-                #row indicies are only written in if they were given
-                #otherwise they are assumed to be in the data
-                if (col == 0 and len(rowIndex) != 0) :
-                    f.write('%.8E,'%(rowIndex[row]))
-                f.write('%.10E,'%(data[row,col]))
-            f.write('\n')
-
-#Export Statement for testing
-#ExportXYYYData("MatchingCorrectionValues", matching_correction_values,numpy.zeros(len(matching_correction_values[0,:])))
+    #combine the column headers and data into one array
+    try:
+        fullArrayToExport = numpy.vstack((formatedColIndex,data))
+    #occasionally, abscissaHeader needs to be inserted without rowIndex being used
+    except ValueError: 
+        formatedColIndex = numpy.hstack((abscissaHeader,formatedColIndex))
+        fullArrayToExport = numpy.vstack((formatedColIndex,data))
+        
+    #if the row index isn't included in the data, then add it 
+    if rowIndex != []:    
+        abscissaHeader = numpy.transpose((numpy.array([[abscissaHeader]])))
+        rowIndex = numpy.transpose([rowIndex])
+        abscissaArrayToExport =  numpy.vstack((abscissaHeader,rowIndex))
+        fullArrayToExport = numpy.hstack((abscissaArrayToExport,fullArrayToExport))
+    #save the file to the correct name
+    numpy.savetxt(filename, fullArrayToExport, delimiter = ',', fmt ="%s")
+  
 
 '''This function inserts rows of percentages into arrays of data'''
 def GeneratePercentages(scaledConcentrationsarray):
@@ -2766,6 +2799,12 @@ def main():
         # Skip preprocessing
         G.preProcessing = 'skip'
         
+    if G.iterativeAnalysis:
+        #This will become a directory preprocessing function call, but it doesn't exist yet
+        pass
+    else:
+        G.exportSuffix = ''
+        
     if(G.preProcessing == 'yes'):
         
         
@@ -2785,7 +2824,7 @@ def main():
             Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'PreprocessingAfterSmoothing' )
 
         #Exports the Preprocessed Data
-        ExportXYYYData(G.preProcessedDataOutputName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers,
+        ExportXYYYData(G.preProcessedDataOutputName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, G.exportSuffix,
                        abscissaHeader = ExperimentData.abscissaHeader, dataType = 'preProcessed', rowIndex = ExperimentData.times)
         print("Preprocessed data exported")
         
@@ -2989,14 +3028,13 @@ def main():
         #this section exports and graphs the analyzed signals 
         if G.generatePercentages == 'yes':
             percentagesOutputArray = GeneratePercentages(concentrationsScaledToCOarray)
-            ExportXYYYData(G.scaledConcentrationsPercentages, percentagesOutputArray, currentReferenceData.molecules)
-        
-        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, dataType = str('scaled'))
+            ExportXYYYData(G.scaledConcentrationsPercentages, percentagesOutputArray, currentReferenceData.molecules, G.exportSuffix)
+        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, G.exportSuffix,abscissaHeader = "Time", dataType = str('scaled'))
         times = concentrationsScaledToCOarray[:,0]#the times are just the first column of the array
         data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
         
         if G.concentrationFinder == 'yes':
-            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, dataType = 'concentration', units = G.units)
+            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, G.exportSuffix, abscissaHeader = "Time", dataType = 'concentration', units = G.units)
             times = concentrationsarray[:,0]
             data = concentrationsarray[:,1:]
         
@@ -3018,7 +3056,7 @@ def main():
         #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
         simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, currentReferenceData.matching_correction_values)
         #Exporting the simulated signals data
-        ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, dataType = 'simulated')
+        ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, G.exportSuffix, abscissaHeader = "Time", dataType = 'simulated')
         #show net time for simulation
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
         G.checkPoint = timeit.default_timer()
