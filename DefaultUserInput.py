@@ -9,6 +9,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
+exportSuffix = ''
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
