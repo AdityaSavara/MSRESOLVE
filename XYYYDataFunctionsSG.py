@@ -243,10 +243,9 @@ def KeepOnlySelectedYYYYColumns(YYYYData, DataHeaders, HeaderValuesToKeep, Array
     # Now remove the unwanted values from DataHeaders
     # and the corresponding unwanted columns from YYYYData
     DataHeaders = numpy.delete(DataHeaders,deletion_indices)
-    #These three lines are to handle any one dimensional arrays that the function takes in
-    axis = 1
+    axis = 1 #This is the appropriate value for a 2D array of YYYYData
     if Array1D:
-        axis = 0
+        axis = 0 #This is the appropriate value for a 1D array of YData
     #remove the data columns
     YYYYData = numpy.delete(YYYYData,deletion_indices, axis)
 
