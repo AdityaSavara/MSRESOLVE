@@ -2809,34 +2809,27 @@ def main():
         #for loop to preprocess all MSReference objects
         for i in range(len(ReferenceDataList)):
             # Reference Pattern Changer
-            print("First", id(ReferenceDataList[i]) == id(currentReferenceData))
             if G.extractReferencePatternFromDataOption == 'yes':
                 ReferenceDataList[i].provided_reference_intensities = ExtractReferencePatternFromData(ExperimentData, ReferenceDataList[i], G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
                 ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
                 print('ReferencePatternChanger complete')
                     
-            print("Second", id(ReferenceDataList[i]) == id(currentReferenceData))
             # Some initial preprocessing on the reference data
             ReferenceDataList[i] = ReferenceInputPreProcessing(ReferenceDataList[i])
-            print("Third", id(ReferenceDataList[i]) == id(currentReferenceData))    
             # Set the ReferenceData.monitored_reference_intensities and
             # ReferenceData.matching_correction_values fields
             # based on the masses in ExperimentData.mass_fragment_numbers
             ReferenceDataList[i] = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceDataList[i])
-            print("Fourth", id(ReferenceDataList[i]) == id(currentReferenceData))
             # Remove reference species that have no mass fragment data
             # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
             ## TODO: Consider changing this function to take the array directly i.e.
             ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
             ## like ReferenceData.standardized_reference_intensities
             ReferenceDataList[i] = UnnecessaryMoleculesDeleter(ReferenceDataList[i])
-            print("Fifth", id(ReferenceDataList[i]) == id(currentReferenceData))
             ReferenceDataList[i].ExportCollector('UnnecessaryMoleculesDeleter')
-            print("Sixth", id(ReferenceDataList[i]) == id(currentReferenceData))
     
             # Export the reference data files that have been stored by ReferenceData.ExportCollector
             ReferenceDataList[i].ExportFragmentationPatterns()
-            print("Seventh", id(ReferenceDataList[i]) == id(currentReferenceData))
 
             
     if (G.dataAnalysis == 'yes'):
