@@ -1,7 +1,7 @@
 import os
 import sys 
 sys.path.insert(1, "..\..")
-if os.path.basename(__file__) == "UserInput.py":
+if os.path.basename(__file__) != "DefaultUserInput.py":
     from DefaultUserInput import *
 
 #USER INPUT FILE
