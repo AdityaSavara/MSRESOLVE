@@ -1,3 +1,9 @@
+import os
+import sys 
+sys.path.insert(1, "..\..")
+if os.path.basename(__file__) != "DefaultUserInput.py":
+    from DefaultUserInput import *
+
 #USER INPUT FILE
 #//Input Files//
 referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information

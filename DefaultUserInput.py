@@ -1,4 +1,3 @@
-#Do not delete or alter these lines, they are required for unit testing UserInputs
 import os
 import sys 
 sys.path.insert(1, "..\..")
@@ -38,7 +37,7 @@ timeRangeFinish = 900	#finish time (-int)
 
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
-specificMolecules = 'yes'
+specificMolecules = 'no'
 chosenMolecules = ['CO', 'CO2', 'H2O']
 
 #//Chosen Mass Fragments//
