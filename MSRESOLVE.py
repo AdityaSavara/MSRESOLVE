@@ -899,6 +899,44 @@ def ReferenceInputPreProcessing(ReferenceData):
 
     return ReferenceData
 
+'''
+GenerateReferenceDataAndFormsList takes in the list of referenceFileNames and the
+list of forms.  A list is generated containing MSReference objects created based
+on the referenceFileName and the corresponding form
+It allows MSRESOLVE to be backwards compatible with previous user input files
+'''
+def GenerateReferenceDataAndFormsList(referenceFileNames,forms,timeRanges):
+    ##If referenceFileName is a string or if form is a string then make them lists
+    if isinstance(referenceFileNames,str):
+        referenceFileNames = [referenceFileNames]
+    if isinstance(forms,str):
+        forms = [forms]
+    #If referenceFileNames and forms are lists of 1 then create a list of the single MSReference object
+    #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
+    if len(forms) == 1 and len(referenceFileNames) == 1:
+        ReferenceDataAndFormsList = [MSReference(referenceFileNames[0],forms[0])]
+        return ReferenceDataAndFormsList
+    #Otherwise we have multiple reference files and forms
+    #Print a warning if the user has more reference files than specified time ranges
+    if len(referenceFileNames) > len(timeRanges):
+        print("WARNING: There are more reference files given than time ranges")
+    #If just one form is used, make a list of forms that is the same length as referenceFileNames
+    if len(forms) == 1:
+        #Generate a copy of referenceFileNames to be overwritten with forms
+        listOfForms = copy.copy(referenceFileNames)
+        #replace each value with the given form
+        for i in range(len(referenceFileNames)):
+            listOfForms[i] = forms[0]
+    #If list of forms is the same length of referenceFileNames then each form should correspond to the referenceFile of the same index
+    elif len(forms) == len(referenceFileNames):
+        #So just set listOfForms equal to forms
+        listOfForms = forms
+    #Initialize ReferenceDataAndFormsList so it can be appended to
+    ReferenceDataAndFormsList = []
+    #For loop to generate each MSReferenceObject and append it to a list
+    for i in range(len(referenceFileNames)):
+        ReferenceDataAndFormsList.append(MSReference(referenceFileNames[i],listOfForms[i]))
+    return ReferenceDataAndFormsList
 
 
 # DataInput just asks the user for the data file names and indexes them into arrays 
@@ -2685,10 +2723,12 @@ def main():
     
     #initalize the data classes with the data from given Excel files
     #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
-    global ReferenceData
+    global ReferenceDataAndFormsList
     global ExperimentData
+    global currentReferenceData
     ExperimentData = MSData(G.collectedFileName)
-    ReferenceData = MSReference(G.referenceFileName, G.form)
+    ReferenceDataAndFormsList = GenerateReferenceDataAndFormsList(G.referenceFileName,G.form,G.referenceFileTimeRanges)
+    currentReferenceData = ReferenceDataAndFormsList[0]
 
 
     # Skip preProcessing all together if we are loading analyzed data
@@ -2701,7 +2741,7 @@ def main():
     if(G.preProcessing == 'yes'):
 
         # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, ReferenceData)
+        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
         
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
@@ -2734,7 +2774,7 @@ def main():
         # MS data
 
         # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, ReferenceData)
+        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
         
         # Output to make sure user knows we are skipping Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -2748,7 +2788,7 @@ def main():
         ExperimentData.workingData, ExperimentData.mass_fragment_numbers, ExperimentData.times = ImportWorkingData(G.preProcessedDataOutputName)
 
         # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, ReferenceData)
+        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
              
         # Output to make sure user knows we are loading Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -2765,31 +2805,32 @@ def main():
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
-
-        # Reference Pattern Changer
-        if G.extractReferencePatternFromDataOption == 'yes':
-            ReferenceData = ExtractReferencePatternFromData(ExperimentData, ReferenceData, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
-            ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
-            print('ReferencePatternChanger complete')
-                
-        # Some initial preprocessing on the reference data
-        ReferenceData = ReferenceInputPreProcessing(ReferenceData)
-
-        # Set the ReferenceData.monitored_reference_intensities and
-        # ReferenceData.matching_correction_values fields
-        # based on the masses in ExperimentData.mass_fragment_numbers
-        ReferenceData = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceData)
-
-        # Remove reference species that have no mass fragment data
-        # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
-        ## TODO: Consider changing this function to take the array directly i.e.
-        ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
-        ## like ReferenceData.standardized_reference_intensities
-        ReferenceData = UnnecessaryMoleculesDeleter(ReferenceData)
-        ReferenceData.ExportCollector('UnnecessaryMoleculesDeleter')
-
-        # Export the reference data files that have been stored by ReferenceData.ExportCollector
-        ReferenceData.ExportFragmentationPatterns()
+        #for loop to preprocess all MSReference objects
+        for i in range(len(ReferenceDataAndFormsList)):
+            # Reference Pattern Changer
+            if G.extractReferencePatternFromDataOption == 'yes':
+                ReferenceDataAndFormsList[i] = ExtractReferencePatternFromData(ExperimentData, ReferenceDataAndFormsList[i], G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
+                ReferenceDataAndFormsList[i].ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
+                print('ReferencePatternChanger complete')
+                    
+            # Some initial preprocessing on the reference data
+            ReferenceDataAndFormsList[i] = ReferenceInputPreProcessing(ReferenceDataAndFormsList[i])
+    
+            # Set the ReferenceData.monitored_reference_intensities and
+            # ReferenceData.matching_correction_values fields
+            # based on the masses in ExperimentData.mass_fragment_numbers
+            ReferenceDataAndFormsList[i] = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceDataAndFormsList[i])
+    
+            # Remove reference species that have no mass fragment data
+            # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
+            ## TODO: Consider changing this function to take the array directly i.e.
+            ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
+            ## like ReferenceData.standardized_reference_intensities
+            ReferenceDataAndFormsList[i] = UnnecessaryMoleculesDeleter(ReferenceDataAndFormsList[i])
+            ReferenceDataAndFormsList[i].ExportCollector('UnnecessaryMoleculesDeleter')
+    
+            # Export the reference data files that have been stored by ReferenceData.ExportCollector
+            ReferenceDataAndFormsList[i].ExportFragmentationPatterns()
 
             
     if (G.dataAnalysis == 'yes'):
@@ -2815,12 +2856,12 @@ def main():
         # while subsequent opens to this file will append
         if G.SLSUniquePrint == 'yes':
             createSLSUniqueOrderFile(ExperimentData.abscissaHeader,
-                                     ReferenceData.molecules)
+                                     currentReferenceData.molecules)
             
         #this numpy.zeros line is going to be the array that holds all of the answers before they are printed out, which
         #is done in order to save time and decrease expense
-        concentrationsScaledToCOarray = numpy.zeros(len(ReferenceData.molecules)+1)
-        concentrationsarray = numpy.zeros(len(ReferenceData.molecules)+1)
+        concentrationsScaledToCOarray = numpy.zeros(len(currentReferenceData.molecules)+1)
+        concentrationsarray = numpy.zeros(len(currentReferenceData.molecules)+1)
 
         # Loading user choices for data analysis
         DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
@@ -2831,7 +2872,7 @@ def main():
                          G.rawSignalThresholdDivider, G.rawSignalThresholdLimit, G.rawSignalThresholdLimitPercent]
         
         # Calculate a coefficient for doing a unit conversion on concentrations
-        ExperimentData = RatioFinder(ReferenceData, ExperimentData, G.concentrationFinder,
+        ExperimentData = RatioFinder(currentReferenceData, ExperimentData, G.concentrationFinder,
                                       G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
 	##End: Preparing data for data analysis based on user input choices
         
@@ -2839,18 +2880,19 @@ def main():
             #This print statement was used to track the progress of the program during long analysis runs
             if ((timeIndex % 100) == 0 and timeIndex != 0):
                 print(timeIndex)
+           
 
             ## TODO: Find out why RawSignalsArrayMaker() takes longer to run when preprocessed data is
             # computed directly rather than loaded. It doesn't seem to effect rawsignalsarrayline in
             # either case so not a priority. 
-            rawsignalsarrayline = RawSignalsArrayMaker(ReferenceData.mass_fragment_numbers_monitored,
+            rawsignalsarrayline = RawSignalsArrayMaker(currentReferenceData.mass_fragment_numbers_monitored,
                                                        ExperimentData.mass_fragment_numbers,ExperimentData.workingData,
-                                                       timeIndex,ReferenceData.referenceabscissa)#gets the collected values that will be solved
+                                                       timeIndex,currentReferenceData.referenceabscissa)#gets the collected values that will be solved
             
             
             if G.rawSignalThresholdMethod == 'yes':#user input, this function calls either sls or inverse, deletes thresholds
-                    solutions =RawSignalThresholdFilter(G.distinguished, ReferenceData.matching_correction_values,rawsignalsarrayline,
-                                                         ReferenceData.monitored_reference_intensities,ReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
+                    solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.matching_correction_values,rawsignalsarrayline,
+                                                         currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
                                                          ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
                                                          DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption, G.maxPermutations)
             else:#otherwise the main analysis functions are called
@@ -2858,16 +2900,16 @@ def main():
                 if G.answer == 'inverse':#user input, the inverse method
                     if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
 
-                        solutions = InverseMethodDistinguished(ReferenceData.monitored_reference_intensities,ReferenceData.matching_correction_values,rawsignalsarrayline)
+                        solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
                     else:
-                        solutions = InverseMethod(ReferenceData.matching_correction_values,rawsignalsarrayline,ReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,ReferenceData.molecules,'composition')
+                        solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
     
                 elif G.answer == 'sls':#user input, the SLS method is chosen)
-                    solutions = SLSMethod(ReferenceData.molecules,ReferenceData.monitored_reference_intensities,ReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, ExperimentData.conversionfactor, ExperimentData.datafromcsv,ReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
+                    solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, ExperimentData.conversionfactor, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
             
             arrayline = []
 
-            for moleculecounter in range(len(ReferenceData.molecules)):#array-indexed for loop, this is the same data structure as the inverse method above once the line of solutions is found, see above for comments
+            for moleculecounter in range(len(currentReferenceData.molecules)):#array-indexed for loop, this is the same data structure as the inverse method above once the line of solutions is found, see above for comments
                 if moleculecounter == 0:#only for the first loop will times be added to new collected data
                     arrayline.append(ExperimentData.times[timeIndex])
                 arrayline.append(solutions[moleculecounter])
@@ -2878,7 +2920,7 @@ def main():
 #                arrayline = BruteForce(ReferenceData.molecules,  G.bruteOption)
             
             if G.negativeAnalyzerYorN == 'yes':
-                arrayline = NegativeAnalyzer(arrayline,ReferenceData.matching_correction_values,rawsignalsarrayline,ReferenceData.molecules,G.bruteOption)
+                arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption)
             
             concentrationline = numpy.zeros(len(arrayline))
             concentrationline[0] = arrayline[0]
@@ -2886,20 +2928,20 @@ def main():
 
             
             if timeIndex > 1:#all additons after second index
-                concentrationsScaledToCOarrayholder = numpy.zeros([len(concentrationsScaledToCOarray[:,0])+1,len(ReferenceData.molecules)+1])
+                concentrationsScaledToCOarrayholder = numpy.zeros([len(concentrationsScaledToCOarray[:,0])+1,len(currentReferenceData.molecules)+1])
                 concentrationsScaledToCOarrayholder[0:len(concentrationsScaledToCOarray[:,0]),:] = concentrationsScaledToCOarray
                 concentrationsScaledToCOarray = concentrationsScaledToCOarrayholder
                 concentrationsScaledToCOarray[len(concentrationsScaledToCOarray[:,0])-1,:] = arrayline
-                concentrationsarrayholder = numpy.zeros([len(concentrationsarray[:,0])+1,len(ReferenceData.molecules)+1])
+                concentrationsarrayholder = numpy.zeros([len(concentrationsarray[:,0])+1,len(currentReferenceData.molecules)+1])
                 concentrationsarrayholder[0:len(concentrationsarray[:,0]),:] = concentrationsarray
                 concentrationsarray = concentrationsarrayholder
                 concentrationsarray[len(concentrationsarray[:,0])-1,:] = concentrationline
             if timeIndex == 1:#additions at second index index
-                concentrationsScaledToCOarrayholder = numpy.zeros([2,len(ReferenceData.molecules)+1])
+                concentrationsScaledToCOarrayholder = numpy.zeros([2,len(currentReferenceData.molecules)+1])
                 concentrationsScaledToCOarrayholder[0,:] = concentrationsScaledToCOarray
                 concentrationsScaledToCOarray = concentrationsScaledToCOarrayholder
                 concentrationsScaledToCOarray[len(concentrationsScaledToCOarray[:,0])-1,:] = arrayline
-                concentrationsarrayholder = numpy.zeros([2,len(ReferenceData.molecules)+1])
+                concentrationsarrayholder = numpy.zeros([2,len(currentReferenceData.molecules)+1])
                 concentrationsarrayholder[0,:] = concentrationsarray
                 concentrationsarray = concentrationsarrayholder
                 concentrationsarray[len(concentrationsarray[:,0])-1,:] = concentrationline
@@ -2917,20 +2959,20 @@ def main():
         #this section exports and graphs the analyzed signals 
         if G.generatePercentages == 'yes':
             percentagesOutputArray = GeneratePercentages(concentrationsScaledToCOarray)
-            ExportXYYYData(G.scaledConcentrationsPercentages, percentagesOutputArray, ReferenceData.molecules)
+            ExportXYYYData(G.scaledConcentrationsPercentages, percentagesOutputArray, currentReferenceData.molecules)
         
-        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, ReferenceData.molecules, dataType = str('scaled'))
+        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, dataType = str('scaled'))
         times = concentrationsScaledToCOarray[:,0]#the times are just the first column of the array
         data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
         
         if G.concentrationFinder == 'yes':
-            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, ReferenceData.molecules, dataType = 'concentration', units = G.units)
+            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, dataType = 'concentration', units = G.units)
             times = concentrationsarray[:,0]
             data = concentrationsarray[:,1:]
         
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
-            Draw(times, data, ReferenceData.molecules, G.concentrationFinder, G.units, graphFileName='graphAfterAnalysis')
+            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.units, graphFileName='graphAfterAnalysis')
 
             
     if G.dataSimulation =='yes':
@@ -2944,7 +2986,7 @@ def main():
         #reset timer so that data simiulation can be timed
         G.checkpoint = timeit.default_timer()
         #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
-        simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, ReferenceData.matching_correction_values)
+        simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, currentReferenceData.matching_correction_values)
         #Exporting the simulated signals data
         ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, dataType = 'simulated')
         #show net time for simulation
