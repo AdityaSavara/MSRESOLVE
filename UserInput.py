@@ -2,7 +2,7 @@
 #//Input Files//
 referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
-referenceFileTimeRanges = [] #Leave empty if not using reference pattern time chooser []
+referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
 
 #Iterative Analysis
@@ -135,6 +135,7 @@ rpcMoleculesToChangeMF = [
                          ]
 
 
+
 #//Reference Mass Fragmentation Threshold//
 # if you want to exclude tiny fragmentation peaks
 minimalReferenceValue= 'no'
@@ -229,9 +230,8 @@ start = ''
 timeSinceLastCheckpoint = ''
 
 
-
-__var_list__ = ['referenceFileName','form','collectedFileName','iterativeAnalysis','referenceFileTimeRanges','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
-				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments', 'moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
+__var_list__ = ['referenceFileName','form','collectedFileName','referenceFileTimeRanges','iterativeAnalysis','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
 				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',

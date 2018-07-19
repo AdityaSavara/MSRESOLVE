@@ -517,7 +517,34 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
                     
     #return [mass_fragment_numbers2,ExperimentData.workingData]
     
-
+#This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
+def TrimDataMolecules(ReferenceData, chosenMolecules):
+    #This if statement is only to mirror the trimDataMasses function
+    if G.specificMolecules == 'yes':
+        print("MoleculeChooser")
+        #the copy is required because the keep only selected columns function is called twice with the same rows to clear
+        copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
+        
+        #shorten the reference fragmentation pattern to the required length
+        (Temp_Reference_Data, ReferenceData.molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.provided_reference_intensities[:,1:],
+                                                                                                                        ReferenceData.molecules, chosenMolecules)  
+        #Shorten the electronnumbers to the correct values, using the copy of molecules 
+        ArrayOneD = True
+        (ReferenceData.electronnumbers, copy_molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
+        #add a second dimension to the reference data
+        newReferenceMF = numpy.reshape(ReferenceData.mass_fragment_numbers_monitored,(-1,1))
+        
+        #Add the abscissa back into the reference values
+        ReferenceData.provided_reference_intensities = numpy.hstack((newReferenceMF,Temp_Reference_Data))
+        
+        #remove any zero rows that may have been created
+        ReferenceData.ClearZeroRows()
+        #update the mass fragment list from the posibly shortened reference spectrums
+        ReferenceData.mass_fragment_numbers_monitored = ReferenceData.provided_reference_intensities[:,0]
+        
+        ReferenceData.ExportCollector("MoleculeChooser")
+    
+    return ReferenceData.provided_reference_intensities, ReferenceData.electronnumbers, ReferenceData.molecules, ReferenceData.mass_fragment_numbers_monitored
     
 '''
 trimDataMasses() is just a wrapper function for two calls to DataFunctions.KeepOnlySelectedYYYYColumns(). 
@@ -2740,8 +2767,12 @@ def main():
         G.preProcessing = 'skip'
         
     if(G.preProcessing == 'yes'):
+        
+        
+    # Trim the reference data according to the selected molecules list
+        (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules)
 
-        # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
+    # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
         (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
         
         # Perform the actual data preprocessing on ExperimentData
