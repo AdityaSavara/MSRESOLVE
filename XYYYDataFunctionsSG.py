@@ -223,8 +223,8 @@ DataHeaders the corresponding column is removed from YYYYData.
 Parameters:
 YYYYData- A 2-d numpy array, shape(YYYYData) = (*, len(DataHeaders)), i.e. the columns
           of YYYYData correspond to the entries in DataHeaders
-DataHeaders- List of floats. (or 1-d numpy array)
-HeaderValuesToKeep- List of floats. NOTE: HeaderValuesToKeep is not necessarily 
+DataHeaders- List of floats/strings/etc. (or 1-d numpy array)
+HeaderValuesToKeep- List of floats/strings/etc. NOTE: HeaderValuesToKeep is not necessarily 
                       smaller than DataHeaders, it may contain values not included
                       in DataHeaders.
 '''
