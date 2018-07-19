@@ -1101,7 +1101,23 @@ class MSReference (object):
             molecules = dfmolecules.as_matrix()
             #save as class object with type string
             self.molecules = molecules.astype(numpy.str)
-
+            
+            '''generate list of molecular weights'''
+            #select row of names
+            dfmolecularWeights = dataFrame.iloc[3][1:]
+            #convert to matrix
+            molecularWeights = dfmolecularWeights.as_matrix()
+            #save as class object with type float
+            self.molecularWeights = molecularWeights.astype(numpy.float)
+            
+            '''generate list of source information'''
+            #select row of names
+            dfsourceInfo = dataFrame.iloc[0][1:]
+            #convert to matrix
+            sourceInfo = dfsourceInfo.as_matrix()
+            #save as class object with type string
+            self.sourceInfo = sourceInfo.astype(numpy.str)
+            
             '''generate list of massfragments monitored '''
             self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
             
@@ -1133,6 +1149,22 @@ class MSReference (object):
             molecules = dfmolecules.as_matrix()
             #save as class object with type string
             self.molecules = molecules.astype(numpy.str)
+            
+            '''generate list of molecular weights'''
+            #select row of names
+            dfmolecularWeights = dataFrame.iloc[3][1::2]
+            #convert to matrix
+            molecularWeights = dfmolecularWeights.as_matrix()
+            #save as class object with type float
+            self.molecularWeights = molecularWeights.astype(numpy.float)
+            
+            '''generate list of source information'''
+            #select row of names
+            dfsourceInfo = dataFrame.iloc[0][1::2]
+            #convert to matrix
+            sourceInfo = dfsourceInfo.as_matrix()
+            #save as class object with type string
+            self.sourceInfo = sourceInfo.astype(numpy.str)
 
             '''generate list of massfragments monitored '''
             self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
