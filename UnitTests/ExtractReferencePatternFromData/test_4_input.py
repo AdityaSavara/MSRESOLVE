@@ -2,6 +2,7 @@
 #//Input Files//
 referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
+referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
 
 
