@@ -6,7 +6,7 @@ collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spe
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
-iterativeAnalysis = True
+iterativeAnalysis = False
 #the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
@@ -220,7 +220,7 @@ simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 
-ExportAtEachStep = 'yes'
+ExportAtEachStep = 'no'
 generatePercentages = 'no'
 
 checkpoint = ''
