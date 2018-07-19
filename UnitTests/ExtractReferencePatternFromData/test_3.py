@@ -26,10 +26,10 @@ suffix = ut.returnDigitFromFilename(__file__)
 MSRESOLVE.main()
 
 #Find the index of the exported data in the MSReference class
-index = MSRESOLVE.ReferenceData.labelToExport.index('ExtractReferencePatternFromData')
+index = MSRESOLVE.currentReferenceData.labelToExport.index('ExtractReferencePatternFromData')
 
 #The output will be the dataToExport of the same index as labelToExport
-output = MSRESOLVE.ReferenceData.dataToExport[index]
+output = MSRESOLVE.currentReferenceData.dataToExport[index]
     
 #places the object in a tuple
 resultObj = (output)
