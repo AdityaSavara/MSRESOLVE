@@ -1147,7 +1147,7 @@ class MSReference (object):
             #convert the matrix to floats
             self.provided_reference_intensities = reference.astype(numpy.float)
             #clear rows of zeros
-            self.ClearZeroRows()
+            self.provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(self.provided_reference_intensities,startingRowIndex=1)
         
             '''generate electron number list'''
             #select row of electron numbers
@@ -1195,7 +1195,7 @@ class MSReference (object):
             #convert reference from XYXY to XYYY
             self.FromXYXYtoXYYY()
             #clear rows of zeros
-            self.ClearZeroRows()
+            self.provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(self.provided_reference_intensities,startingRowIndex=1)
             
             '''generate electron numbers list'''
             #create data frame of electron numbers
