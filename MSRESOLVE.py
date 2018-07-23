@@ -2526,7 +2526,7 @@ def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayli
 ## created csv file. When pandas is used to read the csv this
 ## will result in the creation of a column of 'nan'
 ## ImportWorkingData() has been modified to remove this column
-def ExportXYYYData(outputFileName, data, colIndex, exportSuffix, abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None):
+def ExportXYYYData(outputFileName, data, colIndex, exportSuffix='', abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None):
     formatedColIndex = colIndex
     if dataType == 'preProcessed' or dataType == 'simulated':
         formatedColIndex = ['m%s' % MFNumber for MFNumber in colIndex]
