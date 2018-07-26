@@ -1090,6 +1090,8 @@ def readDataFile(collectedFileName):
         
     return mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName
 
+#readReferenceFile is a helper function that reads the reference file in a certain form and returns the
+#variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
 def readReferenceFile(referenceFileName, form):        
      #This function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(provided_reference_intensities):
@@ -1137,105 +1139,104 @@ def readReferenceFile(referenceFileName, form):
         provided_reference_intensities = reference_holder
         return provided_reference_intensities
     
-    if referenceFileName!=None:
-         #read the csv file into a dataframe
-        dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+     #read the csv file into a dataframe
+    dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+    
+    if form == 'xyyy':
+        ''' generate reference matrix'''
+        #remove top 4 rows
+        dfreference = dataFrame.iloc[4:][:]
+        #convert to matrix
+        reference = dfreference.as_matrix()
+        #convert the matrix to floats
+        provided_reference_intensities = reference.astype(numpy.float)
+        #clear rows of zeros
+        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+    
+        '''generate electron number list'''
+        #select row of electron numbers
+        dfelectronnumbers = dataFrame.iloc[2][1:]
+        #convert to matrix
+        electronnumbers = dfelectronnumbers.as_matrix()
+        #save as class object with type int
+        electronnumbers = electronnumbers.astype(numpy.int32)
+   
+        '''generate list of molecule names'''
+        #select row of names
+        dfmolecules = dataFrame.iloc[1][1:]
+        #convert to matrix
+        molecules = dfmolecules.as_matrix()
+        #save as class object with type string
+        molecules = molecules.astype(numpy.str)
         
-        if form == 'xyyy':
-            ''' generate reference matrix'''
-            #remove top 4 rows
-            dfreference = dataFrame.iloc[4:][:]
-            #convert to matrix
-            reference = dfreference.as_matrix()
-            #convert the matrix to floats
-            provided_reference_intensities = reference.astype(numpy.float)
-            #clear rows of zeros
-            provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(provided_reference_intensities,startingRowIndex=1)
+        '''generate list of molecular weights'''
+        #select row of names
+        dfmolecularWeights = dataFrame.iloc[3][1:]
+        #convert to matrix
+        molecularWeights = dfmolecularWeights.as_matrix()
+        #save as class object with type float
+        molecularWeights = molecularWeights.astype(numpy.float)
         
-            '''generate electron number list'''
-            #select row of electron numbers
-            dfelectronnumbers = dataFrame.iloc[2][1:]
-            #convert to matrix
-            electronnumbers = dfelectronnumbers.as_matrix()
-            #save as class object with type int
-            electronnumbers = electronnumbers.astype(numpy.int32)
-       
-            '''generate list of molecule names'''
-            #select row of names
-            dfmolecules = dataFrame.iloc[1][1:]
-            #convert to matrix
-            molecules = dfmolecules.as_matrix()
-            #save as class object with type string
-            molecules = molecules.astype(numpy.str)
-            
-            '''generate list of molecular weights'''
-            #select row of names
-            dfmolecularWeights = dataFrame.iloc[3][1:]
-            #convert to matrix
-            molecularWeights = dfmolecularWeights.as_matrix()
-            #save as class object with type float
-            molecularWeights = molecularWeights.astype(numpy.float)
-            
-            '''generate list of source information'''
-            #select row of names
-            dfsourceInfo = dataFrame.iloc[0][1:]
-            #convert to matrix
-            sourceInfo = dfsourceInfo.as_matrix()
-            #save as class object with type string
-            sourceInfo = sourceInfo.astype(numpy.str)
-            
-            '''generate list of massfragments monitored '''
-            mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
-            
-        elif form == 'xyxy':
-            '''generate reference matrix'''
-            #remove top 4 rows
-            dfreference = dataFrame.iloc[4:][:]
-            #convert to matrix
-            reference = dfreference.as_matrix()
-            #convert the matrix to floats 
-            provided_reference_intensities = reference.astype(numpy.float)
-            #convert reference from XYXY to XYYY
-            provided_reference_intensities=FromXYXYtoXYYY(provided_reference_intensities)
-            #clear rows of zeros
-            provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(provided_reference_intensities,startingRowIndex=1)
-            
-            '''generate electron numbers list'''
-            #create data frame of electron numbers
-            dfelectronnumbers = dataFrame.iloc[2,1::2]
-            #convert to matrix
-            electronnumbers = dfelectronnumbers.as_matrix()
-            #save as class object with type int
-            electronnumbers = electronnumbers.astype(numpy.int32)
-            
-            '''generate list of molecule names'''
-            #select matrix of names
-            dfmolecules = dataFrame.iloc[1,1::2]
-            #convert to matrix
-            molecules = dfmolecules.as_matrix()
-            #save as class object with type string
-            molecules = molecules.astype(numpy.str)
-            
-            '''generate list of molecular weights'''
-            #select row of names
-            dfmolecularWeights = dataFrame.iloc[3][1::2]
-            #convert to matrix
-            molecularWeights = dfmolecularWeights.as_matrix()
-            #save as class object with type float
-            molecularWeights = molecularWeights.astype(numpy.float)
-            
-            '''generate list of source information'''
-            #select row of names
-            dfsourceInfo = dataFrame.iloc[0][1::2]
-            #convert to matrix
-            sourceInfo = dfsourceInfo.as_matrix()
-            #save as class object with type string
-            sourceInfo = sourceInfo.astype(numpy.str)
+        '''generate list of source information'''
+        #select row of names
+        dfsourceInfo = dataFrame.iloc[0][1:]
+        #convert to matrix
+        sourceInfo = dfsourceInfo.as_matrix()
+        #save as class object with type string
+        sourceInfo = sourceInfo.astype(numpy.str)
+        
+        '''generate list of massfragments monitored '''
+        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        
+    elif form == 'xyxy':
+        '''generate reference matrix'''
+        #remove top 4 rows
+        dfreference = dataFrame.iloc[4:][:]
+        #convert to matrix
+        reference = dfreference.as_matrix()
+        #convert the matrix to floats 
+        provided_reference_intensities = reference.astype(numpy.float)
+        #convert reference from XYXY to XYYY
+        provided_reference_intensities=FromXYXYtoXYYY(provided_reference_intensities)
+        #clear rows of zeros
+        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+        
+        '''generate electron numbers list'''
+        #create data frame of electron numbers
+        dfelectronnumbers = dataFrame.iloc[2,1::2]
+        #convert to matrix
+        electronnumbers = dfelectronnumbers.as_matrix()
+        #save as class object with type int
+        electronnumbers = electronnumbers.astype(numpy.int32)
+        
+        '''generate list of molecule names'''
+        #select matrix of names
+        dfmolecules = dataFrame.iloc[1,1::2]
+        #convert to matrix
+        molecules = dfmolecules.as_matrix()
+        #save as class object with type string
+        molecules = molecules.astype(numpy.str)
+        
+        '''generate list of molecular weights'''
+        #select row of names
+        dfmolecularWeights = dataFrame.iloc[3][1::2]
+        #convert to matrix
+        molecularWeights = dfmolecularWeights.as_matrix()
+        #save as class object with type float
+        molecularWeights = molecularWeights.astype(numpy.float)
+        
+        '''generate list of source information'''
+        #select row of names
+        dfsourceInfo = dataFrame.iloc[0][1::2]
+        #convert to matrix
+        sourceInfo = dfsourceInfo.as_matrix()
+        #save as class object with type string
+        sourceInfo = sourceInfo.astype(numpy.str)
 
-            '''generate list of massfragments monitored '''
-            mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
-            
-        return provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
+        '''generate list of massfragments monitored '''
+        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        
+    return provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
 
 ###############################################################################
 #########################  Classes: Data Storage  #############################
