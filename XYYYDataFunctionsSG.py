@@ -1059,38 +1059,25 @@ def RemoveSignals(dataToExtractFrom, totalColumns, dataToExtract, columnsToSubtr
     #return the values
     return subtractedData
 
-'''Remove columns at zero or below threshold will delete python array columns (appearing as rows on spreadsheets) where all the values are
-#either zero or below a threshold. The default of the function will remove zeros, but the optional arguements can be changed to delete
-#columns below a threshold. Additionally, a startingRowIndex (appears as columns on spreadsheets) can be used to evaluate a subset of the
-#original array. This becomes usefull for evaluating a XYYY data set, where the X-rows should not be evaluated.'''
-def removeColumnsAtZeroOrBelowThreshold(dataValuesArray, startingRowIndex=0, removeThreshold=False, threshold=None):
+'''Remove columns at zero or below threshold will delete python array columns (appearing as rows on spreadsheets) where the absolute value of all the values are
+either are below a threshold.The absolute value was included so significant negative values will not be deleted. The default of the function will have a default 
+threshold of zero. Additionally, a startingRowIndex (appears as columns on spreadsheets) can be used to evaluate a subset of the original array. This becomes 
+useful for evaluating a XYYY data set, where the X-rows should not be evaluated.'''
+def removeColumnsWithAllvaluesBelowZeroOrThreshold(dataValuesArray, startingRowIndex=0, threshold=0):
     #Turns the array into a list to make deletion easier
     dataValuesList=list(dataValuesArray)
     
     #Since the loop does not re-evaluate the length of the referenceDataList, an offset value must be used to account of the rows that were
     #removed
     columnsDeleted=0
-    
-    #If remove threshold is set to false (the default) the funtion will remove columns where all the values are zero            
-    if not removeThreshold:
+
         #Loops through the length of the data list using a rowCounter index
-        for columnsCounter in range(len(dataValuesList)):
-            print(columnsCounter)
-            #If all the intensity values for a certain column are equal to zero, the row gets deleted. Since the column is deleted, the
-            #column index will have to remain the same to evaluate the next original column, meaning columnsDeleted has to be subtracted from the columnCounter.
-            if all(dataValuesList[columnsCounter-columnsDeleted][startingRowIndex:]==0):
-                del dataValuesList[columnsCounter-columnsDeleted]
-                columnsDeleted+=1
-    
-    #If removeThreshold is set to true, the function will remove columns where all values are at and below the threshold value         
-    elif removeThreshold:
-        #Loops through the length of the data list using a rowCounter index
-        for columnsCounter in range(len(dataValuesList)):
-            #If all the intensity values for a certain mass fragment are below the threshold, the row gets deleted. Since the row is deleted, the
-            #row index will have to remain the same to evaluate the next original row, meaning rowsDeleted has to be subtracted from the rowCounter.
-            if all(dataValuesList[columnsCounter-columnsDeleted][startingRowIndex:]<=threshold):
-                del dataValuesList[columnsCounter-columnsDeleted]
-                columnsDeleted+=1
+    for columnsCounter in range(len(dataValuesList)):
+        #If all the intensity values for a certain mass fragment are below the threshold, the row gets deleted. Since the row is deleted, the
+        #row index will have to remain the same to evaluate the next original row, meaning rowsDeleted has to be subtracted from the rowCounter.
+        if all(abs(dataValuesList[columnsCounter-columnsDeleted][startingRowIndex:])<=threshold):
+            del dataValuesList[columnsCounter-columnsDeleted]
+            columnsDeleted+=1
     
     #Makes the list back into an array
     reducedDataValuesArray=numpy.array(dataValuesList)   

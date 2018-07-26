@@ -946,7 +946,8 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     #If referenceFileNames and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
     if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
-        ReferenceDataList = [MSReference(referenceFileNames[0],referencePatternForm[0])]
+        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
+        ReferenceDataList = [MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNames
@@ -964,7 +965,8 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNames)):
-        ReferenceDataAndFormsList.append(MSReference(referenceFileNames[i],listOfForms[i]))
+        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],referencePatternForm[i])
+        ReferenceDataAndFormsList.append(MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
     return ReferenceDataAndFormsList
 
 
@@ -1251,6 +1253,207 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     return None
     
 ###############################################################################
+#########################  Functions to read data files #######################
+###############################################################################
+#These functions read in the experimental data file and the reference file. The
+#returned variables can then be used to initialize the respective classes.
+
+def readDataFile(collectedFileName):
+
+ #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
+    dataFrame = pandas.read_csv('%s' %collectedFileName, header=None)
+    ''' generate mass fragment list'''
+    #select only the 2nd row down, all columns except for the first. 
+		#"iloc" is a pandas dataframe function. All it does is select a portion of the data.
+    dfmass = dataFrame.iloc[1][1:]
+    #convert to matrix
+    masses = dfmass.as_matrix()
+    #sort through the matrix and remove labels
+    for i in range(0,len(masses)):
+        masses[i] = masses[i].replace('mass','')
+        masses[i] = masses[i].replace('m','')
+    #convert the matrix to integers 
+    mass_fragment_numbers = masses.astype(numpy.float32)
+            
+    '''generate time list'''
+    # set abscissa header (time or Temp, etc.)
+    abscissaHeader = dataFrame.iloc[1][0]
+    #select column of times
+    dftimes = dataFrame.iloc[2:][0]
+    #convert to matrix
+    times = dftimes.as_matrix()
+    #save as class object with type float
+    times = times.astype(numpy.float)
+    #if the user wants to analyze one point, the data is doubled in length
+    #to prevent future index problems
+    if len(times) == 1:
+        times = numpy.append(times,times)
+        times[1] = times[0]*1.1
+   
+    '''generate collected data'''
+    #select matrix of raw signals
+    dfcollected = dataFrame.iloc[2:,1:]
+    #convert to matrix
+    collected = dfcollected.as_matrix()
+    #save as class object with type float
+    rawCollectedData = collected.astype(numpy.float)
+    #if the user wants to analyze one point, the data is doubled in length
+    #to prevent future index problems
+    if len(rawCollectedData) == 1:
+        rawCollectedData = numpy.vstack((rawCollectedData,rawCollectedData))
+
+        
+    return mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName
+
+#readReferenceFile is a helper function that reads the reference file in a certain form and returns the
+#variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
+def readReferenceFile(referenceFileName, form):        
+     #This function converts the XYXY data to an XYYY format
+    def FromXYXYtoXYYY(provided_reference_intensities):
+        masslists = [] #future lists must be must empty here to append in the for loops
+        relativeintensitieslists = [] #future list
+        #this loops gathers all the mass fragment numbers for each molecule in one list of arrays, while a second
+        #list is made, gathering the relative intensities so that they were indexed the same as their mass fragment
+        #numbers in the other list
+        #this for loop grabs stuff from the reference array, whose orientation and identity is shown in the flow chart arrays document
+        for referenceBy2Index in range(0,len(provided_reference_intensities[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
+            masslists.append(provided_reference_intensities[:,referenceBy2Index])#these are lists of arrays
+            relativeintensitieslists.append(provided_reference_intensities[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
+        masslist = [] #future list
+        #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
+        #'nan's or empty spaces after the numbers
+        for referenceIndex in range(len(provided_reference_intensities[:,0])): #array-indexed for loop
+            if str(masslists[0][referenceIndex]) != 'nan': #we do not want nan's in our array, the genfromtxt function calls empty boxes in excel (might be in .csv as well)'nan'.
+                masslist.append(masslists[0][referenceIndex])
+        #this second nested for loop gathers all the other mass fragment numbers that have not already been added to
+        #the masslist, basically obtaining all the masses in the reference data and then after the loop they are sorted
+        #using .sort, then an empty array of zeros is made to accommodate the output array
+        for masslistIndex in range(1,len(masslists)):#array-indexed for loop, starts at one because it's checking against all arrays besides itself
+            for referenceIndex in range(len(provided_reference_intensities[:,0])):#array-indexed for loop
+                if str(masslists[masslistIndex][referenceIndex]) != 'nan':
+                    if sum(masslists[masslistIndex][referenceIndex] == numpy.array(masslist)) == 0:#if the value being looked at is not equal to anything in our masslist already
+                        masslist.append(masslists[masslistIndex][referenceIndex])
+        masslist.sort()#puts the list in order
+        reference_holder = numpy.zeros([len(masslist),len(provided_reference_intensities[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
+        reference_holder[:,0:1] = numpy.vstack(numpy.array(masslist))#This puts the mass list in the first column of our new reference array
+        #Finally, the for loop below makes a list each revolution, comparing each list of mass fragments (for each molecule)
+        #and adding the relative intensities (from the identically indexed array) when they numbers were equal, and otherwise
+        #adding a zero in its place. It then adds this list to the array (using numpy.vstack and numpy.array)
+        for massListsIndex in range(len(masslists)):#array-indexed for loop
+            relativeintensitieslist = [] #empties the list every loop
+            for massListIndex in range(len(masslist)):
+                placeholder = 0 #after the next for loop finishes, this is reset
+                for specificMassListIndex in range(len(masslists[massListsIndex])):#array-indexed for loop, each column of .csv file being checked
+                    if masslists[massListsIndex][specificMassListIndex] == masslist[massListIndex]:#This is when the index for the correct mass fragment is found
+                        relativeintensitieslist.append(relativeintensitieslists[massListsIndex][specificMassListIndex])#relative intensities lists index the same way
+                        placeholder = 1 #so that the next if statement will know that this has happened
+                    if specificMassListIndex == len(masslists[massListsIndex])-1 and placeholder == 0:#If it comes to the end of the for loop, and there's no match, then the relative intensity is zero
+                        relativeintensitieslist.append(0)
+                if massListIndex == len(masslist)-1:#Once the larger for loop is done the 
+                    reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
+        provided_reference_intensities = reference_holder
+        return provided_reference_intensities
+    
+     #read the csv file into a dataframe
+    dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+    
+    if form == 'xyyy':
+        ''' generate reference matrix'''
+        #remove top 4 rows
+        dfreference = dataFrame.iloc[4:][:]
+        #convert to matrix
+        reference = dfreference.as_matrix()
+        #convert the matrix to floats
+        provided_reference_intensities = reference.astype(numpy.float)
+        #clear rows of zeros
+        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+    
+        '''generate electron number list'''
+        #select row of electron numbers
+        dfelectronnumbers = dataFrame.iloc[2][1:]
+        #convert to matrix
+        electronnumbers = dfelectronnumbers.as_matrix()
+        #save as class object with type int
+        electronnumbers = electronnumbers.astype(numpy.int32)
+   
+        '''generate list of molecule names'''
+        #select row of names
+        dfmolecules = dataFrame.iloc[1][1:]
+        #convert to matrix
+        molecules = dfmolecules.as_matrix()
+        #save as class object with type string
+        molecules = molecules.astype(numpy.str)
+        
+        '''generate list of molecular weights'''
+        #select row of names
+        dfmolecularWeights = dataFrame.iloc[3][1:]
+        #convert to matrix
+        molecularWeights = dfmolecularWeights.as_matrix()
+        #save as class object with type float
+        molecularWeights = molecularWeights.astype(numpy.float)
+        
+        '''generate list of source information'''
+        #select row of names
+        dfsourceInfo = dataFrame.iloc[0][1:]
+        #convert to matrix
+        sourceInfo = dfsourceInfo.as_matrix()
+        #save as class object with type string
+        sourceInfo = sourceInfo.astype(numpy.str)
+        
+        '''generate list of massfragments monitored '''
+        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        
+    elif form == 'xyxy':
+        '''generate reference matrix'''
+        #remove top 4 rows
+        dfreference = dataFrame.iloc[4:][:]
+        #convert to matrix
+        reference = dfreference.as_matrix()
+        #convert the matrix to floats 
+        provided_reference_intensities = reference.astype(numpy.float)
+        #convert reference from XYXY to XYYY
+        provided_reference_intensities=FromXYXYtoXYYY(provided_reference_intensities)
+        #clear rows of zeros
+        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+        
+        '''generate electron numbers list'''
+        #create data frame of electron numbers
+        dfelectronnumbers = dataFrame.iloc[2,1::2]
+        #convert to matrix
+        electronnumbers = dfelectronnumbers.as_matrix()
+        #save as class object with type int
+        electronnumbers = electronnumbers.astype(numpy.int32)
+        
+        '''generate list of molecule names'''
+        #select matrix of names
+        dfmolecules = dataFrame.iloc[1,1::2]
+        #convert to matrix
+        molecules = dfmolecules.as_matrix()
+        #save as class object with type string
+        molecules = molecules.astype(numpy.str)
+        
+        '''generate list of molecular weights'''
+        #select row of names
+        dfmolecularWeights = dataFrame.iloc[3][1::2]
+        #convert to matrix
+        molecularWeights = dfmolecularWeights.as_matrix()
+        #save as class object with type float
+        molecularWeights = molecularWeights.astype(numpy.float)
+        
+        '''generate list of source information'''
+        #select row of names
+        dfsourceInfo = dataFrame.iloc[0][1::2]
+        #convert to matrix
+        sourceInfo = dfsourceInfo.as_matrix()
+        #save as class object with type string
+        sourceInfo = sourceInfo.astype(numpy.str)
+
+        '''generate list of massfragments monitored '''
+        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        
+    return provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
+
+###############################################################################
 #########################  Classes: Data Storage  #############################
 ###############################################################################
 #TODO add warning to user if their data contains any NaN values
@@ -1261,48 +1464,11 @@ class MSData (object):
 		#self.mass_fragment_numbers , 1D and must be integers
 		#self.rawCollectedData, a 2D array of the signals.
 		
-    def __init__(self, collectedFileName):
-        #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
-        dataFrame = pandas.read_csv('%s' %collectedFileName, header = None)
-        ''' generate mass fragment list'''
-        #select only the 2nd row down, all columns except for the first. 
-		#"iloc" is a pandas dataframe function. All it does is select a portion of the data.
-        dfmass = dataFrame.iloc[1][1:]
-        #convert to matrix
-        masses = dfmass.as_matrix()
-        #sort through the matrix and remove labels
-        for i in range(0,len(masses)):
-            masses[i] = masses[i].replace('mass','')
-            masses[i] = masses[i].replace('m','')
-        #convert the matrix to integers 
-        self.mass_fragment_numbers = masses.astype(numpy.float32)
+    def __init__(self, mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName=None):
         
-        '''generate time list'''
-        # set abscissa header (time or Temp, etc.)
-        self.abscissaHeader = dataFrame.iloc[1][0]
-        #select column of times
-        dftimes = dataFrame.iloc[2:][0]
-        #convert to matrix
-        times = dftimes.as_matrix()
-        #save as class object with type float
-        self.times = times.astype(numpy.float)
-        #if the user wants to analyze one point, the data is doubled in length
-        #to prevent future index problems
-        if len(self.times) == 1:
-            self.times = numpy.append(self.times,self.times)
-            self.times[1] = self.times[0]*1.1
-       
-        '''generate collected data'''
-        #select matrix of raw signals
-        dfcollected = dataFrame.iloc[2:,1:]
-        #convert to matrix
-        collected = dfcollected.as_matrix()
-        #save as class object with type float
-        self.rawCollectedData = collected.astype(numpy.float)
-        #if the user wants to analyze one point, the data is doubled in length
-        #to prevent future index problems
-        if len(self.rawCollectedData) == 1:
-            self.rawCollectedData = numpy.vstack((self.rawCollectedData,self.rawCollectedData))
+        [self.mass_fragment_numbers, self.abscissaHeader, self.times, self.rawCollectedData, self.collectedFileName]=[mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName]
+        
+        
         '''create data set to work on'''
         self.workingData = self.rawCollectedData
         
@@ -1345,106 +1511,10 @@ class MSData (object):
                 abscissa = self.experimentTimes[savePoint]
                 colIndex = ['m%s'% int(y) for y in self.mass_fragment_numbers]
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
-                
-                                
+                                        
 class MSReference (object):
-    
-    def __init__(self, referenceFileName, form):
-        #read the csv file into a dataframe
-        dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
-        if form == 'xyyy':
-            ''' generate reference matrix'''
-            #remove top 4 rows
-            dfreference = dataFrame.iloc[4:][:]
-            #convert to matrix
-            reference = dfreference.as_matrix()
-            #convert the matrix to floats
-            self.provided_reference_intensities = reference.astype(numpy.float)
-            #clear rows of zeros
-            self.provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(self.provided_reference_intensities,startingRowIndex=1)
-        
-            '''generate electron number list'''
-            #select row of electron numbers
-            dfelectronnumbers = dataFrame.iloc[2][1:]
-            #convert to matrix
-            electronnumbers = dfelectronnumbers.as_matrix()
-            #save as class object with type int
-            self.electronnumbers = electronnumbers.astype(numpy.int32)
-       
-            '''generate list of molecule names'''
-            #select row of names
-            dfmolecules = dataFrame.iloc[1][1:]
-            #convert to matrix
-            molecules = dfmolecules.as_matrix()
-            #save as class object with type string
-            self.molecules = molecules.astype(numpy.str)
-            
-            '''generate list of molecular weights'''
-            #select row of names
-            dfmolecularWeights = dataFrame.iloc[3][1:]
-            #convert to matrix
-            molecularWeights = dfmolecularWeights.as_matrix()
-            #save as class object with type float
-            self.molecularWeights = molecularWeights.astype(numpy.float)
-            
-            '''generate list of source information'''
-            #select row of names
-            dfsourceInfo = dataFrame.iloc[0][1:]
-            #convert to matrix
-            sourceInfo = dfsourceInfo.as_matrix()
-            #save as class object with type string
-            self.sourceInfo = sourceInfo.astype(numpy.str)
-            
-            '''generate list of massfragments monitored '''
-            self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
-            
-        elif form == 'xyxy':
-            '''generate reference matrix'''
-            #remove top 4 rows
-            dfreference = dataFrame.iloc[4:][:]
-            #convert to matrix
-            reference = dfreference.as_matrix()
-            #convert the matrix to floats 
-            self.provided_reference_intensities = reference.astype(numpy.float)
-            #convert reference from XYXY to XYYY
-            self.FromXYXYtoXYYY()
-            #clear rows of zeros
-            self.provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(self.provided_reference_intensities,startingRowIndex=1)
-            
-            '''generate electron numbers list'''
-            #create data frame of electron numbers
-            dfelectronnumbers = dataFrame.iloc[2,1::2]
-            #convert to matrix
-            electronnumbers = dfelectronnumbers.as_matrix()
-            #save as class object with type int
-            self.electronnumbers = electronnumbers.astype(numpy.int32)
-            
-            '''generate list of molecule names'''
-            #select matrix of names
-            dfmolecules = dataFrame.iloc[1,1::2]
-            #convert to matrix
-            molecules = dfmolecules.as_matrix()
-            #save as class object with type string
-            self.molecules = molecules.astype(numpy.str)
-            
-            '''generate list of molecular weights'''
-            #select row of names
-            dfmolecularWeights = dataFrame.iloc[3][1::2]
-            #convert to matrix
-            molecularWeights = dfmolecularWeights.as_matrix()
-            #save as class object with type float
-            self.molecularWeights = molecularWeights.astype(numpy.float)
-            
-            '''generate list of source information'''
-            #select row of names
-            dfsourceInfo = dataFrame.iloc[0][1::2]
-            #convert to matrix
-            sourceInfo = dfsourceInfo.as_matrix()
-            #save as class object with type string
-            self.sourceInfo = sourceInfo.astype(numpy.str)
-
-            '''generate list of massfragments monitored '''
-            self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
+    def __init__(self, provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=None, form=None):
+        [self.provided_reference_intensities, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form]=[provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]
             
         '''Initializing Export Collector Variables'''
         #start the timer function
@@ -3030,7 +3100,9 @@ def main():
     global ReferenceDataList
     global ExperimentData
     global currentReferenceData
-    ExperimentData = MSData(G.collectedFileName)
+    
+    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
+    ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
     currentReferenceData = ReferenceDataList[0]
     #Prints a warning if the user has more reference files than specified time ranges
