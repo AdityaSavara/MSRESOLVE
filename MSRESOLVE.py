@@ -1264,8 +1264,6 @@ class MSData (object):
     def __init__(self, collectedFileName):
         #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
         dataFrame = pandas.read_csv('%s' %collectedFileName, header = None)
-        #remove any columns of only NANs 
-        dataFrame = dataFrame.dropna(axis = 1, how = 'all')
         ''' generate mass fragment list'''
         #select only the 2nd row down, all columns except for the first. 
 		#"iloc" is a pandas dataframe function. All it does is select a portion of the data.
@@ -1354,8 +1352,6 @@ class MSReference (object):
     def __init__(self, referenceFileName, form):
         #read the csv file into a dataframe
         dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
-        #remove any columns of only NANs 
-        dataFrame = dataFrame.dropna(axis = 1, how = 'all')
         if form == 'xyyy':
             ''' generate reference matrix'''
             #remove top 4 rows
