@@ -8,9 +8,13 @@ import sys
 import pandas
 import XYYYDataFunctionsSG as DataFunctions
 import os
+import shutil
+import importlib
 from numpy import genfromtxt
+import export_import as ei
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
-import UserInput as G 
+import UserInput 
+G = UserInput
 ############################################################################################################################################
 ################################################Algorithm Part 1: Pre-Processing the data###################################################
 ############################################################################################################################################
@@ -520,7 +524,7 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def TrimDataMolecules(ReferenceData, chosenMolecules):
     #This if statement is only to mirror the trimDataMasses function
-    if G.specificMolecules == 'yes':
+    if G.specificMolecules == 'yes' or G.iterativeAnalysis:
         print("MoleculeChooser")
         #the copy is required because the keep only selected columns function is called twice with the same rows to clear
         copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
@@ -1035,6 +1039,217 @@ def DataInputPreProcessing(ExperimentData):
 
     return ExperimentData
 
+def ExportUserInputFile(fileName):
+    
+    #Creating an updated UI file
+    globalsFE_saveFile = fileName 
+    globalsFE_loadFile = fileName 
+    #create export object
+    globalsFE_object = ei.module_export_import(globalsFE_saveFile,globalsFE_loadFile,G)
+    
+    #save variables to the text file 
+    globalsFE_object.save_params()
+    
+    
+def StringSearch(string, keyword = '', antikeyword = ''):
+    if keyword in string and not antikeyword in string:
+        return True
+    else:
+        return False
+
+#This supporting function of IterativeAnalysisPreProcessing finds the highest suffix of any file that contains a given keyword. 
+def FindHighestDirNumber(keyword):
+    listIterDirectories =[]
+    #Search all files/folders in the current directory
+    for directoryname in os.listdir():
+        #if one of them contains the keyword and is a directory i.e. no '.'
+        if StringSearch(directoryname, keyword, '.'):
+            #append it to the list
+            listIterDirectories.append(directoryname)
+        
+    suffixlist = []
+    #for all files/folders with the right keyword
+    for directoryname in listIterDirectories:
+        #append the last value of each name
+        suffixlist.append(directoryname[-1])
+    #return the highest of the last values
+    if not suffixlist == []:
+        return(max(suffixlist))
+    return 1
+
+#This supporting function of IterativeAnalysisPreProcessing confirms that a directory exists
+def EnsureDirectory(dir_path):
+    directory = dir_path
+    #isolate the directory name
+    #this line can be used if needed
+    #directory = os.path.dirname(dir_path)
+    #if the directory doesn't already exist
+    if not os.path.exists(directory):
+        #create the directory
+        os.makedirs(directory)
+
+def SpecificIterationName(iterativeAnalysis, iterationNumber):
+    #if the user has entered an iteration name
+    if iterativeAnalysis == False or iterativeAnalysis == True:
+         #create the default directory
+        iterationDirectoryName = '.\\_iter_%s' %str(iterationNumber)
+    else:
+        #set that name to be the directory along with the correct number 
+        iterationDirectoryName = '.\\' + iterativeAnalysis + '_iter_%s' %str(iterationNumber)
+    return iterationDirectoryName
+
+def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = False):
+    if iterate:
+        iterationNumber += 1
+    G.iterationNumber = iterationNumber
+    
+    iterationDirectoryName = SpecificIterationName(iterativeAnalysis, iterationNumber)
+       
+    #confirm that the directory exists
+    EnsureDirectory(iterationDirectoryName)
+    
+    #Change the working directory to the new directory name. 
+    'THIS IS A HIGHLY SIGNIFICANT LINE, because it redirects all of the output for the rest of the program run'
+    os.chdir(iterationDirectoryName) #this will be changed back at the end of the program
+    
+    if not iterate:
+        #record the old file names 
+        G.oldReferenceFileName = G.referenceFileName
+        G.oldcollectedFileName = G.collectedFileName
+        
+        #construct the file names for the current run of the program
+        referenceFileNameTemp = G.referenceFileName[:-18] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
+        collectedFileNameTemp = G.collectedFileName[:-21] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
+        
+        #copy the experimental and reference files into new names for this iterative run
+        shutil.copy(G.referenceFileName, referenceFileNameTemp)
+        shutil.copy(G.collectedFileName, collectedFileNameTemp)
+        
+        #change the globals to reflect the renaming of the ref and exp files
+        G.referenceFileName =  referenceFileNameTemp
+        G.collectedFileName =  collectedFileNameTemp
+        
+        #construct file names for the next run of the program 
+        G.nextRefFileName = G.referenceFileName[:-11] +  str('_unused') + G.referenceFileName[-11:]
+        G.nextExpFileName = G.collectedFileName[:-11] +  str('_remaining') + G.collectedFileName[-11:]
+    
+    return None
+       
+def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
+    #this global value is set so that each export statement can label the output files correctly
+    G.iterationNumber = iterationNumber
+    
+    iterationDirectoryName = SpecificIterationName(iterativeAnalysis, iterationNumber)
+       
+    #confirm that the directory exists
+    EnsureDirectory(iterationDirectoryName)
+    
+    #Change the working directory to the new directory name. 
+    'THIS IS A HIGHLY SIGNIFICANT LINE, because it redirects all of the output for the rest of the program run'
+    os.chdir(iterationDirectoryName) #this will be changed back at the end of the program
+    
+    #copy the first UserInputFile into the first iteration directory
+    ExportUserInputFile("UserInput_iter_1.py")
+    
+    #record the old file names 
+    G.oldReferenceFileName = G.referenceFileName
+    G.oldcollectedFileName = G.collectedFileName
+    #construct the file names for the first run of the program
+    G.referenceFileName = G.referenceFileName[:-4] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
+    G.collectedFileName = G.collectedFileName[:-4] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
+    
+    #construct file names for the second run of the program 
+    G.nextRefFileName = G.referenceFileName[:-11] + '_unused_iter_1' + G.referenceFileName[-4:]
+    
+    G.nextExpFileName = G.collectedFileName[:-11] + '_remaining_iter_1' + G.collectedFileName[-4:]
+    
+    return None
+
+#The IterativeAnalysisPreProcessing function is used to shrink the size of the program analysis and redirect the output. 
+def IterativeAnalysisPreProcessing(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy):
+    #override data simulation to yes if it was not selected
+    if G.dataSimulation != 'yes':
+        print("Iterative analysis cannot find the remaining signals in the experiment without signal simulation being run.")
+        print("User selection to skip signal simulation has been overridden. ")
+        G.dataSimulation = 'yes'
+         
+    if len(ReferenceData.molecules) == 0:
+        print("Warning Message: There are inadequate molecules to perform another iteration. Please confirm that there are still remaining molecules to solve.")
+        sys.exit()
+         
+    #Selecting unused Reference Data
+    unusedMolecules = []
+    for molecule in ReferenceDataFullCopy.molecules:
+        if not molecule in G.chosenMolecules:
+            unusedMolecules.append(molecule)
+            
+    #Make into a global variable for future use.     
+    G.unusedMolecules = unusedMolecules
+    
+    #Export current Reference Data  
+    #Reference data is trimmed prior to this function
+    #fileName = G.referenceFileName[:-5] +  str(G.iterationNumber) + G.referenceFileName[-4:]
+    ExportXYYYData(G.referenceFileName, ReferenceData.provided_reference_intensities, ReferenceData.molecules, abscissaHeader = 'M/Z', killSuffix = True)
+    
+    #Export current Experimental Data
+    #Experimental data is trimmed prior to this function, but it still needs to be exported  
+    #fileName = G.collectedFileName[:-5] +  str(G.iterationNumber) + G.collectedFileName[-4:]
+    ExportXYYYData(G.collectedFileName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers,
+              abscissaHeader = ExperimentData.abscissaHeader, dataType = 'preProcessed', rowIndex = ExperimentData.times, killSuffix = True)
+   
+    #export reference data for next iteration
+    if G.iterationNumber == 1: #first iteration files aren't in standard locations
+        DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, "..\\%s" %G.oldReferenceFileName, unusedReferenceFileName = G.nextRefFileName)
+    else: #not first iteration
+    #generate unused reference data
+        DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName, unusedReferenceFileName = G.nextRefFileName)
+    
+    return None
+
+def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment_numbers,ExperimentDataFullCopy, times, concdata, molecules):
+    
+    #remove the signals that have already been solved for from the data set
+    ExperimentData.workingData = DataFunctions.RemoveSignals(ExperimentDataFullCopy.workingData, ExperimentDataFullCopy.mass_fragment_numbers, simulateddata, mass_fragment_numbers)
+    
+    #Export the remaining experimental signals
+    ExportXYYYData(G.nextExpFileName, ExperimentDataFullCopy.workingData, ExperimentDataFullCopy.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, dataType = 'Experiment', rowIndex = ExperimentData.times, killSuffix =True)
+    
+    #update the suffix number and create the next user input file
+    G.iterationSuffix = '_iter_%s' %str(G.iterationNumber + 1)
+    nextUserInputFileName = 'UserInput%s.py' %G.iterationSuffix 
+    
+    #revert to the parent directory
+    os.chdir('..')
+    #create the next iteration directory and change the cwd into the next iteration directory
+    IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber, iterate = True)
+     
+    #save the new file name for the next user input file 
+    G.collectedFileName = G.nextExpFileName 
+    G.referenceFileName = G.nextRefFileName
+    #updating the selected molecules for the next user input file
+    G.chosenMolecules = G.unusedMolecules
+    
+    #export the user input specifications 
+    ExportUserInputFile(nextUserInputFileName)
+    
+    if G.iterativeAnalysis == True:
+        iterationDirectoryName = '_iter_%s' %(str(G.iterationNumber - 1))
+    if not G.iterativeAnalysis == True:
+        iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber - 1))
+    #copy the experimental signals to the next iteration
+    shutil.copy("..\%s\%s" %(iterationDirectoryName, G.collectedFileName), os.getcwd())
+    #copy the next reference file from the previous iteration folder to the next iteration folder
+    shutil.copy("..\%s\%s" %(iterationDirectoryName, G.referenceFileName), os.getcwd())
+    
+    #returning to the parent directory
+    os.chdir('..')
+    
+    #Adding the Additional concentrations to the overall concentration results
+    moleculeConcLabels = ['%s Concentration Relative to CO' % molecule for molecule in molecules] 
+    DataFunctions.AppendColumnsToCSV(G.TotalConcentrationsOutputName, concdata, moleculeConcLabels, times, ["Time"])
+    
+    return None
+    
 ###############################################################################
 #########################  Classes: Data Storage  #############################
 ###############################################################################
@@ -1049,6 +1264,8 @@ class MSData (object):
     def __init__(self, collectedFileName):
         #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
         dataFrame = pandas.read_csv('%s' %collectedFileName, header = None)
+        #remove any columns of only NANs 
+        dataFrame = dataFrame.dropna(axis = 1, how = 'all')
         ''' generate mass fragment list'''
         #select only the 2nd row down, all columns except for the first. 
 		#"iloc" is a pandas dataframe function. All it does is select a portion of the data.
@@ -1137,7 +1354,8 @@ class MSReference (object):
     def __init__(self, referenceFileName, form):
         #read the csv file into a dataframe
         dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
-        
+        #remove any columns of only NANs 
+        dataFrame = dataFrame.dropna(axis = 1, how = 'all')
         if form == 'xyyy':
             ''' generate reference matrix'''
             #remove top 4 rows
@@ -2526,22 +2744,28 @@ def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayli
 ## created csv file. When pandas is used to read the csv this
 ## will result in the creation of a column of 'nan'
 ## ImportWorkingData() has been modified to remove this column
-def ExportXYYYData(outputFileName, data, colIndex, exportSuffix='', abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None):
+def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None, killSuffix = False):
     formatedColIndex = colIndex
-    if dataType == 'preProcessed' or dataType == 'simulated':
+    if dataType == 'preProcessed' or dataType == 'simulated' or dataType == 'Experiment':
         formatedColIndex = ['m%s' % MFNumber for MFNumber in colIndex]
     if dataType == 'scaled':
         formatedColIndex = ['%s Concentration Relative to CO' % molecule for molecule in colIndex]
     if dataType == 'concentration':
         label = ' Concentration(%s)' % units
         formatedColIndex = [molecule + label for molecule in colIndex]
+    extraLine = False
+    if dataType == 'Experiment':
+        extraLine = len(data[1,:])
+        
 #If future applications of Export XYYY are desired, the new formats can be 
 #specified by additional keywords and if statements.
 
-    #the filename can have a suffix attached
-    outputFileName = outputFileName[:-4] + exportSuffix + outputFileName[-4:]
+#if iterative analysis is being used and the suffix is wanted
+    if G.iterativeAnalysis and not killSuffix:
+        #then the filename will have a suffix attached
+        outputFileName = outputFileName[:-4] + '_iter_%s' %G.iterationNumber + outputFileName[-4:]
 
-#testing if file is open, and rename if it is
+    #testing if file is open, and rename if it is
     #create list of name options
     nameOptions = [''] + list(range(100))
     for x in nameOptions:
@@ -2567,6 +2791,11 @@ def ExportXYYYData(outputFileName, data, colIndex, exportSuffix='', abscissaHead
         rowIndex = numpy.transpose([rowIndex])
         abscissaArrayToExport =  numpy.vstack((abscissaHeader,rowIndex))
         fullArrayToExport = numpy.hstack((abscissaArrayToExport,fullArrayToExport))
+    #insert an extra line with a header of the data type. Included to allow exported files to be uploaded during iterative analysis.
+    if not extraLine == False:
+        lineToInsert = "%s,%s" %(dataType, ',' * (extraLine))
+        lineToInsert = numpy.array(lineToInsert.split(','))
+        fullArrayToExport = numpy.vstack((linetoInsert, fullArrayToExport))
     #save the file to the correct name
     numpy.savetxt(filename, fullArrayToExport, delimiter = ',', fmt ="%s")
   
@@ -2647,7 +2876,7 @@ def CreateLogFile():
     f6.write(time.ctime(time.time()))
     f6.write('\n')
     f6.close()
-    print("LogFile complete")
+    #print("LogFile complete")
 
 
 # Since SlSUniqueFragments is potentially used in a number of the analysis options
@@ -2658,7 +2887,12 @@ def CreateLogFile():
 # abscissaHeader - string name of the experiment data type (e.g. 'Temp' or 'time')
 # molecules - list of strings of molecule names from referenceData.molecules
 def createSLSUniqueOrderFile(abscissaHeader, molecules):
-    with open('SLSUniqueOrder.csv','w') as fp:
+        outputFileName = 'SLSUniqueOrder.csv'
+    if G.iterativeAnalysis:
+        #then the filename will have a suffix attached
+        outputFileName = outputFileName[:-4] + '_iter_%s' %G.iterationNumber + outputFileName[-4:]
+    
+    with open(outputFileName,'w') as fp:
         # Headers
         fp.write('{},{}'.format(
             'Data Point',abscissaHeader))
@@ -2773,11 +3007,27 @@ def PrintLogFile():
 ###############################################Algorithm Part 3: Main Control Function ###################################
 ##################################################################################################################
 def main():
+     #This section is to overwrite the UI if iterative analysis is in the process of being run. 
+    highestIteration = int(FindHighestDirNumber("_iter_"))
+    iterationDirectorySuffix = '_iter_%s' %str(highestIteration)
+    for directoryName in os.listdir():
+        if iterationDirectorySuffix in directoryName:
+            userInputName = 'UserInput%s' %iterationDirectorySuffix
+            userInputPath = '%s.%s' %(directoryName, userInputName)
+            global G
+            UserInput2 = importlib.import_module('..%s' %userInputName, '%s' %userInputPath)
+            G = UserInput2
+            break
+    G.iterationNumber = highestIteration
+    G.iterationSuffix = iterationDirectorySuffix
     
-    # Create the log file, and record the time
+    #Record the time
     G.start = timeit.default_timer()
     G.checkpoint = timeit.default_timer()
-    CreateLogFile()
+    
+    #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
+    if G.iterativeAnalysis and G.iterationNumber != 1:
+        IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
     
     #initalize the data classes with the data from given Excel files
     #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
@@ -2791,6 +3041,9 @@ def main():
     if len(G.referenceFileName) > len(G.referencePatternTimeRanges):
         print("WARNING: There are more reference files given than time ranges")
 
+#if this is the first iterative run, then the files need to have been imported before the iteration can begin
+    if G.iterativeAnalysis and G.iterationNumber == 1 :
+        IterationFirstDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
 
     # Skip preProcessing all together if we are loading analyzed data
     if(G.dataAnalysis == 'load'):
@@ -2870,7 +3123,21 @@ def main():
         # if we are here then 'G.preProcessing' != ('yes' or 'skip' or 'load')
         raise ValueError("The value of preProcessing is not set appropriately, it should be 'yes', 'skip' or 'load'." +
                          "Or you are attempting to load pre-processed data without running data analysis")
-
+    if G.iterativeAnalysis:
+        #make a copy of the experimental data
+        ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
+        ReferenceDataFullCopy = copy.deepcopy(ReferenceData)
+        
+     # Trim the reference data according to the selected molecules list
+    (ReferenceData.provided_reference_intensities, ReferenceData.electronnumbers, ReferenceData.molecules, ReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(ReferenceData, G.chosenMolecules)
+    
+    #Trim the experimental data according to the mass fragments in G.chosenMassFragments and the reference data
+    (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, ReferenceData) 
+    
+    #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
+    if G.iterativeAnalysis:
+        IterativeAnalysisPreProcessing(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy)
+   
 
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
@@ -3062,8 +3329,12 @@ def main():
         G.checkPoint = timeit.default_timer()
         print("Simulation Finished")
         print('Simulation Time: ', (G.timeSinceLastCheckPoint))
+        
+    CreateLogFile()    
     PrintLogFile()
-
+    
+    if G.iterativeAnalysis:
+        IterativeAnalysisPostProcessing(ExperimentData, simulateddata, ExperimentData.mass_fragment_numbers, ExperimentDataFullCopy, times, data, ReferenceData.molecules)
 
 if __name__ == '__main__':
     main()
