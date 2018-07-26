@@ -1027,22 +1027,21 @@ def interpolateAccompanyingArrays(marginalChangeRestricted_abscissa, accompanyin
 
 '''RemoveSignals is used by itrative analysis post processing to subtract the signals for the solved molecules from the experimental data.'''
 def RemoveSignals(dataToExtractFrom, totalColumns, dataToExtract, columnsToSubtract):
-    #all inputs must be numpy arrays (2D(MxN),1D(N),2D(MxV),1D(V))
+    #all inputs must be numpy arrays i.e. Func(2D(MxN),1D(N),2D(MxV),1D(V))
     
     #confirm that data lengths are the same
     if (len(dataToExtractFrom[:,0]) != len(dataToExtract[:,0])):
         print("Length of simulated data doesn't equal length of experimental data")
-        
     #copy the row abscissa to be readded later
-    rowAbscissa = dataToExtractFrom[:,[0]]
+    rowAbscissa = dataToExtract[:,[0]]
     #Remove row abscissa from each data set
-    dataToExtractFrom = dataToExtractFrom[:,1:]
+    #dataToExtractFrom = dataToExtractFrom[:,1:]
     dataToExtract = dataToExtract[:,1:]
     
     #confirm that total data sets are the same width
     if (len(dataToExtractFrom[0,:]) != len(totalColumns)):
         print("Number of signals in total experimental data doesn't match header")
-        
+    
      #confirm that solved data sets are the same width
     if (len(dataToExtract[0,:]) != len(columnsToSubtract)):
         print("Number of signals in solved experimental data doesn't match header")

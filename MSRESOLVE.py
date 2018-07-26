@@ -1167,8 +1167,8 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     
     return None
 
-#The IterativeAnalysisPreProcessing function is used to shrink the size of the program analysis and redirect the output. 
-def IterativeAnalysisPreProcessing(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy):
+#The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
+def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy):
     #override data simulation to yes if it was not selected
     if G.dataSimulation != 'yes':
         print("Iterative analysis cannot find the remaining signals in the experiment without signal simulation being run.")
@@ -2810,7 +2810,7 @@ def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayli
 ## created csv file. When pandas is used to read the csv this
 ## will result in the creation of a column of 'nan'
 ## ImportWorkingData() has been modified to remove this column
-def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None, killSuffix = False):
+def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None, killSuffix = False): #if killSuffix is true, Export will not include a suffix for iterative analysis
     formatedColIndex = colIndex
     if dataType == 'preProcessed' or dataType == 'simulated' or dataType == 'Experiment':
         formatedColIndex = ['m%s' % MFNumber for MFNumber in colIndex]
@@ -2819,9 +2819,10 @@ def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', data
     if dataType == 'concentration':
         label = ' Concentration(%s)' % units
         formatedColIndex = [molecule + label for molecule in colIndex]
+    #extraLine is used to create CSV files that conform to MSRESOLVE's import requirements i.e. having a row for comments at the top
     extraLine = False
     if dataType == 'Experiment':
-        extraLine = len(data[1,:])
+        extraLine = len(data[0,1:])
         
 #If future applications of Export XYYY are desired, the new formats can be 
 #specified by additional keywords and if statements.
@@ -2861,7 +2862,7 @@ def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', data
     if not extraLine == False:
         lineToInsert = "%s,%s" %(dataType, ',' * (extraLine))
         lineToInsert = numpy.array(lineToInsert.split(','))
-        fullArrayToExport = numpy.vstack((linetoInsert, fullArrayToExport))
+        fullArrayToExport = numpy.vstack((lineToInsert, fullArrayToExport))
     #save the file to the correct name
     numpy.savetxt(filename, fullArrayToExport, delimiter = ',', fmt ="%s")
   
@@ -2942,7 +2943,6 @@ def CreateLogFile():
     f6.write(time.ctime(time.time()))
     f6.write('\n')
     f6.close()
-    #print("LogFile complete")
 
 
 # Since SlSUniqueFragments is potentially used in a number of the analysis options
@@ -2953,7 +2953,7 @@ def CreateLogFile():
 # abscissaHeader - string name of the experiment data type (e.g. 'Temp' or 'time')
 # molecules - list of strings of molecule names from referenceData.molecules
 def createSLSUniqueOrderFile(abscissaHeader, molecules):
-        outputFileName = 'SLSUniqueOrder.csv'
+    outputFileName = 'SLSUniqueOrder.csv'
     if G.iterativeAnalysis:
         #then the filename will have a suffix attached
         outputFileName = outputFileName[:-4] + '_iter_%s' %G.iterationNumber + outputFileName[-4:]
@@ -2973,7 +2973,7 @@ def createSLSUniqueOrderFile(abscissaHeader, molecules):
 This function takes in the end result of everything and exports it to the 
 log file. 
 '''
-def PrintLogFile():
+def PopulateLogFile():
     filename6 = 'LogFile.txt' #the log file is printed here
     f6 = open(filename6,'a')
     f6.write('\n')
@@ -3120,20 +3120,8 @@ def main():
         # Skip preprocessing
         G.preProcessing = 'skip'
         
-    if G.iterativeAnalysis:
-        #This will become a directory preprocessing function call, but it doesn't exist yet
-        pass
-    else:
-        G.exportSuffix = ''
         
     if(G.preProcessing == 'yes'):
-        
-        
-    # Trim the reference data according to the selected molecules list
-        (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules)
-
-    # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
         
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
@@ -3145,7 +3133,7 @@ def main():
             Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'PreprocessingAfterSmoothing' )
 
         #Exports the Preprocessed Data
-        ExportXYYYData(G.preProcessedDataOutputName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, G.exportSuffix,
+        ExportXYYYData(G.preProcessedDataOutputName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 
                        abscissaHeader = ExperimentData.abscissaHeader, dataType = 'preProcessed', rowIndex = ExperimentData.times)
         print("Preprocessed data exported")
         
@@ -3194,17 +3182,17 @@ def main():
     if G.iterativeAnalysis:
         #make a copy of the experimental data
         ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
-        ReferenceDataFullCopy = copy.deepcopy(ReferenceData)
+        ReferenceDataFullCopy = copy.deepcopy(currentReferenceData)
         
      # Trim the reference data according to the selected molecules list
-    (ReferenceData.provided_reference_intensities, ReferenceData.electronnumbers, ReferenceData.molecules, ReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(ReferenceData, G.chosenMolecules)
+    (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules)
     
     #Trim the experimental data according to the mass fragments in G.chosenMassFragments and the reference data
-    (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, ReferenceData) 
+    (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData) 
     
     #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
     if G.iterativeAnalysis:
-        IterativeAnalysisPreProcessing(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy)
+        IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, currentReferenceData, ReferenceDataFullCopy)
    
 
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
@@ -3364,7 +3352,7 @@ def main():
         if G.generatePercentages == 'yes':
             percentagesOutputArray = GeneratePercentages(concentrationsScaledToCOarray)
             ExportXYYYData(G.scaledConcentrationsPercentages, percentagesOutputArray, currentReferenceData.molecules, G.exportSuffix)
-        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, G.exportSuffix,abscissaHeader = "Time", dataType = str('scaled'))
+        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, abscissaHeader = "Time", dataType = str('scaled'))
         times = concentrationsScaledToCOarray[:,0]#the times are just the first column of the array
         data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
         
@@ -3391,7 +3379,7 @@ def main():
         #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
         simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, currentReferenceData.matching_correction_values)
         #Exporting the simulated signals data
-        ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, G.exportSuffix, abscissaHeader = "Time", dataType = 'simulated')
+        ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = "Time", dataType = 'simulated')
         #show net time for simulation
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
         G.checkPoint = timeit.default_timer()
@@ -3399,10 +3387,11 @@ def main():
         print('Simulation Time: ', (G.timeSinceLastCheckPoint))
         
     CreateLogFile()    
-    PrintLogFile()
+    PopulateLogFile()
+    print("LogFile complete")
     
     if G.iterativeAnalysis:
-        IterativeAnalysisPostProcessing(ExperimentData, simulateddata, ExperimentData.mass_fragment_numbers, ExperimentDataFullCopy, times, data, ReferenceData.molecules)
+        IterativeAnalysisPostProcessing(ExperimentData, simulateddata, ExperimentData.mass_fragment_numbers, ExperimentDataFullCopy, times, data, currentReferenceData.molecules)
 
 if __name__ == '__main__':
     main()
