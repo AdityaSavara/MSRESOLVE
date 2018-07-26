@@ -1150,7 +1150,7 @@ def readReferenceFile(referenceFileName, form):
             #convert the matrix to floats
             provided_reference_intensities = reference.astype(numpy.float)
             #clear rows of zeros
-            provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(provided_reference_intensities,startingRowIndex=1)
+            provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
         
             '''generate electron number list'''
             #select row of electron numbers
@@ -1198,7 +1198,7 @@ def readReferenceFile(referenceFileName, form):
             #convert reference from XYXY to XYYY
             provided_reference_intensities=FromXYXYtoXYYY(provided_reference_intensities)
             #clear rows of zeros
-            provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(provided_reference_intensities,startingRowIndex=1)
+            provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
             
             '''generate electron numbers list'''
             #create data frame of electron numbers
