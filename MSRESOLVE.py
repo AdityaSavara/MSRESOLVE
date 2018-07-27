@@ -1263,7 +1263,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     #export the user input specifications 
     ExportUserInputFile(nextUserInputFileName)
     #append the variable list to the user input file
-    AppendList("__var_list__", G.__var_list__, nextUserInputFileName, 5)
+    AppendListToFile("__var_list__", G.__var_list__, nextUserInputFileName, 5)
     
     if G.iterativeAnalysis == True:
         iterationDirectoryName = '_iter_%s' %(str(G.iterationNumber - 1))
