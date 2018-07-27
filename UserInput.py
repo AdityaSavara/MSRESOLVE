@@ -252,4 +252,4 @@ __var_list__ = ['referenceFileName','form','collectedFileName','referencePattern
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
 				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
 				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
-				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint','__var_list__']
+				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']
