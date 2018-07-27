@@ -13,7 +13,7 @@ collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spe
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
-iterativeAnalysis = False
+iterativeAnalysis = True
 #the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
@@ -38,7 +38,7 @@ timeRangeFinish = 900	#finish time (-int)
 
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
-specificMolecules = 'no'
+specificMolecules = 'yes'
 chosenMolecules = ['CO', 'CO2', 'H2O']
 
 #//Chosen Mass Fragments//
@@ -252,4 +252,4 @@ __var_list__ = ['referenceFileName','form','collectedFileName','referencePattern
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
 				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
 				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
-				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint','__var_list__']
+				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']

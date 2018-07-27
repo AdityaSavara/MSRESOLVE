@@ -1040,7 +1040,7 @@ def DataInputPreProcessing(ExperimentData):
         ExperimentData.ExportCollector("DataSmoother")
 
     return ExperimentData
-
+#exports the user input file so that it can be used in the next iteration
 def ExportUserInputFile(fileName):
     
     #Creating an updated UI file
@@ -1052,6 +1052,29 @@ def ExportUserInputFile(fileName):
     #save variables to the text file 
     globalsFE_object.save_params()
     
+#this function is used to append any list to a file in an executable fashion
+def AppendList(listVariableName, List, FileName, entriesPerLine): 
+    #open the file in an append fashion
+    with open(FileName,'a+') as f:
+        #write in the variable name and open the list
+        f.write('\n%s = [' %listVariableName)
+        #find the length of the list
+        length = len(List)
+        #loop through every value in the list 
+        for listIndex in range(length):
+            #Construct a string for each value in turn
+           string = "'%s'," % str(List[listIndex])
+           #if this is the last entry in the list, remove the trailing comma
+           if listIndex == length - 1:
+               string = string[:-1]
+           #write the entry into the file 
+           f.write(string)
+           #if the previous entry was the last one in that line, add a newline character
+           if (listIndex + 1) % entriesPerLine == 0: 
+               f.write('\n')
+        #write in the closing bracket for the list
+        f.write(']')
+    return None
     
 def StringSearch(string, keyword = '', antikeyword = ''):
     if keyword in string and not antikeyword in string:
@@ -1101,6 +1124,7 @@ def SpecificIterationName(iterativeAnalysis, iterationNumber):
     return iterationDirectoryName
 
 def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = False):
+    #implied arguments for this function are G.referenceFileName and G.collectedFileName
     if iterate:
         iterationNumber += 1
     G.iterationNumber = iterationNumber
@@ -1136,8 +1160,10 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
         G.nextExpFileName = G.collectedFileName[:-11] +  str('_remaining') + G.collectedFileName[-11:]
     
     return None
-       
+    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+
 def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
+    #implied arguments for this function are G.referenceFileName and G.collectedFileName
     #this global value is set so that each export statement can label the output files correctly
     G.iterationNumber = iterationNumber
     
@@ -1152,6 +1178,8 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     
     #copy the first UserInputFile into the first iteration directory
     ExportUserInputFile("UserInput_iter_1.py")
+    #append the variable list to the user input file
+    AppendList("__var_list__", G.__var_list__, "UserInput_iter_1.py", 5)
     
     #record the old file names 
     G.oldReferenceFileName = G.referenceFileName
@@ -1165,16 +1193,18 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     
     G.nextExpFileName = G.collectedFileName[:-11] + '_remaining_iter_1' + G.collectedFileName[-4:]
     
-    return None
+    return None 
+    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
 def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy):
+    #implied arguments: G.dataSimulation, G.referenceFileName, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMolecules, G.iterationNumber
     #override data simulation to yes if it was not selected
     if G.dataSimulation != 'yes':
         print("Iterative analysis cannot find the remaining signals in the experiment without signal simulation being run.")
         print("User selection to skip signal simulation has been overridden. ")
         G.dataSimulation = 'yes'
-         
+    #Warn the user if they are trying to run an iteration that has no molecules to solve. (This would cause a complex error further on in the program if allowed to run.)    
     if len(ReferenceData.molecules) == 0:
         print("Warning Message: There are inadequate molecules to perform another iteration. Please confirm that there are still remaining molecules to solve.")
         sys.exit()
@@ -1190,12 +1220,10 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     
     #Export current Reference Data  
     #Reference data is trimmed prior to this function
-    #fileName = G.referenceFileName[:-5] +  str(G.iterationNumber) + G.referenceFileName[-4:]
     ExportXYYYData(G.referenceFileName, ReferenceData.provided_reference_intensities, ReferenceData.molecules, abscissaHeader = 'M/Z', killSuffix = True)
     
     #Export current Experimental Data
     #Experimental data is trimmed prior to this function, but it still needs to be exported  
-    #fileName = G.collectedFileName[:-5] +  str(G.iterationNumber) + G.collectedFileName[-4:]
     ExportXYYYData(G.collectedFileName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers,
               abscissaHeader = ExperimentData.abscissaHeader, dataType = 'preProcessed', rowIndex = ExperimentData.times, killSuffix = True)
    
@@ -1207,9 +1235,10 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
         DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName, unusedReferenceFileName = G.nextRefFileName)
     
     return None
+    #implied returns: G.unusedMolecules
 
 def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment_numbers,ExperimentDataFullCopy, times, concdata, molecules):
-    
+    #implied arguments: G.iterationSuffix, G.nextRefFileName, G.nextExpFileName, G.iterativeAnalysis, G.unusedMolecules, G.iterationNumber
     #remove the signals that have already been solved for from the data set
     ExperimentData.workingData = DataFunctions.RemoveSignals(ExperimentDataFullCopy.workingData, ExperimentDataFullCopy.mass_fragment_numbers, simulateddata, mass_fragment_numbers)
     
@@ -1233,6 +1262,8 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     
     #export the user input specifications 
     ExportUserInputFile(nextUserInputFileName)
+    #append the variable list to the user input file
+    AppendList("__var_list__", G.__var_list__, nextUserInputFileName, 5)
     
     if G.iterativeAnalysis == True:
         iterationDirectoryName = '_iter_%s' %(str(G.iterationNumber - 1))
@@ -1251,7 +1282,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     DataFunctions.AppendColumnsToCSV(G.TotalConcentrationsOutputName, concdata, moleculeConcLabels, times, ["Time"])
     
     return None
-    
+     #implied returns: G.referenceFileName, G.collectedFileName, G.nextRefFileName, G.chosenMolecules, G.iterationSuffix
 ###############################################################################
 #########################  Functions to read data files #######################
 ###############################################################################
@@ -3093,6 +3124,7 @@ def main():
     
     #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
     if G.iterativeAnalysis and G.iterationNumber != 1:
+        #implied arguments for this function are G.referenceFileName and G.collectedFileName
         IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
     
     #initalize the data classes with the data from given Excel files
@@ -3109,8 +3141,9 @@ def main():
     if len(G.referenceFileName) > len(G.referencePatternTimeRanges):
         print("WARNING: There are more reference files given than time ranges")
 
-#if this is the first iterative run, then the files need to have been imported before the iteration can begin
+    #if this is the first iterative run, then the reference and experimental files need to have been imported before the iteration can begin
     if G.iterativeAnalysis and G.iterationNumber == 1 :
+        #implied arguments for the following function are G.referenceFileName and G.collectedFileName
         IterationFirstDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
 
     # Skip preProcessing all together if we are loading analyzed data
