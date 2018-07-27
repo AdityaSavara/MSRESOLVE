@@ -1053,7 +1053,7 @@ def ExportUserInputFile(fileName):
     globalsFE_object.save_params()
     
 #this function is used to append any list to a file in an executable fashion
-def AppendList(listVariableName, List, FileName, entriesPerLine): 
+def AppendListToFile(listVariableName, List, FileName, entriesPerLine): 
     #open the file in an append fashion
     with open(FileName,'a+') as f:
         #write in the variable name and open the list
@@ -1179,7 +1179,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     #copy the first UserInputFile into the first iteration directory
     ExportUserInputFile("UserInput_iter_1.py")
     #append the variable list to the user input file
-    AppendList("__var_list__", G.__var_list__, "UserInput_iter_1.py", 5)
+    AppendListToFile("__var_list__", G.__var_list__, "UserInput_iter_1.py", 5)
     
     #record the old file names 
     G.oldReferenceFileName = G.referenceFileName
@@ -1263,7 +1263,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     #export the user input specifications 
     ExportUserInputFile(nextUserInputFileName)
     #append the variable list to the user input file
-    AppendList("__var_list__", G.__var_list__, nextUserInputFileName, 5)
+    AppendListToFile("__var_list__", G.__var_list__, nextUserInputFileName, 5)
     
     if G.iterativeAnalysis == True:
         iterationDirectoryName = '_iter_%s' %(str(G.iterationNumber - 1))
