@@ -13,7 +13,7 @@ collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spe
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
-iterativeAnalysis = True
+iterativeAnalysis = False
 #the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
@@ -38,7 +38,7 @@ timeRangeFinish = 900	#finish time (-int)
 
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
-specificMolecules = 'yes'
+specificMolecules = 'no'
 chosenMolecules = ['CO', 'CO2', 'H2O']
 
 #//Chosen Mass Fragments//
