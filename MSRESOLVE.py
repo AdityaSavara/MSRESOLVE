@@ -408,7 +408,7 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                 for eachChosenMoleculesMF in range(len(allExtractedIntensitiesArray)):
                     intensitiesAverage = numpy.average(allExtractedIntensitiesArray[eachChosenMoleculesMF])
                     allExtractedIntensitiesAverage.append(intensitiesAverage)
-                #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment
+                #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment (that is, to make a reference pattern with a ratio matching the extracted ratio)
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
                     copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_intensities[massfragindexer[0],moleculecounter+1]
     return copyOfReferenceData.provided_reference_intensities
