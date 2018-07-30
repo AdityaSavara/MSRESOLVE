@@ -8,9 +8,13 @@ import sys
 import pandas
 import XYYYDataFunctionsSG as DataFunctions
 import os
+import shutil
+import importlib
 from numpy import genfromtxt
+import export_import as ei
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
-import UserInput as G 
+import UserInput 
+G = UserInput
 ############################################################################################################################################
 ################################################Algorithm Part 1: Pre-Processing the data###################################################
 ############################################################################################################################################
@@ -520,7 +524,7 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def TrimDataMolecules(ReferenceData, chosenMolecules):
     #This if statement is only to mirror the trimDataMasses function
-    if G.specificMolecules == 'yes':
+    if G.specificMolecules == 'yes' or G.iterativeAnalysis:
         print("MoleculeChooser")
         #the copy is required because the keep only selected columns function is called twice with the same rows to clear
         copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
@@ -942,7 +946,8 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     #If referenceFileNames and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
     if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
-        ReferenceDataList = [MSReference(referenceFileNames[0],referencePatternForm[0])]
+        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
+        ReferenceDataList = [MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNames
@@ -960,7 +965,8 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNames)):
-        ReferenceDataAndFormsList.append(MSReference(referenceFileNames[i],listOfForms[i]))
+        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],referencePatternForm[i])
+        ReferenceDataAndFormsList.append(MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
     return ReferenceDataAndFormsList
 
 
@@ -1034,6 +1040,449 @@ def DataInputPreProcessing(ExperimentData):
         ExperimentData.ExportCollector("DataSmoother")
 
     return ExperimentData
+#exports the user input file so that it can be used in the next iteration
+def ExportUserInputFile(fileName):
+    
+    #Creating an updated UI file
+    globalsFE_saveFile = fileName 
+    globalsFE_loadFile = fileName 
+    #create export object
+    globalsFE_object = ei.module_export_import(globalsFE_saveFile,globalsFE_loadFile,G)
+    
+    #save variables to the text file 
+    globalsFE_object.save_params()
+    
+#this function is used to append any list to a file in an executable fashion
+def AppendListToFile(listVariableName, List, FileName, entriesPerLine): 
+    #open the file in an append fashion
+    with open(FileName,'a+') as f:
+        #write in the variable name and open the list
+        f.write('\n%s = [' %listVariableName)
+        #find the length of the list
+        length = len(List)
+        #loop through every value in the list 
+        for listIndex in range(length):
+            #Construct a string for each value in turn
+           string = "'%s'," % str(List[listIndex])
+           #if this is the last entry in the list, remove the trailing comma
+           if listIndex == length - 1:
+               string = string[:-1]
+           #write the entry into the file 
+           f.write(string)
+           #if the previous entry was the last one in that line, add a newline character
+           if (listIndex + 1) % entriesPerLine == 0: 
+               f.write('\n')
+        #write in the closing bracket for the list
+        f.write(']')
+    return None
+    
+def StringSearch(string, keyword = '', antikeyword = ''):
+    if keyword in string and not antikeyword in string:
+        return True
+    else:
+        return False
+
+#This supporting function of IterativeAnalysisPreProcessing finds the highest suffix of any file that contains a given keyword. 
+def FindHighestDirNumber(keyword):
+    listIterDirectories =[]
+    #Search all files/folders in the current directory
+    for directoryname in os.listdir():
+        #if one of them contains the keyword and is a directory i.e. no '.'
+        if StringSearch(directoryname, keyword, '.'):
+            #append it to the list
+            listIterDirectories.append(directoryname)
+        
+    suffixlist = []
+    #for all files/folders with the right keyword
+    for directoryname in listIterDirectories:
+        #append the last value of each name
+        suffixlist.append(directoryname[-1])
+    #return the highest of the last values
+    if not suffixlist == []:
+        return(max(suffixlist))
+    return 1
+
+#This supporting function of IterativeAnalysisPreProcessing confirms that a directory exists
+def EnsureDirectory(dir_path):
+    directory = dir_path
+    #isolate the directory name
+    #this line can be used if needed
+    #directory = os.path.dirname(dir_path)
+    #if the directory doesn't already exist
+    if not os.path.exists(directory):
+        #create the directory
+        os.makedirs(directory)
+
+def SpecificIterationName(iterativeAnalysis, iterationNumber):
+    #if the user has entered an iteration name
+    if iterativeAnalysis == False or iterativeAnalysis == True:
+         #create the default directory
+        iterationDirectoryName = '.\\_iter_%s' %str(iterationNumber)
+    else:
+        #set that name to be the directory along with the correct number 
+        iterationDirectoryName = '.\\' + iterativeAnalysis + '_iter_%s' %str(iterationNumber)
+    return iterationDirectoryName
+
+def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = False):
+    #implied arguments for this function are G.referenceFileName and G.collectedFileName
+    if iterate:
+        iterationNumber += 1
+    G.iterationNumber = iterationNumber
+    
+    iterationDirectoryName = SpecificIterationName(iterativeAnalysis, iterationNumber)
+       
+    #confirm that the directory exists
+    EnsureDirectory(iterationDirectoryName)
+    
+    #Change the working directory to the new directory name. 
+    'THIS IS A HIGHLY SIGNIFICANT LINE, because it redirects all of the output for the rest of the program run'
+    os.chdir(iterationDirectoryName) #this will be changed back at the end of the program
+    
+    if not iterate:
+        #record the old file names 
+        G.oldReferenceFileName = G.referenceFileName
+        G.oldcollectedFileName = G.collectedFileName
+        
+        #construct the file names for the current run of the program
+        referenceFileNameTemp = G.referenceFileName[:-18] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
+        collectedFileNameTemp = G.collectedFileName[:-21] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
+        
+        #copy the experimental and reference files into new names for this iterative run
+        shutil.copy(G.referenceFileName, referenceFileNameTemp)
+        shutil.copy(G.collectedFileName, collectedFileNameTemp)
+        
+        #change the globals to reflect the renaming of the ref and exp files
+        G.referenceFileName =  referenceFileNameTemp
+        G.collectedFileName =  collectedFileNameTemp
+        
+        #construct file names for the next run of the program 
+        G.nextRefFileName = G.referenceFileName[:-11] +  str('_unused') + G.referenceFileName[-11:]
+        G.nextExpFileName = G.collectedFileName[:-11] +  str('_remaining') + G.collectedFileName[-11:]
+    
+    return None
+    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+
+def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
+    #implied arguments for this function are G.referenceFileName and G.collectedFileName
+    #this global value is set so that each export statement can label the output files correctly
+    G.iterationNumber = iterationNumber
+    
+    iterationDirectoryName = SpecificIterationName(iterativeAnalysis, iterationNumber)
+       
+    #confirm that the directory exists
+    EnsureDirectory(iterationDirectoryName)
+    
+    #Change the working directory to the new directory name. 
+    'THIS IS A HIGHLY SIGNIFICANT LINE, because it redirects all of the output for the rest of the program run'
+    os.chdir(iterationDirectoryName) #this will be changed back at the end of the program
+    
+    #copy the first UserInputFile into the first iteration directory
+    ExportUserInputFile("UserInput_iter_1.py")
+    #append the variable list to the user input file
+    AppendListToFile("__var_list__", G.__var_list__, "UserInput_iter_1.py", 5)
+    
+    #record the old file names 
+    G.oldReferenceFileName = G.referenceFileName
+    G.oldcollectedFileName = G.collectedFileName
+    #construct the file names for the first run of the program
+    G.referenceFileName = G.referenceFileName[:-4] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
+    G.collectedFileName = G.collectedFileName[:-4] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
+    
+    #construct file names for the second run of the program 
+    G.nextRefFileName = G.referenceFileName[:-11] + '_unused_iter_1' + G.referenceFileName[-4:]
+    
+    G.nextExpFileName = G.collectedFileName[:-11] + '_remaining_iter_1' + G.collectedFileName[-4:]
+    
+    return None 
+    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+
+#The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
+def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy):
+    #implied arguments: G.dataSimulation, G.referenceFileName, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMolecules, G.iterationNumber
+    #override data simulation to yes if it was not selected
+    if G.dataSimulation != 'yes':
+        print("Iterative analysis cannot find the remaining signals in the experiment without signal simulation being run.")
+        print("User selection to skip signal simulation has been overridden. ")
+        G.dataSimulation = 'yes'
+    #Warn the user if they are trying to run an iteration that has no molecules to solve. (This would cause a complex error further on in the program if allowed to run.)    
+    if len(ReferenceData.molecules) == 0:
+        print("Warning Message: There are inadequate molecules to perform another iteration. Please confirm that there are still remaining molecules to solve.")
+        sys.exit()
+         
+    #Selecting unused Reference Data
+    unusedMolecules = []
+    for molecule in ReferenceDataFullCopy.molecules:
+        if not molecule in G.chosenMolecules:
+            unusedMolecules.append(molecule)
+            
+    #Make into a global variable for future use.     
+    G.unusedMolecules = unusedMolecules
+    
+    #Export current Reference Data  
+    #Reference data is trimmed prior to this function
+    ExportXYYYData(G.referenceFileName, ReferenceData.provided_reference_intensities, ReferenceData.molecules, abscissaHeader = 'M/Z', killSuffix = True)
+    
+    #Export current Experimental Data
+    #Experimental data is trimmed prior to this function, but it still needs to be exported  
+    ExportXYYYData(G.collectedFileName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers,
+              abscissaHeader = ExperimentData.abscissaHeader, dataType = 'preProcessed', rowIndex = ExperimentData.times, killSuffix = True)
+   
+    #export reference data for next iteration
+    if G.iterationNumber == 1: #first iteration files aren't in standard locations
+        DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, "..\\%s" %G.oldReferenceFileName, unusedReferenceFileName = G.nextRefFileName)
+    else: #not first iteration
+    #generate unused reference data
+        DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName, unusedReferenceFileName = G.nextRefFileName)
+    
+    return None
+    #implied returns: G.unusedMolecules
+
+def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment_numbers,ExperimentDataFullCopy, times, concdata, molecules):
+    #implied arguments: G.iterationSuffix, G.nextRefFileName, G.nextExpFileName, G.iterativeAnalysis, G.unusedMolecules, G.iterationNumber
+    #remove the signals that have already been solved for from the data set
+    ExperimentData.workingData = DataFunctions.RemoveSignals(ExperimentDataFullCopy.workingData, ExperimentDataFullCopy.mass_fragment_numbers, simulateddata, mass_fragment_numbers)
+    
+    #Export the remaining experimental signals
+    ExportXYYYData(G.nextExpFileName, ExperimentDataFullCopy.workingData, ExperimentDataFullCopy.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, dataType = 'Experiment', rowIndex = ExperimentData.times, killSuffix =True)
+    
+    #update the suffix number and create the next user input file
+    G.iterationSuffix = '_iter_%s' %str(G.iterationNumber + 1)
+    nextUserInputFileName = 'UserInput%s.py' %G.iterationSuffix 
+    
+    #revert to the parent directory
+    os.chdir('..')
+    #create the next iteration directory and change the cwd into the next iteration directory
+    IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber, iterate = True)
+     
+    #save the new file name for the next user input file 
+    G.collectedFileName = G.nextExpFileName 
+    G.referenceFileName = G.nextRefFileName
+    #updating the selected molecules for the next user input file
+    G.chosenMolecules = G.unusedMolecules
+    
+    #export the user input specifications 
+    ExportUserInputFile(nextUserInputFileName)
+    #append the variable list to the user input file
+    AppendListToFile("__var_list__", G.__var_list__, nextUserInputFileName, 5)
+    
+    if G.iterativeAnalysis == True:
+        iterationDirectoryName = '_iter_%s' %(str(G.iterationNumber - 1))
+    if not G.iterativeAnalysis == True:
+        iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber - 1))
+    #copy the experimental signals to the next iteration
+    shutil.copy("..\%s\%s" %(iterationDirectoryName, G.collectedFileName), os.getcwd())
+    #copy the next reference file from the previous iteration folder to the next iteration folder
+    shutil.copy("..\%s\%s" %(iterationDirectoryName, G.referenceFileName), os.getcwd())
+    
+    #returning to the parent directory
+    os.chdir('..')
+    
+    #Adding the Additional concentrations to the overall concentration results
+    moleculeConcLabels = ['%s Concentration Relative to CO' % molecule for molecule in molecules] 
+    DataFunctions.AppendColumnsToCSV(G.TotalConcentrationsOutputName, concdata, moleculeConcLabels, times, ["Time"])
+    
+    return None
+     #implied returns: G.referenceFileName, G.collectedFileName, G.nextRefFileName, G.chosenMolecules, G.iterationSuffix
+###############################################################################
+#########################  Functions to read data files #######################
+###############################################################################
+#These functions read in the experimental data file and the reference file. The
+#returned variables can then be used to initialize the respective classes.
+
+def readDataFile(collectedFileName):
+
+ #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
+    dataFrame = pandas.read_csv('%s' %collectedFileName, header=None)
+    ''' generate mass fragment list'''
+    #select only the 2nd row down, all columns except for the first. 
+		#"iloc" is a pandas dataframe function. All it does is select a portion of the data.
+    dfmass = dataFrame.iloc[1][1:]
+    #convert to matrix
+    masses = dfmass.as_matrix()
+    #sort through the matrix and remove labels
+    for i in range(0,len(masses)):
+        masses[i] = masses[i].replace('mass','')
+        masses[i] = masses[i].replace('m','')
+    #convert the matrix to integers 
+    mass_fragment_numbers = masses.astype(numpy.float32)
+            
+    '''generate time list'''
+    # set abscissa header (time or Temp, etc.)
+    abscissaHeader = dataFrame.iloc[1][0]
+    #select column of times
+    dftimes = dataFrame.iloc[2:][0]
+    #convert to matrix
+    times = dftimes.as_matrix()
+    #save as class object with type float
+    times = times.astype(numpy.float)
+    #if the user wants to analyze one point, the data is doubled in length
+    #to prevent future index problems
+    if len(times) == 1:
+        times = numpy.append(times,times)
+        times[1] = times[0]*1.1
+   
+    '''generate collected data'''
+    #select matrix of raw signals
+    dfcollected = dataFrame.iloc[2:,1:]
+    #convert to matrix
+    collected = dfcollected.as_matrix()
+    #save as class object with type float
+    rawCollectedData = collected.astype(numpy.float)
+    #if the user wants to analyze one point, the data is doubled in length
+    #to prevent future index problems
+    if len(rawCollectedData) == 1:
+        rawCollectedData = numpy.vstack((rawCollectedData,rawCollectedData))
+
+        
+    return mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName
+
+#readReferenceFile is a helper function that reads the reference file in a certain form and returns the
+#variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
+def readReferenceFile(referenceFileName, form):        
+     #This function converts the XYXY data to an XYYY format
+    def FromXYXYtoXYYY(provided_reference_intensities):
+        masslists = [] #future lists must be must empty here to append in the for loops
+        relativeintensitieslists = [] #future list
+        #this loops gathers all the mass fragment numbers for each molecule in one list of arrays, while a second
+        #list is made, gathering the relative intensities so that they were indexed the same as their mass fragment
+        #numbers in the other list
+        #this for loop grabs stuff from the reference array, whose orientation and identity is shown in the flow chart arrays document
+        for referenceBy2Index in range(0,len(provided_reference_intensities[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
+            masslists.append(provided_reference_intensities[:,referenceBy2Index])#these are lists of arrays
+            relativeintensitieslists.append(provided_reference_intensities[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
+        masslist = [] #future list
+        #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
+        #'nan's or empty spaces after the numbers
+        for referenceIndex in range(len(provided_reference_intensities[:,0])): #array-indexed for loop
+            if str(masslists[0][referenceIndex]) != 'nan': #we do not want nan's in our array, the genfromtxt function calls empty boxes in excel (might be in .csv as well)'nan'.
+                masslist.append(masslists[0][referenceIndex])
+        #this second nested for loop gathers all the other mass fragment numbers that have not already been added to
+        #the masslist, basically obtaining all the masses in the reference data and then after the loop they are sorted
+        #using .sort, then an empty array of zeros is made to accommodate the output array
+        for masslistIndex in range(1,len(masslists)):#array-indexed for loop, starts at one because it's checking against all arrays besides itself
+            for referenceIndex in range(len(provided_reference_intensities[:,0])):#array-indexed for loop
+                if str(masslists[masslistIndex][referenceIndex]) != 'nan':
+                    if sum(masslists[masslistIndex][referenceIndex] == numpy.array(masslist)) == 0:#if the value being looked at is not equal to anything in our masslist already
+                        masslist.append(masslists[masslistIndex][referenceIndex])
+        masslist.sort()#puts the list in order
+        reference_holder = numpy.zeros([len(masslist),len(provided_reference_intensities[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
+        reference_holder[:,0:1] = numpy.vstack(numpy.array(masslist))#This puts the mass list in the first column of our new reference array
+        #Finally, the for loop below makes a list each revolution, comparing each list of mass fragments (for each molecule)
+        #and adding the relative intensities (from the identically indexed array) when they numbers were equal, and otherwise
+        #adding a zero in its place. It then adds this list to the array (using numpy.vstack and numpy.array)
+        for massListsIndex in range(len(masslists)):#array-indexed for loop
+            relativeintensitieslist = [] #empties the list every loop
+            for massListIndex in range(len(masslist)):
+                placeholder = 0 #after the next for loop finishes, this is reset
+                for specificMassListIndex in range(len(masslists[massListsIndex])):#array-indexed for loop, each column of .csv file being checked
+                    if masslists[massListsIndex][specificMassListIndex] == masslist[massListIndex]:#This is when the index for the correct mass fragment is found
+                        relativeintensitieslist.append(relativeintensitieslists[massListsIndex][specificMassListIndex])#relative intensities lists index the same way
+                        placeholder = 1 #so that the next if statement will know that this has happened
+                    if specificMassListIndex == len(masslists[massListsIndex])-1 and placeholder == 0:#If it comes to the end of the for loop, and there's no match, then the relative intensity is zero
+                        relativeintensitieslist.append(0)
+                if massListIndex == len(masslist)-1:#Once the larger for loop is done the 
+                    reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
+        provided_reference_intensities = reference_holder
+        return provided_reference_intensities
+    
+     #read the csv file into a dataframe
+    dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+    
+    if form == 'xyyy':
+        ''' generate reference matrix'''
+        #remove top 4 rows
+        dfreference = dataFrame.iloc[4:][:]
+        #convert to matrix
+        reference = dfreference.as_matrix()
+        #convert the matrix to floats
+        provided_reference_intensities = reference.astype(numpy.float)
+        #clear rows of zeros
+        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+    
+        '''generate electron number list'''
+        #select row of electron numbers
+        dfelectronnumbers = dataFrame.iloc[2][1:]
+        #convert to matrix
+        electronnumbers = dfelectronnumbers.as_matrix()
+        #save as class object with type int
+        electronnumbers = electronnumbers.astype(numpy.int32)
+   
+        '''generate list of molecule names'''
+        #select row of names
+        dfmolecules = dataFrame.iloc[1][1:]
+        #convert to matrix
+        molecules = dfmolecules.as_matrix()
+        #save as class object with type string
+        molecules = molecules.astype(numpy.str)
+        
+        '''generate list of molecular weights'''
+        #select row of names
+        dfmolecularWeights = dataFrame.iloc[3][1:]
+        #convert to matrix
+        molecularWeights = dfmolecularWeights.as_matrix()
+        #save as class object with type float
+        molecularWeights = molecularWeights.astype(numpy.float)
+        
+        '''generate list of source information'''
+        #select row of names
+        dfsourceInfo = dataFrame.iloc[0][1:]
+        #convert to matrix
+        sourceInfo = dfsourceInfo.as_matrix()
+        #save as class object with type string
+        sourceInfo = sourceInfo.astype(numpy.str)
+        
+        '''generate list of massfragments monitored '''
+        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        
+    elif form == 'xyxy':
+        '''generate reference matrix'''
+        #remove top 4 rows
+        dfreference = dataFrame.iloc[4:][:]
+        #convert to matrix
+        reference = dfreference.as_matrix()
+        #convert the matrix to floats 
+        provided_reference_intensities = reference.astype(numpy.float)
+        #convert reference from XYXY to XYYY
+        provided_reference_intensities=FromXYXYtoXYYY(provided_reference_intensities)
+        #clear rows of zeros
+        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+        
+        '''generate electron numbers list'''
+        #create data frame of electron numbers
+        dfelectronnumbers = dataFrame.iloc[2,1::2]
+        #convert to matrix
+        electronnumbers = dfelectronnumbers.as_matrix()
+        #save as class object with type int
+        electronnumbers = electronnumbers.astype(numpy.int32)
+        
+        '''generate list of molecule names'''
+        #select matrix of names
+        dfmolecules = dataFrame.iloc[1,1::2]
+        #convert to matrix
+        molecules = dfmolecules.as_matrix()
+        #save as class object with type string
+        molecules = molecules.astype(numpy.str)
+        
+        '''generate list of molecular weights'''
+        #select row of names
+        dfmolecularWeights = dataFrame.iloc[3][1::2]
+        #convert to matrix
+        molecularWeights = dfmolecularWeights.as_matrix()
+        #save as class object with type float
+        molecularWeights = molecularWeights.astype(numpy.float)
+        
+        '''generate list of source information'''
+        #select row of names
+        dfsourceInfo = dataFrame.iloc[0][1::2]
+        #convert to matrix
+        sourceInfo = dfsourceInfo.as_matrix()
+        #save as class object with type string
+        sourceInfo = sourceInfo.astype(numpy.str)
+
+        '''generate list of massfragments monitored '''
+        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        
+    return provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
 
 ###############################################################################
 #########################  Classes: Data Storage  #############################
@@ -1046,48 +1495,11 @@ class MSData (object):
 		#self.mass_fragment_numbers , 1D and must be integers
 		#self.rawCollectedData, a 2D array of the signals.
 		
-    def __init__(self, collectedFileName):
-        #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
-        dataFrame = pandas.read_csv('%s' %collectedFileName, header = None)
-        ''' generate mass fragment list'''
-        #select only the 2nd row down, all columns except for the first. 
-		#"iloc" is a pandas dataframe function. All it does is select a portion of the data.
-        dfmass = dataFrame.iloc[1][1:]
-        #convert to matrix
-        masses = dfmass.as_matrix()
-        #sort through the matrix and remove labels
-        for i in range(0,len(masses)):
-            masses[i] = masses[i].replace('mass','')
-            masses[i] = masses[i].replace('m','')
-        #convert the matrix to integers 
-        self.mass_fragment_numbers = masses.astype(numpy.float32)
+    def __init__(self, mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName=None):
         
-        '''generate time list'''
-        # set abscissa header (time or Temp, etc.)
-        self.abscissaHeader = dataFrame.iloc[1][0]
-        #select column of times
-        dftimes = dataFrame.iloc[2:][0]
-        #convert to matrix
-        times = dftimes.as_matrix()
-        #save as class object with type float
-        self.times = times.astype(numpy.float)
-        #if the user wants to analyze one point, the data is doubled in length
-        #to prevent future index problems
-        if len(self.times) == 1:
-            self.times = numpy.append(self.times,self.times)
-            self.times[1] = self.times[0]*1.1
-       
-        '''generate collected data'''
-        #select matrix of raw signals
-        dfcollected = dataFrame.iloc[2:,1:]
-        #convert to matrix
-        collected = dfcollected.as_matrix()
-        #save as class object with type float
-        self.rawCollectedData = collected.astype(numpy.float)
-        #if the user wants to analyze one point, the data is doubled in length
-        #to prevent future index problems
-        if len(self.rawCollectedData) == 1:
-            self.rawCollectedData = numpy.vstack((self.rawCollectedData,self.rawCollectedData))
+        [self.mass_fragment_numbers, self.abscissaHeader, self.times, self.rawCollectedData, self.collectedFileName]=[mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName]
+        
+        
         '''create data set to work on'''
         self.workingData = self.rawCollectedData
         
@@ -1130,107 +1542,10 @@ class MSData (object):
                 abscissa = self.experimentTimes[savePoint]
                 colIndex = ['m%s'% int(y) for y in self.mass_fragment_numbers]
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
-                
-                                
+                                        
 class MSReference (object):
-    
-    def __init__(self, referenceFileName, form):
-        #read the csv file into a dataframe
-        dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
-        
-        if form == 'xyyy':
-            ''' generate reference matrix'''
-            #remove top 4 rows
-            dfreference = dataFrame.iloc[4:][:]
-            #convert to matrix
-            reference = dfreference.as_matrix()
-            #convert the matrix to floats
-            self.provided_reference_intensities = reference.astype(numpy.float)
-            #clear rows of zeros
-            self.provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(self.provided_reference_intensities,startingRowIndex=1)
-        
-            '''generate electron number list'''
-            #select row of electron numbers
-            dfelectronnumbers = dataFrame.iloc[2][1:]
-            #convert to matrix
-            electronnumbers = dfelectronnumbers.as_matrix()
-            #save as class object with type int
-            self.electronnumbers = electronnumbers.astype(numpy.int32)
-       
-            '''generate list of molecule names'''
-            #select row of names
-            dfmolecules = dataFrame.iloc[1][1:]
-            #convert to matrix
-            molecules = dfmolecules.as_matrix()
-            #save as class object with type string
-            self.molecules = molecules.astype(numpy.str)
-            
-            '''generate list of molecular weights'''
-            #select row of names
-            dfmolecularWeights = dataFrame.iloc[3][1:]
-            #convert to matrix
-            molecularWeights = dfmolecularWeights.as_matrix()
-            #save as class object with type float
-            self.molecularWeights = molecularWeights.astype(numpy.float)
-            
-            '''generate list of source information'''
-            #select row of names
-            dfsourceInfo = dataFrame.iloc[0][1:]
-            #convert to matrix
-            sourceInfo = dfsourceInfo.as_matrix()
-            #save as class object with type string
-            self.sourceInfo = sourceInfo.astype(numpy.str)
-            
-            '''generate list of massfragments monitored '''
-            self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
-            
-        elif form == 'xyxy':
-            '''generate reference matrix'''
-            #remove top 4 rows
-            dfreference = dataFrame.iloc[4:][:]
-            #convert to matrix
-            reference = dfreference.as_matrix()
-            #convert the matrix to floats 
-            self.provided_reference_intensities = reference.astype(numpy.float)
-            #convert reference from XYXY to XYYY
-            self.FromXYXYtoXYYY()
-            #clear rows of zeros
-            self.provided_reference_intensities=DataFunctions.removeColumnsAtZeroOrBelowThreshold(self.provided_reference_intensities,startingRowIndex=1)
-            
-            '''generate electron numbers list'''
-            #create data frame of electron numbers
-            dfelectronnumbers = dataFrame.iloc[2,1::2]
-            #convert to matrix
-            electronnumbers = dfelectronnumbers.as_matrix()
-            #save as class object with type int
-            self.electronnumbers = electronnumbers.astype(numpy.int32)
-            
-            '''generate list of molecule names'''
-            #select matrix of names
-            dfmolecules = dataFrame.iloc[1,1::2]
-            #convert to matrix
-            molecules = dfmolecules.as_matrix()
-            #save as class object with type string
-            self.molecules = molecules.astype(numpy.str)
-            
-            '''generate list of molecular weights'''
-            #select row of names
-            dfmolecularWeights = dataFrame.iloc[3][1::2]
-            #convert to matrix
-            molecularWeights = dfmolecularWeights.as_matrix()
-            #save as class object with type float
-            self.molecularWeights = molecularWeights.astype(numpy.float)
-            
-            '''generate list of source information'''
-            #select row of names
-            dfsourceInfo = dataFrame.iloc[0][1::2]
-            #convert to matrix
-            sourceInfo = dfsourceInfo.as_matrix()
-            #save as class object with type string
-            self.sourceInfo = sourceInfo.astype(numpy.str)
-
-            '''generate list of massfragments monitored '''
-            self.mass_fragment_numbers_monitored = self.provided_reference_intensities[:,0]
+    def __init__(self, provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=None, form=None):
+        [self.provided_reference_intensities, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form]=[provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]
             
         '''Initializing Export Collector Variables'''
         #start the timer function
@@ -2526,22 +2841,29 @@ def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayli
 ## created csv file. When pandas is used to read the csv this
 ## will result in the creation of a column of 'nan'
 ## ImportWorkingData() has been modified to remove this column
-def ExportXYYYData(outputFileName, data, colIndex, exportSuffix='', abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None):
+def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', dataType = None, rowIndex = [], units = None, killSuffix = False): #if killSuffix is true, Export will not include a suffix for iterative analysis
     formatedColIndex = colIndex
-    if dataType == 'preProcessed' or dataType == 'simulated':
+    if dataType == 'preProcessed' or dataType == 'simulated' or dataType == 'Experiment':
         formatedColIndex = ['m%s' % MFNumber for MFNumber in colIndex]
     if dataType == 'scaled':
         formatedColIndex = ['%s Concentration Relative to CO' % molecule for molecule in colIndex]
     if dataType == 'concentration':
         label = ' Concentration(%s)' % units
         formatedColIndex = [molecule + label for molecule in colIndex]
+    #extraLine is used to create CSV files that conform to MSRESOLVE's import requirements i.e. having a row for comments at the top
+    extraLine = False
+    if dataType == 'Experiment':
+        extraLine = len(data[0,1:])
+        
 #If future applications of Export XYYY are desired, the new formats can be 
 #specified by additional keywords and if statements.
 
-    #the filename can have a suffix attached
-    outputFileName = outputFileName[:-4] + exportSuffix + outputFileName[-4:]
+#if iterative analysis is being used and the suffix is wanted
+    if G.iterativeAnalysis and not killSuffix:
+        #then the filename will have a suffix attached
+        outputFileName = outputFileName[:-4] + '_iter_%s' %G.iterationNumber + outputFileName[-4:]
 
-#testing if file is open, and rename if it is
+    #testing if file is open, and rename if it is
     #create list of name options
     nameOptions = [''] + list(range(100))
     for x in nameOptions:
@@ -2567,6 +2889,11 @@ def ExportXYYYData(outputFileName, data, colIndex, exportSuffix='', abscissaHead
         rowIndex = numpy.transpose([rowIndex])
         abscissaArrayToExport =  numpy.vstack((abscissaHeader,rowIndex))
         fullArrayToExport = numpy.hstack((abscissaArrayToExport,fullArrayToExport))
+    #insert an extra line with a header of the data type. Included to allow exported files to be uploaded during iterative analysis.
+    if not extraLine == False:
+        lineToInsert = "%s,%s" %(dataType, ',' * (extraLine))
+        lineToInsert = numpy.array(lineToInsert.split(','))
+        fullArrayToExport = numpy.vstack((lineToInsert, fullArrayToExport))
     #save the file to the correct name
     numpy.savetxt(filename, fullArrayToExport, delimiter = ',', fmt ="%s")
   
@@ -2647,7 +2974,6 @@ def CreateLogFile():
     f6.write(time.ctime(time.time()))
     f6.write('\n')
     f6.close()
-    print("LogFile complete")
 
 
 # Since SlSUniqueFragments is potentially used in a number of the analysis options
@@ -2658,7 +2984,12 @@ def CreateLogFile():
 # abscissaHeader - string name of the experiment data type (e.g. 'Temp' or 'time')
 # molecules - list of strings of molecule names from referenceData.molecules
 def createSLSUniqueOrderFile(abscissaHeader, molecules):
-    with open('SLSUniqueOrder.csv','w') as fp:
+    outputFileName = 'SLSUniqueOrder.csv'
+    if G.iterativeAnalysis:
+        #then the filename will have a suffix attached
+        outputFileName = outputFileName[:-4] + '_iter_%s' %G.iterationNumber + outputFileName[-4:]
+    
+    with open(outputFileName,'w') as fp:
         # Headers
         fp.write('{},{}'.format(
             'Data Point',abscissaHeader))
@@ -2673,7 +3004,7 @@ def createSLSUniqueOrderFile(abscissaHeader, molecules):
 This function takes in the end result of everything and exports it to the 
 log file. 
 '''
-def PrintLogFile():
+def PopulateLogFile():
     filename6 = 'LogFile.txt' #the log file is printed here
     f6 = open(filename6,'a')
     f6.write('\n')
@@ -2773,24 +3104,47 @@ def PrintLogFile():
 ###############################################Algorithm Part 3: Main Control Function ###################################
 ##################################################################################################################
 def main():
+     #This section is to overwrite the UI if iterative analysis is in the process of being run. 
+    highestIteration = int(FindHighestDirNumber("_iter_"))
+    iterationDirectorySuffix = '_iter_%s' %str(highestIteration)
+    for directoryName in os.listdir():
+        if iterationDirectorySuffix in directoryName:
+            userInputName = 'UserInput%s' %iterationDirectorySuffix
+            userInputPath = '%s.%s' %(directoryName, userInputName)
+            global G
+            UserInput2 = importlib.import_module('..%s' %userInputName, '%s' %userInputPath)
+            G = UserInput2
+            break
+    G.iterationNumber = highestIteration
+    G.iterationSuffix = iterationDirectorySuffix
     
-    # Create the log file, and record the time
+    #Record the time
     G.start = timeit.default_timer()
     G.checkpoint = timeit.default_timer()
-    CreateLogFile()
+    
+    #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
+    if G.iterativeAnalysis and G.iterationNumber != 1:
+        #implied arguments for this function are G.referenceFileName and G.collectedFileName
+        IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
     
     #initalize the data classes with the data from given Excel files
     #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
     global ReferenceDataList
     global ExperimentData
     global currentReferenceData
-    ExperimentData = MSData(G.collectedFileName)
+    
+    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
+    ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
     currentReferenceData = ReferenceDataList[0]
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referenceFileName) > len(G.referencePatternTimeRanges):
         print("WARNING: There are more reference files given than time ranges")
 
+    #if this is the first iterative run, then the reference and experimental files need to have been imported before the iteration can begin
+    if G.iterativeAnalysis and G.iterationNumber == 1 :
+        #implied arguments for the following function are G.referenceFileName and G.collectedFileName
+        IterationFirstDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
 
     # Skip preProcessing all together if we are loading analyzed data
     if(G.dataAnalysis == 'load'):
@@ -2799,20 +3153,8 @@ def main():
         # Skip preprocessing
         G.preProcessing = 'skip'
         
-    if G.iterativeAnalysis:
-        #This will become a directory preprocessing function call, but it doesn't exist yet
-        pass
-    else:
-        G.exportSuffix = ''
         
     if(G.preProcessing == 'yes'):
-        
-        
-    # Trim the reference data according to the selected molecules list
-        (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules)
-
-    # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
         
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
@@ -2824,7 +3166,7 @@ def main():
             Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'PreprocessingAfterSmoothing' )
 
         #Exports the Preprocessed Data
-        ExportXYYYData(G.preProcessedDataOutputName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, G.exportSuffix,
+        ExportXYYYData(G.preProcessedDataOutputName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 
                        abscissaHeader = ExperimentData.abscissaHeader, dataType = 'preProcessed', rowIndex = ExperimentData.times)
         print("Preprocessed data exported")
         
@@ -2870,7 +3212,21 @@ def main():
         # if we are here then 'G.preProcessing' != ('yes' or 'skip' or 'load')
         raise ValueError("The value of preProcessing is not set appropriately, it should be 'yes', 'skip' or 'load'." +
                          "Or you are attempting to load pre-processed data without running data analysis")
-
+    if G.iterativeAnalysis:
+        #make a copy of the experimental data
+        ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
+        ReferenceDataFullCopy = copy.deepcopy(currentReferenceData)
+        
+     # Trim the reference data according to the selected molecules list
+    (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules)
+    
+    #Trim the experimental data according to the mass fragments in G.chosenMassFragments and the reference data
+    (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData) 
+    
+    #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
+    if G.iterativeAnalysis:
+        IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, currentReferenceData, ReferenceDataFullCopy)
+   
 
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
@@ -3029,7 +3385,7 @@ def main():
         if G.generatePercentages == 'yes':
             percentagesOutputArray = GeneratePercentages(concentrationsScaledToCOarray)
             ExportXYYYData(G.scaledConcentrationsPercentages, percentagesOutputArray, currentReferenceData.molecules, G.exportSuffix)
-        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, G.exportSuffix,abscissaHeader = "Time", dataType = str('scaled'))
+        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, abscissaHeader = "Time", dataType = str('scaled'))
         times = concentrationsScaledToCOarray[:,0]#the times are just the first column of the array
         data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
         
@@ -3056,14 +3412,19 @@ def main():
         #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
         simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, currentReferenceData.matching_correction_values)
         #Exporting the simulated signals data
-        ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, G.exportSuffix, abscissaHeader = "Time", dataType = 'simulated')
+        ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = "Time", dataType = 'simulated')
         #show net time for simulation
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
         G.checkPoint = timeit.default_timer()
         print("Simulation Finished")
         print('Simulation Time: ', (G.timeSinceLastCheckPoint))
-    PrintLogFile()
-
+        
+    CreateLogFile()    
+    PopulateLogFile()
+    print("LogFile complete")
+    
+    if G.iterativeAnalysis:
+        IterativeAnalysisPostProcessing(ExperimentData, simulateddata, ExperimentData.mass_fragment_numbers, ExperimentDataFullCopy, times, data, currentReferenceData.molecules)
 
 if __name__ == '__main__':
     main()
