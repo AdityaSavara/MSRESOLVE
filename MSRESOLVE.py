@@ -3156,9 +3156,23 @@ def main():
         
     if(G.preProcessing == 'yes'):
         
+        if G.iterativeAnalysis:
+            #create a copy of the Reference Data
+             ReferenceDataFullCopy = copy.deepcopy(currentReferenceData)
+             
+        # Trim the reference data according to the selected molecules list
+        (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules) 
+             
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
         print("Data PreProcessing completed")
+        
+        if G.iterativeAnalysis:
+            #make a copy of the experimental data
+            ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
+            
+        #Trim the experimental data according to the mass fragments in G.chosenMassFragments and the reference data
+        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData) 
         
         #This graph call is graphing fully preprocessed data.
         if G.grapher == 'yes':
@@ -3178,8 +3192,10 @@ def main():
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
         G.checkpoint = timeit.default_timer()
         print('PreProcessing Time: ', (G.timeSinceLastCheckPoint))
-        
-        
+    
+        #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
+        if G.iterativeAnalysis:
+            IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, currentReferenceData, ReferenceDataFullCopy)
     
     elif(G.preProcessing == 'skip'):
 
@@ -3212,21 +3228,6 @@ def main():
         # if we are here then 'G.preProcessing' != ('yes' or 'skip' or 'load')
         raise ValueError("The value of preProcessing is not set appropriately, it should be 'yes', 'skip' or 'load'." +
                          "Or you are attempting to load pre-processed data without running data analysis")
-    if G.iterativeAnalysis:
-        #make a copy of the experimental data
-        ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
-        ReferenceDataFullCopy = copy.deepcopy(currentReferenceData)
-        
-     # Trim the reference data according to the selected molecules list
-    (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules)
-    
-    #Trim the experimental data according to the mass fragments in G.chosenMassFragments and the reference data
-    (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData) 
-    
-    #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
-    if G.iterativeAnalysis:
-        IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, currentReferenceData, ReferenceDataFullCopy)
-   
 
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
