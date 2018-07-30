@@ -3075,7 +3075,7 @@ def main():
                 #If we are in the last time range, calling this function will result in an index error
                 #If using this feature, (len(G.referencePatternTimeRanges)) will always be at least 2 time ranges so use len(G.referencePatternTimeRanges)-1
                 if currentReferencePatternIndex < (len(G.referencePatternTimeRanges)-1):    
-                    (currentReferenceData, currentReferencePatternIndex) = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1])
+                    currentReferenceData, currentReferencePatternIndex = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1])
 
             ## TODO: Find out why RawSignalsArrayMaker() takes longer to run when preprocessed data is
             # computed directly rather than loaded. It doesn't seem to effect rawsignalsarrayline in
