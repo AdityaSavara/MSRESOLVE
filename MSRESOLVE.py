@@ -408,9 +408,9 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                 for eachChosenMoleculesMF in range(len(allExtractedIntensitiesArray)):
                     intensitiesAverage = numpy.average(allExtractedIntensitiesArray[eachChosenMoleculesMF])
                     allExtractedIntensitiesAverage.append(intensitiesAverage)
-                #For loop to overwrite the reference file with the value of the reference signal of the chosen mass fragment with the product of the signal and the ratio of the averages
+                #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
-                    copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1]
+                    copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_intensities[massfragindexer[0],moleculecounter+1]
     return copyOfReferenceData.provided_reference_intensities
 
 '''
@@ -962,6 +962,50 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     for i in range(len(referenceFileNames)):
         ReferenceDataAndFormsList.append(MSReference(referenceFileNames[i],listOfForms[i]))
     return ReferenceDataAndFormsList
+
+'''
+InterpolateReferencePatterns is a function used in the reference pattern time chooser feature when a gap occurs between two time ranges
+It inputs two reference files, the current time, the start time of the gap, and the end time of the gap
+It interpolates row by row and returns the new interpolated data
+'''
+def InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,time,gapStart,gapEnd):
+    #Since we probably need values from firstReferenceObject for another interpolation, create a deepcopy of firstReferenceObject
+    newReferenceObject = copy.deepcopy(firstReferenceObject)
+    #loop through the provided reference intensities and linearly interpolate row by row
+    for i in range(len(firstReferenceObject.monitored_reference_intensities)):
+        #monitor_reference_intensities does not use an abscissa so index as [i,:] to use every column in the ith row
+        newReferenceObject.monitored_reference_intensities[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.monitored_reference_intensities[i,:],secondReferenceObject.monitored_reference_intensities[i,:],time,gapStart,gapEnd)
+    return newReferenceObject
+
+'''
+CheckCurrentTimeRange is a function used for the Reference Pattern Time Chooser feature.  It looks at the current time in data analysis and determines
+which reference pattern needs to be used based on user input.  If the time is in the current reference pattern's time range, the function does nothing.
+If the time is in between two time ranges, the function calls InterpolateReferencePatterns where the two patterns are linearly interpolated.
+If the time is at the beginning of the next time range, it will change the currentReferenceData to the nextReferenceData
+'''
+def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRanges, currentTime, firstReferenceObject, secondReferenceObject):
+    #Print a warning if user has not filled time ranges from data analysis start and stop time
+    if (currentTime > referencePatternTimeRanges[-1][1]) or (currentTime < referencePatternTimeRanges[0][0]):
+        print("WARNING: User has chosen to use Reference Pattern Time Chooser.  \nUser needs to input reference pattern time ranges that fill the entirety of the data analysis time range. \nUser has not and the program is about to crash.")
+        #If in the current time range, continue on with the for loop
+    if currentTime >= referencePatternTimeRanges[currentReferencePatternIndex][0] and currentTime <= referencePatternTimeRanges[currentReferencePatternIndex][1]:
+        pass
+        #Return the original reference pattern and the index
+        return (firstReferenceObject, currentReferencePatternIndex)
+    #Otherwise we are not in the current time range so look for a gap or see if we are in the next time range
+    else:
+        #If we are out of the first time range but not yet in the second time range, we are in a gap
+        if currentTime > referencePatternTimeRanges[currentReferencePatternIndex][1] and currentTime < referencePatternTimeRanges[currentReferencePatternIndex+1][0]:
+            #Reads in current reference pattern, next reference pattern, current time, gap start time, and gap end time
+            currentReferenceData = InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
+        #If we are out of the first time range, not in a gap, and not in the last time range, then we are in the next time range
+        elif currentTime >= referencePatternTimeRanges[currentReferencePatternIndex+1][0]:
+            #Increase the index
+            currentReferencePatternIndex = currentReferencePatternIndex + 1
+            #Change the reference data accordingly
+            currentReferenceData = ReferenceDataList[currentReferencePatternIndex]
+        return (currentReferenceData, currentReferencePatternIndex)
+
 
 
 # DataInput just asks the user for the data file names and indexes them into arrays 
@@ -2944,12 +2988,20 @@ def main():
         ExperimentData = RatioFinder(currentReferenceData, ExperimentData, G.concentrationFinder,
                                       G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
 	##End: Preparing data for data analysis based on user input choices
-        
+    
+        #Initialize a current reference pattern index
+        currentReferencePatternIndex = 0
         for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time   
             #This print statement was used to track the progress of the program during long analysis runs
             if ((timeIndex % 100) == 0 and timeIndex != 0):
                 print(timeIndex)
-           
+            #If referencePatternTimeRanges has anything in it, then the user has opted to use the Reference Pattern Time Chooser feature
+            #FIXME interpolation portion of reference pattern time chooser does not work yet
+            if len(G.referencePatternTimeRanges) != 0:
+                #If we are in the last time range, calling this function will result in an index error
+                #If using this feature, (len(G.referencePatternTimeRanges)) will always be at least 2 time ranges so use len(G.referencePatternTimeRanges)-1
+                if currentReferencePatternIndex < (len(G.referencePatternTimeRanges)-1):    
+                    (currentReferenceData, currentReferencePatternIndex) = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1])
 
             ## TODO: Find out why RawSignalsArrayMaker() takes longer to run when preprocessed data is
             # computed directly rather than loaded. It doesn't seem to effect rawsignalsarrayline in
