@@ -546,7 +546,7 @@ def TrimDataMolecules(ReferenceData, chosenMolecules):
         #update the mass fragment list from the posibly shortened reference spectrums
         ReferenceData.mass_fragment_numbers_monitored = ReferenceData.provided_reference_intensities[:,0]
         
-        ReferenceData.ExportCollector("MoleculeChooser")
+        ReferenceData.ExportCollector("MoleculeChooser", use_provided_reference_intensities=True)
     
     return ReferenceData.provided_reference_intensities, ReferenceData.electronnumbers, ReferenceData.molecules, ReferenceData.mass_fragment_numbers_monitored
     
@@ -3161,7 +3161,7 @@ def main():
              ReferenceDataFullCopy = copy.deepcopy(currentReferenceData)
              
         # Trim the reference data according to the selected molecules list
-        (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules) 
+        currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored = TrimDataMolecules(currentReferenceData, G.chosenMolecules) 
              
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
@@ -3172,7 +3172,7 @@ def main():
             ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
             
         #Trim the experimental data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData) 
+        ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData) 
         
         #This graph call is graphing fully preprocessed data.
         if G.grapher == 'yes':
@@ -3203,7 +3203,7 @@ def main():
         # MS data
 
         # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
+        ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData)
         
         # Output to make sure user knows we are skipping Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -3217,7 +3217,7 @@ def main():
         ExperimentData.workingData, ExperimentData.mass_fragment_numbers, ExperimentData.times = ImportWorkingData(G.preProcessedDataOutputName)
 
         # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
+        ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData)
              
         # Output to make sure user knows we are loading Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -3257,6 +3257,7 @@ def main():
     
             # Export the reference data files that have been stored by ReferenceData.ExportCollector
             ReferenceDataList[i].ExportFragmentationPatterns()
+            print(ReferenceDataList[i].standardized_reference_intensties)
 
             
     if (G.dataAnalysis == 'yes'):
@@ -3270,7 +3271,7 @@ def main():
         # and the corresponding colums from ExperimentData.workingData
         if G.specificMassFragments == 'yes':
             print("MassFragChooser")
-            (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
+            ExperimentData.workingData, ExperimentData.mass_fragment_numbers = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
                                                                                                                            ExperimentData.mass_fragment_numbers,
                                                                                                                            G.chosenMassFragments)
             ExperimentData.ExportCollector("MassFragChooser")
