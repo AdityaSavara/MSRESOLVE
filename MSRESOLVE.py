@@ -530,11 +530,11 @@ def TrimDataMolecules(ReferenceData, chosenMolecules):
         copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
         
         #shorten the reference fragmentation pattern to the required length
-        (Temp_Reference_Data, ReferenceData.molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.provided_reference_intensities[:,1:],
+        Temp_Reference_Data, ReferenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.provided_reference_intensities[:,1:],
                                                                                                                         ReferenceData.molecules, chosenMolecules)  
         #Shorten the electronnumbers to the correct values, using the copy of molecules 
         ArrayOneD = True
-        (ReferenceData.electronnumbers, copy_molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
+        ReferenceData.electronnumbers, copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
         #add a second dimension to the reference data
         newReferenceMF = numpy.reshape(ReferenceData.mass_fragment_numbers_monitored,(-1,1))
         
@@ -546,7 +546,7 @@ def TrimDataMolecules(ReferenceData, chosenMolecules):
         #update the mass fragment list from the posibly shortened reference spectrums
         ReferenceData.mass_fragment_numbers_monitored = ReferenceData.provided_reference_intensities[:,0]
         
-        ReferenceData.ExportCollector("MoleculeChooser")
+        ReferenceData.ExportCollector("MoleculeChooser", use_provided_reference_intensities=True)
     
     return ReferenceData.provided_reference_intensities, ReferenceData.electronnumbers, ReferenceData.molecules, ReferenceData.mass_fragment_numbers_monitored
     
@@ -1053,7 +1053,7 @@ def ExportUserInputFile(fileName):
     globalsFE_object.save_params()
     
 #this function is used to append any list to a file in an executable fashion
-def AppendList(listVariableName, List, FileName, entriesPerLine): 
+def AppendListToFile(listVariableName, List, FileName, entriesPerLine): 
     #open the file in an append fashion
     with open(FileName,'a+') as f:
         #write in the variable name and open the list
@@ -1179,7 +1179,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     #copy the first UserInputFile into the first iteration directory
     ExportUserInputFile("UserInput_iter_1.py")
     #append the variable list to the user input file
-    AppendList("__var_list__", G.__var_list__, "UserInput_iter_1.py", 5)
+    AppendListToFile("__var_list__", G.__var_list__, "UserInput_iter_1.py", 5)
     
     #record the old file names 
     G.oldReferenceFileName = G.referenceFileName
@@ -1263,7 +1263,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     #export the user input specifications 
     ExportUserInputFile(nextUserInputFileName)
     #append the variable list to the user input file
-    AppendList("__var_list__", G.__var_list__, nextUserInputFileName, 5)
+    AppendListToFile("__var_list__", G.__var_list__, nextUserInputFileName, 5)
     
     if G.iterativeAnalysis == True:
         iterationDirectoryName = '_iter_%s' %(str(G.iterationNumber - 1))
@@ -1497,7 +1497,7 @@ class MSData (object):
 		
     def __init__(self, mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName=None):
         
-        [self.mass_fragment_numbers, self.abscissaHeader, self.times, self.rawCollectedData, self.collectedFileName]=[mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName]
+        self.mass_fragment_numbers, self.abscissaHeader, self.times, self.rawCollectedData, self.collectedFileName=mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName
         
         
         '''create data set to work on'''
@@ -1545,7 +1545,11 @@ class MSData (object):
                                         
 class MSReference (object):
     def __init__(self, provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=None, form=None):
-        [self.provided_reference_intensities, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form]=[provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]
+        self.provided_reference_intensities, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form
+        
+        #This loops through the molecules, and removes whitespaces from before and after the molecule's names.
+        for moleculeIndex, moleculeName in enumerate(self.molecules):
+            self.molecules[moleculeIndex] = moleculeName.strip()
             
         '''Initializing Export Collector Variables'''
         #start the timer function
@@ -3104,19 +3108,26 @@ def PopulateLogFile():
 ###############################################Algorithm Part 3: Main Control Function ###################################
 ##################################################################################################################
 def main():
-     #This section is to overwrite the UI if iterative analysis is in the process of being run. 
-    highestIteration = int(FindHighestDirNumber("_iter_"))
-    iterationDirectorySuffix = '_iter_%s' %str(highestIteration)
-    for directoryName in os.listdir():
-        if iterationDirectorySuffix in directoryName:
-            userInputName = 'UserInput%s' %iterationDirectorySuffix
-            userInputPath = '%s.%s' %(directoryName, userInputName)
-            global G
-            UserInput2 = importlib.import_module('..%s' %userInputName, '%s' %userInputPath)
-            G = UserInput2
-            break
-    G.iterationNumber = highestIteration
-    G.iterationSuffix = iterationDirectorySuffix
+    global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.
+    if G.iterativeAnalysis:
+        #This section is to overwrite the UI if iterative analysis is in the process of being run. 
+        highestIteration = int(FindHighestDirNumber("_iter_"))
+        iterationDirectorySuffix = '_iter_%s' %str(highestIteration)
+        for directoryName in os.listdir():
+            if iterationDirectorySuffix in directoryName:
+                userInputName = 'UserInput%s' %iterationDirectorySuffix
+                userInputPath = '%s.%s' %(directoryName, userInputName)
+                UserInput2 = importlib.import_module('..%s' %userInputName, '%s' %userInputPath)
+                G = UserInput2
+                break
+        G.iterationNumber = highestIteration
+        G.iterationSuffix = iterationDirectorySuffix
+    
+    #it is useful to trim whitespace from each chosenMolecules string. The same thing is done to the molecule names of each reference pattern when an MSReference object is created.
+    for moleculeIndex, moleculeName in enumerate(G.chosenMolecules):
+        G.chosenMolecules[moleculeIndex] = moleculeName.strip()
+    
+    
     
     #Record the time
     G.start = timeit.default_timer()
@@ -3161,7 +3172,7 @@ def main():
              ReferenceDataFullCopy = copy.deepcopy(currentReferenceData)
              
         # Trim the reference data according to the selected molecules list
-        (currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored) = TrimDataMolecules(currentReferenceData, G.chosenMolecules) 
+        currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored = TrimDataMolecules(currentReferenceData, G.chosenMolecules) 
              
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
@@ -3172,7 +3183,7 @@ def main():
             ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
             
         #Trim the experimental data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData) 
+        ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData) 
         
         #This graph call is graphing fully preprocessed data.
         if G.grapher == 'yes':
@@ -3203,7 +3214,7 @@ def main():
         # MS data
 
         # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
+        ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData)
         
         # Output to make sure user knows we are skipping Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -3217,7 +3228,7 @@ def main():
         ExperimentData.workingData, ExperimentData.mass_fragment_numbers, ExperimentData.times = ImportWorkingData(G.preProcessedDataOutputName)
 
         # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = trimDataMasses(ExperimentData, currentReferenceData)
+        ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData)
              
         # Output to make sure user knows we are loading Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -3257,10 +3268,8 @@ def main():
     
             # Export the reference data files that have been stored by ReferenceData.ExportCollector
             ReferenceDataList[i].ExportFragmentationPatterns()
-
             
-    if (G.dataAnalysis == 'yes'):
-                
+    if (G.dataAnalysis == 'yes'):               
         # Reset the checkpoint timer for the data analysis section
         G.checkpoint = timeit.default_timer()
 	
@@ -3270,12 +3279,11 @@ def main():
         # and the corresponding colums from ExperimentData.workingData
         if G.specificMassFragments == 'yes':
             print("MassFragChooser")
-            (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
+            ExperimentData.workingData, ExperimentData.mass_fragment_numbers = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
                                                                                                                            ExperimentData.mass_fragment_numbers,
                                                                                                                            G.chosenMassFragments)
             ExperimentData.ExportCollector("MassFragChooser")
 
-        
         # Since SlSUniqueFragments is potentially used in a number of the analysis options
         # set up the 'SLSUniqueOrder.csv' file headers here
         # note that this open overwrites previous file contents
