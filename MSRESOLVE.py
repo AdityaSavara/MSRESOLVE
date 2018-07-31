@@ -3108,19 +3108,20 @@ def PopulateLogFile():
 ###############################################Algorithm Part 3: Main Control Function ###################################
 ##################################################################################################################
 def main():
-     #This section is to overwrite the UI if iterative analysis is in the process of being run. 
-    highestIteration = int(FindHighestDirNumber("_iter_"))
-    iterationDirectorySuffix = '_iter_%s' %str(highestIteration)
-    for directoryName in os.listdir():
-        if iterationDirectorySuffix in directoryName:
-            userInputName = 'UserInput%s' %iterationDirectorySuffix
-            userInputPath = '%s.%s' %(directoryName, userInputName)
-            global G
-            UserInput2 = importlib.import_module('..%s' %userInputName, '%s' %userInputPath)
-            G = UserInput2
-            break
-    G.iterationNumber = highestIteration
-    G.iterationSuffix = iterationDirectorySuffix
+    global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.
+    if G.iterativeAnalysis:
+        #This section is to overwrite the UI if iterative analysis is in the process of being run. 
+        highestIteration = int(FindHighestDirNumber("_iter_"))
+        iterationDirectorySuffix = '_iter_%s' %str(highestIteration)
+        for directoryName in os.listdir():
+            if iterationDirectorySuffix in directoryName:
+                userInputName = 'UserInput%s' %iterationDirectorySuffix
+                userInputPath = '%s.%s' %(directoryName, userInputName)
+                UserInput2 = importlib.import_module('..%s' %userInputName, '%s' %userInputPath)
+                G = UserInput2
+                break
+        G.iterationNumber = highestIteration
+        G.iterationSuffix = iterationDirectorySuffix
     
     #it is useful to trim whitespace from each chosenMolecules string. The same thing is done to the molecule names of each reference pattern when an MSReference object is created.
     for moleculeIndex, moleculeName in enumerate(G.chosenMolecules):
