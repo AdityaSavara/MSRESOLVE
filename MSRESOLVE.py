@@ -1356,7 +1356,7 @@ class MSReference (object):
         self.runTimeAtExport = []
         self.labelToExport = []
         self.dataToExport = []
-	self.exportSuffix = ''
+        self.exportSuffix = ''
         #self.experimentTimes = []
             
     def ExportCollector(self, callingFunction, use_provided_reference_intensities = False):
