@@ -3257,11 +3257,8 @@ def main():
     
             # Export the reference data files that have been stored by ReferenceData.ExportCollector
             ReferenceDataList[i].ExportFragmentationPatterns()
-            print(ReferenceDataList[i].standardized_reference_intensties)
-
             
-    if (G.dataAnalysis == 'yes'):
-                
+    if (G.dataAnalysis == 'yes'):               
         # Reset the checkpoint timer for the data analysis section
         G.checkpoint = timeit.default_timer()
 	
@@ -3276,7 +3273,6 @@ def main():
                                                                                                                            G.chosenMassFragments)
             ExperimentData.ExportCollector("MassFragChooser")
 
-        
         # Since SlSUniqueFragments is potentially used in a number of the analysis options
         # set up the 'SLSUniqueOrder.csv' file headers here
         # note that this open overwrites previous file contents
