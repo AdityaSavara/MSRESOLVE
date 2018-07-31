@@ -1356,6 +1356,7 @@ class MSReference (object):
         self.runTimeAtExport = []
         self.labelToExport = []
         self.dataToExport = []
+	self.exportSuffix = ''
         #self.experimentTimes = []
             
     def ExportCollector(self, callingFunction, use_provided_reference_intensities = False):
@@ -1385,7 +1386,7 @@ class MSReference (object):
                 filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
                 data = self.dataToExport[savePoint]
                 colIndex = ['%s'% y for y in self.molecules]
-                ExportXYYYData(filename,data,colIndex, G.exportSuffix)
+                ExportXYYYData(filename,data,colIndex, self.exportSuffix)
 
     # This class function removes all rows of zeros from
     # the XYYY sorted reference data.
