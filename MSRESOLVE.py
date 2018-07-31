@@ -530,11 +530,11 @@ def TrimDataMolecules(ReferenceData, chosenMolecules):
         copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
         
         #shorten the reference fragmentation pattern to the required length
-        (Temp_Reference_Data, ReferenceData.molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.provided_reference_intensities[:,1:],
+        Temp_Reference_Data, ReferenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.provided_reference_intensities[:,1:],
                                                                                                                         ReferenceData.molecules, chosenMolecules)  
         #Shorten the electronnumbers to the correct values, using the copy of molecules 
         ArrayOneD = True
-        (ReferenceData.electronnumbers, copy_molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
+        ReferenceData.electronnumbers, copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
         #add a second dimension to the reference data
         newReferenceMF = numpy.reshape(ReferenceData.mass_fragment_numbers_monitored,(-1,1))
         
@@ -1546,6 +1546,10 @@ class MSData (object):
 class MSReference (object):
     def __init__(self, provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=None, form=None):
         self.provided_reference_intensities, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form
+        
+        #This loops through the molecules, and removes whitespaces from before and after the molecule's names.
+        for moleculeIndex, moleculeName in enumerate(self.molecules):
+            self.molecules[moleculeIndex] = moleculeName.strip()
             
         '''Initializing Export Collector Variables'''
         #start the timer function
@@ -3117,6 +3121,12 @@ def main():
             break
     G.iterationNumber = highestIteration
     G.iterationSuffix = iterationDirectorySuffix
+    
+    #it is useful to trim whitespace from each chosenMolecules string. The same thing is done to the molecule names of each reference pattern when an MSReference object is created.
+    for moleculeIndex, moleculeName in enumerate(G.chosenMolecules):
+        G.chosenMolecules[moleculeIndex] = moleculeName.strip()
+    
+    
     
     #Record the time
     G.start = timeit.default_timer()
