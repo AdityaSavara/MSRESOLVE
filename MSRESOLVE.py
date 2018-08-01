@@ -965,6 +965,9 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     for i in range(len(referenceFileNames)):
         [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],referencePatternForm[i])
         ReferenceDataAndFormsList.append(MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
+        #save each global variable into the class objects 
+        ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
+        ReferenceDataAndFormsList[i].iterationSuffix = G.iterationSuffix
     return ReferenceDataAndFormsList
 
 '''
@@ -1585,7 +1588,8 @@ class MSData (object):
     def __init__(self, mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName=None):
         
         self.mass_fragment_numbers, self.abscissaHeader, self.times, self.rawCollectedData, self.collectedFileName=mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName
-        
+        #class object variable created to allow class to be used separately from the program. 
+        self.ExportAtEachStep = ''
         
         '''create data set to work on'''
         self.workingData = self.rawCollectedData
@@ -1611,7 +1615,7 @@ class MSData (object):
         #add the name of the calling function to mark its use
         self.labelToExport.append(callingFunction) 
         
-        if G.ExportAtEachStep == 'yes':
+        if self.ExportAtEachStep == 'yes':
             #record data of experiment
             self.dataToExport.append(self.workingData.copy())
             #record times from the data of the experiment
@@ -1622,7 +1626,7 @@ class MSData (object):
         for savePoint in range(len(self.runTimeAtExport)):
             print(self.labelToExport[savePoint])
             print(self.runTimeAtExport[savePoint])
-            if G.ExportAtEachStep == 'yes':
+            if self.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
                 filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint]) #FIXME: for DataSmoother, and some others, the debug output has a "Time" header but the time is not exported.
                 data = self.dataToExport[savePoint]
@@ -1633,7 +1637,9 @@ class MSData (object):
 class MSReference (object):
     def __init__(self, provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=None, form=None):
         self.provided_reference_intensities, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form
-        
+        #class object variable created to allow class to be used separately from the program. 
+        self.ExportAtEachStep = ''
+        self.iterationSuffix = ''
         #This loops through the molecules, and removes whitespaces from before and after the molecule's names.
         for moleculeIndex, moleculeName in enumerate(self.molecules):
             self.molecules[moleculeIndex] = moleculeName.strip()     
@@ -1659,7 +1665,7 @@ class MSReference (object):
         #add the name of the calling function to mark its use
         self.labelToExport.append(callingFunction) 
         
-        if G.ExportAtEachStep == 'yes':
+        if self.ExportAtEachStep == 'yes':
             #record data of experiment
             if use_provided_reference_intensities:
                 self.dataToExport.append(self.provided_reference_intensities.copy())
@@ -1671,12 +1677,12 @@ class MSReference (object):
         for savePoint in range(len(self.runTimeAtExport)):
             print(self.labelToExport[savePoint])
             print(self.runTimeAtExport[savePoint])
-            if G.ExportAtEachStep == 'yes':
+            if self.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
                 filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
                 data = self.dataToExport[savePoint]
                 colIndex = ['%s'% y for y in self.molecules]
-                ExportXYYYData(filename,data,colIndex, fileSuffix = G.iterationSuffix)
+                ExportXYYYData(filename,data,colIndex, fileSuffix = self.iterationSuffix)
 
     # This class function removes all rows of zeros from
     # the XYYY sorted reference data.
@@ -3245,7 +3251,9 @@ def main():
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referenceFileName) > len(G.referencePatternTimeRanges):
         print("WARNING: There are more reference files given than time ranges")
-
+    #save each global variable into the class objects 
+    ExperimentData.ExportAtEachStep = G.ExportAtEachStep
+   
     #if this is the first iterative run, then the reference and experimental files need to have been imported before the iteration can begin
     if G.iterativeAnalysis and G.iterationNumber == 1 :
         #implied arguments for the following function are G.referenceFileName and G.collectedFileName
