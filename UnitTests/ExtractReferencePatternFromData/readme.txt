@@ -18,23 +18,41 @@ The variables input are:
 rpcMoleculesToChange = ['Crotyl Alcohol']
 rpcMoleculesToChangeMF = [[57,70]]
 rpcTimeRanges = [[569,577]]
-So here m70 for Crotyl Alcohol should be twice what it was before since the ratio of the average of m70 to the average of m57 is approximately 2.
+So here m70 will be altered so that it is twice m57 for crotyl alcohol
 
 Test 2 uses the same input as before but now
 rpcMoleculesToChangeMF = [[70,57]]
-So now m57 for Crotyl Alcohol should half what it was since the ratio of the average of m57 to the average of m70 is approximately 0.5
+So now m57 will be altered to be half of m57 for crotyl alcohol
 
 Test 3 uses the full 2-CrotAcetExp#2.csv and the original signals
 Variable inputs are:
 rpcMoleculesToChange = ['CO2']
 rpcMoleculesToChangeMF = [[28,44]]
 rpcTimeRanges = [[300,600]]
-The reference signal for mass fragement 44 for CO2 changed from 10456 to 3551 since the ratio of the average signal of m44 to the average signal of m28 from 300 to 600 is about 3
+In CO2, the reference signal for m44 should be altered to be about 3 times larger than the signal for m28
 
 Test 4 uses the full 2-CrotAcetExp#2.csv and the original signals
 Variable inputs are:
 rpcMoleculesToChange = ['Crotyl Alcohol','CO2']
 rpcMoleculesToChangeMF = [[57,70],[28,44]]
 rpcTimeRanges = [[300,600],[300,600]]
-So here the reference signal for Crotyl Alcohol at mass fragment 70 will be replaced with the product of itstelf and the ratio of the average intensity of m70 from time 300 to 600 to the average intensity of m57 from time 300 to 600
-Also the reference signal for CO2 at mass fragment 28 will be replaced with the procut of itself and the ratio of the average intensity of m44 from time 300 to 600 to the average intensity of m28 from time 300 to 600
+m70 for crotyl alcohol is replaced with the product of the ratio of m70/m57 from 300 to 600 and the signal at m57
+Likewise, m44 for CO2 is replaced with the product of the ratio of m44/m28 from 300 to 600 and the signal at m28
+
+Test 5 uses the full 2-CrotAcetExp#2.csv and the original signals
+Variable inputs are:
+rpcMoleculesToChange = ['Crotyl Alcohol']
+rpcMoleculesToChangeMF = [[57,70,44]]
+rpcTimeRanges = [[300,600]]
+m70 for crotyl alcohol is replaced with the product of the ratio of m70/m57 from 300 to 600 and the signal at m57
+m44 for crotyl alcohol is replaced with the product of the ratio of m44/m57 from 300 to 600 and the signal at m57 (results in a large number)
+
+Test 6 uses the full 2-CrotAcetExp#2.csv and the original signals
+Variable inputs are:
+rpcMoleculesToChange = ['Crotyl Alcohol','CO2']
+rpcMoleculesToChangeMF = [[57,70,44],[28,44]]
+rpcTimeRanges = [[300,600],[300,600]]
+m70 for crotyl alcohol is replaced with the product of the ratio of m70/m57 from 300 to 600 and the signal at m57
+m44 for crotyl alcohol is replaced with the product of the ratio of m44/m57 from 300 to 600 and the signal at m57 (results in a large number)
+m44 for CO2 is replaced with the product of the ratio of m44/m28 from 300 to 600 and the signal at m28
+
