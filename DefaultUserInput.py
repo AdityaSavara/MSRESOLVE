@@ -39,12 +39,12 @@ timeRangeFinish = 900	#finish time (-int)
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
 specificMolecules = 'no'
-chosenMolecules = ['Crotyl Alcohol']
+chosenMolecules = ['CO', 'CO2', 'H2O']
 
 #//Chosen Mass Fragments//
 #To choose only specific mass fragments from collected data, input below:
-specificMassFragments = 'no'	#if you wish to enable this function enter 'yes' otherwise 'no'
-chosenMassFragments = [57] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
+specificMassFragments = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
+chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
 
 #//Molecule Likelihoods//
 #To specify the percentage chance of detecting a particular molecule. This must be the same length as the number of molecules in the reference file, or have no value.
@@ -228,7 +228,7 @@ simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 
-ExportAtEachStep = 'yes'
+ExportAtEachStep = 'no'
 generatePercentages = 'no'
 
 checkpoint = ''
