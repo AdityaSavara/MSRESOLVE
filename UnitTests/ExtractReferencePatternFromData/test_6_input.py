@@ -118,7 +118,7 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
 extractReferencePatternFromDataOption = 'yes'
 rpcMoleculesToChange = ['Crotyl Alcohol','CO2']
-rpcMoleculesToChangeMF = [[57,70],[28,44]]
+rpcMoleculesToChangeMF = [[57,70,44],[28,44]]
 rpcTimeRanges = [[300,600],[300,600]]
 
 

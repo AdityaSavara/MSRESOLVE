@@ -34,6 +34,11 @@ def AppendColumnsToCSV(CSVName, YYYYData, columnheaders, rowIndex = [], rowIndex
     return None
 
 def TrimReferenceFileByMolecules(moleculesToSave, referenceFileName, unusedReferenceFileName = None):
+    
+    #it is useful to trim whitespace from each string. This prevents future errors in comparison. 
+    for moleculeIndex in range(len(moleculesToSave)):
+        moleculesToSave[moleculeIndex] = moleculesToSave[moleculeIndex].strip()
+        
     #generate the dataframe
     referenceFile = pandas.read_csv(referenceFileName, header = None)
     #create an array to store indicies of previously used molecules 
@@ -41,7 +46,7 @@ def TrimReferenceFileByMolecules(moleculesToSave, referenceFileName, unusedRefer
     #for each column that isn't in the mass fragment abcsissa
     for moleculeCount in range(len(referenceFile.columns)-1):
         #if the name of that molecule is one to be saved
-        if not referenceFile.iloc[1,1+moleculeCount] in moleculesToSave:
+        if not referenceFile.iloc[1,1+moleculeCount].strip() in moleculesToSave:
             #store the index of that column
             moleculesToDelete.append(1+moleculeCount)
     #delete all the unspecified molecules 
