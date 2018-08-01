@@ -671,7 +671,6 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
     ReferenceData.matching_correction_values = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
     ReferenceData.monitored_reference_intensities = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referencedata)
     ReferenceData.matching_correction_values = ArrayElementsInverser(ReferenceData.matching_correction_values)
-
     return ReferenceData
     
     
@@ -1196,7 +1195,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
-def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy):
+def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceData, ReferenceDataFullCopy):
     #implied arguments: G.dataSimulation, G.referenceFileName, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMolecules, G.iterationNumber
     #override data simulation to yes if it was not selected
     if G.dataSimulation != 'yes':
@@ -1207,7 +1206,11 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     if len(ReferenceData.molecules) == 0:
         print("Warning Message: There are inadequate molecules to perform another iteration. Please confirm that there are still remaining molecules to solve.")
         sys.exit()
-         
+
+    #Creating a correction values matrix for signal simulation at the end of the program
+    ReferenceDataSS = copy.deepcopy(ReferenceData)
+    ReferenceDataSS = ReferenceInputPreProcessing(ReferenceDataSS)
+    ReferenceDataSS = Populate_matching_correction_values(ExperimentDataFullCopy.mass_fragment_numbers,ReferenceDataSS)
     #Selecting unused Reference Data
     unusedMolecules = []
     for molecule in ReferenceDataFullCopy.molecules:
@@ -1233,7 +1236,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     #generate unused reference data
         DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName, unusedReferenceFileName = G.nextRefFileName)
     
-    return None
+    return ReferenceDataSS.matching_correction_values
     #implied returns: G.unusedMolecules
 
 def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment_numbers,ExperimentDataFullCopy, times, concdata, molecules):
@@ -1261,6 +1264,14 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     #Updating the selected masses for the next user input file
     chosenMasses = list(ExperimentDataFullCopy.mass_fragment_numbers)
     G.chosenMassFragments = [int(x) for x in chosenMasses]
+    #Turn off Data Smoothing 
+    G.dataSmootherYorN = 'no'
+    #Turn off manual baseline correction
+    G.backgroundMassFragment = []
+    G.backgroundSlopes = []
+    G.backgroundIntercepts = []
+    #Turn off semiauto baseline correction
+    G.linearBaselineCorrectionSemiAutomatic = 'no'
     
     #export the user input specifications 
     ExportUserInputFile(nextUserInputFileName)
@@ -3190,7 +3201,11 @@ def main():
         if G.iterativeAnalysis:
             #make a copy of the experimental data
             ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
-            
+            ExperimentDataCopy = copy.deepcopy(ExperimentData)
+            #remove any unreference masses from the copy of experimental data
+            ExperimentDataCopy.workingData, ExperimentDataCopy.mass_fragment_numbers = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
+                                                                                                        ExperimentData.mass_fragment_numbers,
+                                                                                                        currentReferenceData.provided_reference_intensities[:,0])   
         #Trim the experimental data according to the mass fragments in G.chosenMassFragments and the reference data
         ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData) 
         
@@ -3215,8 +3230,7 @@ def main():
     
         #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
         if G.iterativeAnalysis:
-            IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, currentReferenceData, ReferenceDataFullCopy)
-    
+            ReferenceDataSSmatching_correction_values = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, currentReferenceData, ReferenceDataFullCopy)
     elif(G.preProcessing == 'skip'):
 
         # Even if we skip the real preProcessing some manipulations must be performed on the
@@ -3277,7 +3291,6 @@ def main():
     
             # Export the reference data files that have been stored by ReferenceData.ExportCollector
             ReferenceDataList[i].ExportFragmentationPatterns()
-
             
     if (G.dataAnalysis == 'yes'):
                 
@@ -3433,10 +3446,17 @@ def main():
             concentrationsScaledToCOarray = ImportAnalyzedData(G.resolvedScaledConcentrationsOutputName)
         #reset timer so that data simiulation can be timed
         G.checkpoint = timeit.default_timer()
-        #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
-        simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, currentReferenceData.matching_correction_values)
+        if G.iterativeAnalysis:
+            #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
+            simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, ReferenceDataSSmatching_correction_values)
+        if not G.iterativeAnalysis:
+            #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
+            simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, currentReferenceData.matching_correction_values)
         #Exporting the simulated signals data
-        ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'simulated')
+        if G.iterativeAnalysis:
+            ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentDataCopy.mass_fragment_numbers, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'simulated')
+        if not G.iterativeAnalysis:
+            ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'simulated')
         #show net time for simulation
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
         G.checkPoint = timeit.default_timer()
@@ -3448,7 +3468,7 @@ def main():
     print("LogFile complete")
     
     if G.iterativeAnalysis:
-        IterativeAnalysisPostProcessing(ExperimentData, simulateddata, ExperimentData.mass_fragment_numbers, ExperimentDataFullCopy, times, data, currentReferenceData.molecules)
+        IterativeAnalysisPostProcessing(ExperimentData, simulateddata, ExperimentDataCopy.mass_fragment_numbers, ExperimentDataFullCopy, times, data, currentReferenceData.molecules)
 
 if __name__ == '__main__':
     main()
