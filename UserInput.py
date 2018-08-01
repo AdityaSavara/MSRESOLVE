@@ -235,8 +235,14 @@ checkpoint = ''
 start = ''
 timeSinceLastCheckpoint = ''
 
+iterationSuffix= ''
+unusedMolecules =''
+oldReferenceFileName = ''
+oldCollectedFileName ='' 
+nextRefFileName = ''
+nextExpFileName = ''
 
-__var_list__ = ['referenceFileName','form','collectedFileName','referenceFileTimeRanges','iterativeAnalysis','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+__var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
 				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
