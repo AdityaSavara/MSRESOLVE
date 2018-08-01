@@ -1083,6 +1083,9 @@ def DataInputPreProcessing(ExperimentData):
 
     return ExperimentData
 
+'''
+PrepareReferenceOjbectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
+'''
 def PrepareReferenceObjectsAndCorrectionValues(ReferenceData):
     # Reference Pattern Changer
     if G.extractReferencePatternFromDataOption == 'yes':
