@@ -15,6 +15,8 @@ def CompareTwoFiles(fileName1, fileName2, filePath):
     comparison = filecmp.cmp(fileName1,fileName2)
     return comparison
 
+#NOTE 1: Below is a non-standard implementation relative to normal unit testing (asks about and allows overwriting DefaultUserInput file)
+#NOTE 2: Below is not using the up to date UnitTesterSG module functionality of "doTest". (see examples in UnitTesting module)
 def test_Run(pytest = True):
     result = CompareTwoFiles('DefaultUserInput.py', 'UserInput.py', '../..' )
     if pytest:
