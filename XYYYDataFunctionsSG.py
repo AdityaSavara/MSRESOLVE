@@ -8,8 +8,52 @@ in the new numpy array and the number of columns is the same as the number of el
 import numpy
 import math
 import copy
+import pandas 
 
+def AppendColumnsToCSV(CSVName, YYYYData, columnheaders, rowIndex = [], rowIndexHeader = []):
+    #rowIndex and rowIndexHeader are only used if there is not already a file with the specified name. 
+   
+    #create pandas data frame of new data
+    newColumns = pandas.DataFrame(data = YYYYData, columns = columnheaders)
+    
+    #make sure that the solved concentrations file exists
+    try:
+        #read in the previously solved data    
+        totalColumns = pandas.read_csv(CSVName)
+    #If the file doesn't exist
+    except FileNotFoundError:
+        #then the times need to be included in this writing
+        index = pandas.DataFrame(data = rowIndex, columns = rowIndexHeader)
+        totalColumns = pandas.concat((index,newColumns), axis = 1)
+    #Otherwise the new data is simply added to the old
+    else:
+        totalColumns = pandas.concat((totalColumns,newColumns), axis = 1)
+    #all the data is rewritten to the csv file
+    totalColumns.to_csv(CSVName, index = False)
+    
+    return None
 
+def TrimReferenceFileByMolecules(moleculesToSave, referenceFileName, unusedReferenceFileName = None):
+    
+    #it is useful to trim whitespace from each string. This prevents future errors in comparison. 
+    for moleculeIndex in range(len(moleculesToSave)):
+        moleculesToSave[moleculeIndex] = moleculesToSave[moleculeIndex].strip()
+        
+    #generate the dataframe
+    referenceFile = pandas.read_csv(referenceFileName, header = None)
+    #create an array to store indicies of previously used molecules 
+    moleculesToDelete = []
+    #for each column that isn't in the mass fragment abcsissa
+    for moleculeCount in range(len(referenceFile.columns)-1):
+        #if the name of that molecule is one to be saved
+        if not referenceFile.iloc[1,1+moleculeCount].strip() in moleculesToSave:
+            #store the index of that column
+            moleculesToDelete.append(1+moleculeCount)
+    #delete all the unspecified molecules 
+    referenceFile = referenceFile.drop(moleculesToDelete, axis = 1)
+    if unusedReferenceFileName != None:
+        referenceFile.to_csv(unusedReferenceFileName, header = False, index = False)      
+    else: return referenceFile
 
 '''
 MSDataWriterXYYY() replaces ExportXYYYData() for writing
@@ -988,22 +1032,21 @@ def interpolateAccompanyingArrays(marginalChangeRestricted_abscissa, accompanyin
 
 '''RemoveSignals is used by itrative analysis post processing to subtract the signals for the solved molecules from the experimental data.'''
 def RemoveSignals(dataToExtractFrom, totalColumns, dataToExtract, columnsToSubtract):
-    #all inputs must be numpy arrays (2D(MxN),1D(N),2D(MxV),1D(V))
+    #all inputs must be numpy arrays i.e. Func(2D(MxN),1D(N),2D(MxV),1D(V))
     
     #confirm that data lengths are the same
     if (len(dataToExtractFrom[:,0]) != len(dataToExtract[:,0])):
         print("Length of simulated data doesn't equal length of experimental data")
-        
     #copy the row abscissa to be readded later
-    rowAbscissa = dataToExtractFrom[:,[0]]
+    rowAbscissa = dataToExtract[:,[0]]
     #Remove row abscissa from each data set
-    dataToExtractFrom = dataToExtractFrom[:,1:]
+    #dataToExtractFrom = dataToExtractFrom[:,1:]
     dataToExtract = dataToExtract[:,1:]
     
     #confirm that total data sets are the same width
     if (len(dataToExtractFrom[0,:]) != len(totalColumns)):
         print("Number of signals in total experimental data doesn't match header")
-        
+    
      #confirm that solved data sets are the same width
     if (len(dataToExtract[0,:]) != len(columnsToSubtract)):
         print("Number of signals in solved experimental data doesn't match header")
