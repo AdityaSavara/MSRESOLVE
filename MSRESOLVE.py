@@ -1082,6 +1082,33 @@ def DataInputPreProcessing(ExperimentData):
         ExperimentData.ExportCollector("DataSmoother")
 
     return ExperimentData
+
+def PrepareReferenceObjectsAndCorrectionValues(ReferenceData):
+    # Reference Pattern Changer
+    if G.extractReferencePatternFromDataOption == 'yes':
+        ReferenceData.provided_reference_intensities = ExtractReferencePatternFromData(ExperimentData, ReferenceData, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
+        ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
+        print('ReferencePatternChanger complete')
+        
+    # Some initial preprocessing on the reference data
+    ReferenceData = ReferenceInputPreProcessing(ReferenceData)
+    # Set the ReferenceData.monitored_reference_intensities and
+    # ReferenceData.matching_correction_values fields
+    # based on the masses in ExperimentData.mass_fragment_numbers
+    ReferenceData = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceData)
+    print("Matching Correction Values complete")
+    # Remove reference species that have no mass fragment data
+    # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
+    ## TODO: Consider changing this function to take the array directly i.e.
+    ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
+    ## like ReferenceData.standardized_reference_intensities
+    ReferenceData = UnnecessaryMoleculesDeleter(ReferenceData)
+    ReferenceData.ExportCollector('UnnecessaryMoleculesDeleter')
+    
+    # Export the reference data files that have been stored by ReferenceData.ExportCollector
+    ReferenceData.ExportFragmentationPatterns()
+    return ReferenceData
+    
 #exports the user input file so that it can be used in the next iteration
 def ExportUserInputFile(fileName):
     
@@ -3312,31 +3339,12 @@ def main():
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
-        #for loop to preprocess all MSReference objects
+        #Prepare currentReferenceData which is currently the first reference object in the list
+        currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData)
+        #for loop to preprocess the remaining MSReference objects and match correction values
         for i in range(len(ReferenceDataList)):
-            # Reference Pattern Changer
-            if G.extractReferencePatternFromDataOption == 'yes':
-                ReferenceDataList[i].provided_reference_intensities = ExtractReferencePatternFromData(ExperimentData, ReferenceDataList[i], G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
-                ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
-                print('ReferencePatternChanger complete')
-                    
-            # Some initial preprocessing on the reference data
-            ReferenceDataList[i] = ReferenceInputPreProcessing(ReferenceDataList[i])
-            # Set the ReferenceData.monitored_reference_intensities and
-            # ReferenceData.matching_correction_values fields
-            # based on the masses in ExperimentData.mass_fragment_numbers
-            ReferenceDataList[i] = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceDataList[i])
-            # Remove reference species that have no mass fragment data
-            # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
-            ## TODO: Consider changing this function to take the array directly i.e.
-            ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
-            ## like ReferenceData.standardized_reference_intensities
-            ReferenceDataList[i] = UnnecessaryMoleculesDeleter(ReferenceDataList[i])
-            ReferenceDataList[i].ExportCollector('UnnecessaryMoleculesDeleter')
-    
-            # Export the reference data files that have been stored by ReferenceData.ExportCollector
-            ReferenceDataList[i].ExportFragmentationPatterns()
-            
+            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i])
+                              
     if (G.dataAnalysis == 'yes'):
                 
         # Reset the checkpoint timer for the data analysis section
