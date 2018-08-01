@@ -529,11 +529,11 @@ def TrimDataMolecules(ReferenceData, chosenMolecules):
     copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
     
     #shorten the reference fragmentation pattern to the required length
-    Temp_Reference_Data, ReferenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.provided_reference_intensities[:,1:],
+    (Temp_Reference_Data, ReferenceData.molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.provided_reference_intensities[:,1:],
                                                                                                                     ReferenceData.molecules, chosenMolecules)  
     #Shorten the electronnumbers to the correct values, using the copy of molecules 
     ArrayOneD = True
-    ReferenceData.electronnumbers, copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
+    (ReferenceData.electronnumbers, copy_molecules) = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
     #add a second dimension to the reference data
     newReferenceMF = numpy.reshape(ReferenceData.mass_fragment_numbers_monitored,(-1,1))
     
