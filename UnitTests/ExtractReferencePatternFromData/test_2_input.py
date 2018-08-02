@@ -220,7 +220,7 @@ simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 
-ExportAtEachStep = 'no'
+ExportAtEachStep = 'yes'
 generatePercentages = 'no'
 
 checkpoint = ''
