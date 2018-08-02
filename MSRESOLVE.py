@@ -3353,8 +3353,8 @@ def main():
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
-#        #Prepare currentReferenceData which is currently the first reference object in the list
-#        currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData,ExperimentData,G.extractReferencePatternFromDataOption,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+        #Prepare currentReferenceData which is currently the first reference object in the list
+        currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData,ExperimentData,G.extractReferencePatternFromDataOption,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         #for loop to preprocess the remaining MSReference objects and match correction values
         for i in range(len(ReferenceDataList)):
             ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData,G.extractReferencePatternFromDataOption,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
