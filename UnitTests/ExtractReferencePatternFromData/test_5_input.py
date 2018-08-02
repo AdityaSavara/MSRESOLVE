@@ -206,7 +206,7 @@ simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 
 
 
-ExportAtEachStep = 'no'
+ExportAtEachStep = 'yes'
 generatePercentages = 'no'
 
 checkpoint = ''
