@@ -527,14 +527,16 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     print("MoleculeChooser")
+    #getting a list of all molecules (a header) to compare to during trimming.	    
+    allMoleculesList = ReferenceData.molecules
     
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
     
     #trim the reference fragmentation patterns to only the selected molecules 
     #unused trimmed copy molecules is just a place holder to dispose of a function return that is not needed
-    trimmedReferenceIntensities, unused_trimmed_copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
-                                                                                                                    trimmedRefererenceData.molecules, chosenMolecules)  
+    trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
+                                                                                                                    allMoleculesList, chosenMolecules)  
     #add a second dimension to the reference data
     trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.mass_fragment_numbers_monitored,(-1,1))
     
@@ -542,8 +544,9 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.provided_reference_intensities = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules 
-    ArrayOneD = True
-    trimmedRefererenceData.electronnumbers, trimmedRefererenceData.molecules  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, trimmedRefererenceData.molecules, chosenMolecules, ArrayOneD)
+    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, ArrayOneD = True)	    
+    #put the trimmed molecules list into the trimmedRefererenceData object.	   
+    trimmedRefererenceData.molecules = trimmedMoleculesList
     
     #remove any zero rows that may have been created
     trimmedRefererenceData.ClearZeroRows()
@@ -973,7 +976,7 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNames)):
-        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],referencePatternForm[i])
+        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
         ReferenceDataAndFormsList.append(MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
         #save each global variable into the class objects 
         ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
