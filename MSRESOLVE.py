@@ -526,13 +526,12 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
-       
-    print("MoleculeChooser")
-    #the copy is required because the keep only selected columns function is called twice with the same rows to clear
-    copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
-    
-    #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
+    
+    print("MoleculeChooser")
+    
+    #the copy is required because the keep only selected columns function is called twice with the same rows to clear
+    copy_moleculeselecNum = copy.deepcopy(trimmedRefererenceData.molecules)
     
     #shorten the reference fragmentation pattern to the required length
     Temp_Reference_Data, trimmedRefererenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
@@ -567,7 +566,7 @@ ExperimentData - of type MSData, the one instantiated in main() named Experiment
 ReferenceData - of type MSReference, ReferenceData from main() is a good example
 chosenMassFragments  - list of integers, like the one created in UserInput  
 '''
-def trimDataMassesToMatchChosenMassFragments(ExperimentData, ReferenceData, chosenMassFragments):
+def trimDataMassesToMatchChosenMassFragments(ExperimentData, ReferenceData):
 
     # If we are only interested in a subset of the MS data
     # and that subset is a subset of the loaded data
@@ -575,11 +574,7 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, ReferenceData, chos
     # and the corresponding colums from ExperimentData.workingData
     trimmedExperimentData = copy.deepcopy(ExperimentData)
     print("MassFragChooser")
-    if len(chosenMassFragments) < len(ReferenceData.molecules):
-        print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-        print("Mass fragment selection has been canceled")
-    else:
-        (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
+    (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
                                                                                                             G.chosenMassFragments)
     trimmedExperimentData.ExportCollector("MassFragChooser")
@@ -3298,8 +3293,11 @@ def main():
             ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, currentReferenceData)   
             
         if G.specificMassFragments == 'yes':
-            #Trim the experimental data according to the mass fragments in G.chosenMassFragments 
-            ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData, G.chosenMassFragments) 
+            if len(G.chosenMassFragments) < len(currentReferenceData.molecules):
+                print("Selected Mass Fragments are too few to solve for the number of molecules provided")
+                print("Mass fragment selection has been canceled")
+            else:#Trim the experimental data according to the mass fragments in G.chosenMassFragments 
+                ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData) 
         #Trim the experimental data according to the mass fragments in referenceData
         ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
         
@@ -3331,8 +3329,11 @@ def main():
         # MS data
 
         if G.specificMassFragments == 'yes':
-            #Trim the experimental data according to the mass fragments in G.chosenMassFragments 
-            ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData, G.chosenMassFragments) 
+            if len(G.chosenMassFragments) < len(currentReferenceData.molecules):
+                print("Selected Mass Fragments are too few to solve for the number of molecules provided")
+                print("Mass fragment selection has been canceled")
+            else:#Trim the experimental data according to the mass fragments in G.chosenMassFragments 
+                ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData) 
         #Trim the experimental data according to the mass fragments in referenceData
         ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
         
@@ -3348,8 +3349,11 @@ def main():
         ExperimentData.workingData, ExperimentData.mass_fragment_numbers, ExperimentData.times = ImportWorkingData(G.preProcessedDataOutputName)
 
         if G.specificMassFragments == 'yes':
-            #Trim the experimental data according to the mass fragments in G.chosenMassFragments 
-            ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData, G.chosenMassFragments) 
+            if len(G.chosenMassFragments) < len(currentReferenceData.molecules):
+                print("Selected Mass Fragments are too few to solve for the number of molecules provided")
+                print("Mass fragment selection has been canceled")
+            else:#Trim the experimental data according to the mass fragments in G.chosenMassFragments 
+                ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData)
         #Trim the experimental data according to the mass fragments in referenceData
         ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
              
