@@ -16,16 +16,16 @@ import numpy
 
 #BELOW ARE THE LINES INTENDED TO BE CHANGED BY THE USER	
 #1) import the function whose results need to be checked
-import significanceFactorCheck as sfc
+import MSRESOLVE
 #2) getting the prefix (or suffix) arugument for check_results. This is just for the output filenames.
 suffix= ut.returnDigitFromFilename(__file__)
 prefix=''
 #3) provide the input for the function you want to test (you can also import it from a pickled object, for example)
 massFragCombinations=([1,2,3,4,5],[2,1,3,4,5],[3,4,5,6,7],[9,8,7,6,5],[3,4,5,1,2])
 
-topSignificanceFactorCheckList=[]
+largestMagnitudeSigFactorSumsList=[]
 
-keep_N_ValuesInRoughUniquenessCheck=3
+keep_N_ValuesInSignificanceFactorCheck=3
 moleculesLikelihood=numpy.array([1,0.5,1,1])
 chosenReference=numpy.array([[1,2,5,2,1],
                              [2,0,0,4,0],
@@ -35,10 +35,11 @@ chosenReference=numpy.array([[1,2,5,2,1],
 
 #4) get the output of the function, which is what will typically be checked.
 for counter, massFragCombination in enumerate(massFragCombinations):
-    chosenReference[counter,counter]=54
-    [topSignificanceFactorCheckList, valuesStoredInSFTopList]=sfc.significanceFactorCheck(chosenReference,topSignificanceFactorCheckList,keep_N_ValuesInRoughUniquenessCheck,massFragCombination, moleculesLikelihood)
+    chosenReference[counter,counter]=54#This is to change the array so the significance factor sums will be different during each iteration. If a different array is not provided each time, the significance factor sums will all be the same.
+    #calculates the significance factor for each element in the chosen reference array and sums all of the significane values for the whole array. It keeps the mass fragments that have the largest magnitude of significance sum.
+    [largestMagnitudeSigFactorSumsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(chosenReference[:,1:],largestMagnitudeSigFactorSumsList,keep_N_ValuesInSignificanceFactorCheck,massFragCombination, moleculesLikelihood)
 #print(output)
-resultObj= [topSignificanceFactorCheckList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+resultObj= [largestMagnitudeSigFactorSumsList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
 resultStr= str(resultObj)
 #6) Checking the result of the function using check_results. In this case the result is sumList1 object. 
