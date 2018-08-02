@@ -528,25 +528,22 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     print("MoleculeChooser")
     
-    #the untrimmedcopy is required because the keep only selected columns function is called twice with the same columns to clear
-    #without a copy, the full set of molecules would be lost before the second function call could use them
-    unTrimmedMoleculesCopy = copy.deepcopy(ReferenceData.molecules)
-    
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
     
-    #shorten the reference fragmentation pattern to the required length
-    trimmedReferenceIntensities, trimmedRefererenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
+    #trim the reference fragmentation patterns to only the selected molecules 
+    #unused trimmed copy molecules is just a place holder to dispose of a function return that is not needed
+    trimmedReferenceIntensities, unused_trimmed_copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
                                                                                                                     trimmedRefererenceData.molecules, chosenMolecules)  
     #add a second dimension to the reference data
-    newReferenceMF = numpy.reshape(trimmedRefererenceData.mass_fragment_numbers_monitored,(-1,1))
+    trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.mass_fragment_numbers_monitored,(-1,1))
     
     #Add the abscissa back into the reference values
-    trimmedRefererenceData.provided_reference_intensities = numpy.hstack((newReferenceMF,trimmedReferenceIntensities))
+    trimmedRefererenceData.provided_reference_intensities = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules 
     ArrayOneD = True
-    trimmedRefererenceData.electronnumbers, unused_trimmed_copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, unTrimmedMoleculesCopy, chosenMolecules, ArrayOneD)
+    trimmedRefererenceData.electronnumbers, trimmedRefererenceData.molecules  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, trimmedRefererenceData.molecules, chosenMolecules, ArrayOneD)
     
     #remove any zero rows that may have been created
     trimmedRefererenceData.ClearZeroRows()
