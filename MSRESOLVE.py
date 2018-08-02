@@ -25,6 +25,11 @@ G = UserInput
 #applicable). The max lengh of list is used to ensure the list does not go over
 #a certain size. The bisect method used requires the list be presorted in ascending order.
 
+#When multiple of the same value from the objective funcitons are present, 
+#bisect starts searching based on the elements in the array. This is fine 
+#for the purposes of this funciton since the best mass frag chooser iterates
+#through the combinations in order.
+
 def storeAndPop(sortedList, valueToInsert, maxLengthOfList):
     #Find the insertion idex where the value will be inserted by using a binary
     #search
