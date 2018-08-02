@@ -99,18 +99,17 @@ def significanceFactorCheck(chosenReferenceIntensities ,largestMagnitudeSigFacto
         significanceColumnDataList=ElemSignificanceCalculator(chosenReferenceIntensities, columnCounter, moleculesLikelihood)
 
         #Sums the significance factors across the column and to the
-        #sum for the whole ref data array. The subtraction is used to make the
-        #sum negative. The binary search used will order from lowest to highest
-        #The largest magnitude will then be the smallest number and be kept
-        #during the store and pop function
+        #sum for the whole ref data array. The larger in magnitude this is, the 'better'.
         sigFactorSum+=sum(significanceColumnDataList)
         
         ####Currently there is no real need to maintain a significance data 
         ####list for the whole array
     
     #The subtraction is used to make the sum negative. The binary search used 
-    #will order from lowest to highest. The largest magnitude will then be the 
-    #smallest number and be kept during the store and pop function
+    #will order from lowest to highest. A larger magnitude for this value then means
+    #the most negative which will be kept during the store and pop function.
+    #Note that we use the wording of largest magnitude so that our phrasing remains the same
+    #when talking about the negative of the sum.
     negativeOfSigFactorSum=-1*sigFactorSum    
     
     #Creates a tuple that stores the significane factor sum and the mass
@@ -119,6 +118,7 @@ def significanceFactorCheck(chosenReferenceIntensities ,largestMagnitudeSigFacto
     
     #Uses store and pop to maintian a list of the mass fragment with the
     #largest significance factors.
+    #The below line only keeps the combinations with the largest magnitude (most negative) of the negativeOfSigFactorSums.
     [largestMagnitudeSigFactorSumsList,valueStoredInSFTopList]=storeAndPop(largestMagnitudeSigFactorSumsList,sigFactorTuple,keep_N_ValuesInSignificanceFactorCheck)
     
     return largestMagnitudeSigFactorSumsList, valueStoredInSFTopList
