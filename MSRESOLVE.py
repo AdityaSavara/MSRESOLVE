@@ -529,7 +529,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     print("MoleculeChooser")
     
     #the copy is required because the keep only selected columns function is called twice with the same rows to clear
-    copy_moleculeselecNum = copy.deepcopy(RefererenceData.molecules)
+    copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
     
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
