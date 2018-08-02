@@ -13,7 +13,7 @@ collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
-iterativeAnalysis = True
+iterativeAnalysis = False
 #the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
@@ -185,7 +185,7 @@ negativeAnalyzerYorN = 'no'
 
 #//Data Analysis Methods
 #Below the path for the analysis of the data; sls or inverse
-answer = 'sls'	#'inverse' or 'sls'; sls is suggested
+answer = 'inverse'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
@@ -220,22 +220,10 @@ simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 
-ExportAtEachStep = 'yes'
+ExportAtEachStep = 'no'
 generatePercentages = 'no'
 
 checkpoint = ''
 start = ''
 timeSinceLastCheckpoint = ''
 
-
-__var_list__ = ['referenceFileName','form','collectedFileName','referenceFileTimeRanges','iterativeAnalysis','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
-				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
-				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
-				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
-				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
-				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
-				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
-				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
-				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
-				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
-				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']
