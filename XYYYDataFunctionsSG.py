@@ -293,7 +293,7 @@ def KeepOnlySelectedYYYYColumns(YYYYData, DataHeaders, HeaderValuesToKeep, Array
     #remove the data columns
     YYYYData = numpy.delete(YYYYData,deletion_indices, axis)
 
-    return (YYYYData, DataHeaders)
+    return (YYYYData, DataHeaders) #Note that the objects being returned are the original objects, truncated. They are not copies.
 
 #TODO: make a function KeepOnlyYYYYRows() that is very similar to this one.
 # It may be useful and could replace some of the functionality of ArrayBuilder()
