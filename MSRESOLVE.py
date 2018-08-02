@@ -946,6 +946,9 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
         [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
         ReferenceDataList = [MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
+        #save each global variable into the class objects 
+        ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
+        ReferenceDataList[0].iterationSuffix = G.iterationSuffix
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNames
@@ -963,7 +966,7 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNames)):
-        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],referencePatternForm[i])
+        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
         ReferenceDataAndFormsList.append(MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
         #save each global variable into the class objects 
         ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
@@ -3350,11 +3353,12 @@ def main():
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
-        #Prepare currentReferenceData which is currently the first reference object in the list
-        currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData,ExperimentData,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+#        #Prepare currentReferenceData which is currently the first reference object in the list
+#        currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData,ExperimentData,G.extractReferencePatternFromDataOption,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         #for loop to preprocess the remaining MSReference objects and match correction values
         for i in range(len(ReferenceDataList)):
-            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData,G.extractReferencePatternFromDataOption,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+        
                               
     if (G.dataAnalysis == 'yes'):
                 
