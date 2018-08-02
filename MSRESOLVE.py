@@ -526,12 +526,13 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
-    trimmedRefererenceData = copy.deepcopy(ReferenceData)
-    
     print("MoleculeChooser")
     
     #the copy is required because the keep only selected columns function is called twice with the same rows to clear
-    copy_moleculeselecNum = copy.deepcopy(trimmedRefererenceData.molecules)
+    copy_moleculeselecNum = copy.deepcopy(RefererenceData.molecules)
+    
+    #initializing object that will become the trimmed copy of ReferenceData
+    trimmedRefererenceData = copy.deepcopy(ReferenceData)
     
     #shorten the reference fragmentation pattern to the required length
     Temp_Reference_Data, trimmedRefererenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
