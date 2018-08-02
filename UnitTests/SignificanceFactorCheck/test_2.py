@@ -34,8 +34,8 @@ chosenReference=numpy.array([[1,2,5,2,1],
                              [5,0,0,0,0]])
 
 #4) get the output of the function, which is what will typically be checked.
-for changeChosenReferenceAtIndex, massFragCombination in enumerate(massFragCombinations):
-    chosenReference[changeChosenReferenceAtIndex,changeChosenReferenceAtIndex]=54#This is to change the array so the significance factor sums will be different during each iteration. If a different array is not provided each time, the significance factor sums will all be the same.
+for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
+    chosenReference[massFragCombinationIndex,massFragCombinationIndex]=54#This is to change the array so the significance factor sums will be different during each iteration. If a different array is not provided each time, the significance factor sums will all be the same.
     #calculates the significance factor for each element in the chosen reference array and sums all of the significane values for the whole array. It keeps the mass fragments that have the largest magnitude of significance sum.
     [largestMagnitudeSigFactorSumsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(chosenReference[:,1:],largestMagnitudeSigFactorSumsList,keep_N_ValuesInSignificanceFactorCheck,massFragCombination, moleculesLikelihood)
 #print(output)
