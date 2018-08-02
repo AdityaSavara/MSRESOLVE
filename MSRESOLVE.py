@@ -341,7 +341,6 @@ def ABCDetermination(ReferencePatternMeasured, ReferencePatternLiterature):
 #this function either creates or gets the three coefficients for the polynomial correction and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-# TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
 def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceLiteratureFileName,referenceMeasuredFileName,measuredReferenceYorN):
     
     if measuredReferenceYorN =='yes':
@@ -359,7 +358,6 @@ def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,reference
 #this function eliminates any fragments that are below a certain threshold, for solving 
 #data that is giving negatives or over emphasizing small mass fragments, this will eliminate 
 #those below a certain user-input value
-# TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
 def ReferenceThreshold(reference,referenceValueThreshold):
     referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
     for rowcounter in range(len(referencedata[:,0])):#goes through all rows in references
@@ -447,7 +445,7 @@ def RemoveUnreferencedMasses(ExperimentData, reference):  ## DEPRECATED Replaced
     massFragmentNumbers = numpy.delete(massFragmentNumbers.astype(int), deletion_indices)
     workingData = numpy.delete(workingData, deletion_indices, 1)
 
-    return massFragmentNumbers, workingData
+    return (massFragmentNumbers, workingData)
 
 
 '''
@@ -479,7 +477,7 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
     massFragmentNumbers = numpy.delete(massFragmentNumbers.astype(int), deletion_indices)
     workingData = numpy.delete(workingData, deletion_indices, 1)
 
-    return massFragmentNumbers,workingData
+    return (massFragmentNumbers,workingData)
 
 
     
@@ -524,68 +522,76 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
     #return [mass_fragment_numbers2,ExperimentData.workingData]
     
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
-def TrimDataMolecules(ReferenceData, chosenMolecules):
+def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
+    
+    trimmedRefererenceData = copy.deepcopy(ReferenceData)
     
     print("MoleculeChooser")
     #the copy is required because the keep only selected columns function is called twice with the same rows to clear
-    copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
+    copy_moleculeselecNum = copy.deepcopy(trimmedRefererenceData.molecules)
     
     #shorten the reference fragmentation pattern to the required length
-    Temp_Reference_Data, ReferenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.provided_reference_intensities[:,1:],
-                                                                                                                    ReferenceData.molecules, chosenMolecules)  
+    Temp_Reference_Data, trimmedRefererenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
+                                                                                                                    trimmedRefererenceData.molecules, chosenMolecules)  
     #Shorten the electronnumbers to the correct values, using the copy of molecules 
     ArrayOneD = True
-    ReferenceData.electronnumbers, copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
+    trimmedRefererenceData.electronnumbers, copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
     #add a second dimension to the reference data
-    newReferenceMF = numpy.reshape(ReferenceData.mass_fragment_numbers_monitored,(-1,1))
+    newReferenceMF = numpy.reshape(trimmedRefererenceData.mass_fragment_numbers_monitored,(-1,1))
     
     #Add the abscissa back into the reference values
-    ReferenceData.provided_reference_intensities = numpy.hstack((newReferenceMF,Temp_Reference_Data))
+    trimmedRefererenceData.provided_reference_intensities = numpy.hstack((newReferenceMF,Temp_Reference_Data))
     
     #remove any zero rows that may have been created
-    ReferenceData.ClearZeroRows()
+    trimmedRefererenceData.ClearZeroRows()
     #update the mass fragment list from the posibly shortened reference spectrums
-    ReferenceData.mass_fragment_numbers_monitored = ReferenceData.provided_reference_intensities[:,0]
+    trimmedRefererenceData.mass_fragment_numbers_monitored = trimmedRefererenceData.provided_reference_intensities[:,0]
     
-    ReferenceData.ExportCollector("MoleculeChooser", use_provided_reference_intensities=True)
+    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_intensities=True)
     
-    return ReferenceData.provided_reference_intensities, ReferenceData.electronnumbers, ReferenceData.molecules, ReferenceData.mass_fragment_numbers_monitored
+    return trimmedRefererenceData
     
 '''
-trimDataMasses() is just a wrapper function for two calls to DataFunctions.KeepOnlySelectedYYYYColumns(). 
-Both of the calls trim ExperimentData.workingData and ExperimentData.mass_fragment_numbers. 
-The first call trims the data according to the mass fragment selections in G.chosenMassFragments.
-The second call trims the data to remove any mass fragments for which there is no ReferenceData. 
+trimDataMassesToMatchChosenMassFragments() and trimDataMassesToMatchReference() are just a wrapper functions for calls to DataFunctions.KeepOnlySelectedYYYYColumns(). 
+Both of the functions trim ExperimentData.workingData and ExperimentData.mass_fragment_numbers. 
+The first function trims the data according to the mass fragment selections in G.chosenMassFragments.
+The second function trims the data to remove any mass fragments for which there is no ReferenceData. 
 
 Parameters:
 ExperimentData - of type MSData, the one instantiated in main() named ExperimentData is a good example of one
     that will work here
 ReferenceData - of type MSReference, ReferenceData from main() is a good example
+chosenMassFragments  - list of integers, like the one created in UserInput 
 '''
-def trimDataMasses(ExperimentData, ReferenceData):
+def trimDataMassesToMatchChosenMassFragments(ExperimentData, ReferenceData, chosenMassFragments):
 
     # If we are only interested in a subset of the MS data
     # and that subset is a subset of the loaded data
     # remove the irrelevant mass data series from ExperimentData.mass_fragment_numbers
     # and the corresponding colums from ExperimentData.workingData
-    if G.specificMassFragments == 'yes':
-        print("MassFragChooser")
-        if len(G.chosenMassFragments) < len(ReferenceData.molecules):
-            print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-            print("Mass fragment selection has been canceled")
-        else:
-            (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
-                                                                                                            ExperimentData.mass_fragment_numbers,
+    trimmedExperimentData = copy.deepcopy(ExperimentData)
+    print("MassFragChooser")
+    if len(chosenMassFragments) < len(ReferenceData.molecules):
+        print("Selected Mass Fragments are too few to solve for the number of molecules provided")
+        print("Mass fragment selection has been canceled")
+    else:
+        (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
+                                                                                                            trimmedExperimentData.mass_fragment_numbers,
                                                                                                             G.chosenMassFragments)
-        ExperimentData.ExportCollector("MassFragChooser")
+    trimmedExperimentData.ExportCollector("MassFragChooser")
+    return trimmedExperimentData
 
+def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
+    
+    trimmedExperimentData = copy.deepcopy(ExperimentData)
+    
     # Remove elements of ExperimentData.mass_fragment_numbers for which there is no matching mass in the reference data.
     # Also remove the corresponding mass data column from Experiment.workingData.
-    (ExperimentData.workingData, ExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
-                                                                                                        ExperimentData.mass_fragment_numbers,
+    (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
+                                                                                                        trimmedExperimentData.mass_fragment_numbers,
                                                                                                         ReferenceData.provided_reference_intensities[:,0])
 
-    return (ExperimentData.workingData, ExperimentData.mass_fragment_numbers)
+    return trimmedExperimentData
 
     
 #The correction values are calculated based on each molecule's molecular weight, number of electrons and mass fragmentation pattern
@@ -644,7 +650,7 @@ def CorrectionValuesObtain(ReferenceData):
 #need these indexes for later
 def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
     ReferenceData.referenceabscissa = ReferenceData.standardized_reference_intensities[:,0]
-    referenceDataArray = ReferenceData.standardized_reference_intensities[:,1:]
+    referencedata = ReferenceData.standardized_reference_intensities[:,1:]
     correction_values = numpy.array(list(zip(*ReferenceData.correction_values)))
     #This function has inputs that are very general so that it could be easily understood and used in various 
     #circumstances, the function first gets the size of the data array and then uses that to index the loops
@@ -671,7 +677,7 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
         return matching_correction_values
     #here the main function, Populate_matching_correction_values, calls all of its sub-functions 
     ReferenceData.matching_correction_values = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
-    ReferenceData.monitored_reference_intensities = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referenceDataArray)
+    ReferenceData.monitored_reference_intensities = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referencedata)
     ReferenceData.matching_correction_values = ArrayElementsInverser(ReferenceData.matching_correction_values)
     return ReferenceData
     
@@ -1295,9 +1301,6 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     for molecule in ReferenceDataFullCopy.molecules:
         if not molecule in G.chosenMolecules:
             unusedMolecules.append(molecule)
-            
-    #Make into a global variable for future use.     
-    G.unusedMolecules = unusedMolecules
     
     #Export current Reference Data  
     #Reference data is trimmed prior to this function
@@ -1315,8 +1318,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     #generate unused reference data
         DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName, unusedReferenceFileName = G.nextRefFileName)
     
-    return ReferenceDataSS.matching_correction_values
-    #implied returns: G.unusedMolecules
+    return ReferenceDataSS.matching_correction_values, unusedMolecules
 
 def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment_numbers,ExperimentDataFullCopy, times, concdata, molecules):
     #implied arguments: G.iterationSuffix, G.nextRefFileName, G.nextExpFileName, G.iterativeAnalysis, G.unusedMolecules, G.iterationNumber
@@ -2521,7 +2523,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,selectedcounter - place_holder2,axis = 1)
                                             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,selectedcounter - place_holder2)
                                             place_holder2 = place_holder2 + 1 #saves place when deleting
-                                    useablemassfrags,useablecorrections,useablerawsigs = DistinguishedArrayChooser (useablemassfrags,useablecorrections,useablerawsigs)
+                                    useablemassfrags,useablecorrections,useablerawsigs = DistinguishedArrayChooser (useablemassfrags,useablecorrections,useablerawsigs, G.moleculeLikelihoods, G.sensitivityValues)
                                     if numpy.linalg.det(useablecorrections) != 0: #solves if det is not zero
                                         #the counter below is equal to zero so that the molecule chooser will just choose the solutions given in the last line
                                         #the molecules, correction and raw signals arrays here are fragments of the whole, using the function in the same way that
@@ -3276,23 +3278,26 @@ def main():
              ReferenceDataFullCopy = copy.deepcopy(currentReferenceData)
              
         # Trim the reference data according to the selected molecules list
-        if G.specificMolecules == 'yes' or G.iterativeAnalysis:
-            currentReferenceData.provided_reference_intensities, currentReferenceData.electronnumbers, currentReferenceData.molecules, currentReferenceData.mass_fragment_numbers_monitored = TrimDataMolecules(currentReferenceData, G.chosenMolecules) 
+        if G.specificMolecules == 'yes':
+            currentReferenceData = trimDataMoleculesToMatchChosenMolecules(currentReferenceData, G.chosenMolecules) 
              
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
         print("Data PreProcessing completed")
         
         if G.iterativeAnalysis:
-            #make a copy of the experimental data
+            #make a copy of the experimental data for later use in iterative processing
             ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
+            #make a copy of Experimental data specifically to be used in signal simulation. i.e. will have mass fragments trimmed if they aren't referenced by the current molecules. 
             ExperimentDataCopy = copy.deepcopy(ExperimentData)
-            #remove any unreference masses from the copy of experimental data
-            ExperimentDataCopy.workingData, ExperimentDataCopy.mass_fragment_numbers = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
-                                                                                                        ExperimentData.mass_fragment_numbers,
-                                                                                                        currentReferenceData.provided_reference_intensities[:,0])   
-        #Trim the experimental data according to the mass fragments in G.chosenMassFragments and the reference data
-        ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData) 
+            #remove any unreference masses from the signal simulation copy of experimental data
+            ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, currentReferenceData)   
+            
+        if G.specificMassFragments == 'yes':
+            #Trim the experimental data according to the mass fragments in G.chosenMassFragments 
+            ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData, G.chosenMassFragments) 
+        #Trim the experimental data according to the mass fragments in referenceData
+        ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
         
         #This graph call is graphing fully preprocessed data.
         if G.grapher == 'yes':
@@ -3315,14 +3320,17 @@ def main():
     
         #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
         if G.iterativeAnalysis:
-            ReferenceDataSSmatching_correction_values = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, currentReferenceData, ReferenceDataFullCopy)
+            ReferenceDataSSmatching_correction_values, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, currentReferenceData, ReferenceDataFullCopy)
     elif(G.preProcessing == 'skip'):
 
         # Even if we skip the real preProcessing some manipulations must be performed on the
         # MS data
 
-        # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData)
+        if G.specificMassFragments == 'yes':
+            #Trim the experimental data according to the mass fragments in G.chosenMassFragments 
+            ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData, G.chosenMassFragments) 
+        #Trim the experimental data according to the mass fragments in referenceData
+        ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
         
         # Output to make sure user knows we are skipping Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -3335,8 +3343,11 @@ def main():
         print("Loading the preprocessed data from file '{}'".format(G.preProcessedDataOutputName))
         ExperimentData.workingData, ExperimentData.mass_fragment_numbers, ExperimentData.times = ImportWorkingData(G.preProcessedDataOutputName)
 
-        # Trim the data according to the mass fragments in G.chosenMassFragments and the reference data
-        ExperimentData.workingData, ExperimentData.mass_fragment_numbers = trimDataMasses(ExperimentData, currentReferenceData)
+        if G.specificMassFragments == 'yes':
+            #Trim the experimental data according to the mass fragments in G.chosenMassFragments 
+            ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData, G.chosenMassFragments) 
+        #Trim the experimental data according to the mass fragments in referenceData
+        ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
              
         # Output to make sure user knows we are loading Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
