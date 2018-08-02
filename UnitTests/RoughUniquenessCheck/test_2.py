@@ -29,9 +29,9 @@ topRoughUniquenessSumsList=[]
 keep_N_ValuesInRoughUniquenessCheck=4
 
 #4) get the output of the function, which is what will typically be checked.
-for counter, massFragCombination in enumerate(massFragCombinations):
+for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
     #calculates a sum that roughly expresses how unique the molecular mass fragments are to the different molecules, but this is a quick and not-rigrous method. Then, the value is stored *only* if it is in the top N of the values so far.
-    [topRoughUniquenessSumsList,valueStoredInRUTopList] = MSRESOLVE.roughUniquenessCheck(rowSumsList[counter], topRoughUniquenessSumsList, keep_N_ValuesInRoughUniquenessCheck, massFragCombination)
+    [topRoughUniquenessSumsList,valueStoredInRUTopList] = MSRESOLVE.roughUniquenessCheck(rowSumsList[massFragCombinationIndex], topRoughUniquenessSumsList, keep_N_ValuesInRoughUniquenessCheck, massFragCombination)
 
 #The output of the function is sightly unexpected, the last mass fragment combinaiton is stored instead of the fragments [9,8,7,6,5].
 #This is due to the bisect search used. When the values are all the same, it starts looking in the fragment array. This is not a problem
