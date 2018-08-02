@@ -24,6 +24,7 @@ G = UserInput
 #value will be inserted there and the last value removed from the list (if
 #applicable). The max lengh of list is used to ensure the list does not go over
 #a certain size. The bisect method used sorts the list from lowest to highest.
+#The sortedList must be in ascending order.
 def storeAndPop(sortedList, valueToInsert, maxLengthOfList):
     #Find the insertion idex where the value will be inserted by using a binary
     #search
