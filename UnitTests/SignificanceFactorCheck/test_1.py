@@ -38,8 +38,8 @@ chosenReference=numpy.array([[1,2,20,2,1],
 #In it's intended use, the funciton is to append to a list 
 #(topSignificanceFactorCheckList). This list was initialized and is to be 
 #appended to in a loop
-for counter, massFragCombination in enumerate(massFragCombinations):
-    chosenReference[1,counter]=60#This is to change the array so the significance factor sums will be different during each iteration. If a different array is not provided each time, the significance factor sums will all be the same.
+for changeChosenReferenceAtIndex, massFragCombination in enumerate(massFragCombinations):
+    chosenReference[1,changeChosenReferenceAtIndex]=60#This is to change the array so the significance factor sums will be different during each iteration. If a different array is not provided each time, the significance factor sums will all be the same.
     [largestMagnitudeSigFactorSumsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(chosenReference[:,1:],largestMagnitudeSigFactorSumsList,keep_N_ValuesInSignificanceFactorCheck,massFragCombination, moleculesLikelihood)
 #print(output)
 resultObj= [largestMagnitudeSigFactorSumsList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
