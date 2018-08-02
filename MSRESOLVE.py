@@ -3278,6 +3278,7 @@ def main():
     if(G.preProcessing == 'yes'):
         
         #TODO Make a new global to remove mass fragments from the experimental data in preprocessing
+        #using trimDataMassesToMatchChosenMassFragments
         
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
