@@ -341,6 +341,7 @@ def ABCDetermination(ReferencePatternMeasured, ReferencePatternLiterature):
 #this function either creates or gets the three coefficients for the polynomial correction and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
+# TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
 def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceLiteratureFileName,referenceMeasuredFileName,measuredReferenceYorN):
     
     if measuredReferenceYorN =='yes':
@@ -358,6 +359,7 @@ def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,reference
 #this function eliminates any fragments that are below a certain threshold, for solving 
 #data that is giving negatives or over emphasizing small mass fragments, this will eliminate 
 #those below a certain user-input value
+# TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
 def ReferenceThreshold(reference,referenceValueThreshold):
     referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
     for rowcounter in range(len(referencedata[:,0])):#goes through all rows in references
@@ -445,7 +447,7 @@ def RemoveUnreferencedMasses(ExperimentData, reference):  ## DEPRECATED Replaced
     massFragmentNumbers = numpy.delete(massFragmentNumbers.astype(int), deletion_indices)
     workingData = numpy.delete(workingData, deletion_indices, 1)
 
-    return (massFragmentNumbers, workingData)
+    return massFragmentNumbers, workingData
 
 
 '''
@@ -477,7 +479,7 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
     massFragmentNumbers = numpy.delete(massFragmentNumbers.astype(int), deletion_indices)
     workingData = numpy.delete(workingData, deletion_indices, 1)
 
-    return (massFragmentNumbers,workingData)
+    return massFragmentNumbers,workingData
 
 
     
@@ -561,7 +563,7 @@ Parameters:
 ExperimentData - of type MSData, the one instantiated in main() named ExperimentData is a good example of one
     that will work here
 ReferenceData - of type MSReference, ReferenceData from main() is a good example
-chosenMassFragments  - list of integers, like the one created in UserInput 
+chosenMassFragments  - list of integers, like the one created in UserInput  
 '''
 def trimDataMassesToMatchChosenMassFragments(ExperimentData, ReferenceData, chosenMassFragments):
 
@@ -650,7 +652,7 @@ def CorrectionValuesObtain(ReferenceData):
 #need these indexes for later
 def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
     ReferenceData.referenceabscissa = ReferenceData.standardized_reference_intensities[:,0]
-    referencedata = ReferenceData.standardized_reference_intensities[:,1:]
+    referenceDataArray = ReferenceData.standardized_reference_intensities[:,1:]
     correction_values = numpy.array(list(zip(*ReferenceData.correction_values)))
     #This function has inputs that are very general so that it could be easily understood and used in various 
     #circumstances, the function first gets the size of the data array and then uses that to index the loops
@@ -677,7 +679,7 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
         return matching_correction_values
     #here the main function, Populate_matching_correction_values, calls all of its sub-functions 
     ReferenceData.matching_correction_values = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
-    ReferenceData.monitored_reference_intensities = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referencedata)
+    ReferenceData.monitored_reference_intensities = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referenceDataArray)
     ReferenceData.matching_correction_values = ArrayElementsInverser(ReferenceData.matching_correction_values)
     return ReferenceData
     
