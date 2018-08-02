@@ -528,23 +528,25 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     print("MoleculeChooser")
     
-    #the copy is required because the keep only selected columns function is called twice with the same rows to clear
-    copy_moleculeselecNum = copy.deepcopy(ReferenceData.molecules)
+    #the untrimmedcopy is required because the keep only selected columns function is called twice with the same columns to clear
+    #without a copy, the full set of molecules would be lost before the second function call could use them
+    unTrimmedMoleculesCopy = copy.deepcopy(ReferenceData.molecules)
     
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
     
     #shorten the reference fragmentation pattern to the required length
-    Temp_Reference_Data, trimmedRefererenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
+    trimmedReferenceIntensities, trimmedRefererenceData.molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
                                                                                                                     trimmedRefererenceData.molecules, chosenMolecules)  
-    #Shorten the electronnumbers to the correct values, using the copy of molecules 
-    ArrayOneD = True
-    trimmedRefererenceData.electronnumbers, copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, copy_moleculeselecNum, chosenMolecules, ArrayOneD)
     #add a second dimension to the reference data
     newReferenceMF = numpy.reshape(trimmedRefererenceData.mass_fragment_numbers_monitored,(-1,1))
     
     #Add the abscissa back into the reference values
-    trimmedRefererenceData.provided_reference_intensities = numpy.hstack((newReferenceMF,Temp_Reference_Data))
+    trimmedRefererenceData.provided_reference_intensities = numpy.hstack((newReferenceMF,trimmedReferenceIntensities))
+    
+    #Shorten the electronnumbers to the correct values, using the full copy of molecules 
+    ArrayOneD = True
+    trimmedRefererenceData.electronnumbers, unused_trimmed_copy_molecules = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, unTrimmedMoleculesCopy, chosenMolecules, ArrayOneD)
     
     #remove any zero rows that may have been created
     trimmedRefererenceData.ClearZeroRows()
