@@ -527,12 +527,12 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     print("MoleculeChooser")
-    #getting a list of all molecules (a header) to compare to during trimming.
+    #getting a list of all molecules (a header) to compare to during trimming.	    
     allMoleculesList = ReferenceData.molecules
+    
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
     
-  
     #trim the reference fragmentation patterns to only the selected molecules 
     #unused trimmed copy molecules is just a place holder to dispose of a function return that is not needed
     trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
@@ -544,8 +544,8 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.provided_reference_intensities = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules 
-    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, ArrayOneD = True)
-    #put the trimmed molecules list into the trimmedRefererenceData object.
+    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True)	    
+    #put the trimmed molecules list into the trimmedRefererenceData object.	   
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
     #remove any zero rows that may have been created
@@ -569,8 +569,7 @@ ExperimentData - of type MSData, the one instantiated in main() named Experiment
 ReferenceData - of type MSReference, ReferenceData from main() is a good example
 chosenMassFragments  - list of integers, like the one created in UserInput  
 '''
-def trimDataMassesToMatchChosenMassFragments(ExperimentData, ReferenceData):
-
+def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments):
     # If we are only interested in a subset of the MS data
     # and that subset is a subset of the loaded data
     # remove the irrelevant mass data series from ExperimentData.mass_fragment_numbers
@@ -579,8 +578,9 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, ReferenceData):
     print("MassFragChooser")
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
-                                                                                                            G.chosenMassFragments)
+                                                                                                            chosenMassFragments)
     trimmedExperimentData.ExportCollector("MassFragChooser")
+    
     return trimmedExperimentData
 
 def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
@@ -1661,6 +1661,7 @@ class MSReference (object):
         self.runTimeAtExport = []
         self.labelToExport = []
         self.dataToExport = []
+        self.moleculesToExport = []
         self.exportSuffix = ''
         #self.experimentTimes = []
             
@@ -1675,9 +1676,13 @@ class MSReference (object):
         self.labelToExport.append(callingFunction) 
         
         if self.ExportAtEachStep == 'yes':
+            ##record molecules of experiment
+            self.moleculesToExport.append(self.molecules.copy())
             #record data of experiment
             if use_provided_reference_intensities:
                 self.dataToExport.append(self.provided_reference_intensities.copy())
+            elif callingFunction == 'UnnecessaryMoleculesDeleter':
+                self.dataToExport.append(self.monitored_reference_intensities.copy())
             elif not use_provided_reference_intensities:
                 self.dataToExport.append(self.standardized_reference_intensities.copy())
             
@@ -1690,7 +1695,9 @@ class MSReference (object):
                 #inserting the data for a particular savePoint
                 filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
                 data = self.dataToExport[savePoint]
-                colIndex = ['%s'% y for y in self.molecules]
+                colIndex = ['%s'% y for y in self.moleculesToExport[savePoint]]
+                #colIndex = ['%s'% y for y in self.molecules]
+                #print(numpy.shape(data),numpy.shape(colIndex))
                 ExportXYYYData(filename,data,colIndex, fileSuffix = self.iterationSuffix)
 
     # This class function removes all rows of zeros from
@@ -3251,16 +3258,17 @@ def main():
     #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
     global ReferenceDataList
     global ExperimentData
+    global prototypicalReferenceData
     global currentReferenceData
     
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
-    currentReferenceData = ReferenceDataList[0]
+    prototypicalReferenceData = ReferenceDataList[0]
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referenceFileName) > len(G.referencePatternTimeRanges):
         print("WARNING: There are more reference files given than time ranges")
-    #save each global variable into the class objects 
+    #save global variable into the class objects 
     ExperimentData.ExportAtEachStep = G.ExportAtEachStep
    
     #if this is the first iterative run, then the reference and experimental files need to have been imported before the iteration can begin
@@ -3275,37 +3283,14 @@ def main():
         # Skip preprocessing
         G.preProcessing = 'skip'
         
-        
     if(G.preProcessing == 'yes'):
         
-        if G.iterativeAnalysis:
-            #create a copy of the Reference Data
-             ReferenceDataFullCopy = copy.deepcopy(currentReferenceData)
-             
-        # Trim the reference data according to the selected molecules list
-        if G.specificMolecules == 'yes':
-            currentReferenceData = trimDataMoleculesToMatchChosenMolecules(currentReferenceData, G.chosenMolecules) 
-             
+        #TODO Make a new global to remove mass fragments from the experimental data in preprocessing
+        #using trimDataMassesToMatchChosenMassFragments
+        
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
         print("Data PreProcessing completed")
-        
-        if G.iterativeAnalysis:
-            #make a copy of the experimental data for later use in iterative processing
-            ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
-            #make a copy of Experimental data specifically to be used in signal simulation. i.e. will have mass fragments trimmed if they aren't referenced by the current molecules. 
-            ExperimentDataCopy = copy.deepcopy(ExperimentData)
-            #remove any unreference masses from the signal simulation copy of experimental data
-            ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, currentReferenceData)   
-            
-        if G.specificMassFragments == 'yes':
-            if len(G.chosenMassFragments) < len(currentReferenceData.molecules):
-                print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-                print("Mass fragment selection has been canceled")
-            else:#Trim the experimental data according to the mass fragments in G.chosenMassFragments 
-                ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData) 
-        #Trim the experimental data according to the mass fragments in referenceData
-        ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
         
         #This graph call is graphing fully preprocessed data.
         if G.grapher == 'yes':
@@ -3326,22 +3311,7 @@ def main():
         G.checkpoint = timeit.default_timer()
         print('PreProcessing Time: ', (G.timeSinceLastCheckPoint))
     
-        #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
-        if G.iterativeAnalysis:
-            ReferenceDataSSmatching_correction_values, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, currentReferenceData, ReferenceDataFullCopy)
     elif(G.preProcessing == 'skip'):
-
-        # Even if we skip the real preProcessing some manipulations must be performed on the
-        # MS data
-
-        if G.specificMassFragments == 'yes':
-            if len(G.chosenMassFragments) < len(currentReferenceData.molecules):
-                print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-                print("Mass fragment selection has been canceled")
-            else:#Trim the experimental data according to the mass fragments in G.chosenMassFragments 
-                ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData) 
-        #Trim the experimental data according to the mass fragments in referenceData
-        ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
         
         # Output to make sure user knows we are skipping Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -3353,15 +3323,6 @@ def main():
         #This function call loads the preprocessed data
         print("Loading the preprocessed data from file '{}'".format(G.preProcessedDataOutputName))
         ExperimentData.workingData, ExperimentData.mass_fragment_numbers, ExperimentData.times = ImportWorkingData(G.preProcessedDataOutputName)
-
-        if G.specificMassFragments == 'yes':
-            if len(G.chosenMassFragments) < len(currentReferenceData.molecules):
-                print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-                print("Mass fragment selection has been canceled")
-            else:#Trim the experimental data according to the mass fragments in G.chosenMassFragments 
-                ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData)
-        #Trim the experimental data according to the mass fragments in referenceData
-        ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
              
         # Output to make sure user knows we are loading Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -3374,34 +3335,59 @@ def main():
                          "Or you are attempting to load pre-processed data without running data analysis")
 
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
-    ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
-    # and needed if G.dataAnalysis == 'load' or 'yes'
-    if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
-        #Prepare currentReferenceData which is currently the first reference object in the list
-        currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData,ExperimentData,G.extractReferencePatternFromDataOption,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
-        #for loop to preprocess the remaining MSReference objects and match correction values
-        for i in range(len(ReferenceDataList)):
-            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData,G.extractReferencePatternFromDataOption,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+    #Steps required if preprocessing has also been run
+    if (G.dataAnalysis == 'yes' and G.preProcessing == 'yes'):
         
-                              
-    if (G.dataAnalysis == 'yes'):
-                
-        # Reset the checkpoint timer for the data analysis section
-        G.checkpoint = timeit.default_timer()
-        #check to make sure that there are enough mass fragments to solve for each variable. 
-        if len(ExperimentData.mass_fragment_numbers) < len(currentReferenceData.molecules):
-            raise SystemError("There are too few mass fragments to solve for the number of molecules provided. \nData Analysis has been ended.")
-            
+        if G.iterativeAnalysis:
+            #create a copy of the Reference Data
+             ReferenceDataFullCopy = copy.deepcopy(prototypicalReferenceData) 
+        
         ##Start: Preparing data for data analysis based on user input choices
+        # Trim the reference data according to the selected molecules list
+        if G.specificMolecules == 'yes' or G.iterativeAnalysis:
+            prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMolecules)
+            
+        if G.iterativeAnalysis:
+            #make a copy of the experimental data for later use in iterative processing
+            ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
+            #make a copy of Experimental data specifically to be used in signal simulation. i.e. will have mass fragments trimmed if they aren't referenced by the current molecules. 
+            ExperimentDataCopy = copy.deepcopy(ExperimentData)
+            #remove any unreference masses from the signal simulation copy of experimental data
+            ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, prototypicalReferenceData)       
+        
+        
         # If we are only interested in a subset of the MS data
         # remove the irrelevant mass data series from ExperimentData.mass_fragment_numbers
         # and the corresponding colums from ExperimentData.workingData
         if G.specificMassFragments == 'yes':
             print("MassFragChooser")
-            ExperimentData.workingData, ExperimentData.mass_fragment_numbers = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
-                                                                                                                           ExperimentData.mass_fragment_numbers,
-                                                                                                                           G.chosenMassFragments)
+             #Trim the experimental data according to the mass fragments in G.chosenMassFragments 
+            ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, G.chosenMassFragments) 
             ExperimentData.ExportCollector("MassFragChooser")
+        #Trim the experimental data according to the mass fragments in referenceData
+        ExperimentData = trimDataMassesToMatchReference(ExperimentData, prototypicalReferenceData) 
+        
+    ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
+    # and needed if G.dataAnalysis == 'load' or 'yes'  
+    if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
+        #Prepare currentReferenceData which is currently the first reference object in the list
+        prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData,ExperimentData,G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+        #for loop to preprocess the remaining MSReference objects and match correction values
+        for i in range(len(ReferenceDataList)):
+            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+                              
+    if (G.dataAnalysis == 'yes'):
+        
+        #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
+        if G.iterativeAnalysis:
+            ReferenceDataSSmatching_correction_values, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, prototypicalReferenceData, ReferenceDataFullCopy)
+                
+        # Reset the checkpoint timer for the data analysis section
+        G.checkpoint = timeit.default_timer()
+        #check to make sure that there are enough mass fragments to solve for each variable. 
+        if len(ExperimentData.mass_fragment_numbers) < len(prototypicalReferenceData.molecules):
+            raise SystemError("There are too few mass fragments to solve for the number of molecules provided. \nData Analysis has been ended.")
+            
 
         
         # Since SlSUniqueFragments is potentially used in a number of the analysis options
@@ -3410,12 +3396,12 @@ def main():
         # while subsequent opens to this file will append
         if G.SLSUniquePrint == 'yes':
             createSLSUniqueOrderFile(ExperimentData.abscissaHeader,
-                                     currentReferenceData.molecules)
+                                     prototypicalReferenceData.molecules)
             
         #this numpy.zeros line is going to be the array that holds all of the answers before they are printed out, which
         #is done in order to save time and decrease expense
-        concentrationsScaledToCOarray = numpy.zeros(len(currentReferenceData.molecules)+1)
-        concentrationsarray = numpy.zeros(len(currentReferenceData.molecules)+1)
+        concentrationsScaledToCOarray = numpy.zeros(len(prototypicalReferenceData.molecules)+1)
+        concentrationsarray = numpy.zeros(len(prototypicalReferenceData.molecules)+1)
 
         # Loading user choices for data analysis
         DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
@@ -3425,7 +3411,9 @@ def main():
         ThresholdList = [G.rawSignalThresholdMethod, G.rawSignalThresholdValue, G.sensitivityThresholdValue,
                          G.rawSignalThresholdDivider, G.rawSignalThresholdLimit, G.rawSignalThresholdLimitPercent]
         
-        # Calculate a coefficient for doing a unit conversion on concentrations
+        currentReferenceData = ReferenceDataList[0] #TODO this line is placeholder by charles to fix currentRefenceData issue until Alex has a better solution 
+    
+        # Calculate a coefficient for doing a unit conversion on concentrations #TODO resolve Ratio Finder issue, i.e. list of conversionValues
         ExperimentData = RatioFinder(currentReferenceData, ExperimentData, G.concentrationFinder,
                                       G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
 	##End: Preparing data for data analysis based on user input choices
