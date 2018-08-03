@@ -28,7 +28,7 @@ largestMagnitudeSigFactorSumsList=[]
 
 keep_N_ValuesInSignificanceFactorCheck=5
 moleculesLikelihood=numpy.array([1,0.5,1,1])
-chosenReference=numpy.array([[1,2,20,2,1],
+chosenReference=numpy.array([[1,2.06,20,2,1],
                              [2,0,0,4,0],
                              [3,1,1,30,1],
                              [4,3,2,1,0],
@@ -49,9 +49,9 @@ resultStr= str(resultObj)
 
 #this is so that pytest can do UnitTesterSG tests.
 def test_pytest(): #note that it cannot have any required arguments for pytest to use it, and that it is using variables that are defined above in the module.
-    ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = False)
+    ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = False, relativeTolerance=1E-1, absoluteTolerance=1E-3)
     
     
 if __name__ == "__main__":
    #This is the normal way of using the UnitTesterSG module, and will be run by UnitTesterSG or by running this test file by itself.
-   ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = True)
+   ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = True, relativeTolerance=1E-1, absoluteTolerance=1E-3)
