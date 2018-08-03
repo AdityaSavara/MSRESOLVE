@@ -19,16 +19,16 @@ G = UserInput
 ############################################################################################################################################
 #########################################################Best Mass Fragment Chooser#########################################################
 ############################################################################################################################################
-#Store and Pop takes in a sorted list. Using a binary search method, it will 
+#The function maintains two lists: 1)that contains the objective function values that 
+#need to be kept in a sorted order 2) a parallel list where a value needs to be inserted 
+#according to the sorting of the first one. It also takes in an integer value,N, that limits 
+#the the length of the two lists to N values. Using a binary search method, it will 
 #find the location where the value to insert will be inserted(if possible). The
 #value will be inserted there and the last value removed from the list (if
-#applicable). The max lengh of list is used to ensure the list does not go over
-#a certain size. The bisect method used inserts in the list from lowest to 
-#highest, keeping it in a sorted order. The function maintains two lists: 1)
-#that the lists needed to be sorted by and 2) a parallel list where a value 
-#needs to be inserted according to the sorting of the first one.
+#applicable).  The bisect method used requires the list be presorted in ascending order.
+#The bisect method used inserts to keep the list in a sorted order. 
 def storeAndPop(objectiveFunctionValuesList, objectiveFuncitonValueToInsert, parallelList, valueToInsertInParallelList,maxItemsAllowed):
-    #Find the insertion idex where the value will be inserted by using a binary
+    #Find the insertion index where the value will be inserted by using a binary
     #search
     insertionIndex=bisect.bisect(objectiveFunctionValuesList, objectiveFuncitonValueToInsert)
 
@@ -59,8 +59,10 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFuncitonValueToInsert, par
     return objectiveFunctionValuesList, parallelList, valueStoredInList
 
 #The rough uniqueness check is a limiting check that takes the mass fragment
-#combinations that pass the row sums check and builds a list of 
-#keep_N_ValuesInRoughUniquenessCheck that contain the largest number of zeros.
+#combinations that pass the row sums check and builds a lists of 
+#keep_N_ValuesInRoughUniquenessCheck that contain the largest number of zeros
+#and the corresponding mass fragment combination for each of the values in the
+#first list.
 #The largest number of zeros would be most likely to pass the SLS method.
 #It calculates a sum that roughly expresses how unique the molecular mass 
 #fragments are to the different molecules, but this is a quick and not-rigrous 
@@ -82,6 +84,8 @@ def roughUniquenessCheck(rowSumsList, smallestRowsSumsList,topMassFragCombinatio
 #calculates the significance factors for each element in the sub-reference 
 #array (refernce array with zeros for all the data for mass fragments that 
 #aren't needed). Is then takes the sum of all of the significance factors.
+#The top N mass fragment combinations are then stored in a list in decending 
+#order according to the magnitude of their significance sum. 
 #Basically, it calculates the significance factor for each element in the
 #chosen reference array and sums all of the significane values for the whole 
 #array. It keeps the mass fragments that have the largest magnitude of 
@@ -99,20 +103,19 @@ def significanceFactorCheck(chosenReferenceIntensities,largestMagnitudeSigFactor
         #does not include the first column since that is the mass fragment 
         #numbers
         significanceColumnDataList=ElemSignificanceCalculator(chosenReferenceIntensities, columnCounter, moleculesLikelihood)
-
-        #Sums the significance factors across the column and to the
-        #sum for the whole ref data array. The subtraction is used to make the
-        #sum negative. The binary search used will order from lowest to highest
-        #The largest magnitude will then be the smallest number and be kept
-        #during the store and pop function
+        
+	#Sums the significance factors across the column and to the
+        #sum for the whole ref data array. The larger in magnitude this is, the 'better'.
         sigFactorSum+=sum(significanceColumnDataList)
         
         ####Currently there is no real need to maintain a significance data 
         ####list for the whole array
     
     #The subtraction is used to make the sum negative. The binary search used 
-    #will order from lowest to highest. The largest magnitude will then be the 
-    #smallest number and be kept during the store and pop function
+    #will order from lowest to highest. A larger magnitude for this value then means
+    #the most negative which will be kept during the store and pop function.
+    #Note that we use the wording of largest magnitude so that our phrasing remains the same
+    #when talking about the negative of the sum.
     negativeOfSigFactorSum=-1*sigFactorSum    
     
     #Uses store and pop to maintian a list of the mass fragment with the
