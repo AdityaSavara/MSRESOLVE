@@ -9,11 +9,11 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
-collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
+collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
-iterativeAnalysis = False
+iterativeAnalysis = True
 #the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
@@ -27,7 +27,7 @@ dataSimulation='yes'
 
 #//Graphing//
 #option allowing you to view a graph of determined concentrations
-grapher = 'yes' #yes will graph function no will not
+grapher = 'no' #yes will graph function no will not
 
 
 #//Time Range//
@@ -38,12 +38,12 @@ timeRangeFinish = 900	#finish time (-int)
 
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
-specificMolecules = 'no'
+specificMolecules = 'yes'
 chosenMolecules = ['Crotyl Alcohol']
 
 #//Chosen Mass Fragments//
 #To choose only specific mass fragments from collected data, input below:
-specificMassFragments = 'no'	#if you wish to enable this function enter 'yes' otherwise 'no'
+specificMassFragments = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
 chosenMassFragments = [57] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
 
 #//Molecule Likelihoods//
@@ -193,7 +193,7 @@ negativeAnalyzerYorN = 'no'
 
 #//Data Analysis Methods
 #Below the path for the analysis of the data; sls or inverse
-answer = 'inverse'	#'inverse' or 'sls'; sls is suggested
+answer = 'sls'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
@@ -228,7 +228,7 @@ simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 
-ExportAtEachStep = 'no'
+ExportAtEachStep = 'yes'
 generatePercentages = 'no'
 
 checkpoint = ''
