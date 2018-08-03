@@ -271,9 +271,6 @@ DataHeaders- List of floats/strings/etc. (or 1-d numpy array)
 HeaderValuesToKeep- List of floats/strings/etc. NOTE: HeaderValuesToKeep is not necessarily 
                       smaller than DataHeaders, it may contain values not included
                       in DataHeaders.
-NOTE: This function intentionally edits the object directly and then returns it because
- that is more efficient for python, and is also needed in some cases when working on 
- embedded objects.
 '''
 def KeepOnlySelectedYYYYColumns(YYYYData, DataHeaders, HeaderValuesToKeep, Array1D = False):
     

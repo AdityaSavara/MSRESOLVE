@@ -1,3 +1,4 @@
+import bisect
 import copy 
 import numpy
 import csv
@@ -15,6 +16,117 @@ import export_import as ei
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
 import UserInput 
 G = UserInput
+############################################################################################################################################
+#########################################################Best Mass Fragment Chooser#########################################################
+############################################################################################################################################
+#Store and Pop takes in a sorted list. Using a binary search method, it will 
+#find the location where the value to insert will be inserted(if possible). The
+#value will be inserted there and the last value removed from the list (if
+#applicable). The max lengh of list is used to ensure the list does not go over
+#a certain size. The bisect method used requires the list be presorted in ascending order.
+
+#When multiple of the same value from the objective funcitons are present, 
+#bisect starts searching based on the elements in the array. This is fine 
+#for the purposes of this funciton since the best mass frag chooser iterates
+#through the combinations in order.
+
+def storeAndPop(sortedList, valueToInsert, maxLengthOfList):
+    #Find the insertion idex where the value will be inserted by using a binary
+    #search
+    insertionIndex=bisect.bisect(sortedList, valueToInsert)
+
+    #Initialize a variable to keep track of if a value was inserted into the
+    #list.
+    valueStoredInList=False
+
+    #If the list isn't yet filled, the value will inherently be in the top N
+    #value in the list. This vlaue can just be inserted at the insertionIndex.
+    if len(sortedList)<maxLengthOfList:    
+        sortedList.insert(insertionIndex, valueToInsert)
+        valueStoredInList=True
+    #If the list already contains N elements, a new element could either be 
+    #inserted in the list or at the end of the list. Because the list is 
+    #already at its maximum length, nothing shouold be added to the end. This
+    #check is to make sure nothing is going to be added to the end.
+    elif insertionIndex<maxLengthOfList:
+        #insert the value to insert in the location found through the binary
+        #search
+        sortedList.insert(insertionIndex, valueToInsert)
+        valueStoredInList=True
+        #delete the last element since somthing was added to the list
+        del sortedList[-1]
+    return sortedList, valueStoredInList
+
+#The rough uniqueness check is a limiting check that takes the mass fragment
+#combinations that pass the row sums check and builds a list of 
+#keep_N_ValuesInRoughUniquenessCheck that contain the largest number of zeros.
+#The largest number of zeros would be most likely to pass the SLS method.
+#It calculates a sum that roughly expresses how unique the molecular mass 
+#fragments are to the different molecules, but this is a quick and not-rigrous 
+#method. Then, the value is stored *only* if it is in the top N of the values 
+#so far.
+def roughUniquenessCheck(rowSumsList, topRoughUniquenessCheckList, keep_N_ValuesInRoughUniquenessCheck, massFragCombination):
+
+    #We want to save the smallest sum since that would contain the smallest 
+    #number of zeros.
+    roughUniqueness=numpy.sum(rowSumsList) 
+    
+    #Create a tuple that stores the rough uniqueness value and the 
+    #massFragCombination
+    roughUniquenessTuple=tuple([roughUniqueness, massFragCombination])
+    
+    #Use Store and Pop to add the tuple to the list of top rough uniquness 
+    #combinations. This will only save a user specified number of tuples.
+    [topRoughUniquenessCheckList, valueStoredInRUTopList]=storeAndPop(topRoughUniquenessCheckList, roughUniquenessTuple, keep_N_ValuesInRoughUniquenessCheck)
+    return topRoughUniquenessCheckList, valueStoredInRUTopList
+
+#The significance factor check is a limiting check the selects the mass 
+#fragment combinations having the largest sum of significance factors. It
+#calculates the significance factors for each element in the sub-reference 
+#array (refernce array with zeros for all the data for mass fragments that 
+#aren't needed). Is then takes the sum of all of the significance factors.
+#Basically, it calculates the significance factor for each element in the
+#chosen reference array and sums all of the significane values for the whole 
+#array. It keeps the mass fragments that have the largest magnitude of 
+#significance sum.
+def significanceFactorCheck(chosenReferenceIntensities ,largestMagnitudeSigFactorSumsList, keep_N_ValuesInSignificanceFactorCheck, massFragCombination, moleculesLikelihood):
+    
+    #Initialize the sum of the significance factors
+    sigFactorSum=0
+    
+    #The elemSignificanceCalculator finds the significance factors a column at 
+    #a time. This loops through the columns(molecules)
+    for columnCounter in range(len(chosenReferenceIntensities[0])):
+        
+        #Finds the significance factors for each element in the column. This 
+        #does not include the first column since that is the mass fragment 
+        #numbers
+        significanceColumnDataList=ElemSignificanceCalculator(chosenReferenceIntensities, columnCounter, moleculesLikelihood)
+
+        #Sums the significance factors across the column and to the
+        #sum for the whole ref data array. The larger in magnitude this is, the 'better'.
+        sigFactorSum+=sum(significanceColumnDataList)
+        
+        ####Currently there is no real need to maintain a significance data 
+        ####list for the whole array
+    
+    #The subtraction is used to make the sum negative. The binary search used 
+    #will order from lowest to highest. A larger magnitude for this value then means
+    #the most negative which will be kept during the store and pop function.
+    #Note that we use the wording of largest magnitude so that our phrasing remains the same
+    #when talking about the negative of the sum.
+    negativeOfSigFactorSum=-1*sigFactorSum    
+    
+    #Creates a tuple that stores the significane factor sum and the mass
+    #fragment combination
+    sigFactorTuple=tuple([negativeOfSigFactorSum, massFragCombination])
+    
+    #Uses store and pop to maintian a list of the mass fragment with the
+    #largest significance factors.
+    #The below line only keeps the combinations with the largest magnitude (most negative) of the negativeOfSigFactorSums.
+    [largestMagnitudeSigFactorSumsList,valueStoredInSFTopList]=storeAndPop(largestMagnitudeSigFactorSumsList,sigFactorTuple,keep_N_ValuesInSignificanceFactorCheck)
+    
+    return largestMagnitudeSigFactorSumsList, valueStoredInSFTopList
 ############################################################################################################################################
 ################################################Algorithm Part 1: Pre-Processing the data###################################################
 ############################################################################################################################################
@@ -544,8 +656,10 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.provided_reference_intensities = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules 
+
     trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True)	    
     #put the trimmed molecules list into the trimmedRefererenceData object.	   
+
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
     #remove any zero rows that may have been created
@@ -956,9 +1070,6 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
         [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
         ReferenceDataList = [MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
-        #save each global variable into the class objects 
-        ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
-        ReferenceDataList[0].iterationSuffix = G.iterationSuffix
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNames
@@ -976,7 +1087,7 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNames)):
-        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
+        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],referencePatternForm[i])
         ReferenceDataAndFormsList.append(MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
         #save each global variable into the class objects 
         ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
@@ -3264,7 +3375,9 @@ def main():
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
+
     prototypicalReferenceData = ReferenceDataList[0]
+
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referenceFileName) > len(G.referencePatternTimeRanges):
         print("WARNING: There are more reference files given than time ranges")
@@ -3371,6 +3484,7 @@ def main():
     # and needed if G.dataAnalysis == 'load' or 'yes'  
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
         #Prepare currentReferenceData which is currently the first reference object in the list
+
         prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData,ExperimentData,G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         #for loop to preprocess the remaining MSReference objects and match correction values
         for i in range(len(ReferenceDataList)):
