@@ -1030,14 +1030,16 @@ def ImportAnalyzedData(concentrationsOutputName):
 '''
 Performs some manipulations related to the reference pattern
 '''
-def ReferenceInputPreProcessing(ReferenceData):
+def ReferenceInputPreProcessing(ReferenceData, verbose=True):
 
     # standardize the reference data columns such that the maximum value is 100 and everything else is
     # linearly scaled according that the maximum value scaling
     ReferenceData.standardized_reference_intensities=StandardizeReferencePattern(ReferenceData.provided_reference_intensities,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizeReferencePattern')
     
-    print('beginning CorrectionValueCorrector')
+    #Only print if not called from interpolating reference objects
+    if verbose:
+        print('beginning CorrectionValueCorrector')
     ReferenceData.standardized_reference_intensities = CorrectionValueCorrector(ReferenceData.standardized_reference_intensities, G.referenceCorrectionCoefficients,
                                                        G.referenceLiteratureFileName, G.referenceMeasuredFileName,
                                                        G.measuredReferenceYorN)
@@ -1048,7 +1050,9 @@ def ReferenceInputPreProcessing(ReferenceData):
         ReferenceData.ExportCollector('ReferenceThreshold')
     
     ReferenceData.correction_values = CorrectionValuesObtain(ReferenceData)
-    print('CorrectionValuesObtain')
+    #Only print if not called from interpolating reference objects
+    if verbose:
+        print('CorrectionValuesObtain')
 
     return ReferenceData
 
@@ -1105,10 +1109,12 @@ It interpolates row by row and returns the new interpolated data
 def InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,time,gapStart,gapEnd):
     #Since we probably need values from firstReferenceObject for another interpolation, create a deepcopy of firstReferenceObject
     newReferenceObject = copy.deepcopy(firstReferenceObject)
+    
     #loop through the provided reference intensities and linearly interpolate row by row
-    for i in range(len(firstReferenceObject.monitored_reference_intensities)):
-        #monitor_reference_intensities does not use an abscissa so index as [i,:] to use every column in the ith row
-        newReferenceObject.monitored_reference_intensities[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.monitored_reference_intensities[i,:],secondReferenceObject.monitored_reference_intensities[i,:],time,gapStart,gapEnd)
+    for i in range(len(firstReferenceObject.standardized_reference_intensities)):
+        #Overwrite provided_reference_intensities by interpolating the standardized_reference_intensities
+        #[i,:] for every column in the ith row
+        newReferenceObject.provided_reference_intensities[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.standardized_reference_intensities[i,:],secondReferenceObject.standardized_reference_intensities[i,:],time,gapStart,gapEnd)
     return newReferenceObject
 
 '''
@@ -1132,6 +1138,8 @@ def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRan
         if currentTime > referencePatternTimeRanges[currentReferencePatternIndex][1] and currentTime < referencePatternTimeRanges[currentReferencePatternIndex+1][0]:
             #Reads in current reference pattern, next reference pattern, current time, gap start time, and gap end time
             currentReferenceData = InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
+            #Prepare the current reference data
+            currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
         #If we are out of the first time range, not in a gap, and not in the last time range, then we are in the next time range
         elif currentTime >= referencePatternTimeRanges[currentReferencePatternIndex+1][0]:
             #Increase the index
@@ -1216,20 +1224,24 @@ def DataInputPreProcessing(ExperimentData):
 '''
 PrepareReferenceOjbectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
 '''
-def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]]):
+def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
     # Reference Pattern Changer
     if extractReferencePatternFromDataOption == 'yes':
         ReferenceData.provided_reference_intensities = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
         ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
-        print('ReferencePatternChanger complete')
+        #Only print if not called from interpolating reference objects
+        if verbose:
+            print('ReferencePatternChanger complete')
         
     # Some initial preprocessing on the reference data
-    ReferenceData = ReferenceInputPreProcessing(ReferenceData)
+    ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose)
     # Set the ReferenceData.monitored_reference_intensities and
     # ReferenceData.matching_correction_values fields
     # based on the masses in ExperimentData.mass_fragment_numbers
     ReferenceData = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceData)
-    print("Matching Correction Values complete")
+    #Only print if not called from interpolating reference objects
+    if verbose:
+        print("Matching Correction Values complete")
     # Remove reference species that have no mass fragment data
     # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
     ## TODO: Consider changing this function to take the array directly i.e.
@@ -1239,7 +1251,7 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
     ReferenceData.ExportCollector('UnnecessaryMoleculesDeleter')
     
     # Export the reference data files that have been stored by ReferenceData.ExportCollector
-    ReferenceData.ExportFragmentationPatterns()
+    ReferenceData.ExportFragmentationPatterns(verbose)
     return ReferenceData
     
 #exports the user input file so that it can be used in the next iteration
@@ -1800,11 +1812,15 @@ class MSReference (object):
             elif not use_provided_reference_intensities:
                 self.dataToExport.append(self.standardized_reference_intensities.copy())
             
-    def ExportFragmentationPatterns(self):
-        print("\n Reference Debugging List:")
+    def ExportFragmentationPatterns(self, verbose=True):
+        #Only print if not called from interpolating reference objects
+        if verbose:
+            print("\n Reference Debugging List:")
         for savePoint in range(len(self.runTimeAtExport)):
-            print(self.labelToExport[savePoint])
-            print(self.runTimeAtExport[savePoint])
+            #Only print if not called from interpolating reference objects
+            if verbose:
+                print(self.labelToExport[savePoint])
+                print(self.runTimeAtExport[savePoint])
             if self.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
                 filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
