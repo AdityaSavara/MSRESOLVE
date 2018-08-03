@@ -3366,6 +3366,9 @@ def main():
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
     currentReferenceData = ReferenceDataList[0]
+    if G.extractReferencePatternFromDataOption == 'yes':
+        currentReferenceData.ExportAtEachStep = G.ExportAtEachStep #FIXME TODO ASHI HAS ADDED THIS LINE HERE AS A TEMPORARY MEASURE. IT BREAKS OTHER UNIT TESTS if the if statement is removed.
+    
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referenceFileName) > len(G.referencePatternTimeRanges):
         print("WARNING: There are more reference files given than time ranges")
