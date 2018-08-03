@@ -544,7 +544,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.provided_reference_intensities = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules 
-    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, ArrayOneD = True)
+    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True)
     #put the trimmed molecules list into the trimmedRefererenceData object.
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
