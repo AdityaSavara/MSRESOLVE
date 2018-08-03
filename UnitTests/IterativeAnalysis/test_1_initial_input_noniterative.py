@@ -9,7 +9,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
-collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
+collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
@@ -126,12 +126,20 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
 
 
-#//Reference Changer//
+#//Reference Pattern Changer // (rpc)
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
-extractReferencePatternFromDataOption = 'yes'
-rpcMoleculesToChange = ['CO2']
-rpcMoleculesToChangeMF = [[28,44]]
-rpcTimeRanges = [[300,600]]
+extractReferencePatternFromDataOption = 'no'
+rpcMoleculesToChange = ['Crotyl Alcohol']
+#rpcTimeRanges and rpcMoleculesToChangeMF are nested lists.  Each nested list corresponds to a molecule in rpcMoleculesToChange
+#To make this easier to visualize, each nested list is placed on its own line so the first line refers to the first molecule, second line refers to the second molecule and so on
+rpcTimeRanges = [
+                 [300,500], #For each molecule to be changed, a pair of times is required.
+                ]
+#The first mass fragment is the base fragment and it will not be changed.  The fragments following the first one are all altered based on the signal of the first fragment from the collected data
+rpcMoleculesToChangeMF = [
+                          [70,57], #For each molecule for using the rpc on, make a new line with a list of masses (length of each should be greater than 1).
+                         ]
+
 
 
 #//Reference Mass Fragmentation Threshold//
@@ -185,13 +193,13 @@ negativeAnalyzerYorN = 'no'
 
 #//Data Analysis Methods
 #Below the path for the analysis of the data; sls or inverse
-answer = 'inverse'	#'inverse' or 'sls'; sls is suggested
+answer = 'sls'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
-SLSUniquePrint = 'no'
+SLSUniquePrint = 'yes'
 SLSUniqueExport = 'SLSUniqueOrder.csv'
 
 
@@ -226,3 +234,22 @@ generatePercentages = 'no'
 checkpoint = ''
 start = ''
 timeSinceLastCheckpoint = ''
+
+iterationSuffix= ''
+unusedMolecules =''
+oldReferenceFileName = ''
+oldCollectedFileName ='' 
+nextRefFileName = ''
+nextExpFileName = ''
+
+__var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
+				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
+				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
+				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
+				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
+				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
+				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
+				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
+				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
+				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']
