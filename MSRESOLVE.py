@@ -544,8 +544,9 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.provided_reference_intensities = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules 
-    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True)	    
-    #put the trimmed molecules list into the trimmedRefererenceData object.	   
+
+    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True)
+    #put the trimmed molecules list into the trimmedRefererenceData object.
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
     #remove any zero rows that may have been created
@@ -3363,10 +3364,10 @@ def main():
     # and needed if G.dataAnalysis == 'load' or 'yes'  
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
         #Prepare currentReferenceData which is currently the first reference object in the list
-        prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData,ExperimentData,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+        currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
         #for loop to preprocess the remaining MSReference objects and match correction values
         for i in range(len(ReferenceDataList)):
-            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData,G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i], ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
                               
     if (G.dataAnalysis == 'yes'):
         
