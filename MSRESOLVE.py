@@ -1845,15 +1845,14 @@ class MSReference (object):
         #provided_reference_intensitiesOnly is not used, but is made for future use (see below)
         provided_reference_intensitiesOnly = self.provided_reference_intensities[:,1:]
         for intensitiesOnlyInRow in provided_reference_intensitiesOnly:
+            #This line checks if there are any non-zeros in the row.
             numberOfNonzeros = numpy.count_nonzero(intensitiesOnlyInRow)
-            if numberOfNonzeros > 0 :
-                zerosOnly = False
             if numberOfNonzeros == 0 :
-                zerosOnly = True
-            if(zerosOnly == True):
+                #If there are only zeros. we delete a row and adjust the row index to account for that deletion.
                 self.provided_reference_intensities = numpy.delete(self.provided_reference_intensities, currentRowIndexAccountingForDeletions, axis=0 ) #axis = 0 specifies to delete rows (i.e. entire abscissa values at the integer of currentRowIndexAccountingForDeletions).
                 self.provided_mass_fragments = numpy.delete(self.provided_mass_fragments, currentRowIndexAccountingForDeletions, axis=0 )
                 currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
+            #whether we deleted rows or not, we increase the counter of the rows.
             currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
             
 #This class function converts the XYXY data to an XYYY format
