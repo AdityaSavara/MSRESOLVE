@@ -504,8 +504,8 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                                 rpcChosenMoleculesMF[chosenmoleculescounter].pop()
                                 rpcTimeRanges[chosenmoleculescounter].pop()
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
-                    for refMFCounter in range(len(copyOfReferenceData.mass_fragment_numbers_monitored)): #checks whole input list (or list that was made by previous loop)
-                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceData.mass_fragment_numbers_monitored[refMFCounter]:#gets index of mass fragment number
+                    for refMFCounter in range(len(copyOfReferenceData.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceData.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
                             massfragindexer.append(refMFCounter)
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
                     for refMFCounter in range(len(ExperimentData.mass_fragment_numbers)):
@@ -650,7 +650,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
                                                                                                                     allMoleculesList, chosenMolecules)  
     #add a second dimension to the reference data
-    trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.mass_fragment_numbers_monitored,(-1,1))
+    trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.provided_mass_fragments,(-1,1))
     
     #Add the abscissa back into the reference values
     trimmedRefererenceData.provided_reference_intensities = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
@@ -663,9 +663,9 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
     #remove any zero rows that may have been created
-    trimmedRefererenceData.ClearZeroRows()
+    trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
     #update the mass fragment list from the posibly shortened reference spectrums
-    trimmedRefererenceData.mass_fragment_numbers_monitored = trimmedRefererenceData.provided_reference_intensities[:,0]
+    trimmedRefererenceData.mass_fragment_numbers_monitored = trimmedRefererenceData.provided_mass_fragments
     
     trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_intensities=True)
     
@@ -705,7 +705,7 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
     # Also remove the corresponding mass data column from Experiment.workingData.
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                         trimmedExperimentData.mass_fragment_numbers,
-                                                                                                        ReferenceData.provided_reference_intensities[:,0])
+                                                                                                        ReferenceData.provided_mass_fragments)
 
     return trimmedExperimentData
 
@@ -1566,6 +1566,7 @@ def readDataFile(collectedFileName):
 def readReferenceFile(referenceFileName, form):        
      #This function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(provided_reference_intensities):
+        print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
         masslists = [] #future lists must be must empty here to append in the for loops
         relativeintensitieslists = [] #future list
         #this loops gathers all the mass fragment numbers for each molecule in one list of arrays, while a second
@@ -1578,14 +1579,15 @@ def readReferenceFile(referenceFileName, form):
         masslist = [] #future list
         #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
         #'nan's or empty spaces after the numbers
-        for referenceIndex in range(len(provided_reference_intensities[:,0])): #array-indexed for loop
+        provided_mass_fragments = provided_reference_intensities[:,0] 
+        for referenceIndex in range(len(provided_mass_fragments)): #array-indexed for loop
             if str(masslists[0][referenceIndex]) != 'nan': #we do not want nan's in our array, the genfromtxt function calls empty boxes in excel (might be in .csv as well)'nan'.
                 masslist.append(masslists[0][referenceIndex])
         #this second nested for loop gathers all the other mass fragment numbers that have not already been added to
         #the masslist, basically obtaining all the masses in the reference data and then after the loop they are sorted
         #using .sort, then an empty array of zeros is made to accommodate the output array
         for masslistIndex in range(1,len(masslists)):#array-indexed for loop, starts at one because it's checking against all arrays besides itself
-            for referenceIndex in range(len(provided_reference_intensities[:,0])):#array-indexed for loop
+            for referenceIndex in range(len(provided_mass_fragments)):#array-indexed for loop
                 if str(masslists[masslistIndex][referenceIndex]) != 'nan':
                     if sum(masslists[masslistIndex][referenceIndex] == numpy.array(masslist)) == 0:#if the value being looked at is not equal to anything in our masslist already
                         masslist.append(masslists[masslistIndex][referenceIndex])
@@ -1656,8 +1658,8 @@ def readReferenceFile(referenceFileName, form):
         #save as class object with type string
         sourceInfo = sourceInfo.astype(numpy.str)
         
-        '''generate list of massfragments monitored '''
-        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        '''list of massfragments monitored is not part of reference file'''
+        mass_fragment_numbers_monitored = None
         
     elif form == 'xyxy':
         '''generate reference matrix'''
@@ -1668,6 +1670,7 @@ def readReferenceFile(referenceFileName, form):
         #convert the matrix to floats 
         provided_reference_intensities = reference.astype(numpy.float)
         #convert reference from XYXY to XYYY
+        print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
         provided_reference_intensities=FromXYXYtoXYYY(provided_reference_intensities)
         #clear rows of zeros
         provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
@@ -1704,8 +1707,8 @@ def readReferenceFile(referenceFileName, form):
         #save as class object with type string
         sourceInfo = sourceInfo.astype(numpy.str)
 
-        '''generate list of massfragments monitored '''
-        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        '''list of massfragments monitored is not part of reference file'''
+        mass_fragment_numbers_monitored = None
         
     return provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
 
@@ -1770,7 +1773,7 @@ class MSData (object):
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
                                         
 class MSReference (object):
-    def __init__(self, provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=None, form=None):
+    def __init__(self, provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None):
         self.provided_reference_intensities, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
@@ -1789,7 +1792,8 @@ class MSReference (object):
         self.dataToExport = []
         self.moleculesToExport = []
         self.exportSuffix = ''
-        #self.experimentTimes = []
+        #self.experimentTimes = []       
+        self.provided_mass_fragments = self.provided_reference_intensities[:,0]
             
     def ExportCollector(self, callingFunction, use_provided_reference_intensities = False):
         #record current time
@@ -1831,19 +1835,27 @@ class MSReference (object):
                 ExportXYYYData(filename,data,colIndex, fileSuffix = self.iterationSuffix)
 
     # This class function removes all rows of zeros from
-    # the XYYY sorted reference data.
-    def ClearZeroRows(self):
-        zeros = True
-        placeHolder = 0
-        for i in self.provided_reference_intensities:
-            for j in i[1:]:
-                if j != 0:
-                    zeros = False
-            if(zeros == True):
-                self.provided_reference_intensities = numpy.delete(self.provided_reference_intensities, placeHolder,0)
-                placeHolder = placeHolder -1
-            zeros= True    
-            placeHolder = placeHolder + 1
+    # the XYYY sorted provided_reference_intensities, and *also* provided_mass_fragments
+    #The logic in the below funtion is badly written, in terms of efficiency. But it seems to work at present.
+    #TODO: This is not a good practice, because provided_reference_intensities is getting changed, no longer "Provided".
+    #TODO: (continued from previous line) It's more like "zero_trimmed" reference intensities after this.
+    def ClearZeroRowsFromProvidedReferenceIntensities(self):
+        #initial a counter for the row index, which will be updated during the loop
+        currentRowIndexAccountingForDeletions = 0
+        #provided_reference_intensitiesOnly is not used, but is made for future use (see below)
+        provided_reference_intensitiesOnly = self.provided_reference_intensities[:,1:]
+        for massFragmentRow in self.provided_reference_intensities:
+            intensitiesOnlyInRow = massFragmentRow[1:]
+            numberOfNonzeros = numpy.count_nonzero(intensitiesOnlyInRow)
+            if numberOfNonzeros > 0 :
+                zerosOnly = False
+            if numberOfNonzeros == 0 :
+                zerosOnly = True
+            if(zerosOnly == True):
+                self.provided_reference_intensities = numpy.delete(self.provided_reference_intensities, currentRowIndexAccountingForDeletions, axis=0 ) #axis = 0 specifies to delete rows (i.e. entire abscissa values at the integer of currentRowIndexAccountingForDeletions).
+                self.provided_mass_fragments = numpy.delete(self.provided_mass_fragments, currentRowIndexAccountingForDeletions, axis=0 )
+                currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
+            currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
             
 #This class function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(self):
@@ -1859,14 +1871,14 @@ class MSReference (object):
         masslist = [] #future list
         #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
         #'nan's or empty spaces after the numbers
-        for referenceIndex in range(len(self.provided_reference_intensities[:,0])): #array-indexed for loop
+        for referenceIndex in range(len(self.provided_mass_fragments)): #array-indexed for loop
             if str(masslists[0][referenceIndex]) != 'nan': #we do not want nan's in our array, the genfromtxt function calls empty boxes in excel (might be in .csv as well)'nan'.
                 masslist.append(masslists[0][referenceIndex])
         #this second nested for loop gathers all the other mass fragment numbers that have not already been added to
         #the masslist, basically obtaining all the masses in the reference data and then after the loop they are sorted
         #using .sort, then an empty array of zeros is made to accommodate the output array
         for masslistIndex in range(1,len(masslists)):#array-indexed for loop, starts at one because it's checking against all arrays besides itself
-            for referenceIndex in range(len(self.provided_reference_intensities[:,0])):#array-indexed for loop
+            for referenceIndex in range(len(self.provided_mass_fragments)):#array-indexed for loop
                 if str(masslists[masslistIndex][referenceIndex]) != 'nan':
                     if sum(masslists[masslistIndex][referenceIndex] == numpy.array(masslist)) == 0:#if the value being looked at is not equal to anything in our masslist already
                         masslist.append(masslists[masslistIndex][referenceIndex])
@@ -3565,6 +3577,10 @@ def main():
                 if currentReferencePatternIndex < (len(G.referencePatternTimeRanges)-1):    
                     currentReferenceData, currentReferencePatternIndex = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1])
 
+            
+            #populate the mass fragments monitored subobject for the current reference pattern
+            currentReferenceData.mass_fragment_numbers_monitored = ExperimentData.mass_fragment_numbers
+            
             ## TODO: Find out why RawSignalsArrayMaker() takes longer to run when preprocessed data is
             # computed directly rather than loaded. It doesn't seem to effect rawsignalsarrayline in
             # either case so not a priority. 
