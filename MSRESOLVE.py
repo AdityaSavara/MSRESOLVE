@@ -1844,8 +1844,7 @@ class MSReference (object):
         currentRowIndexAccountingForDeletions = 0
         #provided_reference_intensitiesOnly is not used, but is made for future use (see below)
         provided_reference_intensitiesOnly = self.provided_reference_intensities[:,1:]
-        for massFragmentRow in self.provided_reference_intensities:
-            intensitiesOnlyInRow = massFragmentRow[1:]
+        for intensitiesOnlyInRow in provided_reference_intensitiesOnly:
             numberOfNonzeros = numpy.count_nonzero(intensitiesOnlyInRow)
             if numberOfNonzeros > 0 :
                 zerosOnly = False
