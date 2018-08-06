@@ -46,9 +46,9 @@ resultStr= str(resultObj)
 
 #this is so that pytest can do UnitTesterSG tests.
 def test_pytest(): #note that it cannot have any required arguments for pytest to use it, and that it is using variables that are defined above in the module.
-    ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = False)
+    ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = False, relativeTolerance=1E-5, absoluteTolerance=1E-8)
     
     
 if __name__ == "__main__":
    #This is the normal way of using the UnitTesterSG module, and will be run by UnitTesterSG or by running this test file by itself.
-   ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = True)
+   ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = True, relativeTolerance=1E-5, absoluteTolerance=1E-8)
