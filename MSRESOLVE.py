@@ -3601,6 +3601,11 @@ def main():
         
         ##Start: Preparing data for data analysis based on user input choices
         # Trim the reference data according to the selected molecules list
+        #TODO: Ashi thinks this can be moved into PrepareReferenceObjectsAndCorrectionValues
+        #TODO continued: In that case, we could change the trimming function to work on the standardized reference patterns.
+        #TODO continued: This would leave provided_reference_intensities unchanged, which is an additional bonus.
+        #TODO continued: If we parse chosenMOlecules appropriately ahead of time, we can just pass that as an argument to prepare function.
+        #TODO continued: If it matches (as a set, not an equal comparison of lists), then no trimming occurs. Else, trimming occurs.
         if G.specificMolecules == 'yes' or G.iterativeAnalysis:
             prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMolecules)
             
