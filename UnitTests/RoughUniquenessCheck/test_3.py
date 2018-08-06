@@ -74,7 +74,7 @@ resultObj= topMassFragCombinationsList[0] #, output[1], output[2]]  #You can alt
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
 resultStr= str(resultObj)
 
-##Set expected results
+#Set expected results to be the best mass fragment combination
 ut.set_expected_result(massFragCombinations[2],expected_result_str=str(massFragCombinations[2]),suffix=suffix)
 #6) Checking the result of the function using check_results. In this case the result is sumList1 object. 
 
