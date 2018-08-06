@@ -3668,9 +3668,7 @@ def main():
                 #If using this feature, (len(G.referencePatternTimeRanges)) will always be at least 2 time ranges so use len(G.referencePatternTimeRanges)-1
                 if currentReferencePatternIndex < (len(G.referencePatternTimeRanges)-1):    
                     currentReferenceData, currentReferencePatternIndex = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1])
-                else:
-                    currentReferenceData = ReferenceDataList[0]
-            else:
+            else: #referencePatternTimeRanges is empty so user is opting to not use reference pattern time chooser
                 currentReferenceData = ReferenceDataList[0]
 
             
