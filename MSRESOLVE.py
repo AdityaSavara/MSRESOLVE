@@ -468,9 +468,8 @@ def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,reference
     return reference
     
         
-#this function eliminates any fragments that are below a certain threshold, for solving 
-#data that is giving negatives or over emphasizing small mass fragments, this will eliminate 
-#those below a certain user-input value
+#this function eliminates (neglects) reference intensities that are below a certain threshold. Useful for solving 
+#data that is giving negatives or over emphasizing small mass fragments,by assuming no contribution from the molecule at that mass fragment.
 # TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
 def ReferenceThreshold(reference,referenceValueThreshold):
     referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
@@ -1253,6 +1252,31 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
     # Export the reference data files that have been stored by ReferenceData.ExportCollector
     ReferenceData.ExportFragmentationPatterns(verbose)
     return ReferenceData
+
+#Will take current reference data monitored intensities and will set any molecules to zero that do not meet their reference threshold.
+def signalThresholdFilter(ReferenceDataObject, rawsignalsarrayline, ExperimentData, minimumSignalRequired, minimumStandardizedReferenceHeightToBeSignificant):
+    ReferenceDataObject = copy.deepcopy(ReferenceDataObject)    
+    #first we flatten the rawSignalsArrayLine because we want it to be 1D.
+    flattenedRawSignalsArrayLine = rawsignalsarrayline.flatten()
+    #the below line creates a Boolean array which is true when the signal is below the minimum signal required.
+    signalsNegligible = flattenedRawSignalsArrayLine < minimumSignalRequired
+    #the below line creates a Boolean array which is true when the standardized reference intensity is above the threshold to be declared a significant peak
+    signiciant_Peaks_locations_monitored_reference_intensities = ReferenceDataObject.monitored_reference_intensities > minimumStandardizedReferenceHeightToBeSignificant
+    indexesOfMoleculesSetToZero = []
+    #now we are going to loop across each molecules, if we find the case where the signals are negligible but the peak is significant, then we store that as a molecule that is not present.
+    for moleculeIndex in range(len(signiciant_Peaks_locations_monitored_reference_intensities[0])): #just using the first fragment's row to get the number of molecules.
+        moleculeFragmentationPattern = ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex]
+        moleculeFragmentationPatternSignificantPeakLocations = signiciant_Peaks_locations_monitored_reference_intensities[:,moleculeIndex]
+        #Below is a Boolean array with values of true anytime there was a negligble signal for a significant peak
+        negligibleSignalForSignificantPeak = signalsNegligible*moleculeFragmentationPatternSignificantPeakLocations
+        #the sum of the Boolean array will be > 0 if there was any cases with negligible signals for significant peaks.
+        if sum(negligibleSignalForSignificantPeak) > 0:
+            ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex] = ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex]*0 #note that this changes the reference object directly.
+            ReferenceDataObject.matching_correction_values[:,moleculeIndex] = ReferenceDataObject.matching_correction_values[:,moleculeIndex]*0 #note that this changes the reference object directly.
+            indexesOfMoleculesSetToZero.append(moleculeIndex)
+    return ReferenceDataObject
+
+
     
 #exports the user input file so that it can be used in the next iteration
 def ExportUserInputFile(fileName):
@@ -1265,6 +1289,7 @@ def ExportUserInputFile(fileName):
     
     #save variables to the text file 
     globalsFE_object.save_params()
+
     
 #this function is used to append any list to a file in an executable fashion
 def AppendListToFile(listVariableName, List, FileName, entriesPerLine): 
@@ -3574,6 +3599,10 @@ def main():
                 #If using this feature, (len(G.referencePatternTimeRanges)) will always be at least 2 time ranges so use len(G.referencePatternTimeRanges)-1
                 if currentReferencePatternIndex < (len(G.referencePatternTimeRanges)-1):    
                     currentReferenceData, currentReferencePatternIndex = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1])
+                else:
+                    currentReferenceData = ReferenceDataList[0]
+            else:
+                currentReferenceData = ReferenceDataList[0]
 
             
             #populate the mass fragments monitored subobject for the current reference pattern
@@ -3582,28 +3611,36 @@ def main():
             ## TODO: Find out why RawSignalsArrayMaker() takes longer to run when preprocessed data is
             # computed directly rather than loaded. It doesn't seem to effect rawsignalsarrayline in
             # either case so not a priority. 
+            #TODO : these are not actually raw signals, they are preprocessed so the variable names should change.
             rawsignalsarrayline = RawSignalsArrayMaker(currentReferenceData.mass_fragment_numbers_monitored,
                                                        ExperimentData.mass_fragment_numbers,ExperimentData.workingData,
                                                        timeIndex,currentReferenceData.referenceabscissa)#gets the collected values that will be solved
             
-            
-            if G.rawSignalThresholdMethod == 'yes':#user input, this function calls either sls or inverse, deletes thresholds
-                    solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.matching_correction_values,rawsignalsarrayline,
-                                                         currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
-                                                         ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
-                                                         DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption, G.maxPermutations)
-            else:#otherwise the main analysis functions are called
+            #TODO: rename to excludeMoleculesIfMajorFragmentNotObserved, and call the other valuables things like minimumSignalRequired, and minimumStandardizedReferenceHeightToBeSignificant
+            #TODO continued: I am putting some variables here to make that process easier by getting some of it done already, then only the user input file needs to be changed.
+            #This feature is intended to remove molecules that have major fragments not observed. previously, it was done in a more complicated way.
+            # now, to simplify things, is being used as a filter that simply sets standardized intensities in the reference patterns to zero.
+            G.excludeMoleculesIfSignificantFragmentNotObserved = G.rawSignalThresholdMethod
+            G.minimumSignalRequired = G.rawSignalThresholdValue 
+            G.minimumStandardizedReferenceHeightToBeSignificant = G.sensitivityThresholdValue
+            if G.excludeMoleculesIfSignificantFragmentNotObserved == 'yes':
+                currentReferenceData = signalThresholdFilter(currentReferenceData, rawsignalsarrayline, ExperimentData, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
+                    
+                    #solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.matching_correction_values,rawsignalsarrayline,
+                                                         # currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
+                                                         # ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
+                                                         # DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption, G.maxPermutations)           
                 
-                if G.answer == 'inverse':#user input, the inverse method
-                    if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
+            if G.answer == 'inverse':#user input, the inverse method
+                if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
 
-                        solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
-                    else:
-                        solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
-    
-                elif G.answer == 'sls':#user input, the SLS method is chosen)
-                    solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, ExperimentData.conversionfactor, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
-            
+                    solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
+                else:
+                    solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
+
+            elif G.answer == 'sls':#user input, the SLS method is chosen)
+                solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, ExperimentData.conversionfactor, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
+        
             arrayline = []
 
             for moleculecounter in range(len(currentReferenceData.molecules)):#array-indexed for loop, this is the same data structure as the inverse method above once the line of solutions is found, see above for comments
