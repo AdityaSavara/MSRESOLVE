@@ -19,78 +19,77 @@ G = UserInput
 ############################################################################################################################################
 #########################################################Best Mass Fragment Chooser#########################################################
 ############################################################################################################################################
-#The function maintains two lists: 1)that contains the objective function values that 
-#need to be kept in a sorted order 2) a parallel list where a value needs to be inserted 
-#according to the sorting of the first one. It also takes in an integer value,N, that limits 
-#the the length of the two lists to N values. Using a binary search method, it will 
+#Store and Pop takes in a sorted list. Using a binary search method, it will 
 #find the location where the value to insert will be inserted(if possible). The
 #value will be inserted there and the last value removed from the list (if
-#applicable).  The bisect method used requires the list be presorted in ascending order.
-#The bisect method used inserts to keep the list in a sorted order. 
-def storeAndPop(objectiveFunctionValuesList, objectiveFuncitonValueToInsert, parallelList, valueToInsertInParallelList,maxItemsAllowed):
-    #Find the insertion index where the value will be inserted by using a binary
+#applicable). The max lengh of list is used to ensure the list does not go over
+#a certain size. The bisect method used requires the list be presorted in ascending order.
+
+#When multiple of the same value from the objective funcitons are present, 
+#bisect starts searching based on the elements in the array. This is fine 
+#for the purposes of this funciton since the best mass frag chooser iterates
+#through the combinations in order.
+
+def storeAndPop(sortedList, valueToInsert, maxLengthOfList):
+    #Find the insertion idex where the value will be inserted by using a binary
     #search
-    insertionIndex=bisect.bisect(objectiveFunctionValuesList, objectiveFuncitonValueToInsert)
+    insertionIndex=bisect.bisect(sortedList, valueToInsert)
 
     #Initialize a variable to keep track of if a value was inserted into the
     #list.
     valueStoredInList=False
-    
+
     #If the list isn't yet filled, the value will inherently be in the top N
     #value in the list. This vlaue can just be inserted at the insertionIndex.
-    if len(objectiveFunctionValuesList)<maxItemsAllowed:    
-        objectiveFunctionValuesList.insert(insertionIndex, objectiveFuncitonValueToInsert)
-        parallelList.insert(insertionIndex, valueToInsertInParallelList)
+    if len(sortedList)<maxLengthOfList:    
+        sortedList.insert(insertionIndex, valueToInsert)
         valueStoredInList=True
     #If the list already contains N elements, a new element could either be 
     #inserted in the list or at the end of the list. Because the list is 
     #already at its maximum length, nothing shouold be added to the end. This
     #check is to make sure nothing is going to be added to the end.
-    elif len(objectiveFunctionValuesList)== maxItemsAllowed and insertionIndex<maxItemsAllowed:
+    elif insertionIndex<maxLengthOfList:
         #insert the value to insert in the location found through the binary
         #search
-        objectiveFunctionValuesList.insert(insertionIndex, objectiveFuncitonValueToInsert)
-        parallelList.insert(insertionIndex, valueToInsertInParallelList)
+        sortedList.insert(insertionIndex, valueToInsert)
         valueStoredInList=True
         #delete the last element since somthing was added to the list
-        del objectiveFunctionValuesList[-1]
-        del parallelList[-1]
-    #elif len(sortedList)== maxLengthOfList and insertionIndex==maxLengthOfList: #in this case, nothing should be added, because it would be past the length limit.
-    return objectiveFunctionValuesList, parallelList, valueStoredInList
+        del sortedList[-1]
+    return sortedList, valueStoredInList
 
 #The rough uniqueness check is a limiting check that takes the mass fragment
-#combinations that pass the row sums check and builds a lists of 
-#keep_N_ValuesInRoughUniquenessCheck that contain the largest number of zeros
-#and the corresponding mass fragment combination for each of the values in the
-#first list.
+#combinations that pass the row sums check and builds a list of 
+#keep_N_ValuesInRoughUniquenessCheck that contain the largest number of zeros.
 #The largest number of zeros would be most likely to pass the SLS method.
 #It calculates a sum that roughly expresses how unique the molecular mass 
 #fragments are to the different molecules, but this is a quick and not-rigrous 
 #method. Then, the value is stored *only* if it is in the top N of the values 
 #so far.
-def roughUniquenessCheck(rowSumsList, smallestRowsSumsList,topMassFragCombinationsList, keep_N_ValuesInRoughUniquenessCheck, massFragCombination):
+def roughUniquenessCheck(rowSumsList, topRoughUniquenessCheckList, keep_N_ValuesInRoughUniquenessCheck, massFragCombination):
 
     #We want to save the smallest sum since that would contain the smallest 
     #number of zeros.
     roughUniqueness=numpy.sum(rowSumsList) 
-
+    
+    #Create a tuple that stores the rough uniqueness value and the 
+    #massFragCombination
+    roughUniquenessTuple=tuple([roughUniqueness, massFragCombination])
+    
     #Use Store and Pop to add the tuple to the list of top rough uniquness 
     #combinations. This will only save a user specified number of tuples.
-    [smallestRowsSumsList,topMassFragCombinationsList,valueStoredInRUTopList]=storeAndPop(smallestRowsSumsList, roughUniqueness,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInRoughUniquenessCheck)
-    return smallestRowsSumsList,topMassFragCombinationsList, valueStoredInRUTopList
+    [topRoughUniquenessCheckList, valueStoredInRUTopList]=storeAndPop(topRoughUniquenessCheckList, roughUniquenessTuple, keep_N_ValuesInRoughUniquenessCheck)
+    return topRoughUniquenessCheckList, valueStoredInRUTopList
 
 #The significance factor check is a limiting check the selects the mass 
 #fragment combinations having the largest sum of significance factors. It
 #calculates the significance factors for each element in the sub-reference 
 #array (refernce array with zeros for all the data for mass fragments that 
 #aren't needed). Is then takes the sum of all of the significance factors.
-#The top N mass fragment combinations are then stored in a list in decending 
-#order according to the magnitude of their significance sum. 
 #Basically, it calculates the significance factor for each element in the
 #chosen reference array and sums all of the significane values for the whole 
 #array. It keeps the mass fragments that have the largest magnitude of 
 #significance sum.
-def significanceFactorCheck(chosenReferenceIntensities,largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood):
+def significanceFactorCheck(chosenReferenceIntensities ,largestMagnitudeSigFactorSumsList, keep_N_ValuesInSignificanceFactorCheck, massFragCombination, moleculesLikelihood):
     
     #Initialize the sum of the significance factors
     sigFactorSum=0
@@ -103,8 +102,8 @@ def significanceFactorCheck(chosenReferenceIntensities,largestMagnitudeSigFactor
         #does not include the first column since that is the mass fragment 
         #numbers
         significanceColumnDataList=ElemSignificanceCalculator(chosenReferenceIntensities, columnCounter, moleculesLikelihood)
-        
-	#Sums the significance factors across the column and to the
+
+        #Sums the significance factors across the column and to the
         #sum for the whole ref data array. The larger in magnitude this is, the 'better'.
         sigFactorSum+=sum(significanceColumnDataList)
         
@@ -118,12 +117,16 @@ def significanceFactorCheck(chosenReferenceIntensities,largestMagnitudeSigFactor
     #when talking about the negative of the sum.
     negativeOfSigFactorSum=-1*sigFactorSum    
     
+    #Creates a tuple that stores the significane factor sum and the mass
+    #fragment combination
+    sigFactorTuple=tuple([negativeOfSigFactorSum, massFragCombination])
+    
     #Uses store and pop to maintian a list of the mass fragment with the
     #largest significance factors.
     #The below line only keeps the combinations with the largest magnitude (most negative) of the negativeOfSigFactorSums.
-    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valueStoredInSFTopList]=storeAndPop(largestMagnitudeSigFactorSumsList,negativeOfSigFactorSum,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck)
+    [largestMagnitudeSigFactorSumsList,valueStoredInSFTopList]=storeAndPop(largestMagnitudeSigFactorSumsList,sigFactorTuple,keep_N_ValuesInSignificanceFactorCheck)
     
-    return largestMagnitudeSigFactorSumsList, topMassFragCombinationsList, valueStoredInSFTopList
+    return largestMagnitudeSigFactorSumsList, valueStoredInSFTopList
 ############################################################################################################################################
 ################################################Algorithm Part 1: Pre-Processing the data###################################################
 ############################################################################################################################################
@@ -465,9 +468,8 @@ def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,reference
     return reference
     
         
-#this function eliminates any fragments that are below a certain threshold, for solving 
-#data that is giving negatives or over emphasizing small mass fragments, this will eliminate 
-#those below a certain user-input value
+#this function eliminates (neglects) reference intensities that are below a certain threshold. Useful for solving 
+#data that is giving negatives or over emphasizing small mass fragments,by assuming no contribution from the molecule at that mass fragment.
 # TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
 def ReferenceThreshold(reference,referenceValueThreshold):
     referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
@@ -501,8 +503,8 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                                 rpcChosenMoleculesMF[chosenmoleculescounter].pop()
                                 rpcTimeRanges[chosenmoleculescounter].pop()
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
-                    for refMFCounter in range(len(copyOfReferenceData.mass_fragment_numbers_monitored)): #checks whole input list (or list that was made by previous loop)
-                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceData.mass_fragment_numbers_monitored[refMFCounter]:#gets index of mass fragment number
+                    for refMFCounter in range(len(copyOfReferenceData.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceData.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
                             massfragindexer.append(refMFCounter)
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
                     for refMFCounter in range(len(ExperimentData.mass_fragment_numbers)):
@@ -525,8 +527,8 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                     allExtractedIntensitiesAverage.append(intensitiesAverage)
                 #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment (that is, to make a reference pattern with a ratio matching the extracted ratio)
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
-                    copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_intensities[massfragindexer[0],moleculecounter+1]
-    return copyOfReferenceData.provided_reference_intensities
+                    copyOfReferenceData.provided_reference_patterns[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_patterns[massfragindexer[0],moleculecounter+1]
+    return copyOfReferenceData.provided_reference_patterns
 
 '''
 RemoveUnreferencedMasses() is used to prune ExperimentData.workingData and ExperimentData.mass_fragment_numbers 
@@ -636,33 +638,39 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     print("MoleculeChooser")
-    #getting a list of all molecules (a header) to compare to during trimming.
+    #getting a list of all molecules (a header) to compare to during trimming.	    
     allMoleculesList = ReferenceData.molecules
+    
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
     
-  
     #trim the reference fragmentation patterns to only the selected molecules 
     #unused trimmed copy molecules is just a place holder to dispose of a function return that is not needed
-    trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
+    trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_patterns[:,1:],
                                                                                                                     allMoleculesList, chosenMolecules)  
     #add a second dimension to the reference data
-    trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.mass_fragment_numbers_monitored,(-1,1))
+    trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.provided_mass_fragments,(-1,1))
     
+    #TODO: The below line works with provided_reference_patterns. This is because trimDataMoleculesToMatchChosenMolecules
+    #TODO continued: is currently working prior to standardized Reference patterns existing, and also because it is occurring
+    #TODO continued: Before we have the monitored mass fragments (which also occurs later data analysis).
+    #TODO continued: The best solution is probably to do the standardization earlier and then do this trimming after that.
     #Add the abscissa back into the reference values
-    trimmedRefererenceData.provided_reference_intensities = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
+    trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules 
-    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True)
-    #put the trimmed molecules list into the trimmedRefererenceData object.
+
+    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True)	    
+    #put the trimmed molecules list into the trimmedRefererenceData object.	   
+
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
     #remove any zero rows that may have been created
-    trimmedRefererenceData.ClearZeroRows()
+    trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
     #update the mass fragment list from the posibly shortened reference spectrums
-    trimmedRefererenceData.mass_fragment_numbers_monitored = trimmedRefererenceData.provided_reference_intensities[:,0]
+    trimmedRefererenceData.mass_fragment_numbers_monitored = trimmedRefererenceData.provided_mass_fragments
     
-    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_intensities=True)
+    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)
     
     return trimmedRefererenceData
     
@@ -678,8 +686,7 @@ ExperimentData - of type MSData, the one instantiated in main() named Experiment
 ReferenceData - of type MSReference, ReferenceData from main() is a good example
 chosenMassFragments  - list of integers, like the one created in UserInput  
 '''
-def trimDataMassesToMatchChosenMassFragments(ExperimentData, ReferenceData):
-
+def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments):
     # If we are only interested in a subset of the MS data
     # and that subset is a subset of the loaded data
     # remove the irrelevant mass data series from ExperimentData.mass_fragment_numbers
@@ -688,8 +695,9 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, ReferenceData):
     print("MassFragChooser")
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
-                                                                                                            G.chosenMassFragments)
+                                                                                                            chosenMassFragments)
     trimmedExperimentData.ExportCollector("MassFragChooser")
+    
     return trimmedExperimentData
 
 def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
@@ -700,7 +708,7 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
     # Also remove the corresponding mass data column from Experiment.workingData.
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                         trimmedExperimentData.mass_fragment_numbers,
-                                                                                                        ReferenceData.provided_reference_intensities[:,0])
+                                                                                                        ReferenceData.provided_mass_fragments)
 
     return trimmedExperimentData
 
@@ -1025,14 +1033,16 @@ def ImportAnalyzedData(concentrationsOutputName):
 '''
 Performs some manipulations related to the reference pattern
 '''
-def ReferenceInputPreProcessing(ReferenceData):
+def ReferenceInputPreProcessing(ReferenceData, verbose=True):
 
     # standardize the reference data columns such that the maximum value is 100 and everything else is
     # linearly scaled according that the maximum value scaling
-    ReferenceData.standardized_reference_intensities=StandardizeReferencePattern(ReferenceData.provided_reference_intensities,len(ReferenceData.molecules))
+    ReferenceData.standardized_reference_intensities=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizeReferencePattern')
     
-    print('beginning CorrectionValueCorrector')
+    #Only print if not called from interpolating reference objects
+    if verbose:
+        print('beginning CorrectionValueCorrector')
     ReferenceData.standardized_reference_intensities = CorrectionValueCorrector(ReferenceData.standardized_reference_intensities, G.referenceCorrectionCoefficients,
                                                        G.referenceLiteratureFileName, G.referenceMeasuredFileName,
                                                        G.measuredReferenceYorN)
@@ -1043,7 +1053,9 @@ def ReferenceInputPreProcessing(ReferenceData):
         ReferenceData.ExportCollector('ReferenceThreshold')
     
     ReferenceData.correction_values = CorrectionValuesObtain(ReferenceData)
-    print('CorrectionValuesObtain')
+    #Only print if not called from interpolating reference objects
+    if verbose:
+        print('CorrectionValuesObtain')
 
     return ReferenceData
 
@@ -1063,8 +1075,11 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     #If referenceFileNames and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
     if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
-        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
-        ReferenceDataList = [MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
+        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
+        #save each global variable into the class objects 
+        ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
+        ReferenceDataList[0].iterationSuffix = G.iterationSuffix
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNames
@@ -1082,8 +1097,8 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNames)):
-        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],referencePatternForm[i])
-        ReferenceDataAndFormsList.append(MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
+        ReferenceDataAndFormsList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
         #save each global variable into the class objects 
         ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataAndFormsList[i].iterationSuffix = G.iterationSuffix
@@ -1097,10 +1112,12 @@ It interpolates row by row and returns the new interpolated data
 def InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,time,gapStart,gapEnd):
     #Since we probably need values from firstReferenceObject for another interpolation, create a deepcopy of firstReferenceObject
     newReferenceObject = copy.deepcopy(firstReferenceObject)
+    
     #loop through the provided reference intensities and linearly interpolate row by row
-    for i in range(len(firstReferenceObject.monitored_reference_intensities)):
-        #monitor_reference_intensities does not use an abscissa so index as [i,:] to use every column in the ith row
-        newReferenceObject.monitored_reference_intensities[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.monitored_reference_intensities[i,:],secondReferenceObject.monitored_reference_intensities[i,:],time,gapStart,gapEnd)
+    for i in range(len(firstReferenceObject.standardized_reference_intensities)):
+        #Overwrite provided_reference_patterns by interpolating the standardized_reference_intensities
+        #[i,:] for every column in the ith row
+        newReferenceObject.provided_reference_patterns[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.standardized_reference_intensities[i,:],secondReferenceObject.standardized_reference_intensities[i,:],time,gapStart,gapEnd)
     return newReferenceObject
 
 '''
@@ -1124,6 +1141,8 @@ def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRan
         if currentTime > referencePatternTimeRanges[currentReferencePatternIndex][1] and currentTime < referencePatternTimeRanges[currentReferencePatternIndex+1][0]:
             #Reads in current reference pattern, next reference pattern, current time, gap start time, and gap end time
             currentReferenceData = InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
+            #Prepare the current reference data
+            currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
         #If we are out of the first time range, not in a gap, and not in the last time range, then we are in the next time range
         elif currentTime >= referencePatternTimeRanges[currentReferencePatternIndex+1][0]:
             #Increase the index
@@ -1208,20 +1227,24 @@ def DataInputPreProcessing(ExperimentData):
 '''
 PrepareReferenceOjbectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
 '''
-def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]]):
+def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
     # Reference Pattern Changer
     if extractReferencePatternFromDataOption == 'yes':
-        ReferenceData.provided_reference_intensities = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
-        ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
-        print('ReferencePatternChanger complete')
+        ReferenceData.provided_reference_patterns = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
+        ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
+        #Only print if not called from interpolating reference objects
+        if verbose:
+            print('ReferencePatternChanger complete')
         
     # Some initial preprocessing on the reference data
-    ReferenceData = ReferenceInputPreProcessing(ReferenceData)
+    ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose)
     # Set the ReferenceData.monitored_reference_intensities and
     # ReferenceData.matching_correction_values fields
     # based on the masses in ExperimentData.mass_fragment_numbers
     ReferenceData = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceData)
-    print("Matching Correction Values complete")
+    #Only print if not called from interpolating reference objects
+    if verbose:
+        print("Matching Correction Values complete")
     # Remove reference species that have no mass fragment data
     # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
     ## TODO: Consider changing this function to take the array directly i.e.
@@ -1231,8 +1254,33 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
     ReferenceData.ExportCollector('UnnecessaryMoleculesDeleter')
     
     # Export the reference data files that have been stored by ReferenceData.ExportCollector
-    ReferenceData.ExportFragmentationPatterns()
+    ReferenceData.ExportFragmentationPatterns(verbose)
     return ReferenceData
+
+#Will take current reference data monitored intensities and will set any molecules to zero that do not meet their reference threshold.
+def signalThresholdFilter(ReferenceDataObject, rawsignalsarrayline, ExperimentData, minimumSignalRequired, minimumStandardizedReferenceHeightToBeSignificant):
+    ReferenceDataObject = copy.deepcopy(ReferenceDataObject)    
+    #first we flatten the rawSignalsArrayLine because we want it to be 1D.
+    flattenedRawSignalsArrayLine = rawsignalsarrayline.flatten()
+    #the below line creates a Boolean array which is true when the signal is below the minimum signal required.
+    signalsNegligible = flattenedRawSignalsArrayLine < minimumSignalRequired
+    #the below line creates a Boolean array which is true when the standardized reference intensity is above the threshold to be declared a significant peak
+    signiciant_Peaks_locations_monitored_reference_intensities = ReferenceDataObject.monitored_reference_intensities > minimumStandardizedReferenceHeightToBeSignificant
+    indexesOfMoleculesSetToZero = []
+    #now we are going to loop across each molecules, if we find the case where the signals are negligible but the peak is significant, then we store that as a molecule that is not present.
+    for moleculeIndex in range(len(signiciant_Peaks_locations_monitored_reference_intensities[0])): #just using the first fragment's row to get the number of molecules.
+        moleculeFragmentationPattern = ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex]
+        moleculeFragmentationPatternSignificantPeakLocations = signiciant_Peaks_locations_monitored_reference_intensities[:,moleculeIndex]
+        #Below is a Boolean array with values of true anytime there was a negligble signal for a significant peak
+        negligibleSignalForSignificantPeak = signalsNegligible*moleculeFragmentationPatternSignificantPeakLocations
+        #the sum of the Boolean array will be > 0 if there was any cases with negligible signals for significant peaks.
+        if sum(negligibleSignalForSignificantPeak) > 0:
+            ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex] = ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex]*0 #note that this changes the reference object directly.
+            ReferenceDataObject.matching_correction_values[:,moleculeIndex] = ReferenceDataObject.matching_correction_values[:,moleculeIndex]*0 #note that this changes the reference object directly.
+            indexesOfMoleculesSetToZero.append(moleculeIndex)
+    return ReferenceDataObject
+
+
     
 #exports the user input file so that it can be used in the next iteration
 def ExportUserInputFile(fileName):
@@ -1245,6 +1293,7 @@ def ExportUserInputFile(fileName):
     
     #save variables to the text file 
     globalsFE_object.save_params()
+
     
 #this function is used to append any list to a file in an executable fashion
 def AppendListToFile(listVariableName, List, FileName, entriesPerLine): 
@@ -1415,7 +1464,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     
     #Export current Reference Data  
     #Reference data is trimmed prior to this function
-    ExportXYYYData(G.referenceFileName, ReferenceData.provided_reference_intensities, ReferenceData.molecules, abscissaHeader = 'M/Z')
+    ExportXYYYData(G.referenceFileName, ReferenceData.provided_reference_patterns, ReferenceData.molecules, abscissaHeader = 'M/Z')
     
     #Export current Experimental Data
     #Experimental data is trimmed prior to this function, but it still needs to be exported  
@@ -1545,32 +1594,34 @@ def readDataFile(collectedFileName):
 #variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
 def readReferenceFile(referenceFileName, form):        
      #This function converts the XYXY data to an XYYY format
-    def FromXYXYtoXYYY(provided_reference_intensities):
+    def FromXYXYtoXYYY(provided_reference_patterns):
+        print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
         masslists = [] #future lists must be must empty here to append in the for loops
         relativeintensitieslists = [] #future list
         #this loops gathers all the mass fragment numbers for each molecule in one list of arrays, while a second
         #list is made, gathering the relative intensities so that they were indexed the same as their mass fragment
         #numbers in the other list
         #this for loop grabs stuff from the reference array, whose orientation and identity is shown in the flow chart arrays document
-        for referenceBy2Index in range(0,len(provided_reference_intensities[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
-            masslists.append(provided_reference_intensities[:,referenceBy2Index])#these are lists of arrays
-            relativeintensitieslists.append(provided_reference_intensities[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
+        for referenceBy2Index in range(0,len(provided_reference_patterns[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
+            masslists.append(provided_reference_patterns[:,referenceBy2Index])#these are lists of arrays
+            relativeintensitieslists.append(provided_reference_patterns[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
         masslist = [] #future list
         #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
         #'nan's or empty spaces after the numbers
-        for referenceIndex in range(len(provided_reference_intensities[:,0])): #array-indexed for loop
+        provided_mass_fragments = provided_reference_patterns[:,0] 
+        for referenceIndex in range(len(provided_mass_fragments)): #array-indexed for loop
             if str(masslists[0][referenceIndex]) != 'nan': #we do not want nan's in our array, the genfromtxt function calls empty boxes in excel (might be in .csv as well)'nan'.
                 masslist.append(masslists[0][referenceIndex])
         #this second nested for loop gathers all the other mass fragment numbers that have not already been added to
         #the masslist, basically obtaining all the masses in the reference data and then after the loop they are sorted
         #using .sort, then an empty array of zeros is made to accommodate the output array
         for masslistIndex in range(1,len(masslists)):#array-indexed for loop, starts at one because it's checking against all arrays besides itself
-            for referenceIndex in range(len(provided_reference_intensities[:,0])):#array-indexed for loop
+            for referenceIndex in range(len(provided_mass_fragments)):#array-indexed for loop
                 if str(masslists[masslistIndex][referenceIndex]) != 'nan':
                     if sum(masslists[masslistIndex][referenceIndex] == numpy.array(masslist)) == 0:#if the value being looked at is not equal to anything in our masslist already
                         masslist.append(masslists[masslistIndex][referenceIndex])
         masslist.sort()#puts the list in order
-        reference_holder = numpy.zeros([len(masslist),len(provided_reference_intensities[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
+        reference_holder = numpy.zeros([len(masslist),len(provided_reference_patterns[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
         reference_holder[:,0:1] = numpy.vstack(numpy.array(masslist))#This puts the mass list in the first column of our new reference array
         #Finally, the for loop below makes a list each revolution, comparing each list of mass fragments (for each molecule)
         #and adding the relative intensities (from the identically indexed array) when they numbers were equal, and otherwise
@@ -1587,8 +1638,8 @@ def readReferenceFile(referenceFileName, form):
                         relativeintensitieslist.append(0)
                 if massListIndex == len(masslist)-1:#Once the larger for loop is done the 
                     reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
-        provided_reference_intensities = reference_holder
-        return provided_reference_intensities
+        provided_reference_patterns = reference_holder
+        return provided_reference_patterns
     
      #read the csv file into a dataframe
     dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
@@ -1600,9 +1651,9 @@ def readReferenceFile(referenceFileName, form):
         #convert to matrix
         reference = dfreference.as_matrix()
         #convert the matrix to floats
-        provided_reference_intensities = reference.astype(numpy.float)
+        provided_reference_patterns = reference.astype(numpy.float)
         #clear rows of zeros
-        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+        provided_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1)
     
         '''generate electron number list'''
         #select row of electron numbers
@@ -1636,8 +1687,8 @@ def readReferenceFile(referenceFileName, form):
         #save as class object with type string
         sourceInfo = sourceInfo.astype(numpy.str)
         
-        '''generate list of massfragments monitored '''
-        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        '''list of massfragments monitored is not part of reference file'''
+        mass_fragment_numbers_monitored = None
         
     elif form == 'xyxy':
         '''generate reference matrix'''
@@ -1646,11 +1697,12 @@ def readReferenceFile(referenceFileName, form):
         #convert to matrix
         reference = dfreference.as_matrix()
         #convert the matrix to floats 
-        provided_reference_intensities = reference.astype(numpy.float)
+        provided_reference_patterns = reference.astype(numpy.float)
         #convert reference from XYXY to XYYY
-        provided_reference_intensities=FromXYXYtoXYYY(provided_reference_intensities)
+        print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
+        provided_reference_patterns=FromXYXYtoXYYY(provided_reference_patterns)
         #clear rows of zeros
-        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+        provided_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1)
         
         '''generate electron numbers list'''
         #create data frame of electron numbers
@@ -1684,10 +1736,10 @@ def readReferenceFile(referenceFileName, form):
         #save as class object with type string
         sourceInfo = sourceInfo.astype(numpy.str)
 
-        '''generate list of massfragments monitored '''
-        mass_fragment_numbers_monitored = provided_reference_intensities[:,0]
+        '''list of massfragments monitored is not part of reference file'''
+        mass_fragment_numbers_monitored = None
         
-    return provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
+    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
 
 ###############################################################################
 #########################  Classes: Data Storage  #############################
@@ -1750,8 +1802,8 @@ class MSData (object):
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
                                         
 class MSReference (object):
-    def __init__(self, provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=None, form=None):
-        self.provided_reference_intensities, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form
+    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None):
+        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         self.iterationSuffix = ''
@@ -1767,10 +1819,12 @@ class MSReference (object):
         self.runTimeAtExport = []
         self.labelToExport = []
         self.dataToExport = []
+        self.moleculesToExport = []
         self.exportSuffix = ''
-        #self.experimentTimes = []
+        #self.experimentTimes = []       
+        self.provided_mass_fragments = self.provided_reference_patterns[:,0]
             
-    def ExportCollector(self, callingFunction, use_provided_reference_intensities = False):
+    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
@@ -1781,38 +1835,54 @@ class MSReference (object):
         self.labelToExport.append(callingFunction) 
         
         if self.ExportAtEachStep == 'yes':
+            ##record molecules of experiment
+            self.moleculesToExport.append(self.molecules.copy())
             #record data of experiment
-            if use_provided_reference_intensities:
-                self.dataToExport.append(self.provided_reference_intensities.copy())
-            elif not use_provided_reference_intensities:
+            if use_provided_reference_patterns:
+                self.dataToExport.append(self.provided_reference_patterns.copy())
+            elif callingFunction == 'UnnecessaryMoleculesDeleter':
+                self.dataToExport.append(self.monitored_reference_intensities.copy())
+            elif not use_provided_reference_patterns:
                 self.dataToExport.append(self.standardized_reference_intensities.copy())
             
-    def ExportFragmentationPatterns(self):
-        print("\n Reference Debugging List:")
+    def ExportFragmentationPatterns(self, verbose=True):
+        #Only print if not called from interpolating reference objects
+        if verbose:
+            print("\n Reference Debugging List:")
         for savePoint in range(len(self.runTimeAtExport)):
-            print(self.labelToExport[savePoint])
-            print(self.runTimeAtExport[savePoint])
+            #Only print if not called from interpolating reference objects
+            if verbose:
+                print(self.labelToExport[savePoint])
+                print(self.runTimeAtExport[savePoint])
             if self.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
                 filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
                 data = self.dataToExport[savePoint]
-                colIndex = ['%s'% y for y in self.molecules]
+                colIndex = ['%s'% y for y in self.moleculesToExport[savePoint]]
+                #colIndex = ['%s'% y for y in self.molecules]
+                #print(numpy.shape(data),numpy.shape(colIndex))
                 ExportXYYYData(filename,data,colIndex, fileSuffix = self.iterationSuffix)
 
     # This class function removes all rows of zeros from
-    # the XYYY sorted reference data.
-    def ClearZeroRows(self):
-        zeros = True
-        placeHolder = 0
-        for i in self.provided_reference_intensities:
-            for j in i[1:]:
-                if j != 0:
-                    zeros = False
-            if(zeros == True):
-                self.provided_reference_intensities = numpy.delete(self.provided_reference_intensities, placeHolder,0)
-                placeHolder = placeHolder -1
-            zeros= True    
-            placeHolder = placeHolder + 1
+    # the XYYY sorted provided_reference_patterns, and *also* provided_mass_fragments
+    #The logic in the below funtion is badly written, in terms of efficiency. But it seems to work at present.
+    #TODO: This is not a good practice, because provided_reference_patterns is getting changed, no longer "Provided".
+    #TODO: (continued from previous line) It's more like "zero_trimmed" reference intensities after this.
+    def ClearZeroRowsFromProvidedReferenceIntensities(self):
+        #initial a counter for the row index, which will be updated during the loop
+        currentRowIndexAccountingForDeletions = 0
+        #provided_reference_patternsOnly is not used, but is made for future use (see below)
+        provided_reference_patternsOnly = self.provided_reference_patterns[:,1:]
+        for intensitiesOnlyInRow in provided_reference_patternsOnly:
+            #This line checks if there are any non-zeros in the row.
+            numberOfNonzeros = numpy.count_nonzero(intensitiesOnlyInRow)
+            if numberOfNonzeros == 0 :
+                #If there are only zeros. we delete a row and adjust the row index to account for that deletion.
+                self.provided_reference_patterns = numpy.delete(self.provided_reference_patterns, currentRowIndexAccountingForDeletions, axis=0 ) #axis = 0 specifies to delete rows (i.e. entire abscissa values at the integer of currentRowIndexAccountingForDeletions).
+                self.provided_mass_fragments = numpy.delete(self.provided_mass_fragments, currentRowIndexAccountingForDeletions, axis=0 )
+                currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
+            #whether we deleted rows or not, we increase the counter of the rows.
+            currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
             
 #This class function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(self):
@@ -1822,25 +1892,25 @@ class MSReference (object):
         #list is made, gathering the relative intensities so that they were indexed the same as their mass fragment
         #numbers in the other list
         #this for loop grabs stuff from the reference array, whose orientation and identity is shown in the flow chart arrays document
-        for referenceBy2Index in range(0,len(self.provided_reference_intensities[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
-            masslists.append(self.provided_reference_intensities[:,referenceBy2Index])#these are lists of arrays
-            relativeintensitieslists.append(self.provided_reference_intensities[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
+        for referenceBy2Index in range(0,len(self.provided_reference_patterns[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
+            masslists.append(self.provided_reference_patterns[:,referenceBy2Index])#these are lists of arrays
+            relativeintensitieslists.append(self.provided_reference_patterns[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
         masslist = [] #future list
         #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
         #'nan's or empty spaces after the numbers
-        for referenceIndex in range(len(self.provided_reference_intensities[:,0])): #array-indexed for loop
+        for referenceIndex in range(len(self.provided_mass_fragments)): #array-indexed for loop
             if str(masslists[0][referenceIndex]) != 'nan': #we do not want nan's in our array, the genfromtxt function calls empty boxes in excel (might be in .csv as well)'nan'.
                 masslist.append(masslists[0][referenceIndex])
         #this second nested for loop gathers all the other mass fragment numbers that have not already been added to
         #the masslist, basically obtaining all the masses in the reference data and then after the loop they are sorted
         #using .sort, then an empty array of zeros is made to accommodate the output array
         for masslistIndex in range(1,len(masslists)):#array-indexed for loop, starts at one because it's checking against all arrays besides itself
-            for referenceIndex in range(len(self.provided_reference_intensities[:,0])):#array-indexed for loop
+            for referenceIndex in range(len(self.provided_mass_fragments)):#array-indexed for loop
                 if str(masslists[masslistIndex][referenceIndex]) != 'nan':
                     if sum(masslists[masslistIndex][referenceIndex] == numpy.array(masslist)) == 0:#if the value being looked at is not equal to anything in our masslist already
                         masslist.append(masslists[masslistIndex][referenceIndex])
         masslist.sort()#puts the list in order
-        reference_holder = numpy.zeros([len(masslist),len(self.provided_reference_intensities[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
+        reference_holder = numpy.zeros([len(masslist),len(self.provided_reference_patterns[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
         reference_holder[:,0:1] = numpy.vstack(numpy.array(masslist))#This puts the mass list in the first column of our new reference array
         #Finally, the for loop below makes a list each revolution, comparing each list of mass fragments (for each molecule)
         #and adding the relative intensities (from the identically indexed array) when they numbers were equal, and otherwise
@@ -1857,7 +1927,7 @@ class MSReference (object):
                         relativeintensitieslist.append(0)
                 if massListIndex == len(masslist)-1:#Once the larger for loop is done the 
                     reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
-        self.provided_reference_intensities = reference_holder
+        self.provided_reference_patterns = reference_holder
 ############################################################################################################################################
 ###############################################Algorithm Part 2: Analysing the Processed Data###############################################
 ############################################################################################################################################
@@ -1887,18 +1957,18 @@ def RawSignalsArrayMaker(mass_fragment_numbers_monitored,mass_fragment_numbers,c
 #specifically to make square matrices
 #itertools uses a combination function (below) and the function uses those to index drawing out of all the rows in an array
 def CombinationMaker(matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers):
-    moleculenum = len(matching_correction_values[0,:])
-    row_number = len(matching_correction_values[:,0])
+    num_molecules = len(matching_correction_values[0,:])
+    num_MassFragmentsber = len(matching_correction_values[:,0])
     import itertools 
-    combinations = list(itertools.combinations(list(range(row_number)),moleculenum)) 
+    combinations = list(itertools.combinations(list(range(num_MassFragmentsber)),num_molecules)) 
     if combinations == []:#This function will not work without enough mass fragments, so the user must know the problem
         print('****************************************')
         print('Not enough matching mass fragments input')
         print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  minimalReferenceValue feature with referenceValueThreshold, such as referenceValueThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
         print('****************************************')
     combinations_len = len(combinations) 
-    correctionarray = numpy.zeros([1,moleculenum])
-    intensityarray = numpy.zeros([1,moleculenum])
+    correctionarray = numpy.zeros([1,num_molecules])
+    intensityarray = numpy.zeros([1,num_molecules])
     rawsignalarray = numpy.zeros([1,1])
     correctionlist = []
     intensitylist = []
@@ -1910,7 +1980,7 @@ def CombinationMaker(matching_correction_values,rawsignalsarrayline,monitored_re
     #of a list where it will later be accessed by the combination solver. three of these lists are output for signals,corrections
     #and relative intensities
     for combinationnum in range(combinations_len): #array-indexed for loop
-        for moleculecounter in range(moleculenum):    #array-indexed for loop
+        for moleculecounter in range(num_molecules):    #array-indexed for loop
             correctionrow = matching_correction_values[combinations[combinationnum][moleculecounter],:] 
             intensityrow = monitored_reference_intensities[combinations[combinationnum][moleculecounter],:]
             rawsignalrow = rawsignalsarrayline[combinations[combinationnum][moleculecounter],:]
@@ -1918,7 +1988,7 @@ def CombinationMaker(matching_correction_values,rawsignalsarrayline,monitored_re
             correctionarray = numpy.vstack([correctionarray,correctionrow]) 
             intensityarray = numpy.vstack([intensityarray,intensityrow])
             rawsignalarray = numpy.vstack([rawsignalarray,rawsignalrow])
-            if moleculecounter == moleculenum-1:#the end of the nested loop: the rows just made are entered into arrays
+            if moleculecounter == num_molecules-1:#the end of the nested loop: the rows just made are entered into arrays
                 correctionarray = numpy.delete(correctionarray,(0),axis=0)
                 intensityarray = numpy.delete(intensityarray,(0),axis=0)
                 rawsignalarray = numpy.delete(rawsignalarray,(0),axis=0)
@@ -1928,8 +1998,8 @@ def CombinationMaker(matching_correction_values,rawsignalsarrayline,monitored_re
                 correctionlist.append(correctionarray)
                 intensitylist.append(intensityarray)
                 rawsignallist.append(rawsignalarray)
-                correctionarray = numpy.zeros([1,moleculenum])
-                intensityarray = numpy.zeros([1,moleculenum])
+                correctionarray = numpy.zeros([1,num_molecules])
+                intensityarray = numpy.zeros([1,num_molecules])
                 rawsignalarray = numpy.zeros([1,1])
     combinations_len = len(combinations)
     return [combinations_len,rawsignallist,correctionlist,intensitylist,massfraglist]
@@ -1948,12 +2018,12 @@ def CombinationSolver(combinations_len,rawsignallist,correctionlist,molecules,ma
 
 #compresses the data into an array of averages and standard deviations- then prints the results
 def DataCompressor(signals,molecules,type):
-    moleculenum = len(molecules)
+    num_molecules = len(molecules)
     averagegroup = []
     stddevgroup = []
     average = []
     stddev = []
-    for moleculecounter in range(moleculenum): #this part of the code is new for this version (3) and it gets avg and stddev
+    for moleculecounter in range(num_molecules): #this part of the code is new for this version (3) and it gets avg and stddev
         for combinationnum in range(len(signals)):#array-indexed for loop
             averagegroup.append(signals[combinationnum][moleculecounter])#takes all of the different solutions and puts them in a group
             stddevgroup.append(signals[combinationnum][moleculecounter]) #does exactly what the line above did, with different names
@@ -2378,15 +2448,25 @@ def BruteForce(molecules,specifications,matching_correction_values,rawsignalsarr
 #this function is a path is sequential linear subtraction, which can be used alongside the inverse
 #method or as opposed to it. Either way, it only produces one set of values, so it has no need for the 
 #data compressor function and starts right after the correction values are obtained
+#TODO: make some kind of unit test that tests a good order being chosen.
 def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, timeIndex, time):
 
+    #FIXME: I am using the ReferenceData.mass_fragment_numbers_monitored but it needs to be passed in from Reference or Experimental datal.
+    original_list_of_mass_fragments = copy.deepcopy(currentReferenceData.mass_fragment_numbers_monitored)
+  
+    
     # This is creating a local copy of 'monitored_reference_intensities' which will become
     # truncated as the molecules are solved and masses are removed
     remaining_reference_intensities_SLS = copy.deepcopy(monitored_reference_intensities)
 
     # This is creating a local copy of 'matching_correction_values' which will become
     # truncated as the molecules are solved and masses are removed
-    remaining_correction_values_SLS = copy.deepcopy(matching_correction_values)
+    remaining_correction_factors_SLS = copy.deepcopy(matching_correction_values)
+    original_correction_factors = copy.deepcopy(matching_correction_values)
+    #We keep track of the original number of mass fragments and molecules for indexing purposes.
+    #In the loop, we'll update the number of remaining molecules and  mass fragments from remaining correction values.
+    original_num_MassFragments = len(original_correction_factors[:,0])
+    original_num_molecules = len(original_correction_factors[0,:]) 
 
     # This is creating a local copy of 'rawsignalsarrayline' which will become
     # truncated as the molecules are solved and masses are removed
@@ -2395,63 +2475,142 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     # This is creating a local copy of 'molecules' which will become
     # truncated as the molecules are solved and masses are removed
     remaining_molecules_SLS = copy.deepcopy(molecules)
+    molecules_unedited = copy.deepcopy(molecules) #old variable, but being kept to prevent need to change things.
     
-    selectedvariable = []
-    rawsignals1 = []
-    solutions1 = numpy.zeros([1,len(remaining_correction_values_SLS[0,:])])
-    solutions = solutions1[0]
-    moleculenum = len(remaining_correction_values_SLS[0,:]) 
-    row_num = len(remaining_correction_values_SLS[:,0])
-    stable_row_num = row_num 
-    stable_molecule_num = moleculenum 
-    stablecorrection_values = remaining_correction_values_SLS
-    molecules_unedited = copy.deepcopy(molecules)
+
+    #initiailzing some lists for population (and truncation).
+    nonZeroCorrectionValuesList = []
+    signalsCorrespondingToNonZeroCorrectionValuesList = []
     usedmolecules = numpy.zeros(len(remaining_molecules_SLS))
-    reminder2 = 0 
+    #To keep track of the mass fragments used. (just an array of zeros to start, then fill with ones)
+    used_mass_fragments= numpy.array(copy.deepcopy(original_list_of_mass_fragments))*0.0
+
+     
+    #Not quite sure why things were done the below way, but it must work.
+    solutions1 = numpy.zeros([1,len(remaining_correction_factors_SLS[0,:])])
+    solutions = solutions1[0] #this is the variable where concentrations are placed and is the primary return.
+    
+    #First, remove any molecules where they have no signals due to threshold filtering etc.
+    #initialize a variable for moleculeIndex before the loop across all molecules.
+    moleculeIndexIncludingDeletions = 0
+    for moleculeIndex in range(original_num_molecules):#array-indexed for loop. Ideally, we'll do SLS once for each molecule.
+        referenceIntensitiesForThisMolecule = monitored_reference_intensities[:,moleculeIndex] 
+        if sum(referenceIntensitiesForThisMolecule) == 0:
+            #this is setting concentration to 0 for that molecule, in this iteration.
+            solutions[moleculeIndex] = 0.0  #note that we use the actual moleculeIndex here.
+            #No need to subtract any signals
+            #update the used molecules list, and amounts remaining for other things.
+            usedmolecules[moleculeIndex] = 1 #note that we use the actual moleculeIndex here. 
+            remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,(moleculeIndexIncludingDeletions),axis = 1)
+            remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexIncludingDeletions),axis = 1)
+            remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
+            moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions - 1 
+        moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions + 1                       
+            
+    num_remaining_molecules_before_loop = len(remaining_correction_factors_SLS[0,:]) #could have also used a different array or way of doing this.
+    
     #These nested for loops make the whole function run - they go through all the rows
     #and all the columns, but they do this as many times as there are rows, so that all
-    #the values that can be found using this method will be. The values for row_num and
-    #moleculenum are reset every cycle in order to run the other loops right
-    for molNumIndex in range(moleculenum):#array-indexed for loop
-        row_num = len(remaining_correction_values_SLS[:,0])
-        moleculenum = len(remaining_correction_values_SLS[0,:])
-        reminder = 1  
-        for rowcounter in range(row_num):#array-indexed for loop
-            for moleculecounter in range(moleculenum):#array-indexed for loop
-                if reminder == 1:#if the reminder is zero, the loop can't go through, so the solution is found, the the loop restarts with another index.
-                    if remaining_correction_values_SLS[rowcounter,moleculecounter] != 0:#If the value in the correction_values is not zero, it is kept
-                        selectedvariable.append(remaining_correction_values_SLS[rowcounter,moleculecounter]) 
-                        rawsignals1.append(remaining_rawsignals_SLS[rowcounter]) 
-                        whichmolecule = moleculecounter 
-                    #once all the molecules have been looked at for a certain row of correction values, if there is
-                    #a row with only one mass fragment, then that row is kept, so that it can be used to find the 
-                    #compositions of the molecules
-                    if moleculecounter == moleculenum-1: #if you get to the end of the column
-                        if len(selectedvariable) == 1: #if there was only one value that was non zero
-                            for moleculechooser in range(stable_molecule_num): #array-indexed for loop
-                                for rowchooser in range(stable_row_num):#array-indexed for loop
-                                    if stablecorrection_values[rowchooser,moleculechooser] == selectedvariable:#finds index of stable correction values where the selected variable is
-                                        whichmolecule2 = moleculechooser 
-                            #this for loop multiplies the relative amount that was just found by the correction values in order to determine the amount of signal that the 
-                            #certain molecule in question accounted for so that right after the for loop, this signal could be erased from the full signal, and thus the other
-                            #molecules relative amounts could be solved for
-                            rawsignalsused = numpy.zeros([row_num,1])
-                            for rowcounter2 in range(row_num):#array-indexed for loop
-                                if stablecorrection_values[rowcounter2,whichmolecule2]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
-                                    rawsignalsused[rowcounter2] = stablecorrection_values[rowcounter2,whichmolecule2] * (float(rawsignals1[0][0]))/float(selectedvariable[0])
-                            solutions[whichmolecule2] = ((float(rawsignals1[0][0]))/float(selectedvariable[0]))
-                            remaining_correction_values_SLS = numpy.delete(remaining_correction_values_SLS,(whichmolecule),axis = 1)
-                            remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(whichmolecule),axis = 1)
-                            remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(whichmolecule))
-                            usedmolecules[whichmolecule2] = 1
-                            remaining_rawsignals_SLS = remaining_rawsignals_SLS - rawsignalsused
-                            reminder = reminder-1 #if an answer is found the reminder is changed so that the loop has to be reset before it can search again
-                            reminder2 = reminder2 +1 #know the number of solutions
-                        if reminder2 == len(solutions): #if all of the solutions have been found
-                            reminder = 2
-                        selectedvariable = []
-                        rawsignals1 = []
+    #the values that can be found using this method will be. The values for remaining_num_MassFragments and
+    #remaining_num_molecules are re-evaluted every cycle.
+    for molNumIndex in range(num_remaining_molecules_before_loop):#array-indexed for loop. Ideally, we'll do SLS once for each molecule.
+        remaining_num_MassFragments = len(remaining_correction_factors_SLS[:,0])
+        remaining_num_molecules = len(remaining_correction_factors_SLS[0,:])
+        
+        
+        tuplesOfUniqueFragmentsList = []
+        for massFragmentIndex_i in range(remaining_num_MassFragments):#array-indexed for loop (over all fragments)
+            referenceIntensitiesAtThatMassFragment = remaining_reference_intensities_SLS[massFragmentIndex_i]
+            correctionFactorsAtThatMassFragment = remaining_correction_factors_SLS[massFragmentIndex_i]
+            signalsAtThatMassFragment = remaining_rawsignals_SLS[massFragmentIndex_i]
+            #this line checks if that mass fragment is unique to a particular molecule.
+            if numpy.count_nonzero(referenceIntensitiesAtThatMassFragment) == 1:
+                #the nonzero value will be the one at the maximum intensity for the reference pattern.
+                valueOfUniqueStandardizedIntensity = max(referenceIntensitiesAtThatMassFragment)
+                #the below nubby function will return the relevant index in array indexing.
+                moleculeIndexOfUniqueIntensity = numpy.argmax(referenceIntensitiesAtThatMassFragment)
+                #now make a tuple with the unique standardized intensity in the front so we can sort by that
+                correctionFactorOfUniqueIntensity = correctionFactorsAtThatMassFragment[moleculeIndexOfUniqueIntensity]
+                #TODO: consider changing the primary weighting to valueOfUniqueStandardizedIntensity*signalsAtThatMassFragment
+                #and/or to a user specified argument.
+                #Note that for now, by having signals as the second slot, if two molecules each have 100% that they will sort by intensity of signals next.
+                primaryWeightingSLS = valueOfUniqueStandardizedIntensity
+                uniqueFragmentTuple = (primaryWeightingSLS, signalsAtThatMassFragment, massFragmentIndex_i, moleculeIndexOfUniqueIntensity, correctionFactorOfUniqueIntensity)
+                tuplesOfUniqueFragmentsList.append(uniqueFragmentTuple)
+        #now we sort according to the biggest standardized intensities (signals as second spot), in descending order.
+        tuplesOfUniqueFragmentsList.sort(reverse=True) # there is no return by list sort, the list object is directly modified.
+        
+        
+        #now we simply take the first index which is the best to subtract first.
+        tupleForThisSLS = tuplesOfUniqueFragmentsList[0]
+        #for simplicity in reading the code, we will break out the different parts of the tuple
+        signalsAtThatMassFragmentForThisSLS = tupleForThisSLS[1]
+        massFragmentIndexForThisSLS = tupleForThisSLS[2]
+        used_mass_fragments[massFragmentIndexForThisSLS]=1 #TODO: This should be returned so that the SLSUniqueOrder.csv can have an accompanying file of SLSUniqueOrderMassFragments
+        moleculeIndexForThisSLS = tupleForThisSLS[3]
+        correctionFactorOfUniqueIntensityForThisSLS = tupleForThisSLS[4]
+        chosenMolecule = remaining_molecules_SLS[moleculeIndexForThisSLS] #This line is for debugging etc.
+        chosenMolecule_original_molecular_index = list(molecules_unedited).index(chosenMolecule) #we take the chosenMolecule string, and search for it in the original list of molecules to get the original index.
+        #TODO: make (or better yet, take in) a list called "moleculeSolvingOrder", append chosenMolecule to that, and return that from this function. Then we can export a file from main called moleculeSolvingOrder for each time point.
+        #TODO continued: The reason to take in a list (default value blank list) is because SLSCommon may call SLSunique multiple times, so we need to append rather than just making a blank list each time.
+	
+        #now need ot use the chosen mass to calculate concentration.
+        concentrationOfMoleculeForThisSLS = ((float(signalsAtThatMassFragmentForThisSLS))/float(correctionFactorOfUniqueIntensityForThisSLS))
+    
+        ## These print statements will be preserved for debugging purposes.
+        #print("Debugging","current moleculeChosen is", remaining_molecules_SLS[moleculeIndexForThisSLS], concentrationOfMoleculeForThisSLS)
+        #print("Debugging","which is also", molecules[chosenMolecule_original_molecular_index], chosenMolecule_original_molecular_index)
+        #print("Debugging","current moleculeChosen is", remaining_molecules_SLS[moleculeIndexForThisSLS] , concentrationOfMoleculeForThisSLS)
+        #print("Debugging",remaining_molecules_SLS)
+        #print("Debugging",tuplesOfUniqueFragmentsList)
+        #print("Debugging","signals", remaining_rawsignals_SLS)
+        #print("Debugging",remaining_correction_factors_SLS)
+        #print("Debugging","predicted this_round signal:", concentrationOfMoleculeForThisSLS*correctionFactorOfUniqueIntensityForThisSLS)
+        #print("Debugging",original_list_of_mass_fragments)
+        #print("Debugging",used_mass_fragments)
 
+        #FIXME: CHeck this line to see if it's correct.
+#        concentrationsFromSLS[moleculeIndexForThisSLS] = ((float(signalsAtThatMassFragmentForThisSLS))/float(correctionFactorOfUniqueIntensityForThisSLS))
+#        print("FROM NEW CODE:", concentrationsFromSLS)
+        
+        
+        #####THIS IS THE START OF THE BLOCK WHERE SOMETHING IS WRONG I TRIED TO KEEP THE OLD CODE, WHICH MAY BE PART OF THE ISSUE######
+        ####USING THIS INPUT FILE
+        #now we need to collect the list of masses/signals and correction factors that correspond to that molecule, i.e. moleculeIndexForThisSLS, which are nonzero.
+        for massFragmentIndex_jjj in range(remaining_num_MassFragments):
+            if remaining_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS] != 0:#If the value in the correction_values is not zero, it is kept
+                nonZeroCorrectionValuesList.append(remaining_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS]) 
+                signalsCorrespondingToNonZeroCorrectionValuesList.append(remaining_rawsignals_SLS[massFragmentIndex_jjj])  #This only appends signals where a correction value exists for *this* molecule, molecule_ii.
+                
+        ## These print statements will be preserved for debugging purposes.
+        #print("Debugging", nonZeroCorrectionValuesList)
+        #print("Debugging","here are the signals to subtract from", signalsCorrespondingToNonZeroCorrectionValuesList)
+        
+        
+        #now we are going to solve for the signals after modifying the old code.
+        #this for loop multiplies the relative amount that was just found by the correction values in order to determine the amount of signal that the 
+        #certain molecule in question accounted for so that right after the for loop, this signal could be erased from the full signal, and thus the other
+        #molecules relative amounts could be solved for
+        #initializing an array to be populated with the amount to subtract.       
+        solvedSignalsForSubtractionArray = numpy.zeros([remaining_num_MassFragments,1])                           
+        for massFragmentIndex_jj in range(remaining_num_MassFragments):#array-indexed for loop. #This is being called massFragmentIndex_jj to distinguish it from the outer loop.
+            if remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
+                solvedSignalsForSubtractionArray[massFragmentIndex_jj] = remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
+        solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
+        usedmolecules[chosenMolecule_original_molecular_index] = 1 #This updates a list that keeps track of which molecules have been used up.
+
+        #The below line is the key line where the subtraction is done.
+        remaining_rawsignals_SLS = remaining_rawsignals_SLS - solvedSignalsForSubtractionArray        
+       
+        #now delete that molecule from the correction values array, etc.
+        remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,(moleculeIndexForThisSLS),axis = 1)
+        remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexForThisSLS),axis = 1)
+        remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,moleculeIndexForThisSLS)
+        
+        #Reset these lists to start again.
+        nonZeroCorrectionValuesList = []
+        signalsCorrespondingToNonZeroCorrectionValuesList = []
+        
         # This block of code is a printing statement to show the user what order the molecules are being solved in
         # This is a csv file so should be delimited with commas
         if G.SLSUniquePrint == 'yes':
@@ -2462,14 +2621,14 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                     f.write('%s,' %usedmolecules[x])
                 f.write("UsedMolecules \n")
         
-    if remaining_correction_values_SLS.size > 0:#if there are correction values left (i.e. not all the solutions have been found)
+    if remaining_correction_factors_SLS.size > 0:#if there are correction values left (i.e. not all the solutions have been found)
         #this for loop is used to delete any rows entirely composed of zeros, since the molecules percentages are found
         #based on the column index, the rest of the loop still works fine, this is just so that there are not singular
         #matrices made by combination maker. (originally there would be up to hundreds of simply useless matrices solved)
         place_holder = 0
-        for correctionIndex in range(len(remaining_correction_values_SLS[:,0])):#array-indexed for loop
-            if any(remaining_correction_values_SLS[correctionIndex-place_holder,:]) == 0:#all rows of only zeros are deleted
-                remaining_correction_values_SLS = numpy.delete(remaining_correction_values_SLS,correctionIndex-place_holder,axis = 0)
+        for correctionIndex in range(len(remaining_correction_factors_SLS[:,0])):#array-indexed for loop
+            if any(remaining_correction_factors_SLS[correctionIndex-place_holder,:]) == 0:#all rows of only zeros are deleted
+                remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,correctionIndex-place_holder,axis = 0)
                 remaining_rawsignals_SLS = numpy.delete(remaining_rawsignals_SLS,correctionIndex-place_holder,axis = 0)
                 remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,correctionIndex-place_holder,axis = 0)
                 place_holder = place_holder + 1#since the arrays are being deleted, this keeps the indexing correct
@@ -2477,7 +2636,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         solutions = []
         usedmolecules = []
 
-    return [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_values_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules]
+    return [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules]
     
 #this sls method cuts smaller, solvable arrays out of the large array and uses numpy.linalg.solve to find the signals
 #relative to Co for those molecules, then via the SLSMethod function below the function works in conjunction with the 
@@ -2497,7 +2656,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
 
     # This is creating a local copy of the matching_correction_values which will become
     # truncated as the molecules are solved and masses are removed
-    remaining_correction_values_SLS = copy.deepcopy(matching_correction_values)
+    remaining_correction_factors_SLS = copy.deepcopy(matching_correction_values)
 
     # This is creating a local copy of the rawsignalsarrayline which will become
     # truncated as the molecules are solved and masses are removed
@@ -2520,12 +2679,12 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
     for sizecounter in range(2,sizedecide+1):#array-indexed for loop
     #if the array is empty here then the values are set to zero using the else statement
     #the original indexeers will cause an error because they require a two dimensional array
-        if remaining_correction_values_SLS.shape[0] != 0:
-            row_num = len(remaining_correction_values_SLS[:,0])
-            moleculenum = len(remaining_correction_values_SLS[0,:])
+        if remaining_correction_factors_SLS.shape[0] != 0:
+            remaining_num_MassFragments = len(remaining_correction_factors_SLS[:,0])
+            remaining_num_molecules = len(remaining_correction_factors_SLS[0,:])
         else:
-            row_num = len(remaining_correction_values_SLS)
-            moleculenum = len(remaining_correction_values_SLS)
+            remaining_num_MassFragments = len(remaining_correction_factors_SLS)
+            remaining_num_molecules = len(remaining_correction_factors_SLS)
         selectedvariables = []
         selectedcorrections = []
         selectedmassfrags = []
@@ -2534,42 +2693,43 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
         useablemassfrags = []
         useablerawsigs = []
         #this loop looks at each row for the correction value array, resets the selected variable value
-        for rowcounter in range(row_num):#array-indexed for loop
+        for rowcounter in range(remaining_num_MassFragments):#array-indexed for loop
             selectedvariable = []
             reminder2 = 0
             reminder4 = 0
             #this loop looks at each molecule's correction value for each row, only if the reminder is equal to zero(will be
             #used later)
-            for moleculecounter in range(moleculenum):#array-indexed for loop
+            for molecule_ii in range(remaining_num_molecules):#array-indexed for loop
                 if reminder == 1:#will only run if no row has been chosen already
                     #the code below this only happens if the reminder is equal to one
                     #here a zero or a one is added to the selected variable, based on whether the correction value array has a
                     #value present or not, this way the different rows can be compared
-                    if remaining_correction_values_SLS[rowcounter,moleculecounter] != 0:#chooses all values that are non zero- inputs ones
+                    if remaining_correction_factors_SLS[rowcounter,molecule_ii] != 0:#chooses all values that are non zero- inputs ones
                         selectedvariable.append(1)  
                     else:
                         selectedvariable.append(0) 
                     #once the selected variable has been completed, this if statement is called
-                    if moleculecounter == moleculenum-1: #at the end of the row
+                    if molecule_ii == remaining_num_molecules-1: #at the end of the row
                         #this if statement gets all the rows with the needed 
                         if sum(selectedvariable) == sizecounter: #if the row has the correct number of variables
                             selectedvariables.append(selectedvariable)
-                            selectedcorrections.append(remaining_correction_values_SLS[rowcounter])
+                            selectedcorrections.append(remaining_correction_factors_SLS[rowcounter])
                             selectedmassfrags.append(remaining_reference_intensities_SLS[rowcounter])
                             selectedrawsigs.append(remaining_rawsignals_SLS[rowcounter])
             #If the loop has finished making the selected variables list, then this second loop starts, and checks each of these
             #lists to see if this variable has enough rows with the same columns being used to be used as our array to solve
-            if rowcounter == row_num - 1:#after all the selected variables have been put in arrays
-                for rowcounter2 in range(row_num):#array-indexed for loop
+            if rowcounter == remaining_num_MassFragments - 1:#after all the selected variables have been put in arrays
+                #This is being called massFragmentIndex_jj to distinguish it from the outer loop.
+                for massFragmentIndex_jj in range(remaining_num_MassFragments):#array-indexed for loop
                     selectedvariable = []
                     reminder2 = 0
-                    for moleculecounter in range(moleculenum):#array-indexed for loop
+                    for molecule_iii in range(remaining_num_molecules):#array-indexed for loop
                         if reminder == 1:#will only run if no row has been chosen already
-                            if remaining_correction_values_SLS[rowcounter2,moleculecounter] != 0:#makes the selected variable again
+                            if remaining_correction_factors_SLS[massFragmentIndex_jj,molecule_iii] != 0:#makes the selected variable again
                                 selectedvariable.append(1)  
                             else:
                                 selectedvariable.append(0)
-                            if moleculecounter == moleculenum-1: #once it has been made
+                            if molecule_iii == remaining_num_molecules-1: #once it has been made
                             #this for loop iterates across all of the values that are the same length as the variable we're 
                             #checking for, it then makes an array using all of the rows that match (it will at least match with
                             #itself, because itself is in the selected variables)
@@ -2610,12 +2770,12 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                 #in the synthesized arrays and solves for their signals relative to CO
                                 if reminder2 >= sizecounter:#If there are enough rows
                                     place_holder = 0
-                                    for deleter in range(len(remaining_correction_values_SLS[:,0])):#array-indexed for loop
+                                    for deleter in range(len(remaining_correction_factors_SLS[:,0])):#array-indexed for loop
                                         place_holder2 = 0
                                         for checker in range(len(useablecorrections[:,0])):#array-indexed for loop
                                             if place_holder2 == 0:
-                                                if all(remaining_correction_values_SLS[deleter-place_holder,:] == useablecorrections[checker,:]):#gets index of correction values to delete- the ones chosen
-                                                    remaining_correction_values_SLS = numpy.delete(remaining_correction_values_SLS,deleter-place_holder,axis = 0)
+                                                if all(remaining_correction_factors_SLS[deleter-place_holder,:] == useablecorrections[checker,:]):#gets index of correction values to delete- the ones chosen
+                                                    remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,deleter-place_holder,axis = 0)
                                                     remaining_rawsignals_SLS = numpy.delete(remaining_rawsignals_SLS,deleter-place_holder,axis = 0)
                                                     remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,deleter-place_holder,axis = 0)
                                                     place_holder = place_holder + 1
@@ -2630,7 +2790,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                             useablemassfrags = numpy.delete(useablemassfrags,selectedcounter - place_holder,axis = 1)
                                             place_holder = place_holder + 1 #saves place when deleting
                                         if usedmolecules[selectedcounter] == 1:# in same loop, the values that are going to be used will be deleted from the arrays getting passed on- that are not solved yet
-                                            remaining_correction_values_SLS = numpy.delete(remaining_correction_values_SLS,selectedcounter - place_holder2,axis = 1)
+                                            remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,selectedcounter - place_holder2,axis = 1)
                                             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,selectedcounter - place_holder2,axis = 1)
                                             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,selectedcounter - place_holder2)
                                             place_holder2 = place_holder2 + 1 #saves place when deleting
@@ -2681,7 +2841,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                 solutionsholder[usedmoleculesIndex] = solutions[place_holder]
                 place_holder = place_holder + 1 #helps add the two arrays together
         solutions = solutionsholder
-    return [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_values_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,usedmolecules]
+    return [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,usedmolecules]
 
 
 #this function simply calls the other functions to be used, based on the user input pathway, that means that this
@@ -2695,7 +2855,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
 
     # This is creating a local copy of the matching_correction_values which will become
     # truncated as the molecules are solved and masses are removed
-    remaining_correction_values_SLS = copy.deepcopy(matching_correction_values)
+    remaining_correction_factors_SLS = copy.deepcopy(matching_correction_values)
 
     # This is creating a local copy of the rawsignalsarrayline which will become
     # truncated as the molecules are solved and masses are removed
@@ -2709,7 +2869,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
     [uniqueOrCommon,slsFinish,distinguished] = SLSChoices
                    
     if uniqueOrCommon == 'unique': #user input
-        [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_values_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules] = SLSUniqueFragments(remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_values_SLS,remaining_rawsignals_SLS, timeIndex, time)
+        [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules] = SLSUniqueFragments(remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time)
     #should the user choose the common fragments method, it must be realized that once you solve a two by two or three
     #by three array using the common fragments method you can then possibly solve using the unique fragments method once 
     #again. This while loop makes sure that as long as there are possibilities after either method is used, it will keep
@@ -2723,18 +2883,18 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
             place_holder = 0
             for desirednum in range(1,4):#checks all sizes 1,2,3
                 zerosrows = 0
-                if remaining_correction_values_SLS.size != 0: #if the array exists
-                    for rowcounter in range(len(remaining_correction_values_SLS[:,0])):#array-indexed for loop
+                if remaining_correction_factors_SLS.size != 0: #if the array exists
+                    for rowcounter in range(len(remaining_correction_factors_SLS[:,0])):#array-indexed for loop
                         zeros = 0
-                        for columncounter in range(len(remaining_correction_values_SLS[0,:])):#array-indexed for loop
-                            if remaining_correction_values_SLS[rowcounter,columncounter] == 0:#if there is a zero in the array
+                        for columncounter in range(len(remaining_correction_factors_SLS[0,:])):#array-indexed for loop
+                            if remaining_correction_factors_SLS[rowcounter,columncounter] == 0:#if there is a zero in the array
                                 zeros = zeros + 1
-                            if columncounter == len(remaining_correction_values_SLS[0,:])-1:#if the whole row has been checked
-                                if zeros == len(remaining_correction_values_SLS[0,:])-(desirednum):#if the number of ones if the row is equal to the size being checked for
+                            if columncounter == len(remaining_correction_factors_SLS[0,:])-1:#if the whole row has been checked
+                                if zeros == len(remaining_correction_factors_SLS[0,:])-(desirednum):#if the number of ones if the row is equal to the size being checked for
                                     zerosrows = zerosrows + 1
                     if zerosrows >= desirednum: #if the number of matching rows is equal to or greater than the size being looked for
                         if desirednum == 1: #unique method used if there are rows with only one correction value
-                            [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_values_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules] = SLSUniqueFragments (remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_values_SLS,remaining_rawsignals_SLS, timeIndex, time)
+                            [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules] = SLSUniqueFragments (remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time)
                             if len(usedmolecules) != 0:
                                 unique.append([solutions,molecules_unedited,usedmolecules])
                                 order.append('unique')
@@ -2743,7 +2903,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                                 place_holder = place_holder - 1 #while loop can stop- so it does not get stuck
                         else: #common fragments method 
                             
-                            [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_values_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,usedmolecules] = SLSCommonFragments (remaining_correction_values_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,remaining_molecules_SLS,scaledConcentrationsarray,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,bruteOption,timeIndex, maxPermutations)
+                            [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,usedmolecules] = SLSCommonFragments (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,remaining_molecules_SLS,scaledConcentrationsarray,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,bruteOption,timeIndex, maxPermutations)
                             if len(usedmolecules) != 0:
                                 common.append([solutions,molecules_unedited,usedmolecules])
                                 order.append('common')
@@ -2809,47 +2969,47 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
         
     #if the sls method does not solve for all the molecules, then the rest are sent to the inverse method 
     #where the remaining matrix is solved
-    if remaining_correction_values_SLS.size != 0:#if everything hasn't already been solved
+    if remaining_correction_factors_SLS.size != 0:#if everything hasn't already been solved
         if slsFinish == 'inverse':#if inverse finish is chosen
              if distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                 concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_values_SLS,remaining_rawsignals_SLS)
+                 concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS)
              else:
-                 concentrationsFromFinisher = InverseMethod (remaining_correction_values_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
+                 concentrationsFromFinisher = InverseMethod (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
            
         if slsFinish == 'brute':#if brute method is chosen
             if timeIndex == 0:#the first time is always run through the inverse method, where the ranges can use this information the loops afterwards
-                concentrationsFromFinisher = InverseMethod (remaining_correction_values_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
+                concentrationsFromFinisher = InverseMethod (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
                 
                 if math.log(permutationNum,5) >= len(remaining_molecules_SLS):
                     #Ashi believes the above comparision is to ensure each molecule has at least 5 concentrations checked
                     specifications = DataRangeSpecifier(remaining_molecules_SLS,timeIndex,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,concentrationsFromFinisher)
-                    concentrationsFromFinisher = BruteForce(remaining_molecules_SLS,specifications,remaining_correction_values_SLS,remaining_rawsignals_SLS,bruteOption,maxPermutations)
+                    concentrationsFromFinisher = BruteForce(remaining_molecules_SLS,specifications,remaining_correction_factors_SLS,remaining_rawsignals_SLS,bruteOption,maxPermutations)
                 else:
                     print("Warning: The number of permutations requested is too small to allow for 5 possibilities per molecule."
                           + "Switching to use Inverse instead of Brute for slsFinish for this datapont." 
                           + "If you wish to use Brute, increase the size of permutations in the user input file.")
-                    concentrationsFromFinisher = InverseMethod (remaining_correction_values_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
+                    concentrationsFromFinisher = InverseMethod (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
             else: #after the first time these functions are called
                 if math.log(permutationNum,5) >= len(remaining_molecules_SLS):
                     #Ashi believes the above comparision is to ensure each molecule has at least 5 concentrations checked
                     specifications = DataRangeSpecifier(remaining_molecules_SLS,timeIndex,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,
                                                         scaledConcentrationsarray)
-                    concentrationsFromFinisher = BruteForce(remaining_molecules_SLS,specifications,remaining_correction_values_SLS,remaining_rawsignals_SLS,bruteOption, maxPermutations)
+                    concentrationsFromFinisher = BruteForce(remaining_molecules_SLS,specifications,remaining_correction_factors_SLS,remaining_rawsignals_SLS,bruteOption, maxPermutations)
                 else:
-                    concentrationsFromFinisher = InverseMethod (remaining_correction_values_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
+                    concentrationsFromFinisher = InverseMethod (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
         # the concentrations that were solved for by the Finisher are stored as a list
         # to make them easier to use and then discard in the for loop as they are added to solutions
         remainingMolecules = list(concentrationsFromFinisher.copy())
         #print remainingMolecules
         #adds the finisher solutions with the inital analysis solutions 
-        for moleculecounter in range(len(molecules_unedited)):
+        for molecule_iiii in range(len(molecules_unedited)):
             if len(usedmolecules) == 0:
                 print("Warning: if you have chosen to use unique fragment SLS and your data has no unique fragments (not unique to any molecule), "\
                 "then the program may be about to crash. If it does, change SLS method to common.")
             #if the molecule wasn't solved for in the inital analysis
-            if usedmolecules[moleculecounter] == 0:
+            if usedmolecules[molecule_iiii] == 0:
                 # then add the appropriate Finisher concentration for that molecule  
-                solutions[moleculecounter] = remainingMolecules.pop(0) 
+                solutions[molecule_iiii] = remainingMolecules.pop(0) 
             
     return solutions
     
@@ -2872,7 +3032,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
 
     # This is creating a local copy of the matching_correction_values which will become
     # truncated as the molecules are solved and masses are removed
-    remaining_correction_values_SLS = copy.deepcopy(matching_correction_values)
+    remaining_correction_factors_SLS = copy.deepcopy(matching_correction_values)
 
     # This is creating a local copy of the rawsignalsarrayline which will become
     # truncated as the molecules are solved and masses are removed
@@ -2882,7 +3042,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
     # truncated as the molecules are solved and masses are removed
     remaining_molecules_SLS = copy.deepcopy(molecules)
     
-    absentmolecules1 = numpy.ones([1,len(remaining_correction_values_SLS[0,:])])
+    absentmolecules1 = numpy.ones([1,len(remaining_correction_factors_SLS[0,:])])
     absentmolecules = absentmolecules1[0]
     molecules_unedited = copy.deepcopy(molecules)
     place_holder = 0
@@ -2915,7 +3075,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
     elif len(sensitivityThresholdValue) > 1:#user input
         sensitivityThresholdValue = sensitivityThresholdValue[0]
     #This for loop goes through all of the rows of the remaining_rawsignals_SLS and finds the values that are lower than the given 
-    #threshold as defined above, and these rows are deleted from the remaining_rawsignals_SLS, the remaining_correction_values_SLS and the matching
+    #threshold as defined above, and these rows are deleted from the remaining_rawsignals_SLS, the remaining_correction_factors_SLS and the matching
     #mass fragments array, all using a place hold so that even when the rows are deleted, the counting will still work for 
     #the loop. The a nested for loop looks in the matching mass fragments array (a copy, that is not changed in the previous
     #loop), and finds which molecules from each of those deleted rows have a relative intensity above the given threshold 
@@ -2923,7 +3083,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
     for rawcounter in range(len(remaining_rawsignals_SLS)):#array-indexed for loop
         if remaining_rawsignals_SLS[rawcounter-place_holder] < rawSignalThresholdValue:#any values below threshold are deleted
             remaining_rawsignals_SLS = numpy.delete(remaining_rawsignals_SLS,rawcounter-place_holder,axis = 0)
-            remaining_correction_values_SLS = numpy.delete(remaining_correction_values_SLS,rawcounter-place_holder,axis = 0)
+            remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,rawcounter-place_holder,axis = 0)
             remaining_reference_intensities_filter = numpy.delete(remaining_reference_intensities_filter,rawcounter-place_holder,axis = 0)
             place_holder = place_holder + 1
             for monitored_reference_intensitiescounter in range(len(monitored_reference_intensities_copy[0,:])):#array-indexed for loop
@@ -2935,7 +3095,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
         if absentmolecules[absentmoleculescounter] == 0:#finds indexes where molecules can be deleted
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,absentmoleculescounter-place_holder2)
             remaining_reference_intensities_filter = numpy.delete(remaining_reference_intensities_filter,absentmoleculescounter-place_holder2,axis = 1)
-            remaining_correction_values_SLS = numpy.delete(remaining_correction_values_SLS,absentmoleculescounter-place_holder2,axis = 1)
+            remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,absentmoleculescounter-place_holder2,axis = 1)
             place_holder2 = place_holder2 + 1    
     #this last section of code just adds the absent molecules together with the solutions to get all of the molecules needed, and
     #prints off the results using a copy of the molecules array made earlier; this part of the function is very similar to what the
@@ -2945,11 +3105,11 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
     else:
         if answer == 'inverse':#if the inverse method is wanted
             if distinguished == 'yes':#distinguished method
-                solutions = InverseMethodDistinguished(remaining_reference_intensities_filter,remaining_correction_values_SLS,remaining_rawsignals_SLS)
+                solutions = InverseMethodDistinguished(remaining_reference_intensities_filter,remaining_correction_factors_SLS,remaining_rawsignals_SLS)
             else:#combinations method
-                solutions = InverseMethod(remaining_correction_values_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_filter,mass_fragment_numbers,remaining_molecules_SLS,'composition')
+                solutions = InverseMethod(remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_filter,mass_fragment_numbers,remaining_molecules_SLS,'composition')
         if answer == 'sls':#sls method
-            solutions = SLSMethod(remaining_molecules_SLS,remaining_reference_intensities_filter,remaining_correction_values_SLS,remaining_rawsignals_SLS,timeIndex,conversionfactor,datafromcsv,molecules_unedited,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,bruteOption, time, maxPermutations)
+            solutions = SLSMethod(remaining_molecules_SLS,remaining_reference_intensities_filter,remaining_correction_factors_SLS,remaining_rawsignals_SLS,timeIndex,conversionfactor,datafromcsv,molecules_unedited,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,bruteOption, time, maxPermutations)
         timeIndex = 0
         for moleculecounter in range(len(molecules_unedited)):#array-indexed for loop
             if absentmolecules[moleculecounter] == 1:#gets index for present molecule
@@ -3357,19 +3517,19 @@ def main():
     #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
     global ReferenceDataList
     global ExperimentData
+    global prototypicalReferenceData
     global currentReferenceData
     
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
-    currentReferenceData = ReferenceDataList[0]
-    if G.extractReferencePatternFromDataOption == 'yes':
-        currentReferenceData.ExportAtEachStep = G.ExportAtEachStep #FIXME TODO ASHI HAS ADDED THIS LINE HERE AS A TEMPORARY MEASURE. IT BREAKS OTHER UNIT TESTS if the if statement is removed.
-    
+
+    prototypicalReferenceData = ReferenceDataList[0]
+
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referenceFileName) > len(G.referencePatternTimeRanges):
         print("WARNING: There are more reference files given than time ranges")
-    #save each global variable into the class objects 
+    #save global variable into the class objects 
     ExperimentData.ExportAtEachStep = G.ExportAtEachStep
    
     #if this is the first iterative run, then the reference and experimental files need to have been imported before the iteration can begin
@@ -3384,37 +3544,14 @@ def main():
         # Skip preprocessing
         G.preProcessing = 'skip'
         
-        
     if(G.preProcessing == 'yes'):
         
-        if G.iterativeAnalysis:
-            #create a copy of the Reference Data
-             ReferenceDataFullCopy = copy.deepcopy(currentReferenceData)
-             
-        # Trim the reference data according to the selected molecules list
-        if G.specificMolecules == 'yes':
-            currentReferenceData = trimDataMoleculesToMatchChosenMolecules(currentReferenceData, G.chosenMolecules) 
-             
+        #TODO Make a new global to remove mass fragments from the experimental data in preprocessing
+        #using trimDataMassesToMatchChosenMassFragments
+        
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
         print("Data PreProcessing completed")
-        
-        if G.iterativeAnalysis:
-            #make a copy of the experimental data for later use in iterative processing
-            ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
-            #make a copy of Experimental data specifically to be used in signal simulation. i.e. will have mass fragments trimmed if they aren't referenced by the current molecules. 
-            ExperimentDataCopy = copy.deepcopy(ExperimentData)
-            #remove any unreference masses from the signal simulation copy of experimental data
-            ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, currentReferenceData)   
-            
-        if G.specificMassFragments == 'yes':
-            if len(G.chosenMassFragments) < len(currentReferenceData.molecules):
-                print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-                print("Mass fragment selection has been canceled")
-            else:#Trim the experimental data according to the mass fragments in G.chosenMassFragments 
-                ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData) 
-        #Trim the experimental data according to the mass fragments in referenceData
-        ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
         
         #This graph call is graphing fully preprocessed data.
         if G.grapher == 'yes':
@@ -3435,22 +3572,7 @@ def main():
         G.checkpoint = timeit.default_timer()
         print('PreProcessing Time: ', (G.timeSinceLastCheckPoint))
     
-        #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
-        if G.iterativeAnalysis:
-            ReferenceDataSSmatching_correction_values, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, currentReferenceData, ReferenceDataFullCopy)
     elif(G.preProcessing == 'skip'):
-
-        # Even if we skip the real preProcessing some manipulations must be performed on the
-        # MS data
-
-        if G.specificMassFragments == 'yes':
-            if len(G.chosenMassFragments) < len(currentReferenceData.molecules):
-                print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-                print("Mass fragment selection has been canceled")
-            else:#Trim the experimental data according to the mass fragments in G.chosenMassFragments 
-                ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData) 
-        #Trim the experimental data according to the mass fragments in referenceData
-        ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
         
         # Output to make sure user knows we are skipping Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -3462,15 +3584,6 @@ def main():
         #This function call loads the preprocessed data
         print("Loading the preprocessed data from file '{}'".format(G.preProcessedDataOutputName))
         ExperimentData.workingData, ExperimentData.mass_fragment_numbers, ExperimentData.times = ImportWorkingData(G.preProcessedDataOutputName)
-
-        if G.specificMassFragments == 'yes':
-            if len(G.chosenMassFragments) < len(currentReferenceData.molecules):
-                print("Selected Mass Fragments are too few to solve for the number of molecules provided")
-                print("Mass fragment selection has been canceled")
-            else:#Trim the experimental data according to the mass fragments in G.chosenMassFragments 
-                ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, currentReferenceData)
-        #Trim the experimental data according to the mass fragments in referenceData
-        ExperimentData = trimDataMassesToMatchReference(ExperimentData, currentReferenceData) 
              
         # Output to make sure user knows we are loading Preprocessing
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
@@ -3483,33 +3596,66 @@ def main():
                          "Or you are attempting to load pre-processed data without running data analysis")
 
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
-    ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
-    # and needed if G.dataAnalysis == 'load' or 'yes'
-    if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
-        #Prepare currentReferenceData which is currently the first reference object in the list
-        currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
-        #for loop to preprocess the remaining MSReference objects and match correction values
-        for i in range(len(ReferenceDataList)):
-            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i], ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges)
-                              
-    if (G.dataAnalysis == 'yes'):
-                
-        # Reset the checkpoint timer for the data analysis section
-        G.checkpoint = timeit.default_timer()
-        #check to make sure that there are enough mass fragments to solve for each variable. 
-        if len(ExperimentData.mass_fragment_numbers) < len(currentReferenceData.molecules):
-            raise SystemError("There are too few mass fragments to solve for the number of molecules provided. \nData Analysis has been ended.")
-            
+    #Steps required if preprocessing has also been run
+    if (G.dataAnalysis == 'yes' and G.preProcessing == 'yes'):
+        
+        if G.iterativeAnalysis:
+            #create a copy of the Reference Data
+             ReferenceDataFullCopy = copy.deepcopy(prototypicalReferenceData) 
+        
         ##Start: Preparing data for data analysis based on user input choices
+        # Trim the reference data according to the selected molecules list
+        #TODO: Ashi thinks this can be moved into PrepareReferenceObjectsAndCorrectionValues. But care of not messing up iterativeAnalysis would be needed.
+        #TODO continued: In that case, we could change the trimming function to work on the standardized reference patterns.
+        #TODO continued: This would leave provided_reference_intensities unchanged, which is an additional bonus.
+        #TODO continued: If we parse chosenMOlecules appropriately ahead of time, we can just pass that as an argument to prepare function.
+        #TODO continued: If it matches (as a set, not an equal comparison of lists), then no trimming occurs. Else, trimming occurs.
+        #TODO continued: but the above changes would probably also require trimDataMassesToMatchReference to occur on Experimental data, again, after prepare reference patterns, including on ExperimentDataCopy.
+        if G.specificMolecules == 'yes' or G.iterativeAnalysis:
+            prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMolecules)
+            
+        if G.iterativeAnalysis:
+            #make a copy of the experimental data for later use in iterative processing
+            ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
+            #make a copy of Experimental data specifically to be used in signal simulation. i.e. will have mass fragments trimmed if they aren't referenced by the current molecules. 
+            ExperimentDataCopy = copy.deepcopy(ExperimentData)
+            #remove any unreference masses from the signal simulation copy of experimental data
+            ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, prototypicalReferenceData)       
+        
+        
         # If we are only interested in a subset of the MS data
         # remove the irrelevant mass data series from ExperimentData.mass_fragment_numbers
         # and the corresponding colums from ExperimentData.workingData
         if G.specificMassFragments == 'yes':
             print("MassFragChooser")
-            ExperimentData.workingData, ExperimentData.mass_fragment_numbers = DataFunctions.KeepOnlySelectedYYYYColumns(ExperimentData.workingData,
-                                                                                                                           ExperimentData.mass_fragment_numbers,
-                                                                                                                           G.chosenMassFragments)
+             #Trim the experimental data according to the mass fragments in G.chosenMassFragments 
+            ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, G.chosenMassFragments) 
             ExperimentData.ExportCollector("MassFragChooser")
+        #Trim the experimental data according to the mass fragments in referenceData
+        ExperimentData = trimDataMassesToMatchReference(ExperimentData, prototypicalReferenceData) 
+        
+    ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
+    # and needed if G.dataAnalysis == 'load' or 'yes'  
+    if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
+        #Prepare currentReferenceData which is currently the first reference object in the list
+
+        prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData,ExperimentData,G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+        #for loop to preprocess the remaining MSReference objects and match correction values
+        for i in range(len(ReferenceDataList)):
+            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+                              
+    if (G.dataAnalysis == 'yes'):
+        
+        #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
+        if G.iterativeAnalysis:
+            ReferenceDataSSmatching_correction_values, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, prototypicalReferenceData, ReferenceDataFullCopy)
+                
+        # Reset the checkpoint timer for the data analysis section
+        G.checkpoint = timeit.default_timer()
+        #check to make sure that there are enough mass fragments to solve for each variable. 
+        if len(ExperimentData.mass_fragment_numbers) < len(prototypicalReferenceData.molecules):
+            raise SystemError("There are too few mass fragments to solve for the number of molecules provided. \nData Analysis has been ended.")
+            
 
         
         # Since SlSUniqueFragments is potentially used in a number of the analysis options
@@ -3518,12 +3664,12 @@ def main():
         # while subsequent opens to this file will append
         if G.SLSUniquePrint == 'yes':
             createSLSUniqueOrderFile(ExperimentData.abscissaHeader,
-                                     currentReferenceData.molecules)
+                                     prototypicalReferenceData.molecules)
             
         #this numpy.zeros line is going to be the array that holds all of the answers before they are printed out, which
         #is done in order to save time and decrease expense
-        concentrationsScaledToCOarray = numpy.zeros(len(currentReferenceData.molecules)+1)
-        concentrationsarray = numpy.zeros(len(currentReferenceData.molecules)+1)
+        concentrationsScaledToCOarray = numpy.zeros(len(prototypicalReferenceData.molecules)+1)
+        concentrationsarray = numpy.zeros(len(prototypicalReferenceData.molecules)+1)
 
         # Loading user choices for data analysis
         DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
@@ -3533,7 +3679,9 @@ def main():
         ThresholdList = [G.rawSignalThresholdMethod, G.rawSignalThresholdValue, G.sensitivityThresholdValue,
                          G.rawSignalThresholdDivider, G.rawSignalThresholdLimit, G.rawSignalThresholdLimitPercent]
         
-        # Calculate a coefficient for doing a unit conversion on concentrations
+        currentReferenceData = ReferenceDataList[0] #TODO this line is placeholder by charles to fix currentRefenceData issue until Alex has a better solution 
+    
+        # Calculate a coefficient for doing a unit conversion on concentrations #TODO resolve Ratio Finder issue, i.e. list of conversionValues
         ExperimentData = RatioFinder(currentReferenceData, ExperimentData, G.concentrationFinder,
                                       G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
 	##End: Preparing data for data analysis based on user input choices
@@ -3551,32 +3699,45 @@ def main():
                 #If using this feature, (len(G.referencePatternTimeRanges)) will always be at least 2 time ranges so use len(G.referencePatternTimeRanges)-1
                 if currentReferencePatternIndex < (len(G.referencePatternTimeRanges)-1):    
                     currentReferenceData, currentReferencePatternIndex = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1])
+            else: #referencePatternTimeRanges is empty so user is opting to not use reference pattern time chooser
+                currentReferenceData = ReferenceDataList[0]
 
+            
+            #populate the mass fragments monitored subobject for the current reference pattern
+            currentReferenceData.mass_fragment_numbers_monitored = ExperimentData.mass_fragment_numbers
+            
             ## TODO: Find out why RawSignalsArrayMaker() takes longer to run when preprocessed data is
             # computed directly rather than loaded. It doesn't seem to effect rawsignalsarrayline in
             # either case so not a priority. 
+            #TODO : these are not actually raw signals, they are preprocessed so the variable names should change.
             rawsignalsarrayline = RawSignalsArrayMaker(currentReferenceData.mass_fragment_numbers_monitored,
                                                        ExperimentData.mass_fragment_numbers,ExperimentData.workingData,
                                                        timeIndex,currentReferenceData.referenceabscissa)#gets the collected values that will be solved
             
-            
-            if G.rawSignalThresholdMethod == 'yes':#user input, this function calls either sls or inverse, deletes thresholds
-                    solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.matching_correction_values,rawsignalsarrayline,
-                                                         currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
-                                                         ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
-                                                         DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption, G.maxPermutations)
-            else:#otherwise the main analysis functions are called
+            #TODO: rename to excludeMoleculesIfMajorFragmentNotObserved, and call the other valuables things like minimumSignalRequired, and minimumStandardizedReferenceHeightToBeSignificant
+            #TODO continued: I am putting some variables here to make that process easier by getting some of it done already, then only the user input file needs to be changed.
+            #This feature is intended to remove molecules that have major fragments not observed. previously, it was done in a more complicated way.
+            # now, to simplify things, is being used as a filter that simply sets standardized intensities in the reference patterns to zero.
+            G.excludeMoleculesIfSignificantFragmentNotObserved = G.rawSignalThresholdMethod
+            G.minimumSignalRequired = G.rawSignalThresholdValue 
+            G.minimumStandardizedReferenceHeightToBeSignificant = G.sensitivityThresholdValue
+            if G.excludeMoleculesIfSignificantFragmentNotObserved == 'yes':
+                currentReferenceData = signalThresholdFilter(currentReferenceData, rawsignalsarrayline, ExperimentData, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
+                    
+                    #solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.matching_correction_values,rawsignalsarrayline,
+                                                         # currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
+                                                         # ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
+                                                         # DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption, G.maxPermutations)           
                 
-                if G.answer == 'inverse':#user input, the inverse method
-                    if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
+            if G.answer == 'inverse':#user input, the inverse method
+                if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
+                    solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
+                else:
+                    solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
 
-                        solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
-                    else:
-                        solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
-    
-                elif G.answer == 'sls':#user input, the SLS method is chosen)
-                    solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, ExperimentData.conversionfactor, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
-            
+            elif G.answer == 'sls':#user input, the SLS method is chosen)
+                solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, ExperimentData.conversionfactor, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
+        
             arrayline = []
 
             for moleculecounter in range(len(currentReferenceData.molecules)):#array-indexed for loop, this is the same data structure as the inverse method above once the line of solutions is found, see above for comments
