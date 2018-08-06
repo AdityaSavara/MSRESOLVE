@@ -651,6 +651,10 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     #add a second dimension to the reference data
     trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.provided_mass_fragments,(-1,1))
     
+    #TODO: The below line works with provided_reference_patterns. This is because trimDataMoleculesToMatchChosenMolecules
+    #TODO continued: is currently working prior to standardized Reference patterns existing, and also because it is occurring
+    #TODO continued: Before we have the monitored mass fragments (which also occurs later data analysis).
+    #TODO continued: The best solution is probably to do the standardization earlier and then do this trimming after that.
     #Add the abscissa back into the reference values
     trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
