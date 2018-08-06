@@ -528,8 +528,8 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                     allExtractedIntensitiesAverage.append(intensitiesAverage)
                 #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment (that is, to make a reference pattern with a ratio matching the extracted ratio)
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
-                    copyOfReferenceData.provided_reference_intensities[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_intensities[massfragindexer[0],moleculecounter+1]
-    return copyOfReferenceData.provided_reference_intensities
+                    copyOfReferenceData.provided_reference_patterns[massfragindexer[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*copyOfReferenceData.provided_reference_patterns[massfragindexer[0],moleculecounter+1]
+    return copyOfReferenceData.provided_reference_patterns
 
 '''
 RemoveUnreferencedMasses() is used to prune ExperimentData.workingData and ExperimentData.mass_fragment_numbers 
@@ -647,13 +647,13 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     #trim the reference fragmentation patterns to only the selected molecules 
     #unused trimmed copy molecules is just a place holder to dispose of a function return that is not needed
-    trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_intensities[:,1:],
+    trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_patterns[:,1:],
                                                                                                                     allMoleculesList, chosenMolecules)  
     #add a second dimension to the reference data
     trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.provided_mass_fragments,(-1,1))
     
     #Add the abscissa back into the reference values
-    trimmedRefererenceData.provided_reference_intensities = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
+    trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules 
 
@@ -667,7 +667,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     #update the mass fragment list from the posibly shortened reference spectrums
     trimmedRefererenceData.mass_fragment_numbers_monitored = trimmedRefererenceData.provided_mass_fragments
     
-    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_intensities=True)
+    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)
     
     return trimmedRefererenceData
     
@@ -1034,7 +1034,7 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
 
     # standardize the reference data columns such that the maximum value is 100 and everything else is
     # linearly scaled according that the maximum value scaling
-    ReferenceData.standardized_reference_intensities=StandardizeReferencePattern(ReferenceData.provided_reference_intensities,len(ReferenceData.molecules))
+    ReferenceData.standardized_reference_intensities=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizeReferencePattern')
     
     #Only print if not called from interpolating reference objects
@@ -1072,8 +1072,8 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     #If referenceFileNames and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
     if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
-        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
-        ReferenceDataList = [MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
+        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
         #save each global variable into the class objects 
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[0].iterationSuffix = G.iterationSuffix
@@ -1094,8 +1094,8 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNames)):
-        [provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
-        ReferenceDataAndFormsList.append(MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
+        ReferenceDataAndFormsList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
         #save each global variable into the class objects 
         ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataAndFormsList[i].iterationSuffix = G.iterationSuffix
@@ -1112,9 +1112,9 @@ def InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,time
     
     #loop through the provided reference intensities and linearly interpolate row by row
     for i in range(len(firstReferenceObject.standardized_reference_intensities)):
-        #Overwrite provided_reference_intensities by interpolating the standardized_reference_intensities
+        #Overwrite provided_reference_patterns by interpolating the standardized_reference_intensities
         #[i,:] for every column in the ith row
-        newReferenceObject.provided_reference_intensities[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.standardized_reference_intensities[i,:],secondReferenceObject.standardized_reference_intensities[i,:],time,gapStart,gapEnd)
+        newReferenceObject.provided_reference_patterns[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.standardized_reference_intensities[i,:],secondReferenceObject.standardized_reference_intensities[i,:],time,gapStart,gapEnd)
     return newReferenceObject
 
 '''
@@ -1227,8 +1227,8 @@ PrepareReferenceOjbectsAndCorrectionValues takes in ReferenceData to be prepared
 def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
     # Reference Pattern Changer
     if extractReferencePatternFromDataOption == 'yes':
-        ReferenceData.provided_reference_intensities = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
-        ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_intensities = True)
+        ReferenceData.provided_reference_patterns = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
+        ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
         #Only print if not called from interpolating reference objects
         if verbose:
             print('ReferencePatternChanger complete')
@@ -1435,7 +1435,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     
     #Export current Reference Data  
     #Reference data is trimmed prior to this function
-    ExportXYYYData(G.referenceFileName, ReferenceData.provided_reference_intensities, ReferenceData.molecules, abscissaHeader = 'M/Z')
+    ExportXYYYData(G.referenceFileName, ReferenceData.provided_reference_patterns, ReferenceData.molecules, abscissaHeader = 'M/Z')
     
     #Export current Experimental Data
     #Experimental data is trimmed prior to this function, but it still needs to be exported  
@@ -1565,7 +1565,7 @@ def readDataFile(collectedFileName):
 #variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
 def readReferenceFile(referenceFileName, form):        
      #This function converts the XYXY data to an XYYY format
-    def FromXYXYtoXYYY(provided_reference_intensities):
+    def FromXYXYtoXYYY(provided_reference_patterns):
         print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
         masslists = [] #future lists must be must empty here to append in the for loops
         relativeintensitieslists = [] #future list
@@ -1573,13 +1573,13 @@ def readReferenceFile(referenceFileName, form):
         #list is made, gathering the relative intensities so that they were indexed the same as their mass fragment
         #numbers in the other list
         #this for loop grabs stuff from the reference array, whose orientation and identity is shown in the flow chart arrays document
-        for referenceBy2Index in range(0,len(provided_reference_intensities[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
-            masslists.append(provided_reference_intensities[:,referenceBy2Index])#these are lists of arrays
-            relativeintensitieslists.append(provided_reference_intensities[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
+        for referenceBy2Index in range(0,len(provided_reference_patterns[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
+            masslists.append(provided_reference_patterns[:,referenceBy2Index])#these are lists of arrays
+            relativeintensitieslists.append(provided_reference_patterns[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
         masslist = [] #future list
         #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
         #'nan's or empty spaces after the numbers
-        provided_mass_fragments = provided_reference_intensities[:,0] 
+        provided_mass_fragments = provided_reference_patterns[:,0] 
         for referenceIndex in range(len(provided_mass_fragments)): #array-indexed for loop
             if str(masslists[0][referenceIndex]) != 'nan': #we do not want nan's in our array, the genfromtxt function calls empty boxes in excel (might be in .csv as well)'nan'.
                 masslist.append(masslists[0][referenceIndex])
@@ -1592,7 +1592,7 @@ def readReferenceFile(referenceFileName, form):
                     if sum(masslists[masslistIndex][referenceIndex] == numpy.array(masslist)) == 0:#if the value being looked at is not equal to anything in our masslist already
                         masslist.append(masslists[masslistIndex][referenceIndex])
         masslist.sort()#puts the list in order
-        reference_holder = numpy.zeros([len(masslist),len(provided_reference_intensities[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
+        reference_holder = numpy.zeros([len(masslist),len(provided_reference_patterns[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
         reference_holder[:,0:1] = numpy.vstack(numpy.array(masslist))#This puts the mass list in the first column of our new reference array
         #Finally, the for loop below makes a list each revolution, comparing each list of mass fragments (for each molecule)
         #and adding the relative intensities (from the identically indexed array) when they numbers were equal, and otherwise
@@ -1609,8 +1609,8 @@ def readReferenceFile(referenceFileName, form):
                         relativeintensitieslist.append(0)
                 if massListIndex == len(masslist)-1:#Once the larger for loop is done the 
                     reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
-        provided_reference_intensities = reference_holder
-        return provided_reference_intensities
+        provided_reference_patterns = reference_holder
+        return provided_reference_patterns
     
      #read the csv file into a dataframe
     dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
@@ -1622,9 +1622,9 @@ def readReferenceFile(referenceFileName, form):
         #convert to matrix
         reference = dfreference.as_matrix()
         #convert the matrix to floats
-        provided_reference_intensities = reference.astype(numpy.float)
+        provided_reference_patterns = reference.astype(numpy.float)
         #clear rows of zeros
-        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+        provided_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1)
     
         '''generate electron number list'''
         #select row of electron numbers
@@ -1668,12 +1668,12 @@ def readReferenceFile(referenceFileName, form):
         #convert to matrix
         reference = dfreference.as_matrix()
         #convert the matrix to floats 
-        provided_reference_intensities = reference.astype(numpy.float)
+        provided_reference_patterns = reference.astype(numpy.float)
         #convert reference from XYXY to XYYY
         print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
-        provided_reference_intensities=FromXYXYtoXYYY(provided_reference_intensities)
+        provided_reference_patterns=FromXYXYtoXYYY(provided_reference_patterns)
         #clear rows of zeros
-        provided_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_intensities,startingRowIndex=1)
+        provided_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1)
         
         '''generate electron numbers list'''
         #create data frame of electron numbers
@@ -1710,7 +1710,7 @@ def readReferenceFile(referenceFileName, form):
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
         
-    return provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
+    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
 
 ###############################################################################
 #########################  Classes: Data Storage  #############################
@@ -1773,8 +1773,8 @@ class MSData (object):
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
                                         
 class MSReference (object):
-    def __init__(self, provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None):
-        self.provided_reference_intensities, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_intensities, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form
+    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None):
+        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         self.iterationSuffix = ''
@@ -1793,9 +1793,9 @@ class MSReference (object):
         self.moleculesToExport = []
         self.exportSuffix = ''
         #self.experimentTimes = []       
-        self.provided_mass_fragments = self.provided_reference_intensities[:,0]
+        self.provided_mass_fragments = self.provided_reference_patterns[:,0]
             
-    def ExportCollector(self, callingFunction, use_provided_reference_intensities = False):
+    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
@@ -1809,11 +1809,11 @@ class MSReference (object):
             ##record molecules of experiment
             self.moleculesToExport.append(self.molecules.copy())
             #record data of experiment
-            if use_provided_reference_intensities:
-                self.dataToExport.append(self.provided_reference_intensities.copy())
+            if use_provided_reference_patterns:
+                self.dataToExport.append(self.provided_reference_patterns.copy())
             elif callingFunction == 'UnnecessaryMoleculesDeleter':
                 self.dataToExport.append(self.monitored_reference_intensities.copy())
-            elif not use_provided_reference_intensities:
+            elif not use_provided_reference_patterns:
                 self.dataToExport.append(self.standardized_reference_intensities.copy())
             
     def ExportFragmentationPatterns(self, verbose=True):
@@ -1835,21 +1835,21 @@ class MSReference (object):
                 ExportXYYYData(filename,data,colIndex, fileSuffix = self.iterationSuffix)
 
     # This class function removes all rows of zeros from
-    # the XYYY sorted provided_reference_intensities, and *also* provided_mass_fragments
+    # the XYYY sorted provided_reference_patterns, and *also* provided_mass_fragments
     #The logic in the below funtion is badly written, in terms of efficiency. But it seems to work at present.
-    #TODO: This is not a good practice, because provided_reference_intensities is getting changed, no longer "Provided".
+    #TODO: This is not a good practice, because provided_reference_patterns is getting changed, no longer "Provided".
     #TODO: (continued from previous line) It's more like "zero_trimmed" reference intensities after this.
     def ClearZeroRowsFromProvidedReferenceIntensities(self):
         #initial a counter for the row index, which will be updated during the loop
         currentRowIndexAccountingForDeletions = 0
-        #provided_reference_intensitiesOnly is not used, but is made for future use (see below)
-        provided_reference_intensitiesOnly = self.provided_reference_intensities[:,1:]
-        for intensitiesOnlyInRow in provided_reference_intensitiesOnly:
+        #provided_reference_patternsOnly is not used, but is made for future use (see below)
+        provided_reference_patternsOnly = self.provided_reference_patterns[:,1:]
+        for intensitiesOnlyInRow in provided_reference_patternsOnly:
             #This line checks if there are any non-zeros in the row.
             numberOfNonzeros = numpy.count_nonzero(intensitiesOnlyInRow)
             if numberOfNonzeros == 0 :
                 #If there are only zeros. we delete a row and adjust the row index to account for that deletion.
-                self.provided_reference_intensities = numpy.delete(self.provided_reference_intensities, currentRowIndexAccountingForDeletions, axis=0 ) #axis = 0 specifies to delete rows (i.e. entire abscissa values at the integer of currentRowIndexAccountingForDeletions).
+                self.provided_reference_patterns = numpy.delete(self.provided_reference_patterns, currentRowIndexAccountingForDeletions, axis=0 ) #axis = 0 specifies to delete rows (i.e. entire abscissa values at the integer of currentRowIndexAccountingForDeletions).
                 self.provided_mass_fragments = numpy.delete(self.provided_mass_fragments, currentRowIndexAccountingForDeletions, axis=0 )
                 currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
             #whether we deleted rows or not, we increase the counter of the rows.
@@ -1863,9 +1863,9 @@ class MSReference (object):
         #list is made, gathering the relative intensities so that they were indexed the same as their mass fragment
         #numbers in the other list
         #this for loop grabs stuff from the reference array, whose orientation and identity is shown in the flow chart arrays document
-        for referenceBy2Index in range(0,len(self.provided_reference_intensities[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
-            masslists.append(self.provided_reference_intensities[:,referenceBy2Index])#these are lists of arrays
-            relativeintensitieslists.append(self.provided_reference_intensities[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
+        for referenceBy2Index in range(0,len(self.provided_reference_patterns[0,:]),2):#array-indexed for loop, only gets every other value, as half the indexes are mass lists, and the other half are relative intensity
+            masslists.append(self.provided_reference_patterns[:,referenceBy2Index])#these are lists of arrays
+            relativeintensitieslists.append(self.provided_reference_patterns[:,referenceBy2Index+1])#the relative intensities are after every counter, so there is a +1 (it is array indexed so since the first column is a mass list all the +1's are relative intensities)
         masslist = [] #future list
         #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
         #'nan's or empty spaces after the numbers
@@ -1881,7 +1881,7 @@ class MSReference (object):
                     if sum(masslists[masslistIndex][referenceIndex] == numpy.array(masslist)) == 0:#if the value being looked at is not equal to anything in our masslist already
                         masslist.append(masslists[masslistIndex][referenceIndex])
         masslist.sort()#puts the list in order
-        reference_holder = numpy.zeros([len(masslist),len(self.provided_reference_intensities[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
+        reference_holder = numpy.zeros([len(masslist),len(self.provided_reference_patterns[0,:])/2+1])#makes an array that is full of zeros to hold our future reference array
         reference_holder[:,0:1] = numpy.vstack(numpy.array(masslist))#This puts the mass list in the first column of our new reference array
         #Finally, the for loop below makes a list each revolution, comparing each list of mass fragments (for each molecule)
         #and adding the relative intensities (from the identically indexed array) when they numbers were equal, and otherwise
@@ -1898,7 +1898,7 @@ class MSReference (object):
                         relativeintensitieslist.append(0)
                 if massListIndex == len(masslist)-1:#Once the larger for loop is done the 
                     reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
-        self.provided_reference_intensities = reference_holder
+        self.provided_reference_patterns = reference_holder
 ############################################################################################################################################
 ###############################################Algorithm Part 2: Analysing the Processed Data###############################################
 ############################################################################################################################################
