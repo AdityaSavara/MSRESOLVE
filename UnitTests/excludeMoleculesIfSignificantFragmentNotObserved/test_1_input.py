@@ -6,11 +6,16 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv','AcetaldehydeNISTRefMixed2Edit.csv'] #enter the file name of the file containing reference information
-form = ['xyyy']	#form is either 'xyyy' or 'xyxy'
-referencePatternTimeRanges = [[300,303],[306,309]]
-collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
+referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
+form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
+referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
+collectedFileName = '2-CrotAcetExp#2ExclusionTest.csv'	#enter the file name with raw mass spectrometer data
 
+#Iterative Analysis
+#Options are True, False, or '<name of iteration>'
+iterativeAnalysis = False
+#the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
+#the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
 #do you wish for the program to institute preproccessing and/or Data analysis?
 #note that preproccesing must be done at least once before being bypassed 
@@ -28,18 +33,24 @@ grapher = 'no' #yes will graph function no will not
 #//Time Range//
 #This function limits the data analyzed and proccessed to a certain subset of the total data
 timeRangeLimit = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
-timeRangeStart = 300  #start time (-int)
-timeRangeFinish = 305	#finish time (-int)
+timeRangeStart = 176  #start time (-int)
+timeRangeFinish = 200	#finish time (-int)
 
+#//Chosen Molecules
+#To choose only specific molecules to solve, input in a list of strings  below
+specificMolecules = 'no'
+chosenMolecules = ['Crotyl Alcohol']
 
 #//Chosen Mass Fragments//
 #To choose only specific mass fragments from collected data, input below:
-specificMassFragments = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
-chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
+specificMassFragments = 'no'	#if you wish to enable this function enter 'yes' otherwise 'no'
+chosenMassFragments = [57] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
 
 #//Molecule Likelihoods//
 #To specify the percentage chance of detecting a particular molecule. This must be the same length as the number of molecules in the reference file, or have no value.
 moleculeLikelihoods = [] #This should be like this [], or like this: [0.8, 1.0, 0.01,... 1.0] where the decimals are the user's guess of the likelihood of each molecule being present.
+#//Sensivity Values//
+#Sensitivity values allow the user the specify the threshold of each molecule individually, or apply one threshold to all molecules 
 sensitivityValues = []
 
 #TODO 2/3/18: 
@@ -151,7 +162,7 @@ lowerBoundThresholdAbsolute = []  # leave as [ ] to only use the percentage thre
 #//Data Smoothing//
 #This section is for the data smoother function which, by default, is enabled. 
 #Data smoothing can be conducted by a time basis or by a data point basis
-dataSmootherYorN = 'no'
+dataSmootherYorN = 'yes'
 dataSmootherChoice = 'timerange'	#options are 'pointrange' or 'timerange'
 # abscissaPointRadius and absc
 dataSmootherTimeRadius = 7
@@ -166,8 +177,8 @@ polynomialOrder = 1  #During the local smoothing, a linear fit (or polynomial fi
 #To change the threshold at which raw signals are not longer relevant, change below (similar to above function, but for rows instead of columns)
 #These signals get converted into 0.
 #WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
-rawSignalThresholdMethod = 'no'
-rawSignalThresholdValue = [.0000001]
+rawSignalThresholdMethod = 'yes'
+rawSignalThresholdValue = [.02]
 sensitivityThresholdValue = [1] #this is the number in the Reference given, the relative intensity of the signal of the mass fragment
 rawSignalThresholdDivider = []
 #Part of previous entry function, but this function enables the user to change the sum of raw signals, allowing molecules with very high concentrations not to affect previous funciton
@@ -182,7 +193,7 @@ negativeAnalyzerYorN = 'no'
 
 #//Data Analysis Methods
 #Below the path for the analysis of the data; sls or inverse
-answer = 'inverse'	#'inverse' or 'sls'; sls is suggested
+answer = 'sls'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
@@ -213,13 +224,20 @@ scaledConcentrationsPercentages = 'ScaledConcentrationPercentages.csv'
 concentrationsOutputName= 'ResolvedConcentrations.csv'
 simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 
+#Only used in iterative analysis
+TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 
-ExportAtEachStep = 'yes'
+ExportAtEachStep = 'no'
 generatePercentages = 'no'
 
 checkpoint = ''
 start = ''
 timeSinceLastCheckpoint = ''
 
-
+iterationSuffix= ''
+unusedMolecules =''
+oldReferenceFileName = ''
+oldCollectedFileName ='' 
+nextRefFileName = ''
+nextExpFileName = ''
