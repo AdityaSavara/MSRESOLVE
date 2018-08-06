@@ -15,14 +15,14 @@ import pickle
 '''
 This function takes in two arrarys (or iterables) and compares them using functions from the nestedObjectsFunctions module
 '''
-def compareNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays, relativeTolerance=None, absoluteTolerance=None):
+def compareNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays):
         #Taking the difference of two arrays will yield in all elements being zero if the arrays are the same
         #If arrays are of different shape they will not be equal and the subtraction between the two will result in an error
     try:    
                     #Initializing diffOfArrays since it is needed for the subtractNested function
         diffOfArrays = nested_iter_to_nested_list(copy.deepcopy(firstInComparisonArray))
         #If the arrays are the same, subtractNested overwrites diffOfArrays with all zeros
-        subtractNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays, relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance)
+        subtractNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays)
     except:
         return False
     #The difference sum keeps adding all the values until it no longer has an array
@@ -43,9 +43,8 @@ values.  If the arrays are the same then the sum of the differences should be 0.
 If both inputs are not strings but one is iterable and one is not, customCompare returns False.  This should occur
 the first time the unit tester is run because the expected results file will not have been created so it is of type None.
 If both inputs are not strings nor are they iterable, customCompare checks the equality using ==.
-#we do allow approximate comparisons using the variables relativeTolerance and absoluteTolerance
 '''
-def customCompare(firstInComparison,secondInComparison, relativeTolerance=None, absoluteTolerance=None):
+def customCompare(firstInComparison,secondInComparison):
     #If two variables are both strings, just simply compare them directly
     if ((type(firstInComparison) != str) and (type(secondInComparison) != str)):
         #checks to see if both variables are iterable and converts them into numpy arrays
@@ -57,21 +56,7 @@ def customCompare(firstInComparison,secondInComparison, relativeTolerance=None, 
                 #Otherwise use nested array functions
                 try:
                     #diffOfArrays will be an array of zeros if the two arrays are equal
-                    if (relativeTolerance==None and absoluteTolerance==None):
-                        diffOfArrays = firstInComparisonArray - secondInComparisonArray
-                    else: #Else one of the tolerances requested is not None
-                        import numpy as np 
-                        #we 1st need to make any tolerances that are still none into the numpy default, because we don't know if the person has selected both tolerances.
-                        #and we cannot feed "None" into numpy.
-                        if relativeTolerance == None:
-                            relativeTolerance = 1.0E-5
-                        if absoluteTolerance == None:
-                            absoluteTolerance = 1.0E-8
-                        trueIfApproximatelyEqual = np.allclose(firstInComparisonArray,secondInComparisonArray, rtol = relativeTolerance, atol = absoluteTolerance)
-                        if trueIfApproximatelyEqual == True:
-                            diffOfArrays = 0
-                        if trueIfApproximatelyEqual == False: #return actual subtraction if they are not approximately equal.
-                            diffOfArrays = firstInComparisonArray - secondInComparisonArray
+                    diffOfArrays = firstInComparisonArray - secondInComparisonArray
                     #take the sum of the differences
                     sumOfDifference = sumNestedAbsValues(diffOfArrays)
                     #If the sum of differences is 0 then the two arrays must be the same
@@ -81,7 +66,7 @@ def customCompare(firstInComparison,secondInComparison, relativeTolerance=None, 
                     else:
                         return False
                 except: 
-                    if compareNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays, relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance):
+                    if compareNested(firstInComparisonArray,secondInComparisonArray,diffOfArrays):
                         return True
                     else:
                         return False
@@ -89,7 +74,7 @@ def customCompare(firstInComparison,secondInComparison, relativeTolerance=None, 
             #Functions in the nestedObjectFunctions module do work with nested tuples and lists so the except statement tells the code to do just that
             except:
                 diffOfArrays = copy.deepcopy(firstInComparison)
-                if compareNested(firstInComparison,secondInComparison,diffOfArrays, relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance):
+                if compareNested(firstInComparison,secondInComparison,diffOfArrays):
                     return True
                 else:
                     return False
@@ -114,7 +99,7 @@ def customCompare(firstInComparison,secondInComparison, relativeTolerance=None, 
             return False
 
 
-def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix='', allowOverwrite = True, relativeTolerance=None, absoluteTolerance=None):
+def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix='', allowOverwrite = True):
     calculated_resultObj_pickledfile='{}calculated_resultObj{}.p'.format(prefix,suffix)
     calculated_resultStr_file='{}calculated_resultStr{}.txt'.format(prefix,suffix)
     expected_result_file='{}expected_resultObj{}.p'.format(prefix,suffix)
@@ -128,7 +113,7 @@ def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix=
     #comparing from pickled and before
     
     #if calculated_resultObj_unpacked==calculated_resultObj:
-    if customCompare(calculated_resultObj_unpacked,calculated_resultObj, relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance) == True:
+    if customCompare(calculated_resultObj_unpacked,calculated_resultObj) == True:
         print('calculated_Results before and after pickling MATCH.')
     else:
         print("calculated_Results before and after pickling DO NOT MATCH (or is nested and/or contains an unsupported datatype).")
@@ -155,7 +140,7 @@ def check_results(calculated_resultObj,calculated_resultStr='',prefix='',suffix=
         expected_resultStr_read=''
         expected_resultObj_unpacked=None
     #compare the expected result to the calculated result, both obj and str
-    if customCompare(expected_resultObj_unpacked,calculated_resultObj_unpacked, relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance) == True:
+    if customCompare(expected_resultObj_unpacked,calculated_resultObj_unpacked) == True:
         print('Expected result and calculated_result MATCH.')
         objectMatch = True
     else: #implies that customCompare returned false.
@@ -208,16 +193,15 @@ def returnDigitFromFilename(currentFile):
     extractedDigit = listOfNumbers[0]
     return extractedDigit
 
-def doTest(resultObj, resultStr, prefix='',suffix='', allowOverwrite = False, relativeTolerance=None, absoluteTolerance=None):
+def doTest(resultObj, resultStr, prefix='',suffix='', allowOverwrite = False):
     #if the user wants to be able to change what the saved outputs are
     if allowOverwrite:
         #This function call is used when this test is run solo as well as by UnitTesterSG
-        check_results(resultObj, resultStr, prefix = '', suffix=suffix, relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance)
+        check_results(resultObj, resultStr, prefix = '', suffix=suffix)
     #this option allows pytest to call the function
     if not allowOverwrite: 
         #this assert statement is required for the pytest module 
-        assert check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False,  
-               relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance) == True #This line is still part of assert.
+        assert check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False) == True
     
 def runTestsInSubdirectories():
     listOfDirectoriesAndFiles = os.listdir(".")
@@ -253,3 +237,4 @@ if __name__=="__main__":
             os.system("python " + name)
             
     runTestsInSubdirectories()
+

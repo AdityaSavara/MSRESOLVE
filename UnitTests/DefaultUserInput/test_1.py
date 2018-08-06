@@ -26,9 +26,9 @@ def test_Run(pytest = True):
         if result == True:
             print("DefaultUserInput.py and UserInput.py do match" )
         if result == False:
-            overwriteOption=str(input('DefaultUserInput.py and UserInput.py do NOT match. Would you like to overwrite UserInput.py (Y or N)?'))
+            overwriteOption=str(input('DefaultUserInput.py and UserInput.py do NOT match. Would you like to overwrite DefaultUserInput.py (Y or N)?'))
             if overwriteOption == 'Y':
-                shutil.copy('DefaultUserInput.py', 'UserInput.py')
+                shutil.copy('UserInput.py', 'DefaultUserInput.py')
             elif overwriteOption != 'N':
                 print("UserError: Only Y or N allowed. Please run program again.")
     
