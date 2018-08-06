@@ -9,9 +9,13 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
-collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
+collectedFileName = '2-CrotAcetExp#2ExclusionTest.csv'	#enter the file name with raw mass spectrometer data
 
+#Iterative Analysis
+#Options are True, False, or '<name of iteration>'
 iterativeAnalysis = False
+#the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
+#the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
 #do you wish for the program to institute preproccessing and/or Data analysis?
 #note that preproccesing must be done at least once before being bypassed 
@@ -30,17 +34,24 @@ grapher = 'no' #yes will graph function no will not
 #This function limits the data analyzed and proccessed to a certain subset of the total data
 timeRangeLimit = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
 timeRangeStart = 176  #start time (-int)
-timeRangeFinish = 900	#finish time (-int)
+timeRangeFinish = 200	#finish time (-int)
 
+#//Chosen Molecules
+#To choose only specific molecules to solve, input in a list of strings  below
+specificMolecules = 'no'
+chosenMolecules = ['Crotyl Alcohol']
 
 #//Chosen Mass Fragments//
 #To choose only specific mass fragments from collected data, input below:
-specificMassFragments = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
-chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
+specificMassFragments = 'no'	#if you wish to enable this function enter 'yes' otherwise 'no'
+chosenMassFragments = [57] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
 
 #//Molecule Likelihoods//
 #To specify the percentage chance of detecting a particular molecule. This must be the same length as the number of molecules in the reference file, or have no value.
 moleculeLikelihoods = [] #This should be like this [], or like this: [0.8, 1.0, 0.01,... 1.0] where the decimals are the user's guess of the likelihood of each molecule being present.
+#//Sensivity Values//
+#Sensitivity values allow the user the specify the threshold of each molecule individually, or apply one threshold to all molecules 
+sensitivityValues = []
 
 #TODO 2/3/18: 
 # Change so that late baseline times are omitted with a blank list for that mass (or all masses) rather than with zeros, 
@@ -115,12 +126,20 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
 
 
-#//Reference Changer//
+#//Reference Pattern Changer // (rpc)
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
-extractReferencePatternFromDataOption = 'yes'
-rpcMoleculesToChange = ['Crotyl Alcohol','CO2']
-rpcMoleculesToChangeMF = [[57,70],[28,44]]
-rpcTimeRanges = [[300,600],[300,600]]
+extractReferencePatternFromDataOption = 'no'
+rpcMoleculesToChange = ['Crotyl Alcohol']
+#rpcTimeRanges and rpcMoleculesToChangeMF are nested lists.  Each nested list corresponds to a molecule in rpcMoleculesToChange
+#To make this easier to visualize, each nested list is placed on its own line so the first line refers to the first molecule, second line refers to the second molecule and so on
+rpcTimeRanges = [
+                 [300,500], #For each molecule to be changed, a pair of times is required.
+                ]
+#The first mass fragment is the base fragment and it will not be changed.  The fragments following the first one are all altered based on the signal of the first fragment from the collected data
+rpcMoleculesToChangeMF = [
+                          [70,57], #For each molecule for using the rpc on, make a new line with a list of masses (length of each should be greater than 1).
+                         ]
+
 
 
 #//Reference Mass Fragmentation Threshold//
@@ -159,7 +178,7 @@ polynomialOrder = 1  #During the local smoothing, a linear fit (or polynomial fi
 #These signals get converted into 0.
 #WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
 rawSignalThresholdMethod = 'yes'
-rawSignalThresholdValue = [.0000001]
+rawSignalThresholdValue = [.02]
 sensitivityThresholdValue = [1] #this is the number in the Reference given, the relative intensity of the signal of the mass fragment
 rawSignalThresholdDivider = []
 #Part of previous entry function, but this function enables the user to change the sum of raw signals, allowing molecules with very high concentrations not to affect previous funciton
@@ -174,13 +193,13 @@ negativeAnalyzerYorN = 'no'
 
 #//Data Analysis Methods
 #Below the path for the analysis of the data; sls or inverse
-answer = 'inverse'	#'inverse' or 'sls'; sls is suggested
+answer = 'sls'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
-SLSUniquePrint = 'no'
+SLSUniquePrint = 'yes'
 SLSUniqueExport = 'SLSUniqueOrder.csv'
 
 
@@ -205,11 +224,20 @@ scaledConcentrationsPercentages = 'ScaledConcentrationPercentages.csv'
 concentrationsOutputName= 'ResolvedConcentrations.csv'
 simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 
+#Only used in iterative analysis
+TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 
-ExportAtEachStep = 'yes'
+ExportAtEachStep = 'no'
 generatePercentages = 'no'
 
 checkpoint = ''
 start = ''
 timeSinceLastCheckpoint = ''
+
+iterationSuffix= ''
+unusedMolecules =''
+oldReferenceFileName = ''
+oldCollectedFileName ='' 
+nextRefFileName = ''
+nextExpFileName = ''
