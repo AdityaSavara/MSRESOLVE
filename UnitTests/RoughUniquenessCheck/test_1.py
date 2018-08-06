@@ -24,16 +24,17 @@ massFragCombinations=([1,2,3,4,5],[2,1,3,4,5],[3,4,5,6,7],[9,8,7,6,5],[3,4,5,1,2
 
 rowSumsList=([1,1,1,1,1],[1,3,4,1,1],[1,3,1,1,1],[1,3,4,1,2],[1,3,4,1,3])
 
-topRoughUniquenessCheckList=[]
+topRoughUniquenessSumsList=[]
+topMassFragCombinationsList=[]
 
 keep_N_ValuesInRoughUniquenessCheck=3
 
 #4) get the output of the function, which is what will typically be checked.
-for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
+for counter, massFragCombination in enumerate(massFragCombinations):
     #calculates a sum that roughly expresses how unique the molecular mass fragments are to the different molecules, but this is a quick and not-rigrous method. Then, the value is stored *only* if it is in the top N of the values so far.
-    [topRoughUniquenessCheckList,valueStoredInRUTopList] = MSRESOLVE.roughUniquenessCheck(rowSumsList[massFragCombinationIndex], topRoughUniquenessCheckList, keep_N_ValuesInRoughUniquenessCheck, massFragCombination)
-#print(output)
-resultObj= [topRoughUniquenessCheckList,valueStoredInRUTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+    [topRoughUniquenessSumsList,topMassFragCombinationsList,valueStoredInRUTopList] = MSRESOLVE.roughUniquenessCheck(rowSumsList[counter], topRoughUniquenessSumsList,topMassFragCombinationsList, keep_N_ValuesInRoughUniquenessCheck, massFragCombination)
+
+resultObj= [topRoughUniquenessSumsList,topMassFragCombinationsList,valueStoredInRUTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
 resultStr= str(resultObj)
 #6) Checking the result of the function using check_results. In this case the result is sumList1 object. 

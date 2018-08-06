@@ -5,7 +5,7 @@ This directory contains the unit tests of the significanceFactorCheck function f
 In order to be Pytest compatible and UnitTesterSG compatible, the user input file and xyyy data functions also are included.  
 To run the unit tests separately, execute them out of the Anaconda Prompt, or run from Spyder directly.
 
-The significanceFactorCheck funciton calculates the significance factors for all elements of a reference array. It then sums these elements and stores the largest significance factors in a list of a user specifecd size along with the mass fragment combination the sum belongs to. The last value in the return is a boolean representing if the last iteration was stored in the list.
+The significanceFactorCheck funciton calculates the significance factors for all elements of a reference array. It then sums the significance factors across the reference array. The sum is multiplied by a negative so it can be added to a sorted list containing the greatest magnitude of significance sums. An N number of largest magnitude significance sums and stored in order of descending magnitude. The corresponding N mass fragment combinations are stored in a parallel list according to how their significance sums are inserted in list of magnitudes. The last value in the funciton return is a boolean representing if the last iteration was stored in the list.
 
 There are 2 test cases:
 	1) Calculates and stores all of the significance factors when a value of 60 is continuously inserted in the second row.
