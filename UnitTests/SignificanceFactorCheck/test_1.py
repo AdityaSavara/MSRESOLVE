@@ -64,10 +64,9 @@ refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,
 #In it's intended use, the funciton is to append to a list 
 #(topSignificanceFactorCheckList). This list was initialized and is to be 
 #appended to in a loop
-#The slicing occurs because the first element in each row represents the mass fragment number. The fragment number should not be kept during calculations.
-#The mass fragment numbers are kept to maintian consistency with the fuction they are added to.
 for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
-    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refPatternList[massFragCombinationIndex][:,1:],largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
+    refIntensity=refPatternList[massFragCombinationIndex][:,1:]
+    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refIntensity,largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
 
 resultObj= [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
