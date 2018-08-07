@@ -17,9 +17,11 @@ import numpy
 #BELOW ARE THE LINES INTENDED TO BE CHANGED BY THE USER	
 #1) import the function whose results need to be checked
 import MSRESOLVE
+
 #2) getting the prefix (or suffix) arugument for check_results. This is just for the output filenames.
 suffix= ut.returnDigitFromFilename(__file__)
 prefix=''
+
 #3) provide the input for the function you want to test (you can also import it from a pickled object, for example)
 massFragCombinations=([1,2,3,4,5],[2,1,3,4,5],[3,4,5,6,7],[9,8,7,6,5],[3,4,5,1,2])
 
@@ -66,11 +68,14 @@ refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,
 #The slicing occurs because the first element in each row represents the mass fragment number. The fragment number should not be kept during calculations.
 #The mass fragment numbers are kept to maintian consistency with the fuction they are added to.
 for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
-    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refPatternList[massFragCombinationIndex][:,1:],largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
+     refIntensity=refPatternList[massFragCombinationIndex][:,1:]
+    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refIntensity,largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
 
 resultObj= [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
 resultStr= str(resultObj)
+
 #6) Checking the result of the function using check_results. In this case the result is sumList1 object. 
 
 #this is so that pytest can do UnitTesterSG tests.
