@@ -59,7 +59,8 @@ refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,
 #The mass fragment numbers are kept to maintian consistency with the fuction they are added to.
 rowSumsList=[]
 for refPattern in refPatternList:
-    rowSumsList.append(numpy.sum(refPattern[:,1:]))
+    refIntensity=refPattern[:,1:]
+    rowSumsList.append(numpy.sum(refIntensity))
 
 
 topRoughUniquenessSumsList=[]
