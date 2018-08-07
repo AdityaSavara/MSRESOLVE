@@ -63,6 +63,8 @@ refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,
 #In it's intended use, the funciton is to append to a list 
 #(topSignificanceFactorCheckList). This list was initialized and is to be 
 #appended to in a loop
+#The slicing occurs because the first element in each row represents the mass fragment number. The fragment number should not be kept during calculations.
+#The mass fragment numbers are kept to maintian consistency with the fuction they are added to.
 for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
     [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refPatternList[massFragCombinationIndex][:,1:],largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
 
