@@ -22,6 +22,7 @@ suffix= ut.returnDigitFromFilename(__file__)
 prefix=''
 #3) provide the input for the function you want to test (you can also import it from a pickled object, for example)
 massFragCombinations=([1,2,3,4,5],[2,1,3,4,5],[3,4,5,6,7],[9,8,7,6,5],[3,4,5,1,2])
+
 #Create reference patterns as 1s and zeros for each mass fragment combination.
 #The referecne patterns as ones and zeros shown alreadt pass the two rough checks
 #for SLS solvability since the checks are used before the roughuniquness check
@@ -32,20 +33,20 @@ chosenReferenceForMassFragComb1=numpy.array([[1,1,1,1,1],
                              [1,1,1,1,0],
                              [1,0,1,1,1]])
 chosenReferenceForMassFragComb2=numpy.array([[1,1,1,1,1],
-                             [1,1,0,1,0],
+                             [1,0,0,1,0],
                              [1,1,1,0,1],
                              [1,1,1,1,0],
-                             [1,1,1,1,1]])
-chosenReferenceForMassFragComb3=numpy.array([[1,0,0,0,0],
+                             [1,0,1,1,1]])
+chosenReferenceForMassFragComb3=numpy.array([[1,1,1,1,1],
                              [1,0,0,1,0],
-                             [1,1,0,0,0],
-                             [1,0,0,0,0],
-                             [1,0,1,0,1]])
+                             [1,1,1,0,1],
+                             [1,1,1,1,0],
+                             [1,0,1,1,1]])
 chosenReferenceForMassFragComb4=numpy.array([[1,1,1,1,1],
-                             [1,0,0,1,1],
-                             [1,1,1,1,1],
-                             [1,1,1,1,1],
-                             [1,1,1,1,1]])
+                             [1,0,0,1,0],
+                             [1,1,1,0,1],
+                             [1,1,1,1,0],
+                             [1,0,1,1,1]])
 chosenReferenceForMassFragComb5=numpy.array([[1,1,1,1,1],
                              [1,0,0,1,0],
                              [1,1,1,0,1],
@@ -59,20 +60,23 @@ rowSumsList=[]
 for refPattern in refPatternList:
     rowSumsList.append(numpy.sum(refPattern[:,1:]))
 
-
 topRoughUniquenessSumsList=[]
 topMassFragCombinationsList=[]
 
-keep_N_ValuesInRoughUniquenessCheck=3
+keep_N_ValuesInRoughUniquenessCheck=4
 
 #4) get the output of the function, which is what will typically be checked.
 for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
-    #calculates a sum that roughly expresses how unique the molecular mass fragments are to the different molecules, but this is a quick and not-rigrous method. Then, the value is stored *only* if it is in the top N of the values so far.
+   #calculates a sum that roughly expresses how unique the molecular mass fragments are to the different molecules, but this is a quick and not-rigrous method. Then, the value is stored *only* if it is in the top N of the values so far.
     [topRoughUniquenessSumsList,topMassFragCombinationsList,valueStoredInRUTopList] = MSRESOLVE.roughUniquenessCheck(rowSumsList[massFragCombinationIndex], topRoughUniquenessSumsList,topMassFragCombinationsList, keep_N_ValuesInRoughUniquenessCheck, massFragCombination)
 
-resultObj= [topRoughUniquenessSumsList,topMassFragCombinationsList,valueStoredInRUTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+resultObj= topMassFragCombinationsList[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
 resultStr= str(resultObj)
+
+#Set expected results to be the best mass fragment combination
+ut.set_expected_result(massFragCombinations[0], expected_result_str=str(massFragCombinations[0]),suffix=suffix)
+
 #6) Checking the result of the function using check_results. In this case the result is sumList1 object. 
 
 #this is so that pytest can do UnitTesterSG tests.
