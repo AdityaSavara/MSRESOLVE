@@ -55,11 +55,10 @@ chosenReferenceForMassFragComb5=numpy.array([[1,1,1,1,1],
 refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,chosenReferenceForMassFragComb3,chosenReferenceForMassFragComb4,chosenReferenceForMassFragComb5]
 
 #Generate the sums across the mass fragments for each molecule.
-#The slicing occurs because the first element in each row represents the mass fragment number. The fragment number should not be kept during calculations.
-#The mass fragment numbers are kept to maintian consistency with the fuction they are added to.
 rowSumsList=[]
 for refPattern in refPatternList:
-    rowSumsList.append(numpy.sum(refPattern[:,1:]))
+    refIntensity=refPattern[:,1:]
+    rowSumsList.append(numpy.sum(refIntensity))
 
 
 topRoughUniquenessSumsList=[]
