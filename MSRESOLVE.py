@@ -42,10 +42,10 @@ def passesRowsSumChecks(rowSumsList, massFragCombination, allOverlappingPatterns
 #value will be inserted there and the last value removed from the list (if
 #applicable).  The bisect method used requires the list be presorted in ascending order.
 #The bisect method used inserts to keep the list in a sorted order. 
-def storeAndPop(objectiveFunctionValuesList, objectiveFuncitonValueToInsert, parallelList, valueToInsertInParallelList,maxItemsAllowed):
+def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert, parallelList, valueToInsertInParallelList,maxItemsAllowed):
     #Find the insertion index where the value will be inserted by using a binary
     #search
-    insertionIndex=bisect.bisect(objectiveFunctionValuesList, objectiveFuncitonValueToInsert)
+    insertionIndex=bisect.bisect(objectiveFunctionValuesList, objectiveFunctionValueToInsert)
 
     #Initialize a variable to keep track of if a value was inserted into the
     #list.
@@ -54,7 +54,7 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFuncitonValueToInsert, par
     #If the list isn't yet filled, the value will inherently be in the top N
     #value in the list. This vlaue can just be inserted at the insertionIndex.
     if len(objectiveFunctionValuesList)<maxItemsAllowed:    
-        objectiveFunctionValuesList.insert(insertionIndex, objectiveFuncitonValueToInsert)
+        objectiveFunctionValuesList.insert(insertionIndex, objectiveFunctionValueToInsert)
         parallelList.insert(insertionIndex, valueToInsertInParallelList)
         valueStoredInList=True
     #If the list already contains N elements, a new element could either be 
@@ -64,7 +64,7 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFuncitonValueToInsert, par
     elif len(objectiveFunctionValuesList)== maxItemsAllowed and insertionIndex<maxItemsAllowed:
         #insert the value to insert in the location found through the binary
         #search
-        objectiveFunctionValuesList.insert(insertionIndex, objectiveFuncitonValueToInsert)
+        objectiveFunctionValuesList.insert(insertionIndex, objectiveFunctionValueToInsert)
         parallelList.insert(insertionIndex, valueToInsertInParallelList)
         valueStoredInList=True
         #delete the last element since somthing was added to the list
