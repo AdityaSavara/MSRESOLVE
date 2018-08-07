@@ -3266,7 +3266,7 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
         fullArrayToExport = numpy.vstack((formatedDataHeader,data))
     #occasionally, abscissaHeader needs to be inserted without rowIndex being used
     except ValueError: 
-        formatedColIndex = numpy.hstack((abscissaHeader,formatedDataHeader))
+        formatedDataHeader = numpy.hstack((abscissaHeader,formatedDataHeader))
         fullArrayToExport = numpy.vstack((formatedDataHeader,data))
         
     #if the row index isn't included in the data, then add it 
