@@ -58,7 +58,7 @@ refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,
 rowSumsList=[]
 for refPattern in refPatternList:
     refIntensity=refPattern[:,1:]
-    rowSumsList.append(numpy.sum(refIntensity))
+    rowSumsList.append(numpy.sum(refIntensity, axis=0))
 
 
 topRoughUniquenessSumsList=[]
