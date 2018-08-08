@@ -1136,8 +1136,9 @@ CheckCurrentTimeRange is a function used for the Reference Pattern Time Chooser 
 which reference pattern needs to be used based on user input.  If the time is in the current reference pattern's time range, the function does nothing.
 If the time is in between two time ranges, the function calls InterpolateReferencePatterns where the two patterns are linearly interpolated.
 If the time is at the beginning of the next time range, it will change the currentReferenceData to the nextReferenceData
+#TODO: This is not a good algorithm as written. Instead of assuming that points can only be between current and next, the function should consider the entire referencePatternTimeRanges to see where the currentTime falls.  Right now it  only considers likely possibilities rather than all possibilities.
 '''
-def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRanges, currentTime, firstReferenceObject, secondReferenceObject):
+def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRanges, currentTime, firstReferenceObject, secondReferenceObject, ReferenceDataList):
     #Print a warning if user has not filled time ranges from data analysis start and stop time
     if (currentTime > referencePatternTimeRanges[-1][1]) or (currentTime < referencePatternTimeRanges[0][0]):
         print("WARNING: User has chosen to use Reference Pattern Time Chooser.  \nUser needs to input reference pattern time ranges that fill the entirety of the data analysis time range. \nUser has not and the program is about to crash.")
@@ -3768,7 +3769,7 @@ def main():
                 #If we are in the last time range, calling this function will result in an index error
                 #If using this feature, (len(G.referencePatternTimeRanges)) will always be at least 2 time ranges so use len(G.referencePatternTimeRanges)-1
                 if currentReferencePatternIndex < (len(G.referencePatternTimeRanges)-1):    
-                    currentReferenceData, currentReferencePatternIndex = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1])
+                    currentReferenceData, currentReferencePatternIndex = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1], ReferenceDataList)
             else: #referencePatternTimeRanges is empty so user is opting to not use reference pattern time chooser
                 currentReferenceData = ReferenceDataList[0]
 
