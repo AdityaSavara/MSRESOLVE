@@ -11,6 +11,7 @@ import sys
 sys.path.insert(1, "..\\lib")
 sys.path.insert(1, "..")
 sys.path.insert(1, "..\..")
+
 import UnitTesterSG as ut
 import numpy
 
@@ -23,12 +24,12 @@ prefix=''
 #3) provide the input for the function you want to test (you can also import it from a pickled object, for example)
 massFragCombinations=([1,2,3,4,5],[2,1,3,4,5],[3,4,5,6,7],[9,8,7,6,5],[3,4,5,1,2])
 
+#Initialize list variable that store the objective function output and the mass
+#frag combinations.
 largestMagnitudeSigFactorSumsList=[]
 topMassFragCombinationsList=[]
 
-#Initialize list variable that store the objective function output and the mass
-#frag combinations.
-keep_N_ValuesInSignificanceFactorCheck=3
+keep_N_ValuesInSignificanceFactorCheck=5
 moleculesLikelihood=numpy.array([1,0.5,1,1])
 #Create reference patterns for each mass fragment combination
 chosenReferenceForMassFragComb1=numpy.array([[1,2,5,50,1],
@@ -66,9 +67,14 @@ refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,
 for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
     [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refPatternList[massFragCombinationIndex][:,1:],largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
 
-resultObj= [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+#The output result is the best mass fragment according to the objective function
+resultObj= topMassFragCombinationsList[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
 resultStr= str(resultObj)
+
+#Set expected results to be the best mass fragment combination
+ut.set_expected_result(massFragCombinations[3],expected_result_str=str(massFragCombinations[3]),suffix=suffix)
+
 #6) Checking the result of the function using check_results. In this case the result is sumList1 object. 
 
 #this is so that pytest can do UnitTesterSG tests.
