@@ -880,7 +880,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     #select only the 1st row down, all columns except for the first
     dfmass = dataFrame.iloc[0][1:]
     #convert to matrix
-    masses = dfmass.as_matrix()
+    masses = dfmass.values
     #sort through the matrix and remove labels
     #masses = numpy.delete(masses, -1)
     for i in range(0,len(masses)):
@@ -892,7 +892,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     #select column of times
     dftimes = dataFrame.iloc[1:][0]
     #convert to matrix
-    times = dftimes.as_matrix()
+    times = dftimes.values
     #save with type float
     fulltimes = times.astype(numpy.float)
     
@@ -900,7 +900,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     #select matrix of signals
     dfpreprocessed = dataFrame.iloc[1:,1:]
     #convert to matrix
-    preprocessed = dfpreprocessed.as_matrix()
+    preprocessed = dfpreprocessed.values
     #save  with type float
     preprocessedData = preprocessed.astype(numpy.float)
 
@@ -918,7 +918,7 @@ def ImportAnalyzedData(concentrationsOutputName):
     #select matrix of signals
     dfanalyzed = dataFrame.iloc[1:,0:]
     #convert to matrix
-    analyzed = dfanalyzed.as_matrix()
+    analyzed = dfanalyzed.values
     analyzed = numpy.delete(analyzed, -1, 1)
     #save  with type float
     analyzedData = analyzed.astype(numpy.float)
@@ -1448,7 +1448,7 @@ def readDataFile(collectedFileName):
 		#"iloc" is a pandas dataframe function. All it does is select a portion of the data.
     dfmass = dataFrame.iloc[1][1:]
     #convert to matrix
-    masses = dfmass.as_matrix()
+    masses = dfmass.values
     #sort through the matrix and remove labels
     for i in range(0,len(masses)):
         masses[i] = masses[i].replace('mass','')
@@ -1462,7 +1462,7 @@ def readDataFile(collectedFileName):
     #select column of times
     dftimes = dataFrame.iloc[2:][0]
     #convert to matrix
-    times = dftimes.as_matrix()
+    times = dftimes.values
     #save as class object with type float
     times = times.astype(numpy.float)
     #if the user wants to analyze one point, the data is doubled in length
@@ -1475,7 +1475,7 @@ def readDataFile(collectedFileName):
     #select matrix of raw signals
     dfcollected = dataFrame.iloc[2:,1:]
     #convert to matrix
-    collected = dfcollected.as_matrix()
+    collected = dfcollected.values
     #save as class object with type float
     rawCollectedData = collected.astype(numpy.float)
     #if the user wants to analyze one point, the data is doubled in length
@@ -1545,7 +1545,7 @@ def readReferenceFile(referenceFileName, form):
         #remove top 4 rows
         dfreference = dataFrame.iloc[4:][:]
         #convert to matrix
-        reference = dfreference.as_matrix()
+        reference = dfreference.values
         #convert the matrix to floats
         provided_reference_patterns = reference.astype(numpy.float)
         #clear rows of zeros
@@ -1555,7 +1555,7 @@ def readReferenceFile(referenceFileName, form):
         #select row of electron numbers
         dfelectronnumbers = dataFrame.iloc[2][1:]
         #convert to matrix
-        electronnumbers = dfelectronnumbers.as_matrix()
+        electronnumbers = dfelectronnumbers.values
         #save as class object with type int
         electronnumbers = electronnumbers.astype(numpy.int32)
    
@@ -1563,7 +1563,7 @@ def readReferenceFile(referenceFileName, form):
         #select row of names
         dfmolecules = dataFrame.iloc[1][1:]
         #convert to matrix
-        molecules = dfmolecules.as_matrix()
+        molecules = dfmolecules.values
         #save as class object with type string
         molecules = molecules.astype(numpy.str)
         
@@ -1571,7 +1571,7 @@ def readReferenceFile(referenceFileName, form):
         #select row of names
         dfmolecularWeights = dataFrame.iloc[3][1:]
         #convert to matrix
-        molecularWeights = dfmolecularWeights.as_matrix()
+        molecularWeights = dfmolecularWeights.values
         #save as class object with type float
         molecularWeights = molecularWeights.astype(numpy.float)
         
@@ -1579,7 +1579,7 @@ def readReferenceFile(referenceFileName, form):
         #select row of names
         dfsourceInfo = dataFrame.iloc[0][1:]
         #convert to matrix
-        sourceInfo = dfsourceInfo.as_matrix()
+        sourceInfo = dfsourceInfo.values
         #save as class object with type string
         sourceInfo = sourceInfo.astype(numpy.str)
         
@@ -1591,7 +1591,7 @@ def readReferenceFile(referenceFileName, form):
         #remove top 4 rows
         dfreference = dataFrame.iloc[4:][:]
         #convert to matrix
-        reference = dfreference.as_matrix()
+        reference = dfreference.values
         #convert the matrix to floats 
         provided_reference_patterns = reference.astype(numpy.float)
         #convert reference from XYXY to XYYY
@@ -1604,7 +1604,7 @@ def readReferenceFile(referenceFileName, form):
         #create data frame of electron numbers
         dfelectronnumbers = dataFrame.iloc[2,1::2]
         #convert to matrix
-        electronnumbers = dfelectronnumbers.as_matrix()
+        electronnumbers = dfelectronnumbers.values
         #save as class object with type int
         electronnumbers = electronnumbers.astype(numpy.int32)
         
@@ -1612,7 +1612,7 @@ def readReferenceFile(referenceFileName, form):
         #select matrix of names
         dfmolecules = dataFrame.iloc[1,1::2]
         #convert to matrix
-        molecules = dfmolecules.as_matrix()
+        molecules = dfmolecules.values
         #save as class object with type string
         molecules = molecules.astype(numpy.str)
         
@@ -1620,7 +1620,7 @@ def readReferenceFile(referenceFileName, form):
         #select row of names
         dfmolecularWeights = dataFrame.iloc[3][1::2]
         #convert to matrix
-        molecularWeights = dfmolecularWeights.as_matrix()
+        molecularWeights = dfmolecularWeights.values
         #save as class object with type float
         molecularWeights = molecularWeights.astype(numpy.float)
         
@@ -1628,7 +1628,7 @@ def readReferenceFile(referenceFileName, form):
         #select row of names
         dfsourceInfo = dataFrame.iloc[0][1::2]
         #convert to matrix
-        sourceInfo = dfsourceInfo.as_matrix()
+        sourceInfo = dfsourceInfo.values
         #save as class object with type string
         sourceInfo = sourceInfo.astype(numpy.str)
 
@@ -2339,7 +2339,30 @@ def BruteForce(molecules,specifications,matching_correction_values,rawsignalsarr
     answers = resbrute[0]
 
     return answers
-    
+
+def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS):   
+    #initialize a variable for moleculeIndex before the loop across all molecules.
+    # print("in the function start", remaining_num_molecules)
+    moleculeIndexIncludingDeletions = 0
+    for moleculeIndex in range(remaining_num_molecules):#array-indexed for loop. Ideally, we'll do SLS once for each molecule.
+        referenceIntensitiesForThisMolecule = monitored_reference_intensities[:,moleculeIndex]  #Note that this must be monitored_reference_intensities, so it has same indexing as moleculeIndex even while remaining_reference_intensities_SLS gets shortened.
+        #print(referenceIntensitiesForThisMolecule, "Molecule's Ref. Intensities")
+        if sum(referenceIntensitiesForThisMolecule) == 0.0:
+            #print("the above one got this molecule removed, index!", moleculeIndexIncludingDeletions)
+            #this is setting concentration to 0 for that molecule, in this iteration.
+            solutions[moleculeIndex] = 0.0  #note that we use the actual moleculeIndex here.
+            #No need to subtract any signals
+            #update the used molecules list, and amounts remaining for other things.
+            usedmolecules[moleculeIndex] = 1 #note that we use the actual moleculeIndex here. 
+            remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,(moleculeIndexIncludingDeletions),axis = 1)
+            remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexIncludingDeletions),axis = 1)
+            remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
+            remaining_num_molecules = remaining_num_molecules -1
+            moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions - 1 
+        #increase the index no matter what, to go to next part of loop.
+        moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions + 1
+    # print("in the function end", remaining_num_molecules)
+    return remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS
     
 #this function is a path is sequential linear subtraction, which can be used alongside the inverse
 #method or as opposed to it. Either way, it only produces one set of values, so it has no need for the 
@@ -2403,35 +2426,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
             moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions - 1 
         moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions + 1                       
-    
-    
-    def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS):   
-        #First, remove any molecules where they have no signals due to threshold filtering etc.
-        #initialize a variable for moleculeIndex before the loop across all molecules.
-        
-        # print("in the function start", remaining_num_molecules)
-        moleculeIndexIncludingDeletions = 0
-        remaining_num_molecules = remaining_num_molecules #initialize this variable based on the number of molecules coming in.
-        for moleculeIndex in range(remaining_num_molecules):#array-indexed for loop. Ideally, we'll do SLS once for each molecule.
-            referenceIntensitiesForThisMolecule = monitored_reference_intensities[:,moleculeIndex] 
-            #print(referenceIntensitiesForThisMolecule, "Molecule's Ref. Intensities")
-            if sum(referenceIntensitiesForThisMolecule) == 0.0:
-                #print("the above one got this molecule removed, index!", moleculeIndexIncludingDeletions)
-                #this is setting concentration to 0 for that molecule, in this iteration.
-                solutions[moleculeIndex] = 0.0  #note that we use the actual moleculeIndex here.
-                #No need to subtract any signals
-                #update the used molecules list, and amounts remaining for other things.
-                usedmolecules[moleculeIndex] = 1 #note that we use the actual moleculeIndex here. 
-                remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,(moleculeIndexIncludingDeletions),axis = 1)
-                remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexIncludingDeletions),axis = 1)
-                remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
-                remaining_num_molecules = remaining_num_molecules -1
-                moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions - 1 
-                
-            moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions + 1
-        # print("in the function end", remaining_num_molecules)
-        return remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS
-            
+       
+           
     num_remaining_molecules_before_loop = len(remaining_correction_factors_SLS[0,:]) #could have also used a different array or way of doing this.
     
     listFor_remaining_num_molecules_during_loop = list(range(num_remaining_molecules_before_loop))
@@ -2441,11 +2437,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     #the values that can be found using this method will be. The values for remaining_num_MassFragments and
     #remaining_num_molecules are re-evaluted every cycle.
     for molNumIndex in listFor_remaining_num_molecules_during_loop:#array-indexed for loop. Ideally, we'll do SLS once for each molecule.     
-
-
-        
-        
-        
+    
         remaining_num_MassFragments = len(remaining_correction_factors_SLS[:,0])
         remaining_num_molecules = len(remaining_correction_factors_SLS[0,:])
         # print("top of loop", molNumIndex, remaining_num_molecules )
@@ -2456,6 +2448,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
 
         #TODO: add a call the rawSignalThresholdFilter right over here. That way such filtering can occur even during SLS. Then make a unit test comparing that to iterative, where thershold filtering would happen between iterations.
         #It's now been added, but has to be ensured to be working. I am temporarily putting the word "experimental" here until I have checked.
+        #FIXME: need to remove the globals here, including currentReferenceData.  these need to be passed in as arguments.
         if G.excludeMoleculesIfSignificantFragmentNotObserved == 'experimental':
             slsReferenceDataObject = copy.deepcopy(currentReferenceData)
             slsReferenceDataObject.monitored_reference_intensities = remaining_reference_intensities_SLS
@@ -2468,9 +2461,12 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             remaining_molecules_SLS = slsReferenceDataObject.molecules #should not have changed, since it just adds zeroes to patterns without removing molecules.
 
 
-        #now we exclude (remove) molecules with no mass fragments left, which can happen due to the rawThresholdFilter.
+        #now we exclude (remove) molecules with no signals left in their reference patterns on any of the remaining mass fragments, which can happen due to the rawThresholdFilter.
         remaining_num_molecules_before_excluding  = remaining_num_molecules
-        remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS = excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS)
+        remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, \
+                                        remaining_molecules_SLS = excludeEmptyMolecules(remaining_num_molecules, solutions,  \
+                                        usedmolecules, monitored_reference_intensities, remaining_correction_factors_SLS, \
+                                        remaining_reference_intensities_SLS, remaining_molecules_SLS)  
         # print("right after the function call", molNumIndex, num_remaining_molecules_before_loop,  len(listFor_remaining_num_molecules_during_loop), listFor_remaining_num_molecules_during_loop)
         numMoleculesExcluded = remaining_num_molecules_before_excluding - remaining_num_molecules #note that here remaining_num_molecules is after excluding.
         # print(numMoleculesExcluded,"deleting from loop list in next line", remaining_num_molecules_before_excluding, remaining_num_molecules) #note that here remaining_num_molecules is after excluding.
