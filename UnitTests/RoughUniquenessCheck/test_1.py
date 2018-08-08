@@ -57,7 +57,8 @@ refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,
 #Generate the sums across the mass fragments for each molecule.
 rowSumsList=[]
 for refPattern in refPatternList:
-    rowSumsList.append(numpy.sum(refPattern[:,1:]))
+    refIntensity=refPattern[:,1:]
+    rowSumsList.append(numpy.sum(refIntensity, axis=0))
 
 
 topRoughUniquenessSumsList=[]
