@@ -19,10 +19,126 @@ G = UserInput
 ############################################################################################################################################
 #########################################################Best Mass Fragment Chooser#########################################################
 ############################################################################################################################################
+#This function is made to conduct prelimiary checks. The checks are designed to
+#fail only if there is not chance of the the chosen reference data passing the
+#SLS method. There are 2 cases where this occurs :1) a molecule does not 
+#contain reference intensities for any mass fragments in the combination or 2)
+#The reference data for the mass fragments does not contain any zeros.
+def passesRowsSumChecks(rowSumsList, massFragCombination, allOverlappingPatterns):
+    numberOfMassFragments=len(massFragCombination)##Potentially pass in the length variable to make it shorter
+    passesRowsSumChecks=True#Initialize return variable as true
+    if all(rowSum==numberOfMassFragments for rowSum in rowSumsList): #Check if the array passed to it is full. If it is full, it appends to the allOverlapping patterns list
+        allOverlappingPatterns.append(massFragCombination)###May be an error with the use of allOverlapping patterns
+        passesRowsSumChecks=False
+    elif 0 in rowSumsList: #Check if any row is entirely full of zeros
+        passesRowsSumChecks=False
+    return passesRowsSumChecks #Return true if the rowsSumsList passes the check
 
+#The function maintains two lists: 1)that contains the objective function values that 
+#need to be kept in a sorted order 2) a parallel list where a value needs to be inserted 
+#according to the sorting of the first one. It also takes in an integer value,N, that limits 
+#the the length of the two lists to N values. Using a binary search method, it will 
+#find the location where the value to insert will be inserted(if possible). The
+#value will be inserted there and the last value removed from the list (if
+#applicable).  The bisect method used requires the list be presorted in ascending order.
+#The bisect method used inserts to keep the list in a sorted order. 
+def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert, parallelList, valueToInsertInParallelList,maxItemsAllowed):
+    #Find the insertion index where the value will be inserted by using a binary
+    #search
+    insertionIndex=bisect.bisect(objectiveFunctionValuesList, objectiveFunctionValueToInsert)
 
-#Ashi has intentionally deleted the Best Mass Fragment chooser on his branch to create a conflict, and then he can just use the parent fork's version.
+    #Initialize a variable to keep track of if a value was inserted into the
+    #list.
+    valueStoredInList=False
+    
+    #If the list isn't yet filled, the value will inherently be in the top N
+    #value in the list. This vlaue can just be inserted at the insertionIndex.
+    if len(objectiveFunctionValuesList)<maxItemsAllowed:    
+        objectiveFunctionValuesList.insert(insertionIndex, objectiveFunctionValueToInsert)
+        parallelList.insert(insertionIndex, valueToInsertInParallelList)
+        valueStoredInList=True
+    #If the list already contains N elements, a new element could either be 
+    #inserted in the list or at the end of the list. Because the list is 
+    #already at its maximum length, nothing shouold be added to the end. This
+    #check is to make sure nothing is going to be added to the end.
+    elif len(objectiveFunctionValuesList)== maxItemsAllowed and insertionIndex<maxItemsAllowed:
+        #insert the value to insert in the location found through the binary
+        #search
+        objectiveFunctionValuesList.insert(insertionIndex, objectiveFunctionValueToInsert)
+        parallelList.insert(insertionIndex, valueToInsertInParallelList)
+        valueStoredInList=True
+        #delete the last element since somthing was added to the list
+        del objectiveFunctionValuesList[-1]
+        del parallelList[-1]
+    #elif len(sortedList)== maxLengthOfList and insertionIndex==maxLengthOfList: #in this case, nothing should be added, because it would be past the length limit.
+    return objectiveFunctionValuesList, parallelList, valueStoredInList
 
+#The rough uniqueness check is a limiting check that takes the mass fragment
+#combinations that pass the row sums check and builds a lists of 
+#keep_N_ValuesInRoughUniquenessCheck that contain the largest number of zeros
+#and the corresponding mass fragment combination for each of the values in the
+#first list.
+#The largest number of zeros would be most likely to pass the SLS method.
+#It calculates a sum that roughly expresses how unique the molecular mass 
+#fragments are to the different molecules, but this is a quick and not-rigrous 
+#method. Then, the value is stored *only* if it is in the top N of the values 
+#so far.
+def roughUniquenessCheck(rowSumsList, smallestRowsSumsList,topMassFragCombinationsList, keep_N_ValuesInRoughUniquenessCheck, massFragCombination):
+
+    #We want to save the smallest sum since that would contain the smallest 
+    #number of zeros.
+    roughUniqueness=numpy.sum(rowSumsList) 
+
+    #Use Store and Pop to add the tuple to the list of top rough uniquness 
+    #combinations. This will only save a user specified number of tuples.
+    [smallestRowsSumsList,topMassFragCombinationsList,valueStoredInRUTopList]=storeAndPop(smallestRowsSumsList, roughUniqueness,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInRoughUniquenessCheck)
+    return smallestRowsSumsList,topMassFragCombinationsList, valueStoredInRUTopList
+
+#The significance factor check is a limiting check the selects the mass 
+#fragment combinations having the largest sum of significance factors. It
+#calculates the significance factors for each element in the sub-reference 
+#array (refernce array with zeros for all the data for mass fragments that 
+#aren't needed). Is then takes the sum of all of the significance factors.
+#The top N mass fragment combinations are then stored in a list in decending 
+#order according to the magnitude of their significance sum. 
+#Basically, it calculates the significance factor for each element in the
+#chosen reference array and sums all of the significane values for the whole 
+#array. It keeps the mass fragments that have the largest magnitude of 
+#significance sum.
+def significanceFactorCheck(chosenReferenceIntensities,largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood):
+    
+    #Initialize the sum of the significance factors
+    sigFactorSum=0
+    
+    #The elemSignificanceCalculator finds the significance factors a column at 
+    #a time. This loops through the columns(molecules)
+    for columnCounter in range(len(chosenReferenceIntensities[0])):
+        
+        #Finds the significance factors for each element in the column. This 
+        #does not include the first column since that is the mass fragment 
+        #numbers
+        significanceColumnDataList=ElemSignificanceCalculator(chosenReferenceIntensities, columnCounter, moleculesLikelihood)
+        
+	#Sums the significance factors across the column and to the
+        #sum for the whole ref data array. The larger in magnitude this is, the 'better'.
+        sigFactorSum+=sum(significanceColumnDataList)
+        
+        ####Currently there is no real need to maintain a significance data 
+        ####list for the whole array
+    
+    #The subtraction is used to make the sum negative. The binary search used 
+    #will order from lowest to highest. A larger magnitude for this value then means
+    #the most negative which will be kept during the store and pop function.
+    #Note that we use the wording of largest magnitude so that our phrasing remains the same
+    #when talking about the negative of the sum.
+    negativeOfSigFactorSum=-1*sigFactorSum    
+    
+    #Uses store and pop to maintian a list of the mass fragment with the
+    #largest significance factors.
+    #The below line only keeps the combinations with the largest magnitude (most negative) of the negativeOfSigFactorSums.
+    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valueStoredInSFTopList]=storeAndPop(largestMagnitudeSigFactorSumsList,negativeOfSigFactorSum,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck)
+    
+    return largestMagnitudeSigFactorSumsList, topMassFragCombinationsList, valueStoredInSFTopList
 ############################################################################################################################################
 ################################################Algorithm Part 1: Pre-Processing the data###################################################
 ############################################################################################################################################
