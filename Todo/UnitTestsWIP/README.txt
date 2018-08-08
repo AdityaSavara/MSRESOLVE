@@ -7,3 +7,5 @@ testKeepOnlyYYYYCol.py tests the KeepOnlySelectedYYYYColumns function from XYYYD
 TestRemoveSignals.py tests the RemoveSignals function from XYYYDataFunctionsSG.
 
 Both of these tests currently are written to print the results to the console and do not yet use the UnitTester module. 
+
+In order to make them operational, add functions to call UnitTester on the results, save the output, and rename them to be accesible by pytest.
