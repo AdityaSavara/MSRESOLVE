@@ -3285,15 +3285,16 @@ def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayli
 ## created csv file. When pandas is used to read the csv this
 ## will result in the creation of a column of 'nan'
 ## ImportWorkingData() has been modified to remove this column
-def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', fileSuffix = '', dataType = None, rowIndex = [], units = None): 
-    formatedColIndex = colIndex
+## If the data header and the data are the same length, the abscissa header is disregarded.
+def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fileSuffix = '', dataType = None, rowIndex = [], units = None): 
+    formatedDataHeader = dataHeader
     if dataType == 'preProcessed' or dataType == 'simulated' or dataType == 'Experiment':
-        formatedColIndex = ['m%s' % MFNumber for MFNumber in colIndex]
+        formatedDataHeader = ['m%s' % MFNumber for MFNumber in dataHeader]
     if dataType == 'scaled':
-        formatedColIndex = ['%s Concentration Relative to CO' % molecule for molecule in colIndex]
+        formatedDataHeader = ['%s Concentration Relative to CO' % molecule for molecule in dataHeader]
     if dataType == 'concentration':
         label = ' Concentration(%s)' % units
-        formatedColIndex = [molecule + label for molecule in colIndex]
+        formatedDataHeader = [molecule + label for molecule in dataHeader]
     #extraLine is used to create CSV files that conform to MSRESOLVE's import requirements i.e. having a row for comments at the top
     extraLine = False
     if dataType == 'Experiment':
@@ -3321,11 +3322,11 @@ def ExportXYYYData(outputFileName, data, colIndex, abscissaHeader = 'Mass', file
             pass
     #combine the column headers and data into one array
     try:
-        fullArrayToExport = numpy.vstack((formatedColIndex,data))
+        fullArrayToExport = numpy.vstack((formatedDataHeader,data))
     #occasionally, abscissaHeader needs to be inserted without rowIndex being used
     except ValueError: 
-        formatedColIndex = numpy.hstack((abscissaHeader,formatedColIndex))
-        fullArrayToExport = numpy.vstack((formatedColIndex,data))
+        formatedDataHeader = numpy.hstack((abscissaHeader,formatedDataHeader))
+        fullArrayToExport = numpy.vstack((formatedDataHeader,data))
         
     #if the row index isn't included in the data, then add it 
     if rowIndex != []:    
