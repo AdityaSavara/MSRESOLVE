@@ -1137,7 +1137,7 @@ CheckCurrentTimeRange is a function used for the Reference Pattern Time Chooser 
 which reference pattern needs to be used based on user input.  If the time is in the current reference pattern's time range, the function does nothing.
 If the time is in between two time ranges, the function calls InterpolateReferencePatterns where the two patterns are linearly interpolated.
 If the time is at the beginning of the next time range, it will change the currentReferenceData to the nextReferenceData
-#TODO: This is not a good algorithm as written. Instead of assuming that points can only be between current and next, the function should consider the entire referencePatternTimeRanges to see where the currentTime falls.  Right it  only considers likely possibilities rather than all possibilities.
+#TODO: This is not a good algorithm as written. Instead of assuming that points can only be between current and next, the function should consider the entire referencePatternTimeRanges to see where the currentTime falls.  Right now it  only considers likely possibilities rather than all possibilities.
 '''
 def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRanges, currentTime, firstReferenceObject, secondReferenceObject, ReferenceDataList):
     #Print a warning if user has not filled time ranges from data analysis start and stop time
