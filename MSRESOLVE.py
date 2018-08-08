@@ -136,7 +136,7 @@ def significanceFactorCheck(chosenReferenceIntensities,largestMagnitudeSigFactor
     #Uses store and pop to maintian a list of the mass fragment with the
     #largest significance factors.
     #The below line only keeps the combinations with the largest magnitude (most negative) of the negativeOfSigFactorSums.
-    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valueStoredInSFTopList]=storeAndPop(largestMagnitudeSigFactorSumsList,negativeOfSigFactorSum,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck
+    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valueStoredInSFTopList]=storeAndPop(largestMagnitudeSigFactorSumsList,negativeOfSigFactorSum,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck)
     return largestMagnitudeSigFactorSumsList, topMassFragCombinationsList, valueStoredInSFTopList
 ############################################################################################################################################
 ################################################Algorithm Part 1: Pre-Processing the data###################################################
