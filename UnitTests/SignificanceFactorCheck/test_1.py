@@ -24,27 +24,53 @@ prefix=''
 #3) provide the input for the function you want to test (you can also import it from a pickled object, for example)
 massFragCombinations=([1,2,3,4,5],[2,1,3,4,5],[3,4,5,6,7],[9,8,7,6,5],[3,4,5,1,2])
 
+#Initialize list variable that store the objective function output and the mass
+#frag combinations.
 largestMagnitudeSigFactorSumsList=[]
+topMassFragCombinationsList=[]
 
 keep_N_ValuesInSignificanceFactorCheck=5
 moleculesLikelihood=numpy.array([1,0.5,1,1])
-chosenReference=numpy.array([[1,2.06,20,2,1],
+#Create reference patterns for each mass fragment combination
+chosenReferenceForMassFragComb1=numpy.array([[1,2,5,50,1],
                              [2,0,0,4,0],
-                             [3,1,1,30,1],
+                             [3,1,1,40,1],
                              [4,3,2,1,0],
                              [5,0,0,0,0]])
+chosenReferenceForMassFragComb2=numpy.array([[2,2,5,2,1],
+                             [1,50,0,4,0],
+                             [3,1,1,30,1],
+                             [4,100,2,1,0],
+                             [5,0,0,0,0]])
+chosenReferenceForMassFragComb3=numpy.array([[3,2,5,2,1],
+                             [4,0,52,4,0],
+                             [5,1,96,30,1],
+                             [6,3,100,1,0],
+                             [7,0,0,0,0]])
+chosenReferenceForMassFragComb4=numpy.array([[9,2,5,2,1],
+                             [8,0,0,4,25],
+                             [7,1,1,30,50],
+                             [6,3,2,1,100],
+                             [5,0,0,0,0]])
+chosenReferenceForMassFragComb5=numpy.array([[3,2,5,2,1],
+                             [4,0,0,4,0],
+                             [5,1,1,30,1],
+                             [1,3,2,1,0],
+                             [2,0,0,0,0]])
+#Create a list that makes the reference patterns iterable
+refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,chosenReferenceForMassFragComb3,chosenReferenceForMassFragComb4,chosenReferenceForMassFragComb5]
 
 #4) get the output of the function, which is what will typically be checked.
 #In it's intended use, the funciton is to append to a list 
 #(topSignificanceFactorCheckList). This list was initialized and is to be 
 #appended to in a loop
 for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
-    chosenReference[1,massFragCombinationIndex]=60#This is to change the array so the significance factor sums will be different during each iteration. If a different array is not provided each time, the significance factor sums will all be the same.
-    [largestMagnitudeSigFactorSumsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(chosenReference[:,1:],largestMagnitudeSigFactorSumsList,keep_N_ValuesInSignificanceFactorCheck,massFragCombination, moleculesLikelihood)
-#print(output)
-resultObj= [largestMagnitudeSigFactorSumsList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refPatternList[massFragCombinationIndex][:,1:],largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
+
+resultObj= [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
 resultStr= str(resultObj)
+
 #6) Checking the result of the function using check_results. In this case the result is sumList1 object. 
 
 #this is so that pytest can do UnitTesterSG tests.

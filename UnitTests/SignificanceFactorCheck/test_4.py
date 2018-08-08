@@ -66,9 +66,14 @@ refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,
 for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
     [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refPatternList[massFragCombinationIndex][:,1:],largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
 
-resultObj= [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+#The output result is the best mass fragment according to the objective function
+resultObj= topMassFragCombinationsList[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
 resultStr= str(resultObj)
+
+#Set expected results to be the best mass fragment combination
+ut.set_expected_result(massFragCombinations[3],expected_result_str=str(massFragCombinations[3]),suffix=suffix)
+
 #6) Checking the result of the function using check_results. In this case the result is sumList1 object. 
 
 #this is so that pytest can do UnitTesterSG tests.
