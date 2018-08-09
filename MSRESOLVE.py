@@ -1,4 +1,4 @@
-nimport bisect
+import bisect
 import copy 
 import numpy
 import csv
