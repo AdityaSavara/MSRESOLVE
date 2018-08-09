@@ -1418,7 +1418,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
             G.oldReferenceFileName.append(RefName)
             
             #construct the file names for the current run of the program
-            referenceFileNameTemp = G.referenceFileName[RefIndex][:-4] +  str(G.iterationSuffix) + G.referenceFileName[RefIndex][-4:]
+            referenceFileNameTemp = G.referenceFileName[RefIndex][:-18] +  str(G.iterationSuffix) + G.referenceFileName[RefIndex][-4:]
             
             #copy the experimental and reference files into new names for this iterative run
             shutil.copy(RefName, referenceFileNameTemp)
@@ -1427,7 +1427,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
             G.referenceFileName[RefIndex] =  referenceFileNameTemp
             
             #construct file names for the next run of the program 
-            G.nextRefFileName.append(RefName[:-4] + '_unused_iter_1' + RefName[-4:])
+            G.nextRefFileName.append(RefName[:-18] + '_unused_iter_%s' %G.iterationNumber + RefName[-4:])
     
     return None
     #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
