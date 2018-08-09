@@ -238,9 +238,9 @@ timeSinceLastCheckpoint = ''
 
 iterationSuffix= ''
 unusedMolecules =''
-oldReferenceFileName = ''
+oldReferenceFileName = []
 oldCollectedFileName ='' 
-nextRefFileName = ''
+nextRefFileName = []
 nextExpFileName = ''
 
 __var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
