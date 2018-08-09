@@ -3715,14 +3715,15 @@ def main():
         if G.specificMolecules == 'yes' or G.iterativeAnalysis:
            for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
                 ReferenceDataList[RefObjectIndex] = trimDataMoleculesToMatchChosenMolecules(RefObject, G.chosenMolecules)
-            
+           prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMolecules)
+	
         if G.iterativeAnalysis:
             #make a copy of the experimental data for later use in iterative processing
             ExperimentDataFullCopy = copy.deepcopy(ExperimentData)
             #make a copy of Experimental data specifically to be used in signal simulation. i.e. will have mass fragments trimmed if they aren't referenced by the current molecules. 
             ExperimentDataCopy = copy.deepcopy(ExperimentData)
             #remove any unreference masses from the signal simulation copy of experimental data
-            ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, ReferenceDataList[0])       
+            ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, prototypicalReferenceData)       
         
         
         # If we are only interested in a subset of the MS data
@@ -3734,7 +3735,7 @@ def main():
             ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, G.chosenMassFragments) 
             ExperimentData.ExportCollector("MassFragChooser")
         #Trim the experimental data according to the mass fragments in referenceData
-        ExperimentData = trimDataMassesToMatchReference(ExperimentData, ReferenceDataList[0]) 
+        ExperimentData = trimDataMassesToMatchReference(ExperimentData, prototypicalReferenceData) 
         
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'  
@@ -3766,7 +3767,7 @@ def main():
         # while subsequent opens to this file will append
         if G.SLSUniquePrint == 'yes':
             createSLSUniqueOrderFile(ExperimentData.abscissaHeader,
-                                     ReferenceDataList[0].molecules)
+                                     prototypicalReferenceData.molecules)
             
         #this numpy.zeros line is going to be the array that holds all of the answers before they are printed out, which
         #is done in order to save time and decrease expense
