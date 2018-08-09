@@ -703,7 +703,7 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments
     # remove the irrelevant mass data series from ExperimentData.mass_fragment_numbers
     # and the corresponding colums from ExperimentData.workingData
     trimmedExperimentData = copy.deepcopy(ExperimentData)
-    print("MassFragChooser")
+    #print("MassFragChooser")
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
                                                                                                             chosenMassFragments)
@@ -1394,25 +1394,40 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
     os.chdir(iterationDirectoryName) #this will be changed back at the end of the program
     
     if not iterate:
+        #naming for collected file
         #record the old file names 
-        G.oldReferenceFileName = G.referenceFileName
         G.oldcollectedFileName = G.collectedFileName
         
         #construct the file names for the current run of the program
-        referenceFileNameTemp = G.referenceFileName[:-18] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
         collectedFileNameTemp = G.collectedFileName[:-21] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
         
         #copy the experimental and reference files into new names for this iterative run
-        shutil.copy(G.referenceFileName, referenceFileNameTemp)
         shutil.copy(G.collectedFileName, collectedFileNameTemp)
         
         #change the globals to reflect the renaming of the ref and exp files
-        G.referenceFileName =  referenceFileNameTemp
         G.collectedFileName =  collectedFileNameTemp
         
         #construct file names for the next run of the program 
-        G.nextRefFileName = G.referenceFileName[:-11] +  str('_unused') + G.referenceFileName[-11:]
         G.nextExpFileName = G.collectedFileName[:-11] +  str('_remaining') + G.collectedFileName[-11:]
+        #naming for reference files
+        
+        G.oldReferenceFileName = []
+        G.nextRefFileName = []
+        for RefIndex, RefName in enumerate(G.referenceFileName): #a list
+            #record the old file names 
+            G.oldReferenceFileName.append(RefName)
+            
+            #construct the file names for the current run of the program
+            referenceFileNameTemp = G.referenceFileName[RefIndex][:-4] +  str(G.iterationSuffix) + G.referenceFileName[RefIndex][-4:]
+            
+            #copy the experimental and reference files into new names for this iterative run
+            shutil.copy(RefName, referenceFileNameTemp)
+            
+            #change the globals to reflect the renaming of the ref and exp files
+            G.referenceFileName[RefIndex] =  referenceFileNameTemp
+            
+            #construct file names for the next run of the program 
+            G.nextRefFileName.append(RefName[:-4] + '_unused_iter_1' + RefName[-4:])
     
     return None
     #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
@@ -1437,22 +1452,25 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     AppendListToFile("__var_list__", G.__var_list__, "UserInput_iter_1.py", 5)
     
     #record the old file names 
-    G.oldReferenceFileName = G.referenceFileName
     G.oldcollectedFileName = G.collectedFileName
     #construct the file names for the first run of the program
-    G.referenceFileName = G.referenceFileName[:-4] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
     G.collectedFileName = G.collectedFileName[:-4] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
-    
     #construct file names for the second run of the program 
-    G.nextRefFileName = G.referenceFileName[:-11] + '_unused_iter_1' + G.referenceFileName[-4:]
-    
     G.nextExpFileName = G.collectedFileName[:-11] + '_remaining_iter_1' + G.collectedFileName[-4:]
+    
+    G.oldReferenceFileName = []
+    for RefIndex, RefName in enumerate(G.referenceFileName): #a list
+        G.oldReferenceFileName.append(RefName)
+        #construct the file names for the first run of the program
+        G.referenceFileName[RefIndex] = G.referenceFileName[RefIndex][:-4] +  str(G.iterationSuffix) + G.referenceFileName[RefIndex][-4:]
+        #construct file names for the second run of the program 
+        G.nextRefFileName.append(RefName[:-4] + '_unused_iter_1' + RefName[-4:])
     
     return None 
     #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
-def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceData, ReferenceDataFullCopy):
+def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataFullCopy):
     #implied arguments: G.dataSimulation, G.referenceFileName, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMolecules, G.iterationNumber
     #override data simulation to yes if it was not selected
     if G.dataSimulation != 'yes':
@@ -1460,37 +1478,44 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
         print("User selection to skip signal simulation has been overridden. ")
         G.dataSimulation = 'yes'
     #Warn the user if they are trying to run an iteration that has no molecules to solve. (This would cause a complex error further on in the program if allowed to run.)    
-    if len(ReferenceData.molecules) == 0:
+    if len(ReferenceDataList[0].molecules) == 0:
         print("Warning Message: There are inadequate molecules to perform another iteration. Please confirm that there are still remaining molecules to solve.")
         sys.exit()
 
-    #Creating a correction values matrix for signal simulation at the end of the program
-    ReferenceDataSS = copy.deepcopy(ReferenceData)
-    ReferenceDataSS = ReferenceInputPreProcessing(ReferenceDataSS)
-    ReferenceDataSS = Populate_matching_correction_values(ExperimentDataFullCopy.mass_fragment_numbers,ReferenceDataSS)
+    ReferenceDataSS = []
+    ReferenceDataSSmatching_correction_valuesList = []
+    for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
+        #Creating a correction values matrix list for signal simulation at the end of the program
+        ReferenceDataSS.append(copy.deepcopy(RefObject))
+        ReferenceDataSS[RefObjectIndex] = ReferenceInputPreProcessing(ReferenceDataSS[RefObjectIndex])
+        ReferenceDataSS[RefObjectIndex] = Populate_matching_correction_values(ExperimentDataFullCopy.mass_fragment_numbers,ReferenceDataSS[RefObjectIndex])
+        ReferenceDataSSmatching_correction_valuesList.append(ReferenceDataSS[RefObjectIndex].matching_correction_values)
+        
     #Selecting unused Reference Data
     unusedMolecules = []
-    for molecule in ReferenceDataFullCopy.molecules:
+    for molecule in ReferenceDataFullCopy[0].molecules:
         if not molecule in G.chosenMolecules:
             unusedMolecules.append(molecule)
     
-    #Export current Reference Data  
-    #Reference data is trimmed prior to this function
-    ExportXYYYData(G.referenceFileName, ReferenceData.provided_reference_patterns, ReferenceData.molecules, abscissaHeader = 'M/Z')
+    for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
+        #Export current Reference Data  
+        #Reference data is trimmed prior to this function
+        ExportXYYYData(G.referenceFileName[RefObjectIndex], RefObject.provided_reference_patterns, RefObject.molecules, abscissaHeader = 'M/Z')
     
     #Export current Experimental Data
     #Experimental data is trimmed prior to this function, but it still needs to be exported  
     ExportXYYYData(G.collectedFileName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers,
               abscissaHeader = ExperimentData.abscissaHeader, dataType = 'preProcessed', rowIndex = ExperimentData.times)
    
-    #export reference data for next iteration
-    if G.iterationNumber == 1: #first iteration files aren't in standard locations
-        DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, "..\\%s" %G.oldReferenceFileName, unusedReferenceFileName = G.nextRefFileName)
-    else: #not first iteration
-    #generate unused reference data
-        DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName, unusedReferenceFileName = G.nextRefFileName)
+    for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
+        #export reference data for next iteration
+        if G.iterationNumber == 1: #first iteration files aren't in standard locations
+            DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, "..\\%s" %G.oldReferenceFileName[RefObjectIndex], unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
+        else: #not first iteration
+        #generate unused reference data
+            DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName[RefObjectIndex], unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
     
-    return ReferenceDataSS.matching_correction_values, unusedMolecules
+    return ReferenceDataSSmatching_correction_valuesList, unusedMolecules
 
 def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment_numbers,ExperimentDataFullCopy, times, concdata, molecules):
     #implied arguments: G.iterationSuffix, G.nextRefFileName, G.nextExpFileName, G.iterativeAnalysis, G.unusedMolecules, G.iterationNumber
@@ -1537,8 +1562,9 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
         iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber - 1))
     #copy the experimental signals to the next iteration
     shutil.copy("..\%s\%s" %(iterationDirectoryName, G.collectedFileName), os.getcwd())
-    #copy the next reference file from the previous iteration folder to the next iteration folder
-    shutil.copy("..\%s\%s" %(iterationDirectoryName, G.referenceFileName), os.getcwd())
+    for RefIndex, RefName in enumerate(G.referenceFileName): #a list
+        #copy the next reference file from the previous iteration folder to the next iteration folder
+        shutil.copy("..\%s\%s" %(iterationDirectoryName, G.referenceFileName[RefIndex]), os.getcwd())
     
     #returning to the parent directory
     os.chdir('..')
@@ -1835,7 +1861,8 @@ class MSReference (object):
         self.exportSuffix = ''
         #self.experimentTimes = []       
         self.provided_mass_fragments = self.provided_reference_patterns[:,0]
-            
+    #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
+    #Additionally, it should take an optional variable to determine the headers that will be used.         
     def ExportCollector(self, callingFunction, use_provided_reference_patterns = False):
         #record current time
         currentTime = timeit.default_timer()
@@ -3672,8 +3699,10 @@ def main():
     if (G.dataAnalysis == 'yes' and G.preProcessing == 'yes'):
         
         if G.iterativeAnalysis:
-            #create a copy of the Reference Data
-             ReferenceDataFullCopy = copy.deepcopy(prototypicalReferenceData) 
+            ReferenceDataFullCopy = []
+            for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
+                #create a copy of the Reference Data
+                ReferenceDataFullCopy.append(copy.deepcopy(RefObject)) 
         
         ##Start: Preparing data for data analysis based on user input choices
         # Trim the reference data according to the selected molecules list
@@ -3684,7 +3713,8 @@ def main():
         #TODO continued: If it matches (as a set, not an equal comparison of lists), then no trimming occurs. Else, trimming occurs.
         #TODO continued: but the above changes would probably also require trimDataMassesToMatchReference to occur on Experimental data, again, after prepare reference patterns, including on ExperimentDataCopy.
         if G.specificMolecules == 'yes' or G.iterativeAnalysis:
-            prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMolecules)
+           for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
+                ReferenceDataList[RefObjectIndex] = trimDataMoleculesToMatchChosenMolecules(RefObject, G.chosenMolecules)
             
         if G.iterativeAnalysis:
             #make a copy of the experimental data for later use in iterative processing
@@ -3692,7 +3722,7 @@ def main():
             #make a copy of Experimental data specifically to be used in signal simulation. i.e. will have mass fragments trimmed if they aren't referenced by the current molecules. 
             ExperimentDataCopy = copy.deepcopy(ExperimentData)
             #remove any unreference masses from the signal simulation copy of experimental data
-            ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, prototypicalReferenceData)       
+            ExperimentDataCopy = trimDataMassesToMatchReference(ExperimentDataCopy, ReferenceDataList[0])       
         
         
         # If we are only interested in a subset of the MS data
@@ -3704,12 +3734,12 @@ def main():
             ExperimentData = trimDataMassesToMatchChosenMassFragments(ExperimentData, G.chosenMassFragments) 
             ExperimentData.ExportCollector("MassFragChooser")
         #Trim the experimental data according to the mass fragments in referenceData
-        ExperimentData = trimDataMassesToMatchReference(ExperimentData, prototypicalReferenceData) 
+        ExperimentData = trimDataMassesToMatchReference(ExperimentData, ReferenceDataList[0]) 
         
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'  
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
-        #Prepare currentReferenceData which is currently the first reference object in the list
+        #Prepare prototypicalReferenceData which is currently the first reference object in the list
 
         prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData,ExperimentData,G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         #for loop to preprocess the remaining MSReference objects and match correction values
@@ -3720,12 +3750,12 @@ def main():
         
         #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
         if G.iterativeAnalysis:
-            ReferenceDataSSmatching_correction_values, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, prototypicalReferenceData, ReferenceDataFullCopy)
+            ReferenceDataSSmatching_correction_valuesList, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataFullCopy)
                 
         # Reset the checkpoint timer for the data analysis section
         G.checkpoint = timeit.default_timer()
         #check to make sure that there are enough mass fragments to solve for each variable. 
-        if len(ExperimentData.mass_fragment_numbers) < len(prototypicalReferenceData.molecules):
+        if len(ExperimentData.mass_fragment_numbers) < len(ReferenceDataList[0].molecules):
             raise SystemError("There are too few mass fragments to solve for the number of molecules provided. \nData Analysis has been ended.")
             
 
@@ -3736,7 +3766,7 @@ def main():
         # while subsequent opens to this file will append
         if G.SLSUniquePrint == 'yes':
             createSLSUniqueOrderFile(ExperimentData.abscissaHeader,
-                                     prototypicalReferenceData.molecules)
+                                     ReferenceDataList[0].molecules)
             
         #this numpy.zeros line is going to be the array that holds all of the answers before they are printed out, which
         #is done in order to save time and decrease expense
@@ -3888,8 +3918,9 @@ def main():
         #reset timer so that data simiulation can be timed
         G.checkpoint = timeit.default_timer()
         if G.iterativeAnalysis:
+            #TODO when RawSignalSimulation is rewritten for multiple reference patterns, ReferenceDataSSmatching_correction_valuesList[0] should be replaced with ReferenceDataSSmatching_correction_valuesList
             #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
-            simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, ReferenceDataSSmatching_correction_values)
+            simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, ReferenceDataSSmatching_correction_valuesList[0])
         if not G.iterativeAnalysis:
             #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
             simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, currentReferenceData.matching_correction_values)
