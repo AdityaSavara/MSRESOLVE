@@ -194,7 +194,7 @@ negativeAnalyzerYorN = 'no'
 #//Data Analysis Methods
 #Below the path for the analysis of the data; sls or inverse
 answer = 'sls'	#'inverse' or 'sls'; sls is suggested
-uniqueOrCommon = 'unique'	#'unique' or 'common'; common is suggested
+uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
@@ -230,7 +230,6 @@ TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 ExportAtEachStep = 'yes'
 generatePercentages = 'no'
-
 
 __var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
 				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
