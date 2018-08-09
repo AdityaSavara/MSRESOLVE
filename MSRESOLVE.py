@@ -1,4 +1,4 @@
-import bisect
+nimport bisect
 import copy 
 import numpy
 import csv
@@ -1470,7 +1470,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
-def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataFullCopy):
+def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataListFullCopy):
     #implied arguments: G.dataSimulation, G.referenceFileName, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMolecules, G.iterationNumber
     #override data simulation to yes if it was not selected
     if G.dataSimulation != 'yes':
@@ -1493,7 +1493,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
         
     #Selecting unused Reference Data
     unusedMolecules = []
-    for molecule in ReferenceDataFullCopy[0].molecules:
+    for molecule in ReferenceDataListFullCopy[0].molecules:
         if not molecule in G.chosenMolecules:
             unusedMolecules.append(molecule)
     
@@ -3699,10 +3699,10 @@ def main():
     if (G.dataAnalysis == 'yes' and G.preProcessing == 'yes'):
         
         if G.iterativeAnalysis:
-            ReferenceDataFullCopy = []
+            ReferenceDataListFullCopy = []
             for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
                 #create a copy of the Reference Data
-                ReferenceDataFullCopy.append(copy.deepcopy(RefObject)) 
+                ReferenceDataListFullCopy.append(copy.deepcopy(RefObject)) 
         
         ##Start: Preparing data for data analysis based on user input choices
         # Trim the reference data according to the selected molecules list
@@ -3750,7 +3750,7 @@ def main():
         
         #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
         if G.iterativeAnalysis:
-            ReferenceDataSSmatching_correction_valuesList, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataFullCopy)
+            ReferenceDataSSmatching_correction_valuesList, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataListFullCopy)
                 
         # Reset the checkpoint timer for the data analysis section
         G.checkpoint = timeit.default_timer()
