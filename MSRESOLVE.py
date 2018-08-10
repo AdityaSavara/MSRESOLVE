@@ -154,12 +154,12 @@ def SlopeEliminator (ExperimentData,backgroundMassFragment,backgroundSlopes,back
                     ExperimentData.workingData[times_counter,mass_fragment_numbers_counter] = ExperimentData.workingData[times_counter, mass_fragment_numbers_counter] - subtraction_value
     #return collected #no return is necessary. this is implied. the function takes a "pointer/reference" to the collected array and then modifies it directly.
         
-#this function works by drawing the input values from the input file which includes a baslineType, a time range, and the mass fragment
+#this function works by drawing the input values from the input file which includes a baselineType, a time range, and the mass fragment
 #that is being altered. the time range is taken, and using a for loop, all the values between those two times (including those two times)
 #are used in finding the average or polyfit, the collected signals are also picked up here, in order to use them for finding the polyfit. 
-#So then, depending of the baslineType, the mass fragments row will be found using a nested for loop with an if statement, which then
+#So then, depending of the baselineType, the mass fragments row will be found using a nested for loop with an if statement, which then
 # subtracts what ever was found- the polyfit or the average from each data point in the collected data set. 
-def LinearBaselineCorrectorSemiAutomatic(ExperimentData,baslineType,massesToBackgroundCorrect,earlyBaselineTimes,lateBaselineTimes):
+def LinearBaselineCorrectorSemiAutomatic(ExperimentData,baselineType,massesToBackgroundCorrect,earlyBaselineTimes,lateBaselineTimes):
     
     #This section of code is a patch to permit easier usage of the Baseline Correction
     # it Applies background correction to all fragments if none are listed,
@@ -227,14 +227,14 @@ def LinearBaselineCorrectorSemiAutomatic(ExperimentData,baslineType,massesToBack
                         selectedtimes = []
                         selectedsignals = []
 
-        #these are the if statements that choose what happens based on user baslineType in the input data file
-    if len(baslineType) == 1:
-        baslineTypeholder = []
+        #these are the if statements that choose what happens based on user baselineType in the input data file
+    if len(baselineType) == 1:
+        baselineTypeholder = []
         for length in range(len(massesToBackgroundCorrect)):
-            baslineTypeholder.append(baslineType[0])
-        baslineType = baslineTypeholder
+            baselineTypeholder.append(baselineType[0])
+        baselineType = baselineTypeholder
     for MassFragmentIndex in range(len(massesToBackgroundCorrect)):#array-indexed for loop
-        if baslineType[MassFragmentIndex] == 'flat': #the different baslineTypes subtract different things
+        if baselineType[MassFragmentIndex] == 'flat': #the different baselineTypes subtract different things
             for measured_masses_counter in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
                 if massesToBackgroundCorrect[MassFragmentIndex] == ExperimentData.mass_fragment_numbers[measured_masses_counter]:#when the index for the mass fragment is obtained
                     try:
@@ -245,7 +245,7 @@ def LinearBaselineCorrectorSemiAutomatic(ExperimentData,baslineType,massesToBack
                        does not appear in the reference data. If this is the case, \
                        remove that mass fragment and rerun the program.")
                        sys.exit()
-        if baslineType[MassFragmentIndex] == 'linear':#other option
+        if baselineType[MassFragmentIndex] == 'linear':#other option
             for measured_masses_counter in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
                 if massesToBackgroundCorrect[MassFragmentIndex] == ExperimentData.mass_fragment_numbers[measured_masses_counter]:#same as above
                     try:
@@ -1197,7 +1197,7 @@ def DataInputPreProcessing(ExperimentData):
         ExperimentData.ExportCollector("SlopeEliminator")
 
     if G.linearBaselineCorrectionSemiAutomatic   == 'yes': #the data edit sheet is used here, to determine to run this function or not
-        LinearBaselineCorrectorSemiAutomatic(ExperimentData, G.baslineType, G.massesToBackgroundCorrect, G.earlyBaselineTimes, G.lateBaselineTimes)
+        LinearBaselineCorrectorSemiAutomatic(ExperimentData, G.baselineType, G.massesToBackgroundCorrect, G.earlyBaselineTimes, G.lateBaselineTimes)
         print('Linear Baseline Correction, Semiautomatic, Complete')
         ExperimentData.ExportCollector("LinearBaselineCorrectorSemiAutomatic")
         
@@ -2613,7 +2613,6 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         # print("right after the function call", molNumIndex, num_remaining_molecules_before_loop,  len(listFor_remaining_num_molecules_during_loop), listFor_remaining_num_molecules_during_loop)
         numMoleculesExcluded = remaining_num_molecules_before_excluding - remaining_num_molecules #note that here remaining_num_molecules is after excluding.
         # print(numMoleculesExcluded,"deleting from loop list in next line", remaining_num_molecules_before_excluding, remaining_num_molecules) #note that here remaining_num_molecules is after excluding.
-        del listFor_remaining_num_molecules_during_loop[molNumIndex:molNumIndex+numMoleculesExcluded] #deleting items from the listFor_remaining_num_molecules_during_loop to compensate for each excluded on. otherwise, the loop will go too many times.
         # print("after the update after function call", molNumIndex, num_remaining_molecules_before_loop,  len(listFor_remaining_num_molecules_during_loop), listFor_remaining_num_molecules_during_loop)
 
         ####The below block of code is just to choose the next molecule to perform SLS on.###
@@ -2700,9 +2699,6 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexForThisSLS),axis = 1)
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,moleculeIndexForThisSLS)
             # print("before del", listFor_remaining_num_molecules_during_loop,  molNumIndex, remaining_molecules_SLS)
-            del listFor_remaining_num_molecules_during_loop[deletionAdjustedIndex] #need to decrease remaining molecules list for loop by one.
-            deletionAdjustedIndex = deletionAdjustedIndex - 1
-            deletionAdjustedIndex = deletionAdjustedIndex + 1
             # print("after del", listFor_remaining_num_molecules_during_loop, molNumIndex, remaining_molecules_SLS)
         
             #Reset these lists to start again.
