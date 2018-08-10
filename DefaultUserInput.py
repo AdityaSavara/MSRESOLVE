@@ -6,7 +6,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
+referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
@@ -206,6 +206,7 @@ SLSUniqueExport = 'SLSUniqueOrder.csv'
 #//Concentration Finder//
 #this last set of inputs is where you enter your conversion factors from raw signal to concentration, unlike most rows, do not leave brackets around chosen numbers
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
+#TODO The use of multiple reference patterns is not upgraded to work with concentrationFinder
 concentrationFinder = 'no'
 molecule = 'Acetaldehyde'
 moleculeSignal = 1.66945
@@ -237,9 +238,9 @@ timeSinceLastCheckpoint = ''
 
 iterationSuffix= ''
 unusedMolecules =''
-oldReferenceFileName = ''
+oldReferenceFileName = []
 oldCollectedFileName ='' 
-nextRefFileName = ''
+nextRefFileName = []
 nextExpFileName = ''
 
 __var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',

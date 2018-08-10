@@ -6,14 +6,14 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
+referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
-referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
-collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
+collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
+exportSuffix = ''
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
-iterativeAnalysis = False
+iterativeAnalysis = True
 #the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
@@ -27,7 +27,7 @@ dataSimulation='yes'
 
 #//Graphing//
 #option allowing you to view a graph of determined concentrations
-grapher = 'no' #yes will graph function no will not
+grapher = 'yes' #yes will graph function no will not
 
 
 #//Time Range//
@@ -128,7 +128,7 @@ referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
 
 #//Reference Pattern Changer // (rpc)
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
-extractReferencePatternFromDataOption = 'no'
+extractReferencePatternFromDataOption = 'yes'
 rpcMoleculesToChange = ['Crotyl Alcohol']
 #rpcTimeRanges and rpcMoleculesToChangeMF are nested lists.  Each nested list corresponds to a molecule in rpcMoleculesToChange
 #To make this easier to visualize, each nested list is placed on its own line so the first line refers to the first molecule, second line refers to the second molecule and so on
@@ -139,7 +139,6 @@ rpcTimeRanges = [
 rpcMoleculesToChangeMF = [
                           [70,57], #For each molecule for using the rpc on, make a new line with a list of masses (length of each should be greater than 1).
                          ]
-
 
 
 #//Reference Mass Fragmentation Threshold//
@@ -177,7 +176,7 @@ polynomialOrder = 1  #During the local smoothing, a linear fit (or polynomial fi
 #To change the threshold at which raw signals are not longer relevant, change below (similar to above function, but for rows instead of columns)
 #These signals get converted into 0.
 #WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
-rawSignalThresholdMethod = 'no'
+rawSignalThresholdMethod = 'yes'
 rawSignalThresholdValue = [.0000001]
 sensitivityThresholdValue = [1] #this is the number in the Reference given, the relative intensity of the signal of the mass fragment
 rawSignalThresholdDivider = []
@@ -193,8 +192,8 @@ negativeAnalyzerYorN = 'no'
 
 #//Data Analysis Methods
 #Below the path for the analysis of the data; sls or inverse
-answer = 'sls'	#'inverse' or 'sls'; sls is suggested
-uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
+answer = 'inverse'	#'inverse' or 'sls'; sls is suggested
+uniqueOrCommon = 'unique'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
@@ -231,8 +230,13 @@ TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 ExportAtEachStep = 'yes'
 generatePercentages = 'no'
 
-__var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
-				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
+checkpoint = ''
+start = ''
+timeSinceLastCheckpoint = ''
+
+
+__var_list__ = ['referenceFileName','form','collectedFileName','iterativeAnalysis','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments', 'moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
 				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',

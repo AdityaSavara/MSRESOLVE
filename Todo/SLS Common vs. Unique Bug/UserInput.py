@@ -6,10 +6,10 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
+referenceFileName = '180710ReferenceFile14thiteration.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
-collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
+collectedFileName = '180710MassSpecSSITKAData.csv'	#enter the file name with raw mass spectrometer data
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
@@ -27,14 +27,14 @@ dataSimulation='yes'
 
 #//Graphing//
 #option allowing you to view a graph of determined concentrations
-grapher = 'no' #yes will graph function no will not
+grapher = 'yes' #yes will graph function no will not
 
 
 #//Time Range//
 #This function limits the data analyzed and proccessed to a certain subset of the total data
 timeRangeLimit = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
-timeRangeStart = 176  #start time (-int)
-timeRangeFinish = 900	#finish time (-int)
+timeRangeStart = 0  #start time (-int)
+timeRangeFinish = 1000	#finish time (-int)
 
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
@@ -43,8 +43,8 @@ chosenMolecules = ['CO', 'CO2', 'H2O']
 
 #//Chosen Mass Fragments//
 #To choose only specific mass fragments from collected data, input below:
-specificMassFragments = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
-chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
+specificMassFragments = 'no'	#if you wish to enable this function enter 'yes' otherwise 'no'
+chosenMassFragments = [49,50,51,52,53,54,55,56,57,58] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
 
 #//Molecule Likelihoods//
 #To specify the percentage chance of detecting a particular molecule. This must be the same length as the number of molecules in the reference file, or have no value.
@@ -144,8 +144,8 @@ rpcMoleculesToChangeMF = [
 
 #//Reference Mass Fragmentation Threshold//
 # if you want to exclude tiny fragmentation peaks
-minimalReferenceValue= 'no'
-referenceValueThreshold = [6.0]
+minimalReferenceValue= 'yes'
+referenceValueThreshold = [4.9]
 
 
 #//Data Threshold Filter//
@@ -195,7 +195,7 @@ negativeAnalyzerYorN = 'no'
 #Below the path for the analysis of the data; sls or inverse
 answer = 'sls'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
-slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
+slsFinish = 'inverse'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
@@ -228,8 +228,19 @@ simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 
 
-ExportAtEachStep = 'yes'
+ExportAtEachStep = 'no'
 generatePercentages = 'no'
+
+checkpoint = ''
+start = ''
+timeSinceLastCheckpoint = ''
+
+iterationSuffix= ''
+unusedMolecules =''
+oldReferenceFileName = ''
+oldCollectedFileName ='' 
+nextRefFileName = ''
+nextExpFileName = ''
 
 __var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
 				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
