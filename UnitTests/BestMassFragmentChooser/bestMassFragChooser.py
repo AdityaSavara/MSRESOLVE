@@ -11,9 +11,31 @@ import UserInput as G
 import itertools
 import copy
 import time
+import bisect
 
+#TODO finish ranking systems to use update or insert. This will keep a list 
+#containing 2 tuples: 1) the mass fragment combinaiton and 2) the values of the
+#Objective functions. The values of the objective functions will contain 3
+#elementss: 1) the number of remaining molecules left from SLS, 2) the negative
+#significance sum and 3) the rough uniqueness value. After the loop though SLS,
+#the mass fragments will be sorted by objective values in an ascending order.
+#The value to insert tuple will contian the mass fragment and the objective
+#functions tuple.
 
-
+def updateOrInsert(storeInObjectiveFunctionValuesList, valueToInsertTuple):
+    #If the mass fragment combination is not already present in the list insert
+    #it
+    if valueToInsertTuple[0] not in storeInObjectiveFunctionValuesList[:][0]:
+        storeInObjectiveFunctionValuesList=bisect.insort(storeInObjectiveFunctionValuesList,valueToInsertTuple)
+    else: #If the mass fragment combinaiton is already in the list
+        #Loop throught the storedInObjectiveFunctionValuesList to determine where
+        #The mass fragment combination was
+        for storeInObjectiveFunctionValuesIndex, storedInObjectiveFunctionValues in enumerate(storeInObjectiveFunctionValuesList):
+            #If the mass fragment combinaiton was in the list, set the
+            if valueToInsertTuple[1]==storedInObjectiveFunctionValues[1]:
+                storeInObjectiveFunctionValuesList[storeInObjectiveFunctionValuesIndex]=valueToInsertTuple
+                
+                
 #The best mass frag chooser, uses reference patterns for selected molecules to
 #deteremine which mass fragements would be the best to monitor in order to 
 #correctly identify the composition and concentration of the chosen molecules
@@ -202,7 +224,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
                 #was stored in the top mass fragment combinaitons of the 
                 #significance factor check
                 if valueStoredInSFTopList: valueStoredInTopList=True
-
+            
             #Need to only use the fabricated data of the current mass fragments.
             #This just sets reference data intensites for non-current mass
             #fragments to zero. Truncation of these zero rows is not 
@@ -228,7 +250,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
                 #This if statement is not included in the pseudocode. It was split into two parts in the pseudocode, but can be combinded into one to avoid funcitonalizing run SLS
                 #Case 3 is represented by the first half of the if statement and case 1 is represented by the second portion
                 if (keep_N_ValuesInRoughUniquenessCheck==False and keep_N_ValuesInSignificanceFactorCheck==False) or valueStoredInTopList:
-
+                    
                #Loop through the the first value in the fabricatedAbscissa. Only the first row of the first abscissa value is of interest sice the second row is just a duplicate.
                #There is no need to run through the duplicate. The loop form is kept only for consistency with the actual running of the SLS method in MSRESOLVE and for the 
                #needed arguments of the SLS method.
