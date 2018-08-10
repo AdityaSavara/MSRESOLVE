@@ -338,15 +338,16 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
                   
     end=time.time()
     #The time is kept for printing purposes
-    totalTime=end-start    
+    totalTime=end-start
+#If there is a solvable set of mass fragments, a reference data set containing only the best mass fragment combination and the selected molecules will be exported. 
     if len(topBestMassFragments)!=0:
         sourceHeader=numpy.append('Source:',truncatedReferenceData.sourceInfo)
         moleculesHeader=numpy.append('Molecules',truncatedReferenceData.molecules)
         electronHeader=numpy.append('Electron Numbers',truncatedReferenceData.electronnumbers)
         massHeader=numpy.append('Molecular Mass', truncatedReferenceData.molecularWeights)
-        
+        #The header will be stacked before saving the data array. In order to get the multiple headers present, an array will be used to contain all of the information to allow for stacking.
         fullHeaderArray=numpy.array([sourceHeader,moleculesHeader,electronHeader,massHeader])
-    
+    	#In order to export the proper header using the stacking, the abscissa header is set as blank so it doesn't cause anything to be written where the full header should go.
         MSRESOLVE.ExportXYYYData('bestMassFragReference.csv', bestMassFragReference,fullHeaderArray, abscissaHeader='')    
     else:
         print('There are no SLS Solvable mass fragment combinations')
