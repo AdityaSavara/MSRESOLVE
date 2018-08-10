@@ -29,11 +29,11 @@ def passesRowsSumChecks(rowSumsList, massFragCombination, allOverlappingPatterns
     passesRowsSumChecks=True#Initialize return variable as true
     if all(rowSum==numberOfMassFragments for rowSum in rowSumsList): #Check if the array passed to it is full. If it is full, it appends to the allOverlapping patterns list
         allOverlappingPatterns.append(massFragCombination)###May be an error with the use of allOverlapping patterns
+        print(allOverlappingPatterns)
         passesRowsSumChecks=False
     elif 0 in rowSumsList: #Check if any row is entirely full of zeros
         passesRowsSumChecks=False
-    return passesRowsSumChecks #Return true if the rowsSumsList passes the check
-
+    return passesRowsSumChecks, allOverlappingPatterns #Return true if the rowsSumsList passes the check
 #The function maintains two lists: 1)that contains the objective function values that 
 #need to be kept in a sorted order 2) a parallel list where a value needs to be inserted 
 #according to the sorting of the first one. It also takes in an integer value,N, that limits 
@@ -2942,7 +2942,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
 #this function simply calls the other functions to be used, based on the user input pathway, that means that this
 #function can send the sls to unique or common fragments, to inverse or brute method after, and sends the data back 
 #and forth between the unique and common fragments for the common fragments method
-def SLSMethod(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline,timeIndex,conversionfactor,datafromcsv,molecules_copy,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,bruteOption,time,maxPermutations=100001):
+def SLSMethod(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline,timeIndex,conversionfactor,datafromcsv,molecules_copy,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,bruteOption,time,maxPermutations=100001, bestMassFragChooser=False):
     # This is creating a local copy of the monitored_reference_intensities which will become
     # truncated as the molecules are solved and masses are removed
     remaining_reference_intensities_SLS = copy.deepcopy(monitored_reference_intensities)
@@ -3060,7 +3060,9 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                     usedmolecules = common[0][2]
     else: # throw error because uniqueOrCommon is not set properly
         raise ValueError("The value of 'uniqueOrCommon' is {}, it should be either 'common' or 'unique'".format(uniqueOrCommon)) 
-        
+    
+    if bestMassFragChooser: return remaining_molecules_SLS
+    
     #if the sls method does not solve for all the molecules, then the rest are sent to the inverse method 
     #where the remaining matrix is solved
     if remaining_correction_factors_SLS.size != 0:#if everything hasn't already been solved
