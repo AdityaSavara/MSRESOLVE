@@ -2714,6 +2714,9 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                     for x in range(len(usedmolecules)):
                         f.write('%s,' %usedmolecules[x])
                     f.write("UsedMolecules \n")
+                    
+                with open("SLSUniqueMassFragments.csv", 'a') as f:
+                    f.write(str(list(usedmolecules)) + "\n")
         
     if remaining_correction_factors_SLS.size > 0:#if there are correction values left (i.e. not all the solutions have been found)
         #this for loop is used to delete any rows entirely composed of zeros, since the molecules percentages are found
@@ -3472,6 +3475,9 @@ def createSLSUniqueOrderFile(abscissaHeader, molecules):
         for molecule in molecules:
             fp.write(",{}".format(molecule))
         fp.write('\n')
+    
+    with open("SLSUniqueMassFragments.csv", 'w') as f:
+        f.write(str(list(ExperimentData.mass_fragment_numbers)) + "\n")
 
 '''
 This function takes in the end result of everything and exports it to the 
