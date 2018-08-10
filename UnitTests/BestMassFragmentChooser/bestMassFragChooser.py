@@ -242,8 +242,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
                         #variable set to True will return the unsolved 
                         #molecules
                         SLSReturnRemainingMolecules=MSRESOLVE.SLSMethod(truncatedReferenceData.molecules,currentFragReferencePatternTruncated[:,1:],correctionValuescurrentTruncated,rawsignalsarrayline,timeIndex,[],[],truncatedReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,massFragCombination,G.permutationNum,[],G.bruteOption,fabricatedAbscissa[timeIndex],maxPermutations=100001,bestMassFragChooser=True)
-                        print(massFragCombination)
-                        print(SLSReturnRemainingMolecules)
+
                         #If there is no unsolved molecules, append this combinaiton to the list of top best mass fragments.
                         #If order to prevent the storage of a large amount of combinations, only an N number of fragments are stored.
                         #N is set from the finalNumberOfCombinationsToKeep user specified variable. The N number are stored based on
@@ -305,8 +304,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
                 #variable set to True will return the unsolved 
                 #molecules
                 SLSReturnRemainingMolecules=MSRESOLVE.SLSMethod(truncatedReferenceData.molecules,currentFragReferencePatternTruncated[:,1:],correctionValuescurrentTruncated,rawsignalsarrayline,timeIndex,[],[],truncatedReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,massFragCombination,G.permutationNum,[],G.bruteOption,fabricatedAbscissa[timeIndex],maxPermutations=100001,bestMassFragChooser=True)
-                print(massFragCombination)
-                print(SLSReturnRemainingMolecules)
+
                 #If there is no unsolved molecules, append this combinaiton to the list of top best mass fragments.
                 #If order to prevent the storage of a large amount of combinations, only an N number of fragments are stored.
                 #N is set from the finalNumberOfCombinationsToKeep user specified variable. The N number are stored based on
