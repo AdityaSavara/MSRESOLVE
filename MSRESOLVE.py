@@ -2716,7 +2716,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                     f.write("UsedMolecules \n")
                     
                 with open("SLSUniqueMassFragments.csv", 'a') as f:
-                    f.write(str(list(usedmolecules)) + "\n")
+                    f.write(str(list(used_mass_fragments)) + "\n")
         
     if remaining_correction_factors_SLS.size > 0:#if there are correction values left (i.e. not all the solutions have been found)
         #this for loop is used to delete any rows entirely composed of zeros, since the molecules percentages are found
