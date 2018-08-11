@@ -29,7 +29,8 @@ def passesRowsSumChecks(rowSumsList, massFragCombination, allOverlappingPatterns
     passesRowsSumChecks=True#Initialize return variable as true
     if all(rowSum==numberOfMassFragments for rowSum in rowSumsList): #Check if the array passed to it is full. If it is full, it appends to the allOverlapping patterns list
         allOverlappingPatterns.append(massFragCombination)###May be an error with the use of allOverlapping patterns
-        print(allOverlappingPatterns)
+        #FIXME: #TODO: should be printed to a file.
+	print(allOverlappingPatterns)
         passesRowsSumChecks=False
     elif 0 in rowSumsList: #Check if any row is entirely full of zeros
         passesRowsSumChecks=False
