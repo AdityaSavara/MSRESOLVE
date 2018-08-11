@@ -679,11 +679,8 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     #remove any zero rows that may have been created
     trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
-    #update the mass fragment list from the posibly shortened reference spectrums
-    trimmedRefererenceData.mass_fragment_numbers_monitored = trimmedRefererenceData.provided_mass_fragments
     
-    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)
-    
+    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)    
     return trimmedRefererenceData
     
 '''
