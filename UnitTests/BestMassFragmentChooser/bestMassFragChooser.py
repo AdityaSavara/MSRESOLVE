@@ -83,8 +83,8 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     # standardize the reference data columns such that the maximum value is 
     #100 and everything else is linearly scaled according that the maximum 
     #value scaling
-    ReferenceData.standardized_reference_intensities=MSRESOLVE.StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
-    ReferenceData.standardized_reference_intensities = MSRESOLVE.CorrectionValueCorrector(ReferenceData.standardized_reference_intensities, G.referenceCorrectionCoefficients,
+    ReferenceData.standardized_reference_patterns=MSRESOLVE.StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
+    ReferenceData.standardized_reference_patterns = MSRESOLVE.CorrectionValueCorrector(ReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
                                                G.referenceLiteratureFileName, G.referenceMeasuredFileName,
                                                G.measuredReferenceYorN)
     #make a copy of the original molecules so the ReferenceData object is not 
@@ -93,29 +93,29 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     truncatedReferenceData=copy.deepcopy(ReferenceData)
     
     #Any slicing with the standardized reference intensities (i.e. 
-    #standardized_reference_intensities[:,1:]) occurs because the mass fragments
+    #standardized_reference_patterns[:,1:]) occurs because the mass fragments
     #are contained in the array. This differs from the typical syntax through
     #MSRESOLVE as the intensities usually don't include the mass fragments. It 
     #is kept this way because the correction value calculator looks for the 
-    #standardized_reference_intensities but also requires the mass fragments.
+    #standardized_reference_patterns but also requires the mass fragments.
     #I will add this as a TODO to the correction value calculator.
     
     #Remove the molecules that aren't specified by the user from all object
     #variables.
-    truncatedReferenceData.standardized_reference_intensities,truncatedReferenceData.molecules=DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.standardized_reference_intensities[:,1:], ReferenceData.molecules, moleculesToMonitor)
+    truncatedReferenceData.standardized_reference_patterns,truncatedReferenceData.molecules=DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.standardized_reference_patterns[:,1:], ReferenceData.molecules, moleculesToMonitor)
     truncatedReferenceData.electronnumbers=DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers,ReferenceData.molecules,moleculesToMonitor, Array1D=True)[0]
     truncatedReferenceData.molecularWeights=DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.molecularWeights ,ReferenceData.molecules,moleculesToMonitor, Array1D=True)[0]
     truncatedReferenceData.sourceInfo=DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.sourceInfo ,ReferenceData.molecules,moleculesToMonitor, Array1D=True)[0]
 
     #Make sure that the mass frag number remains in the array of data by reinserting it
-    truncatedReferenceData.standardized_reference_intensities=numpy.insert(truncatedReferenceData.standardized_reference_intensities,0, ReferenceData.provided_mass_fragments,axis=1)
+    truncatedReferenceData.standardized_reference_patterns=numpy.insert(truncatedReferenceData.standardized_reference_patterns,0, ReferenceData.provided_mass_fragments,axis=1)
     
     #Removing entire rows of data for mass fragments with all reference
     #inntensities below the threshold.
-    truncatedReferenceData.standardized_reference_intensities=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(truncatedReferenceData.standardized_reference_intensities,startingRowIndex=1,threshold=referenceIntensityThreshold)
-    truncatedReferenceData.provided_mass_fragments=truncatedReferenceData.standardized_reference_intensities[:,0]
+    truncatedReferenceData.standardized_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(truncatedReferenceData.standardized_reference_patterns,startingRowIndex=1,threshold=referenceIntensityThreshold)
+    truncatedReferenceData.provided_mass_fragments=truncatedReferenceData.standardized_reference_patterns[:,0]
     #Set all values below the threshold to zero
-    truncatedReferenceData.standardized_reference_intensities[truncatedReferenceData.standardized_reference_intensities<referenceIntensityThreshold]=0
+    truncatedReferenceData.standardized_reference_patterns[truncatedReferenceData.standardized_reference_patterns<referenceIntensityThreshold]=0
     
     #Create the correction values to be used in the SLS method
     truncatedReferenceData.correction_values = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData)
@@ -134,7 +134,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
         
     #Fabricate a data for a single abscissa value based on the probability of 
     #each molecule being present and the reference intensities.
-    fabricatedDataTemp=numpy.dot(truncatedReferenceData.standardized_reference_intensities[:,1:], reorderedMoleculesLikelihood)
+    fabricatedDataTemp=numpy.dot(truncatedReferenceData.standardized_reference_patterns[:,1:], reorderedMoleculesLikelihood)
     
     #For SLS to work properly, the data cannot be a 1-D array. A duplicte row 
     #is used to prevent any problems
@@ -148,7 +148,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     #The parallel reference data array is made to represent the locations of 
     #any data and zeros. A zero is in the location of zeros in the reference
     #data. 1s represent the location of any non-zero value
-    truncatedReferenceDataas1sand0s=(truncatedReferenceData.standardized_reference_intensities!=0)/1.0
+    truncatedReferenceDataas1sand0s=(truncatedReferenceData.standardized_reference_patterns!=0)/1.0
 
     #A parallel array to the mass fragment numbers monitored is initialized as 
     #zeros. This array is altered during the loop through all possible mass 
@@ -190,7 +190,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
         #currentMassFragmentsas1sand0s in order to only keep the data that is
         #representative of the current mass fragments.
         currentRefDataas1sand0s=numpy.multiply(truncatedReferenceDataas1sand0s.T,currentMassFragmentsas1sand0s).T
-        currentFragReferencePattern=numpy.multiply(truncatedReferenceData.standardized_reference_intensities.T,currentMassFragmentsas1sand0s).T
+        currentFragReferencePattern=numpy.multiply(truncatedReferenceData.standardized_reference_patterns.T,currentMassFragmentsas1sand0s).T
 
         #Sums are taken across each molecule to make checks and additional 
         #caluculations more effecient. The axis=0 argument in the sum funciton
@@ -301,7 +301,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
             #For SLS to funciton properly, the rows of non-current mass 
             #fragments must be removed from the correction values and the 
             #current reference.
-            currentFragReferencePattern=numpy.multiply(truncatedReferenceData.standardized_reference_intensities.T,currentMassFragmentsas1sand0s).T
+            currentFragReferencePattern=numpy.multiply(truncatedReferenceData.standardized_reference_patterns.T,currentMassFragmentsas1sand0s).T
             currentFragReferencePatternTruncated=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(currentFragReferencePattern)
             
             #This just sets reference data intensites for non-current mass
