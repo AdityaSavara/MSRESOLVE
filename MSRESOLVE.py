@@ -670,20 +670,17 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     #Add the abscissa back into the reference values
     trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
-    #Shorten the electronnumbers to the correct values, using the full copy of molecules 
-
+    #Shorten the electronnumbers to the correct values, using the full copy of molecules. Do the same for molecularWeights and sourceInfo
     trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True)	    
-    #put the trimmed molecules list into the trimmedRefererenceData object.	   
-
+    trimmedRefererenceData.molecularWeights, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.molecularWeights, allMoleculesList, chosenMolecules, Array1D = True)	    
+    trimmedRefererenceData.sourceInfo, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.sourceInfo, allMoleculesList, chosenMolecules, Array1D = True)	    
+    
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
     #remove any zero rows that may have been created
     trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
-    #update the mass fragment list from the posibly shortened reference spectrums
-    trimmedRefererenceData.mass_fragment_numbers_monitored = trimmedRefererenceData.provided_mass_fragments
     
-    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)
-    
+    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)    
     return trimmedRefererenceData
     
 '''
@@ -730,26 +727,26 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
 #Then it gets the sum of each molecules frag pattern and uses all these values to get each moleule's correction value via the
 #system created by Madix and Ko and puts this in an answers array
 def CorrectionValuesObtain(ReferenceData):
-    reference_width = len(ReferenceData.standardized_reference_intensities[0,:]) 
-    reference_height = len(ReferenceData.standardized_reference_intensities[:,0]) 
+    reference_width = len(ReferenceData.standardized_reference_patterns[0,:]) 
+    reference_height = len(ReferenceData.standardized_reference_patterns[:,0]) 
     correction_values = numpy.zeros([1,reference_height])
     #the first for loop here gets all of the values for e- and mw and uses them to get the
     #respective values that can find the correction factor for each mass fragment of each molecule
     for column_counter in range(1,reference_width): #array-indexed for loop, skips column one b/c that is the mass fragment numbers, not relative intensities
         ionization_efficiency = (0.6*ReferenceData.electronnumbers[column_counter-1]/14)+0.4
         answer_array_row = []
-        quotients = numpy.zeros(len(ReferenceData.standardized_reference_intensities[:,0]))
+        quotients = numpy.zeros(len(ReferenceData.standardized_reference_patterns[:,0]))
         #This first loop goes through the row and gets all of the mass fragment's Tms and Gms
         #and then uses those along with the relative intensity of the mass fragment itself to
         #calculate the sum of each column's Fm/(Gm*Tm)
         for row_counter in range(0,reference_height):  #array-indexed for loop
-            fragmentmass = ReferenceData.standardized_reference_intensities[row_counter,column_counter] 
+            fragmentmass = ReferenceData.standardized_reference_patterns[row_counter,column_counter] 
             if fragmentmass != 0: #only gets the Gm and Tm if relative intensity is not equal to zero
-                electron_multiplier_gain = (28/ReferenceData.standardized_reference_intensities[row_counter,0])**0.5 
-                if (ReferenceData.standardized_reference_intensities[row_counter,0] < 30): #transmission gain depends on the mass fragment mass
+                electron_multiplier_gain = (28/ReferenceData.standardized_reference_patterns[row_counter,0])**0.5 
+                if (ReferenceData.standardized_reference_patterns[row_counter,0] < 30): #transmission gain depends on the mass fragment mass
                     transmission_gain = 1
                 else:
-                    transmission_gain = 10**((30-ReferenceData.standardized_reference_intensities[row_counter,0])/155)
+                    transmission_gain = 10**((30-ReferenceData.standardized_reference_patterns[row_counter,0])/155)
                 quotient = fragmentmass/(transmission_gain*electron_multiplier_gain)
                 quotients[row_counter] = quotient
                 a = sum(quotients)
@@ -758,9 +755,9 @@ def CorrectionValuesObtain(ReferenceData):
         #value by dividing the sum by that relative intensity and ionization efficiency for the 
         #molecule, then creating an correction_values of correction values
         for row_counter in range(0,reference_height):#array-indexed for loop, there is a second loop for each column, because the first only gets the sum of (Fm)/(Gm*Tm)
-            fragmentmass = ReferenceData.standardized_reference_intensities[row_counter,column_counter] 
+            fragmentmass = ReferenceData.standardized_reference_patterns[row_counter,column_counter] 
             if fragmentmass != 0: #once again, if the relative intensity is zero, then the correction value will be zero as well, this is done by the else statement
-                fragmentmass = ReferenceData.standardized_reference_intensities[row_counter,column_counter]
+                fragmentmass = ReferenceData.standardized_reference_patterns[row_counter,column_counter]
                 correction = a/(ionization_efficiency*fragmentmass)
                 answer_array_row.append(correction)
             else: 
@@ -780,8 +777,8 @@ def CorrectionValuesObtain(ReferenceData):
 #to create all the combinations of row and thereby creating all the possible answer arrays for the data given
 #need these indexes for later
 def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
-    ReferenceData.referenceabscissa = ReferenceData.standardized_reference_intensities[:,0]
-    referenceDataArray = ReferenceData.standardized_reference_intensities[:,1:]
+    ReferenceData.referenceabscissa = ReferenceData.standardized_reference_patterns[:,0]
+    referenceDataArray = ReferenceData.standardized_reference_patterns[:,1:]
     correction_values = numpy.array(list(zip(*ReferenceData.correction_values)))
     #This function has inputs that are very general so that it could be easily understood and used in various 
     #circumstances, the function first gets the size of the data array and then uses that to index the loops
@@ -1049,19 +1046,19 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
 
     # standardize the reference data columns such that the maximum value is 100 and everything else is
     # linearly scaled according that the maximum value scaling
-    ReferenceData.standardized_reference_intensities=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
+    ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizeReferencePattern')
     
     #Only print if not called from interpolating reference objects
     if verbose:
         print('beginning CorrectionValueCorrector')
-    ReferenceData.standardized_reference_intensities = CorrectionValueCorrector(ReferenceData.standardized_reference_intensities, G.referenceCorrectionCoefficients,
+    ReferenceData.standardized_reference_patterns = CorrectionValueCorrector(ReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
                                                        G.referenceLiteratureFileName, G.referenceMeasuredFileName,
                                                        G.measuredReferenceYorN)
     ReferenceData.ExportCollector('CorrectionValueCorrector')
     
     if G.minimalReferenceValue == 'yes':
-        ReferenceData.standardized_reference_intensities = ReferenceThreshold(ReferenceData.standardized_reference_intensities,G.referenceValueThreshold)
+        ReferenceData.standardized_reference_patterns = ReferenceThreshold(ReferenceData.standardized_reference_patterns,G.referenceValueThreshold)
         ReferenceData.ExportCollector('ReferenceThreshold')
     
     ReferenceData.correction_values = CorrectionValuesObtain(ReferenceData)
@@ -1126,10 +1123,10 @@ def InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,time
     newReferenceObject = copy.deepcopy(firstReferenceObject)
     
     #loop through the provided reference intensities and linearly interpolate row by row
-    for i in range(len(firstReferenceObject.standardized_reference_intensities)):
-        #Overwrite provided_reference_patterns by interpolating the standardized_reference_intensities
+    for i in range(len(firstReferenceObject.standardized_reference_patterns)):
+        #Overwrite provided_reference_patterns by interpolating the standardized_reference_patterns
         #[i,:] for every column in the ith row
-        newReferenceObject.provided_reference_patterns[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.standardized_reference_intensities[i,:],secondReferenceObject.standardized_reference_intensities[i,:],time,gapStart,gapEnd)
+        newReferenceObject.provided_reference_patterns[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.standardized_reference_patterns[i,:],secondReferenceObject.standardized_reference_patterns[i,:],time,gapStart,gapEnd)
     return newReferenceObject
 
 '''
@@ -1262,7 +1259,7 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
     # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
     ## TODO: Consider changing this function to take the array directly i.e.
     ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
-    ## like ReferenceData.standardized_reference_intensities
+    ## like ReferenceData.standardized_reference_patterns
     ReferenceData = UnnecessaryMoleculesDeleter(ReferenceData)
     ReferenceData.ExportCollector('UnnecessaryMoleculesDeleter')
     
@@ -1883,7 +1880,7 @@ class MSReference (object):
             elif callingFunction == 'UnnecessaryMoleculesDeleter':
                 self.dataToExport.append(self.monitored_reference_intensities.copy())
             elif not use_provided_reference_patterns:
-                self.dataToExport.append(self.standardized_reference_intensities.copy())
+                self.dataToExport.append(self.standardized_reference_patterns.copy())
             
     def ExportFragmentationPatterns(self, verbose=True):
         #Only print if not called from interpolating reference objects
