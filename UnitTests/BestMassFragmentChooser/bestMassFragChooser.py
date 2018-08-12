@@ -44,7 +44,7 @@ def updateOrInsert(storeInObjectiveFunctionValuesList, valueToInsertTuple):
 #of mamss fragments will result in a solution via SLS. It will return the N 
 #most significant possible combinaitons (if any). Currently, the feature 
 #does not work with SLS common due to errors in SLS common.
-def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor, referenceFileName, referenceForm,referenceIntensityThreshold=5, onTheFlySLS=False, keep_N_ValuesInRoughUniquenessCheck=1000, keep_N_ValuesInSignificanceFactorCheck=1000, finalNumberOfCombinationsToKeep=10):
+def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor, referenceFileName, referenceForm,significantPeakThreshold=5, onTheFlySLS=False, keep_N_ValuesInRoughUniquenessCheck=1000, keep_N_ValuesInSignificanceFactorCheck=1000, finalNumberOfCombinationsToKeep=10):
     
     #Initialize a timer
     start=time.time()
@@ -79,46 +79,42 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=MSRESOLVE.readReferenceFile(referenceFileName, referenceForm)
     ReferenceData = MSRESOLVE.MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)
 
+    truncatedReferenceData=copy.deepcopy(ReferenceData)
+    
+    #Truncate the data so that it matches the molecules chosen for consideration. #TODO: should probably change moleculesToMonitor to be G.chosenMolecules
+    
+    truncatedReferenceData = MSRESOLVE.trimDataMoleculesToMatchChosenMolecules(truncatedReferenceData, moleculesToMonitor)
 
+    
     # standardize the reference data columns such that the maximum value is 
     #100 and everything else is linearly scaled according that the maximum 
     #value scaling
-    ReferenceData.standardized_reference_patterns=MSRESOLVE.StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
-    ReferenceData.standardized_reference_patterns = MSRESOLVE.CorrectionValueCorrector(ReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
+    truncatedReferenceData.standardized_reference_patterns=MSRESOLVE.StandardizeReferencePattern(truncatedReferenceData.provided_reference_patterns,len(truncatedReferenceData.molecules))
+    truncatedReferenceData.standardized_reference_patterns = MSRESOLVE.CorrectionValueCorrector(truncatedReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
                                                G.referenceLiteratureFileName, G.referenceMeasuredFileName,
-                                               G.measuredReferenceYorN)
-    #make a copy of the original molecules so the ReferenceData object is not 
-    #altered. This is trucated because both molecules and mass fragments are
-    #removed.
-    truncatedReferenceData=copy.deepcopy(ReferenceData)
-    
-    #Any slicing with the standardized reference intensities (i.e. 
-    #standardized_reference_patterns[:,1:]) occurs because the mass fragments
-    #are contained in the array. This differs from the typical syntax through
-    #MSRESOLVE as the intensities usually don't include the mass fragments. It 
-    #is kept this way because the correction value calculator looks for the 
-    #standardized_reference_patterns but also requires the mass fragments.
-    #I will add this as a TODO to the correction value calculator.
-    
-    #Remove the molecules that aren't specified by the user from all object
-    #variables.
-    truncatedReferenceData.standardized_reference_patterns,truncatedReferenceData.molecules=DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.standardized_reference_patterns[:,1:], ReferenceData.molecules, moleculesToMonitor)
-    truncatedReferenceData.electronnumbers=DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.electronnumbers,ReferenceData.molecules,moleculesToMonitor, Array1D=True)[0]
-    truncatedReferenceData.molecularWeights=DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.molecularWeights ,ReferenceData.molecules,moleculesToMonitor, Array1D=True)[0]
-    truncatedReferenceData.sourceInfo=DataFunctions.KeepOnlySelectedYYYYColumns(ReferenceData.sourceInfo ,ReferenceData.molecules,moleculesToMonitor, Array1D=True)[0]
-
-    #Make sure that the mass frag number remains in the array of data by reinserting it
-    truncatedReferenceData.standardized_reference_patterns=numpy.insert(truncatedReferenceData.standardized_reference_patterns,0, ReferenceData.provided_mass_fragments,axis=1)
+                                               G.measuredReferenceYorN)  
     
     #Removing entire rows of data for mass fragments with all reference
-    #inntensities below the threshold.
-    truncatedReferenceData.standardized_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(truncatedReferenceData.standardized_reference_patterns,startingRowIndex=1,threshold=referenceIntensityThreshold)
+    #intensities below the threshold.
+    truncatedReferenceData.standardized_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(truncatedReferenceData.standardized_reference_patterns,startingRowIndex=1,threshold=significantPeakThreshold)
+
+    #we need to repopulate the mass fragments since we're removing columns/rows.
     truncatedReferenceData.provided_mass_fragments=truncatedReferenceData.standardized_reference_patterns[:,0]
-    #Set all values below the threshold to zero
-    truncatedReferenceData.standardized_reference_patterns[truncatedReferenceData.standardized_reference_patterns<referenceIntensityThreshold]=0
     
+    #Set all values below the significance threshold to zero (This is in case one molecule had a value that was bigger, while another molecule didn't. Since we want an array with only the significant values, we're removing the rest.
+    #First create a new array, then do the filtering. The threshold filtering line has =0 at the end.  the syntax is a bit strange, but it works.
+    truncatedReferenceData.standardized_reference_patterns_thresholdFiltered = truncatedReferenceData.standardized_reference_patterns*1.0 #lazy copy. 
+    truncatedReferenceData.standardized_reference_patterns_thresholdFiltered[truncatedReferenceData.standardized_reference_patterns_thresholdFiltered<significantPeakThreshold]=0
+       
+    #FIXME: Currently the rest of the code uses truncatedReferenceData.standardized_reference_patterns, so now we're going to set it equal to do that before the correction values.
+    #it seems like this is not the correct order to do things, since now the correction values are distorted. But correctionValues obtain uses the data objects inside the Reference object.
+    # so until someone thinks further about the algorithm, it might have to stay this way.
+    truncatedReferenceData.standardized_reference_patterns = truncatedReferenceData.standardized_reference_patterns_thresholdFiltered
+  
+    truncatedReferenceData.correction_values = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData) 
     #Create the correction values to be used in the SLS method
     truncatedReferenceData.correction_values = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData)
+
     
     #Need to reorder the list of molecular likelihoods so they match the class
     #molecules object. In order to reorder the molecular likelihoods, a 
