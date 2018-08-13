@@ -2481,20 +2481,25 @@ def BruteForce(molecules,specifications,matching_correction_values,rawsignalsarr
 
     return answers
 
-def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS):   
+def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited):   
     #initialize a variable for moleculeIndex before the loop across all molecules.
     # print("in the function start", remaining_num_molecules)
+    monitored_reference_intensities = remaining_reference_intensities_SLS*1.0
     moleculeIndexIncludingDeletions = 0
     for moleculeIndex in range(remaining_num_molecules):#array-indexed for loop. Ideally, we'll do SLS once for each molecule.
         referenceIntensitiesForThisMolecule = monitored_reference_intensities[:,moleculeIndex]  #Note that this must be monitored_reference_intensities, so it has same indexing as moleculeIndex even while remaining_reference_intensities_SLS gets shortened.
         #print(referenceIntensitiesForThisMolecule, "Molecule's Ref. Intensities")
         if sum(referenceIntensitiesForThisMolecule) == 0.0:
+            #Find the name of the molecule getting deleted.
+            nameOfThisMolecule = remaining_molecules_SLS[moleculeIndexIncludingDeletions]
+            #Find the index of where that molecule was originally, to update usedmolecules accordingly, and also solutions accordingly.
+            originalMolecularIndex = list(molecules_unedited).index(nameOfThisMolecule)
             #print("the above one got this molecule removed, index!", moleculeIndexIncludingDeletions)
             #this is setting concentration to 0 for that molecule, in this iteration.
-            solutions[moleculeIndex] = 0.0  #note that we use the actual moleculeIndex here.
+            solutions[originalMolecularIndex] = 0.0  #note that we use the actual moleculeIndex here.
             #No need to subtract any signals
             #update the used molecules list, and amounts remaining for other things.
-            usedmolecules[moleculeIndex] = 1 #note that we use the actual moleculeIndex here. 
+            usedmolecules[originalMolecularIndex] = 1 #note that we use the actual moleculeIndex here. 
             remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,(moleculeIndexIncludingDeletions),axis = 1)
             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexIncludingDeletions),axis = 1)
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
@@ -2502,8 +2507,11 @@ def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, mon
             moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions - 1 
         #increase the index no matter what, to go to next part of loop.
         moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions + 1
-    # print("in the function end", remaining_num_molecules)
-    return remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS
+    #connect to return variables after the loop:
+    remaining_correction_factors_SLS_after_exclusion = remaining_correction_factors_SLS
+    remaining_reference_intensities_SLS_after_exclusion = remaining_reference_intensities_SLS
+    remaining_molecules_SLS_after_exclusion = remaining_molecules_SLS
+    return remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS_after_exclusion, remaining_reference_intensities_SLS_after_exclusion, remaining_molecules_SLS_after_exclusion
     
 #this function is a path is sequential linear subtraction, which can be used alongside the inverse
 #method or as opposed to it. Either way, it only produces one set of values, so it has no need for the 
@@ -2593,7 +2601,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             slsReferenceDataObject.molecules = remaining_molecules_SLS
             slsReferenceDataObject = signalThresholdFilter(slsReferenceDataObject, remaining_rawsignals_SLS, ExperimentData, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
             #after done, update local variables from the object that has now been changed.
-            remaining_reference_intensities_SLS = slsReferenceDataObject.monitored_reference_intensities
+            remaining_reference_intensities_SLS = slsReferenceDataObject.monitored_reference_intensities *1.0 #This one will get further shortened inside the loop.
             remaining_correction_factors_SLS = slsReferenceDataObject.matching_correction_values
             remaining_molecules_SLS = slsReferenceDataObject.molecules #should not have changed, since it just adds zeroes to patterns without removing molecules.
             #now we exclude (remove) molecules with no signals left in their reference patterns on any of the remaining mass fragments, which can happen due to the rawThresholdFilter.
@@ -2602,7 +2610,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, \
                                             remaining_molecules_SLS = excludeEmptyMolecules(remaining_num_molecules, solutions,  \
                                             usedmolecules, monitored_reference_intensities, remaining_correction_factors_SLS, \
-                                            remaining_reference_intensities_SLS, remaining_molecules_SLS)  
+                                            remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited)  
             numMoleculesExcluded = remaining_num_molecules_before_excluding - remaining_num_molecules #note that here remaining_num_molecules is after excluding.
 
             if numMoleculesExcluded > 0:#reset this variable.            
@@ -2710,6 +2718,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             # print("before del", listFor_remaining_num_molecules_during_loop,  molNumIndex, remaining_molecules_SLS)
             # print("after del", listFor_remaining_num_molecules_during_loop, molNumIndex, remaining_molecules_SLS)
         
+            #update this variable:
+            remaining_num_molecules = remaining_num_molecules -1
             #Reset these lists to start again.
             nonZeroCorrectionValuesList = []
             signalsCorrespondingToNonZeroCorrectionValuesList = []
