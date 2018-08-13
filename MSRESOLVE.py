@@ -2581,16 +2581,12 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     
         remaining_num_MassFragments = len(remaining_correction_factors_SLS[:,0])
         remaining_num_molecules = len(remaining_correction_factors_SLS[0,:])
-        # print("top of loop", molNumIndex, remaining_num_molecules )
-        # print(len(remaining_correction_factors_SLS))
-        # print(remaining_correction_factors_SLS)
-        # print(remaining_correction_factors_SLS[:,0])
-        # print(len(remaining_correction_factors_SLS[:,0]))
-
-        #TODO: add a call the rawSignalThresholdFilter right over here. That way such filtering can occur even during SLS. Then make a unit test comparing that to iterative, where thershold filtering would happen between iterations.
-        #It's now been added, but has to be ensured to be working. I am temporarily putting the word "experimental" here until I have checked.
         #FIXME: need to remove the globals here, including currentReferenceData.  these need to be passed in as arguments.
-        if G.excludeMoleculesIfSignificantFragmentNotObserved == 'experimental':
+        
+        if G.excludeMoleculesIfSignificantFragmentNotObserved == 'yes':
+            numMoleculesExcluded = 0#reset this variable.
+            remaining_num_molecules_before_excluding  = remaining_num_molecules #keep track of this variable.
+            
             slsReferenceDataObject = copy.deepcopy(currentReferenceData)
             slsReferenceDataObject.monitored_reference_intensities = remaining_reference_intensities_SLS
             slsReferenceDataObject.matching_correction_values = remaining_correction_factors_SLS
@@ -2600,19 +2596,34 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             remaining_reference_intensities_SLS = slsReferenceDataObject.monitored_reference_intensities
             remaining_correction_factors_SLS = slsReferenceDataObject.matching_correction_values
             remaining_molecules_SLS = slsReferenceDataObject.molecules #should not have changed, since it just adds zeroes to patterns without removing molecules.
+            #now we exclude (remove) molecules with no signals left in their reference patterns on any of the remaining mass fragments, which can happen due to the rawThresholdFilter.
+            
+            #Now we need to actually delete the molecules that have 0's thanks to the signalThreshold filter. The delting is what excludeEmptyMolecules does.
+            remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, \
+                                            remaining_molecules_SLS = excludeEmptyMolecules(remaining_num_molecules, solutions,  \
+                                            usedmolecules, monitored_reference_intensities, remaining_correction_factors_SLS, \
+                                            remaining_reference_intensities_SLS, remaining_molecules_SLS)  
+            numMoleculesExcluded = remaining_num_molecules_before_excluding - remaining_num_molecules #note that here remaining_num_molecules is after excluding.
 
+            if numMoleculesExcluded > 0:#reset this variable.            
+                #Revised the numbers since we've deleted some molecules.
+                remaining_num_MassFragments = len(remaining_correction_factors_SLS[:,0])
+                remaining_num_molecules = len(remaining_correction_factors_SLS[0,:])
 
-        #now we exclude (remove) molecules with no signals left in their reference patterns on any of the remaining mass fragments, which can happen due to the rawThresholdFilter.
-        remaining_num_molecules_before_excluding  = remaining_num_molecules
-        remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, \
-                                        remaining_molecules_SLS = excludeEmptyMolecules(remaining_num_molecules, solutions,  \
-                                        usedmolecules, monitored_reference_intensities, remaining_correction_factors_SLS, \
-                                        remaining_reference_intensities_SLS, remaining_molecules_SLS)  
-        # print("right after the function call", molNumIndex, num_remaining_molecules_before_loop,  len(listFor_remaining_num_molecules_during_loop), listFor_remaining_num_molecules_during_loop)
-        numMoleculesExcluded = remaining_num_molecules_before_excluding - remaining_num_molecules #note that here remaining_num_molecules is after excluding.
-        # print(numMoleculesExcluded,"deleting from loop list in next line", remaining_num_molecules_before_excluding, remaining_num_molecules) #note that here remaining_num_molecules is after excluding.
-        # print("after the update after function call", molNumIndex, num_remaining_molecules_before_loop,  len(listFor_remaining_num_molecules_during_loop), listFor_remaining_num_molecules_during_loop)
-
+                #Check if we should export to file what happened.
+                #TODO: Below should probably be made  a function (occurs at another place below)
+                if G.SLSUniquePrint == 'yes':
+                    with open(G.SLSUniqueExport, 'a') as f:
+                        f.write('%s,' %timeIndex)
+                        f.write('%s,' %time)
+                        for x in range(len(usedmolecules)):
+                            f.write('%s,' %usedmolecules[x])
+                        f.write("UsedMolecules \n")
+                        
+                    with open("SLSUniqueMassFragments.csv", 'a') as f:
+                        f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
+            
+            
         ####The below block of code is just to choose the next molecule to perform SLS on.###
         chosenMolecule = None
         tuplesOfUniqueFragmentsList = []
@@ -2705,6 +2716,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         
             # This block of code is a printing statement to show the user what order the molecules are being solved in
             # This is a csv file so should be delimited with commas
+            #TODO: Below should probably be made  a function (occurs at another place above)
             if G.SLSUniquePrint == 'yes':
                 with open(G.SLSUniqueExport, 'a') as f:
                     f.write('%s,' %timeIndex)
@@ -2714,7 +2726,9 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                     f.write("UsedMolecules \n")
                     
                 with open("SLSUniqueMassFragments.csv", 'a') as f:
-                    f.write(str(list(used_mass_fragments)) + "\n")
+                    f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
+        if remaining_num_molecules == 0:
+            break
         
     if remaining_correction_factors_SLS.size > 0:#if there are correction values left (i.e. not all the solutions have been found)
         #this for loop is used to delete any rows entirely composed of zeros, since the molecules percentages are found
