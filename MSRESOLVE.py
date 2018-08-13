@@ -2481,13 +2481,13 @@ def BruteForce(molecules,specifications,matching_correction_values,rawsignalsarr
 
     return answers
 
-def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited):   
+def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited):   
     #initialize a variable for moleculeIndex before the loop across all molecules.
     # print("in the function start", remaining_num_molecules)
-    monitored_reference_intensities = remaining_reference_intensities_SLS*1.0
+
     moleculeIndexIncludingDeletions = 0
     for moleculeIndex in range(remaining_num_molecules):#array-indexed for loop. Ideally, we'll do SLS once for each molecule.
-        referenceIntensitiesForThisMolecule = monitored_reference_intensities[:,moleculeIndex]  #Note that this must be monitored_reference_intensities, so it has same indexing as moleculeIndex even while remaining_reference_intensities_SLS gets shortened.
+        referenceIntensitiesForThisMolecule = remaining_monitored_reference_intensities[:,moleculeIndex]  #Note that this must be monitored_reference_intensities, so it has same indexing as moleculeIndex even while remaining_reference_intensities_SLS gets shortened.
         #print(referenceIntensitiesForThisMolecule, "Molecule's Ref. Intensities")
         if sum(referenceIntensitiesForThisMolecule) == 0.0:
             #Find the name of the molecule getting deleted.
@@ -2601,6 +2601,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             slsReferenceDataObject.molecules = remaining_molecules_SLS
             slsReferenceDataObject = signalThresholdFilter(slsReferenceDataObject, remaining_rawsignals_SLS, ExperimentData, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
             #after done, update local variables from the object that has now been changed.
+            remaining_monitored_reference_intensities = slsReferenceDataObject.monitored_reference_intensities *1.0  #These are the remaining_monitored_reference_intensities after exclusion.
             remaining_reference_intensities_SLS = slsReferenceDataObject.monitored_reference_intensities *1.0 #This one will get further shortened inside the loop.
             remaining_correction_factors_SLS = slsReferenceDataObject.matching_correction_values
             remaining_molecules_SLS = slsReferenceDataObject.molecules #should not have changed, since it just adds zeroes to patterns without removing molecules.
@@ -2609,7 +2610,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             #Now we need to actually delete the molecules that have 0's thanks to the signalThreshold filter. The delting is what excludeEmptyMolecules does.
             remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, \
                                             remaining_molecules_SLS = excludeEmptyMolecules(remaining_num_molecules, solutions,  \
-                                            usedmolecules, monitored_reference_intensities, remaining_correction_factors_SLS, \
+                                            usedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, \
                                             remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited)  
             numMoleculesExcluded = remaining_num_molecules_before_excluding - remaining_num_molecules #note that here remaining_num_molecules is after excluding.
 
@@ -3501,7 +3502,7 @@ def createSLSUniqueOrderFile(abscissaHeader, molecules):
         fp.write('\n')
     
     with open("SLSUniqueMassFragments.csv", 'w') as f:
-        f.write(str(list(ExperimentData.mass_fragment_numbers)) + "\n")
+        f.write(str(list(ExperimentData.provided_mass_fragment_numbers)[1:-1]) + "\n") #The [1:-1] is to get rid of the brackets from the list during export.
 
 '''
 This function takes in the end result of everything and exports it to the 
@@ -3648,6 +3649,7 @@ def main():
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
+    ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers 
 
     prototypicalReferenceData = ReferenceDataList[0]
 
