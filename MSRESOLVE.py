@@ -3502,7 +3502,7 @@ def createSLSUniqueOrderFile(abscissaHeader, molecules):
         fp.write('\n')
     
     with open("SLSUniqueMassFragments.csv", 'w') as f:
-        f.write(str(list(ExperimentData.provided_mass_fragment_numbers)[1:-1]) + "\n") #The [1:-1] is to get rid of the brackets from the list during export.
+        f.write(str(list(ExperimentData.provided_mass_fragment_numbers))[1:-1] + "\n") #The [1:-1] is to get rid of the brackets from the list during export.
 
 '''
 This function takes in the end result of everything and exports it to the 
