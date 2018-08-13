@@ -22,6 +22,8 @@ MSRESOLVE.G = test_1_input
 # in this case, we set the signal threshold to be 0.02, and the significance to be at 1% for standardized reference patterns.
 # the mass 70 signal is always below 0.02 and a significant for both crotyl alcohol and 2-butenal (crotonaldehyde)
 # consequently, the solved concentrations for both of these molecules is zero at all times.
+# Although we do not check it, it turns out that CO2 ends up as zero as well because after ethanol's contribution is subtracted, 
+#   m45 goes below threshold, and CO2 has m45 above 1% in standardized signals. CO must have a similar reason for becoming set to zero.
 
 MSRESOLVE.main()
 
@@ -47,6 +49,8 @@ sumIndex7 = sum(arrayReadFromScaledConcentrations[7])
 resultsSums = [sumIndex2, sumIndex7]
 expectedSums = [0.0,0.0]
 ut.set_expected_result(expectedSums,expected_result_str=str(expectedSums), prefix=prefix,suffix=suffix)
+
+
 
 resultObj = resultsSums
 
