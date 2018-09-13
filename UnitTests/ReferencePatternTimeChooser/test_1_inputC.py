@@ -11,6 +11,7 @@ form = ['xyyy']	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [[300,303],[306,309]]
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
 
+iterationNumber = None
 
 #do you wish for the program to institute preproccessing and/or Data analysis?
 #note that preproccesing must be done at least once before being bypassed 
