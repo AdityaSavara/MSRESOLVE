@@ -13,6 +13,7 @@ import shutil
 import importlib
 from numpy import genfromtxt
 import export_import as ei
+import ParsingFunctions as parse
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
 import UserInput 
 G = UserInput
@@ -1775,7 +1776,39 @@ def readReferenceFile(referenceFileName, form):
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
         
-    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form      
+    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form
+
+'''
+getMoleculesFromReferenceData is a function that takes in the reference filename and just returns the molecules present
+'''
+def getMoleculesFromReferenceData(ReferenceFileName):
+    #Read the csv file
+    #TODO Change to use numpy.gen_from_text instead of pandas
+    ReferenceInfo = pandas.read_csv(ReferenceFileName,header=0)
+    #Convert the reference info into an array
+    ReferenceInfoArray = numpy.array(ReferenceInfo)
+    #Get the names of molecules in reference data
+    molecules = ReferenceInfoArray[0,1:] #First row, all but the first column
+    #Strip the white space around the molecules
+    for i in range(0,len(molecules)):
+        molecules[i] = molecules[i].strip()
+    return molecules
+
+'''
+getMassFragmentsFromCollectedData is a function that takes in the collected filename and returns the mass fragments present in the data
+'''
+def getMassFragmentsFromCollectedData(CollectedFileName):
+    #Read the csv file
+    #TODO CHange to use numpy.gen_from_text instead of pandas
+    DataInfo = pandas.read_csv(CollectedFileName,header=0)
+    #Convert the data into an array
+    DataInfoArray = numpy.array(DataInfo)
+    #Get the names of mass fragments in collected data
+    massFragments = DataInfoArray[0,1:] #First row, all but the first column
+    #Remove the 'm' from each fragment and convert to float (i.e. 'm28' now becomes 28.)
+    for i in range(0,len(massFragments)):
+        massFragments[i] = float(massFragments[i][1:])
+    return massFragments
 
 ###############################################################################
 #########################  Classes: Data Storage  #############################
@@ -2188,6 +2221,7 @@ def ListLengthChecker(aList, desiredLength, defaultNum):
 #in that row and that molecules own value
 def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeLikelihoods,sensitivityValues):
     #the shape of the referenceData is found 
+    #TODO change row_num to num_rows and column_num to num_columns
     row_num = len(refMassFrags[:,0])
     column_num = len(refMassFrags[0,:])
     
@@ -3604,6 +3638,150 @@ def PopulateLogFile():
     f6.close()#once the log file is printed the program is finished
     return None
 
+'''
+parseUserInput parses the variables in the user input file
+It passes in G as an argument
+This function is designed to serve as a standard for parsing particular variables
+'''
+def parseUserInput(currentUserInput):
+    #Input Files
+    currentUserInput.referenceFileName = parse.listCast(currentUserInput.referenceFileName) #referenceFileName needs to be a list
+    currentUserInput.form = parse.listCast(currentUserInput.form) #form needs to be a list
+    currentUserInput.form = parse.parallelVectorize(currentUserInput.form,len(currentUserInput.referenceFileName)) #form needs to be a list of the same length as referenceFileName
+    currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
+    
+    #Time Ranges are both floats
+    if currentUserInput.timeRangeLimit == 'yes':
+        currentUserInput.timeRangeStart = float(currentUserInput.timeRangeStart) 
+        currentUserInput.timeRangeFinish = float(currentUserInput.timeRangeFinish)    
+    
+    #Chosen Molecules and Mass Fragments are both lists
+    currentUserInput.chosenMolecules = parse.listCast(currentUserInput.chosenMolecules)
+    currentUserInput.chosenMassFragments = parse.listCast(currentUserInput.chosenMassFragments)
+    #currentUserInput.exp_mass_fragment_numbers and currentUserInput.molecules are the molecules and the mass fragments from the referece data and collected data, respectively
+    #Populate chosenMassFragmentsForParsing based on user input option to get a list of mass fragments
+    if currentUserInput.specificMassFragments == 'yes': #if yes, use the user's chosen mass fragments
+        chosenMassFragmentsForParsing = copy.deepcopy(currentUserInput.chosenMassFragments)
+        #If using specificMassFragments, make sure all selected fragments are in the collected data
+        parse.compareElementsBetweenLists(currentUserInput.chosenMassFragments,currentUserInput.exp_mass_fragment_numbers,'chosenMassFragments','Mass Fragments from Data')
+    elif currentUserInput.specificMassFragments == 'no': #Otherwise use all mass fragments
+        chosenMassFragmentsForParsing = copy.deepcopy(currentUserInput.exp_mass_fragment_numbers)
+    
+    #Populate chosenMolecules based on user input option to get a list of molecules
+    if currentUserInput.specificMolecules == 'yes': #if yes, use the user's chosen moleclues
+        chosenMoleculesForParsing = copy.deepcopy(currentUserInput.chosenMolecules)
+        #If using specificMolecules, make sure all selected molecules are in the reference data
+        parse.compareElementsBetweenLists(currentUserInput.chosenMolecules,currentUserInput.molecules,'chosenMolecules','Molecules from Reference Data')
+    elif currentUserInput.specificMolecules == 'no': #Otherwise use all molecules
+        chosenMoleculesForParsing = copy.deepcopy(currentUserInput.molecules)
+    
+    #Molecule Likelihoods and Sensitivity Values are lists with the same length as the number of molecules
+    currentUserInput.moleculeLikelihoods = parse.listCast(currentUserInput.moleculeLikelihoods)
+    currentUserInput.moleculeLikelihoods = parse.parallelVectorize(currentUserInput.moleculeLikelihoods,len(chosenMoleculesForParsing))
+    currentUserInput.sensitivityValues = parse.listCast(currentUserInput.sensitivityValues)
+    currentUserInput.sensitivityValues = parse.parallelVectorize(currentUserInput.sensitivityValues,len(chosenMoleculesForParsing))
+    
+    #Linear Baseline Correction Semi-Automatic variables
+    if currentUserInput.linearBaselineCorrectionSemiAutomatic == 'yes': #if using linear baseline correction semi automatic
+        currentUserInput.baselineType = parse.listCast(currentUserInput.baselineType) #Baseline type needs to be a list
+        currentUserInput.massesToBackgroundCorrect = parse.listCast(currentUserInput.massesToBackgroundCorrect) #Masses to background correct is a list        
+        if len(currentUserInput.massesToBackgroundCorrect) == 0: #If massesToBackgroundCorrect is empty
+            currentUserInput.massesToBackgroundCorrect = chosenMassFragmentsForParsing #Use the chosenMassFragments
+        #Check that all masses in currentUserInput.massesToBackgroundCorrect are in the collected data
+        parse.compareElementsBetweenLists(currentUserInput.massesToBackgroundCorrect,chosenMassFragmentsForParsing,"massesToBackgroundCorrect","chosenMassFragments")
+        #Early and Late baseline times are lists
+        currentUserInput.earlyBaselineTimes = parse.listCast(currentUserInput.earlyBaselineTimes) 
+        currentUserInput.lateBaselineTimes = parse.listCast(currentUserInput.lateBaselineTimes)
+        #Early and late baseline times are also the same length as masses to background correct
+        currentUserInput.earlyBaselineTimes = parse.parallelVectorize(currentUserInput.earlyBaselineTimes,len(currentUserInput.massesToBackgroundCorrect))
+        currentUserInput.lateBaselineTimes = parse.parallelVectorize(currentUserInput.lateBaselineTimes,len(currentUserInput.massesToBackgroundCorrect)) 
+    
+    #Data Solving Restrictions - Marginal Change Restrictor
+    if currentUserInput.interpolateYorN == 'yes':
+        #Marginal Change Restriction and Ignorable Delta Y Threshold are both floats
+        currentUserInput.marginalChangeRestriction = float(currentUserInput.marginalChangeRestriction)
+        currentUserInput.ignorableDeltaYThreshold = float(currentUserInput.ignorableDeltaYThreshold)
+    
+    #Data Solving Restrictions - Brute Solving Restrictions
+    #Data  Upper/Lower Bound are both lists
+    currentUserInput.dataLowerBound = parse.listCast(currentUserInput.dataLowerBound)
+    currentUserInput.dataUpperBound = parse.listCast(currentUserInput.dataUpperBound)
+    currentUserInput.increments = parse.listCast(currentUserInput.increments) #increments is a list
+    currentUserInput.moleculesRange = parse.listCast(currentUserInput.moleculesRange) #Molecules range is a list    
+    #if using signal range, then data lower/upper bound and increments needs to be the same length as the number of chosenMassFragments
+    #if using concentration range, then they need to be the the same length as number of chosenMolecules
+    if currentUserInput.signalOrConcentrationRange == 'signal': #So set lenOfParallelVectorizingBruteSolvingRestrictionVars to be the length of chosenMassFragments if using signal
+        lenOfParallelVectorizingBruteSolvingRestrictionVars = len(chosenMassFragmentsForParsing)
+    elif currentUserInput.signalOrConcentrationRange == 'concentration': #and set it equal to the length of chosenMolecules if using concentration
+        lenOfParallelVectorizingBruteSolvingRestrictionVars = len(chosenMoleculesForParsing)
+    #paralellVectorize data upper/lower bound and increments to the appropriate length
+    currentUserInput.dataLowerBound = parse.parallelVectorize(currentUserInput.dataLowerBound,lenOfParallelVectorizingBruteSolvingRestrictionVars)
+    currentUserInput.dataUpperBound = parse.parallelVectorize(currentUserInput.dataUpperBound,lenOfParallelVectorizingBruteSolvingRestrictionVars)
+    currentUserInput.increments = parse.parallelVectorize(currentUserInput.increments,lenOfParallelVectorizingBruteSolvingRestrictionVars)
+    
+    #Set Scaling Factor
+    if currentUserInput.scaleRawDataOption == 'manual':
+        currentUserInput.scaleRawDataFactor = float(currentUserInput.scaleRawDataFactor) #scaleRawDataFactor is a float
+    
+    #Reference Pattern Changer
+    #If using reference pattern changer, check that all currentUserInput.rpcMoleculesToChange are in the referenceData
+    if currentUserInput.extractReferencePatternFromDataOption == 'yes':
+        #The molecules to change, their mass fragments, and time ranges are all lists
+        currentUserInput.rpcMoleculesToChange = parse.listCast(currentUserInput.rpcMoleculesToChange)
+        currentUserInput.rpcTimeRanges = parse.listCast(currentUserInput.rpcTimeRanges)
+        currentUserInput.rpcTimeRanges = parse.parallelVectorize(currentUserInput.rpcTimeRanges,len(currentUserInput.rpcMoleculesToChange)) #rpcTimeRanges needs to have the same number of time ranges as moleculesToChange
+        currentUserInput.rpcMoleculesToChangeMF = parse.listCast(currentUserInput.rpcMoleculesToChangeMF) #rpcMoleculesToChangeMF also needs to be of the same length but the mass fragments to change need to be hard coded in the user input so parallel vectorize is not feasible
+        parse.compareElementsBetweenLists(currentUserInput.rpcMoleculesToChange,chosenMoleculesForParsing,'rpcMoleculesToChange','chosenMolecules')
+    
+    #Reference Mass Fragmentation Threshold
+    if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
+        currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
+    
+    #Data Threshold Filter
+    if currentUserInput.lowerBoundThresholdChooser == 'yes': #if using lowerBoundThresholdFilter
+        #masstes to lower bound threshold filter and lower bound threshold percent/absolute are all three lists
+        currentUserInput.massesToLowerBoundThresholdFilter = parse.listCast(currentUserInput.massesToLowerBoundThresholdFilter)
+        currentUserInput.lowerBoundThresholdPercentage = parse.listCast(currentUserInput.lowerBoundThresholdPercentage)
+        currentUserInput.lowerBoundThresholdAbsolute = parse.listCast(currentUserInput.lowerBoundThresholdAbsolute)        
+        if len(currentUserInput.massesToLowerBoundThresholdFilter) == 0: #If currentUserInput.massesToLowerBoundThresholdFilter is empty
+            currentUserInput.massesToLowerBoundThresholdFilter = chosenMassFragmentsForParsing #populate it with chosenMassFragments
+        #if lowerBoundThresholdPercentage is empty, then user is option to use lowerBoundThresholdAbsolute
+        if len(currentUserInput.lowerBoundThresholdPercentage) == 0:
+            #and currentUserInput.lowerBoundThresholdAbsolute needs to be the same length as massesToLowerBoundThresholdFilter
+            currentUserInput.lowerBoundThresholdAbsolute = parse.parallelVectorize(currentUserInput.lowerBoundThresholdAbsolute,len(currentUserInput.massesToLowerBoundThresholdFilter))
+        elif len(currentUserInput.lowerBoundThresholdAbsolute) == 0: #Otherwise lowerBoundThresholdAbsolute is empty and the user has opted to use lowerBoundThresholdPercentage
+            currentUserInput.lowerBoundThresholdPercentage = parse.parallelVectorize(currentUserInput.lowerBoundThresholdPercentage,len(currentUserInput.massesToLowerBoundThresholdFilter))
+    
+    #Data Smoother
+    if currentUserInput.dataSmootherYorN == 'yes': #If using dataSmoother
+        #The headers to confine to in data smoother is a list
+        currentUserInput.dataSmootherHeadersToConfineTo = parse.listCast(currentUserInput.dataSmootherHeadersToConfineTo)        
+        #mass fragments in headers to confine to must be included in chosenMassFragments
+        parse.compareElementsBetweenLists(currentUserInput.dataSmootherHeadersToConfineTo,chosenMassFragmentsForParsing,'dataSmootherHeadersToConfineTo','chosenMolecules')
+    
+    #Raw Signal Threshold
+    if currentUserInput.rawSignalThresholdMethod == 'yes': #If using rawSignalThresholdMethod
+        #raw signal threshold value, sensitivity value, raw signal threshold divider, and raw signal threshold limit percent are all lists
+        currentUserInput.rawSignalThresholdValue = parse.listCast(currentUserInput.rawSignalThresholdValue)
+        currentUserInput.sensitivityThresholdValue = parse.listCast(currentUserInput.sensitivityThresholdValue)
+        currentUserInput.rawSignalThresholdDivider = parse.listCast(currentUserInput.rawSignalThresholdDivider)
+        currentUserInput.rawSignalThresholdLimitPercent = parse.listCast(currentUserInput.rawSignalThresholdLimitPercent)
+        #sensitivityThreshold parallelVectorized to length of chosenMolecules
+        #rawSignalThresholdValue, Divider, and LimitPercent all parallelVectorized to length of chosenMassFragments
+        currentUserInput.rawSignalThresholdValue = parse.parallelVectorize(currentUserInput.rawSignalThresholdValue,len(chosenMassFragmentsForParsing))
+    #   #TODO Commented out until bug in referenceThreshold is fixed    
+    #    currentUserInput.sensitivityThresholdValue = parse.parallelVectorize(currentUserInput.sensitivityThresholdValue,len(chosenMoleculesForParsing))
+        currentUserInput.rawSignalThresholdDivider = parse.parallelVectorize(currentUserInput.rawSignalThresholdDivider,len(chosenMassFragmentsForParsing))
+        currentUserInput.rawSignalThresholdLimitPercent = parse.parallelVectorize(currentUserInput.rawSignalThresholdLimitPercent,len(chosenMassFragmentsForParsing))
+    
+    #Concentration Finder
+    if currentUserInput.concentrationFinder == 'yes':
+        currentUserInput.moleculeSignal = float(currentUserInput.moleculeSignal) #The molecule signal is a float
+        currentUserInput.moleculeConcentration = float(currentUserInput.moleculeConcentration) #the molecule's concentration is a float
+    return None
+
+
+
 ##################################################################################################################
 ###############################################Algorithm Part 3: Main Control Function ###################################
 ##################################################################################################################
@@ -3625,6 +3803,18 @@ def main():
             G.iterationSuffix = iterationDirectorySuffix
         elif not G.iterativeAnalysis:
             G.iterationSuffix = ''
+
+    #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
+    if G.iterativeAnalysis and G.iterationNumber != 1:
+        #implied arguments for this function are G.referenceFileName and G.collectedFileName
+        IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
+
+    #Read in the molecules used before parsing the user input file    
+    G.referenceFileName = parse.listCast(G.referenceFileName)
+    G.molecules = getMoleculesFromReferenceData(G.referenceFileName[0])
+    #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
+    G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
+    parseUserInput(G) #This parses the variables in the user input file
             
     #it is useful to trim whitespace from each chosenMolecules string. The same thing is done to the molecule names of each reference pattern when an MSReference object is created.
     for moleculeIndex, moleculeName in enumerate(G.chosenMolecules):
@@ -3634,18 +3824,13 @@ def main():
     G.start = timeit.default_timer()
     G.checkpoint = timeit.default_timer()
     
-    #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
-    if G.iterativeAnalysis and G.iterationNumber != 1:
-        #implied arguments for this function are G.referenceFileName and G.collectedFileName
-        IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
-    
+
     #initalize the data classes with the data from given Excel files
     #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
     global ReferenceDataList
     global ExperimentData
     global prototypicalReferenceData
     global currentReferenceData
-    
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
