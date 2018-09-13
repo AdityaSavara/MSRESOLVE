@@ -179,7 +179,7 @@ polynomialOrder = 1  #During the local smoothing, a linear fit (or polynomial fi
 #WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
 rawSignalThresholdMethod = 'no'
 rawSignalThresholdValue = [.0000001]
-sensitivityThresholdValue = [1] #this is the number in the Reference given, the relative intensity of the signal of the mass fragment
+sensitivityThresholdValue = [1] #this is the number in the Reference given the relative intensity of the signal of the mass fragment
 rawSignalThresholdDivider = []
 #Part of previous entry function, but this function enables the user to change the sum of raw signals, allowing molecules with very high concentrations not to affect previous funciton
 rawSignalThresholdLimit = 'no'
@@ -208,6 +208,7 @@ SLSUniqueExport = 'SLSUniqueOrder.csv'
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
 #TODO The use of multiple reference patterns is not upgraded to work with concentrationFinder
 concentrationFinder = 'no'
+#TODO rename molecule to moleculeToScaleConcentrations
 molecule = 'Acetaldehyde'
 moleculeSignal = 1.66945
 massNumber = 29
@@ -225,8 +226,7 @@ scaledConcentrationsPercentages = 'ScaledConcentrationPercentages.csv'
 concentrationsOutputName= 'ResolvedConcentrations.csv'
 simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 
-#Only used in iterative analysis
-TotalConcentrationsOutputName = 'TotalConcentrations.csv'
+
 
 
 ExportAtEachStep = 'no'
@@ -235,13 +235,15 @@ generatePercentages = 'no'
 checkpoint = ''
 start = ''
 timeSinceLastCheckpoint = ''
-
+#Only used in iterative analysis
+TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 iterationSuffix= ''
 unusedMolecules =''
 oldReferenceFileName = []
 oldCollectedFileName ='' 
 nextRefFileName = []
 nextExpFileName = ''
+iterationNumber = None #just initializing.
 
 __var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
 				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
@@ -253,4 +255,4 @@ __var_list__ = ['referenceFileName','form','collectedFileName','referencePattern
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
 				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
 				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
-				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']
+				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint', 'iterationNumber']

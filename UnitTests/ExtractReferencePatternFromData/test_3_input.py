@@ -16,6 +16,7 @@ collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spe
 iterativeAnalysis = False
 #the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
+iterationNumber = None
 
 #do you wish for the program to institute preproccessing and/or Data analysis?
 #note that preproccesing must be done at least once before being bypassed 

@@ -241,3 +241,4 @@ oldReferenceFileName = ''
 oldCollectedFileName ='' 
 nextRefFileName = ''
 nextExpFileName = ''
+iterationNumber = None
