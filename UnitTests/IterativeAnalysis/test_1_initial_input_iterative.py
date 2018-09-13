@@ -6,7 +6,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
+referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
@@ -16,6 +16,7 @@ collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw
 iterativeAnalysis = True
 #the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
+iterationNumber = None
 
 #do you wish for the program to institute preproccessing and/or Data analysis?
 #note that preproccesing must be done at least once before being bypassed 
@@ -226,7 +227,6 @@ simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 
 #Only used in iterative analysis
 TotalConcentrationsOutputName = 'TotalConcentrations.csv'
-
 
 ExportAtEachStep = 'yes'
 generatePercentages = 'no'
