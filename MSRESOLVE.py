@@ -488,7 +488,7 @@ def ReferenceThreshold(reference,referenceValueThreshold):
     referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
     for rowcounter in range(len(referencedata[:,0])):#goes through all rows in references
         for columncounter in range(len(referencedata[0,:])):#goes through all columns in all rows in reference
-            if referencedata[rowcounter,columncounter] < referenceValueThreshold:#user input changes
+            if referencedata[rowcounter,columncounter] < referenceValueThreshold[columncounter]:#user input changes
                 referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
     reference[:,1:] = referencedata #this puts changed reference back with mass fragment numbers
     return reference
@@ -3736,6 +3736,8 @@ def parseUserInput(currentUserInput):
     #Reference Mass Fragmentation Threshold
     if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
         currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
+        #The length of the reference values needs to be the same length as the number of molecules
+        currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
     
     #Data Threshold Filter
     if currentUserInput.lowerBoundThresholdChooser == 'yes': #if using lowerBoundThresholdFilter
