@@ -62,37 +62,37 @@ MSRESOLVE.main()
 #now we need to change the choices for iteration 2. 
 #we 1st need to make the strings we want to append into a list.
 #Then call main function again.
-listOfStringsToAppend = ["chosenMolecules = ['(E) 2-Butenal (Crotonaldehyde']", "chosenMassFragments = [39]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['(E) 2-Butenal (Crotonaldehyde']", "chosenMassFragments = [39]"]
 appendToIterFile(2, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 3
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['Ethanol']", "chosenMassFragments = [31]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['Ethanol']", "chosenMassFragments = [31]"]
 appendToIterFile(3, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 4
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['H2O']", "chosenMassFragments = [18]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['H2O']", "chosenMassFragments = [18]"]
 appendToIterFile(4, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 5
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['Acetaldehyde']", "chosenMassFragments = [41]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['Acetaldehyde']", "chosenMassFragments = [41]"]
 appendToIterFile(5, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 6
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['Ethylene (Ethene)']", "chosenMassFragments = [27]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['Ethylene (Ethene)']", "chosenMassFragments = [27]"]
 appendToIterFile(6, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 7
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['CO', 'CO2', 'H2']", "chosenMassFragments = [2, 28, 44]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['CO', 'CO2', 'H2']", "chosenMassFragments = [2, 28, 44]"]
 appendToIterFile(7, listOfStringsToAppend)
 MSRESOLVE.main()
 

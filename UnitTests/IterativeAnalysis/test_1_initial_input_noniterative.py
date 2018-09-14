@@ -6,7 +6,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
+referenceFileNameList = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
@@ -40,7 +40,7 @@ timeRangeFinish = 900	#finish time (-int)
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
 specificMolecules = 'no'
-chosenMolecules = ['CO', 'CO2', 'H2O']
+chosenMoleculesNames = ['CO', 'CO2', 'H2O']
 
 #//Chosen Mass Fragments//
 #To choose only specific mass fragments from collected data, input below:
@@ -96,7 +96,7 @@ dataUpperBound = []
 dataRangeSpecifierYorN = 'no' 
 signalOrConcentrationRange = 'signal'	#'signal' or 'concentration'
 csvFile = 'yes'	#'yes' or 'no'
-moleculesRange = []
+moleculesToRestrict = []
 csvFileName = 'rangestemplate.csv'
 #NOTE: The increment choice of the user is then possibly overridden based on 
 # the values of maxPermutations (the number of molecules and increments might 
@@ -232,10 +232,10 @@ TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 ExportAtEachStep = 'yes'
 generatePercentages = 'no'
 
-__var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
-				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
+__var_list__ = ['referenceFileNameList','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+				'specificMolecules','chosenMoleculesNames','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
-				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
+				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
 				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
 				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
