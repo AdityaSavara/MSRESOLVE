@@ -101,7 +101,6 @@ csvFileName = 'rangestemplate.csv'
 # the values of maxPermutations (the number of molecules and bruteIncrements might 
 # cause too large of a number of permutations, in which case larger bruteIncrements 
 # may be used).
-#TODO: Let’s rename increments to bruteIncrements
 #bruteIncrements sets the size of the increments for Brute (e.g., if we said  0.01 bar, it would make the 
 # separation between points 0.01 bar in the grid, for that axis). 
 bruteIncrements = []
