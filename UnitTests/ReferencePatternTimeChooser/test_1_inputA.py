@@ -6,7 +6,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
+referenceFileNameList = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
 form = ['xyyy']	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = []
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
@@ -85,7 +85,7 @@ dataUpperBound = []
 dataRangeSpecifierYorN = 'no' 
 signalOrConcentrationRange = 'signal'	#'signal' or 'concentration'
 csvFile = 'yes'	#'yes' or 'no'
-moleculesRange = []
+moleculesToRestrict = []
 csvFileName = 'rangestemplate.csv'
 #NOTE: The increment choice of the user is then possibly overridden based on 
 # the values of maxPermutations (the number of molecules and increments might 
