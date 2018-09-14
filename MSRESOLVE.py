@@ -3581,7 +3581,7 @@ def PopulateLogFile():
         else:
             f6.write('lowerBound = %s \n'%(G.dataLowerBound))
             f6.write('higherBound = %s \n'%(G.dataUpperBound))
-            f6.write('increments = %s \n'%(G.increments))
+            f6.write('increments = %s \n'%(G.bruteIncrements))
         f6.write('permutationNum = %s \n'%(G.permutationNum))
     if G.extractReferencePatternFromDataOption == 'yes':
         f6.write('extractReferencePatternFromDataOption = %s \n'%(G.extractReferencePatternFromDataOption))
@@ -3625,7 +3625,7 @@ def PopulateLogFile():
             f6.write('distinguished = %s \n'%(G.distinguished))
     if G.concentrationFinder == 'yes':
         f6.write('concentrationFinder = %s \n'%(G.concentrationFinder))
-        f6.write('molecule = %s \n'%(G.molecule))
+        f6.write('molecule = %s \n'%(G.moleculeToScaleConcentration))
         f6.write('moleculeSignal = %s \n'%(G.moleculeSignal))
         f6.write('massNumber = %s \n'%(G.massNumber))
         f6.write('moleculeConcentration = %s \n'%(G.moleculeConcentration))
@@ -3706,7 +3706,7 @@ def parseUserInput(currentUserInput):
     #Data  Upper/Lower Bound are both lists
     currentUserInput.dataLowerBound = parse.listCast(currentUserInput.dataLowerBound)
     currentUserInput.dataUpperBound = parse.listCast(currentUserInput.dataUpperBound)
-    currentUserInput.increments = parse.listCast(currentUserInput.increments) #increments is a list
+    currentUserInput.bruteIncrements = parse.listCast(currentUserInput.bruteIncrements) #increments is a list
     currentUserInput.moleculesToRestrict = parse.listCast(currentUserInput.moleculesToRestrict) #Molecules range is a list    
     #if using signal range, then data lower/upper bound and increments needs to be the same length as the number of chosenMassFragments
     #if using concentration range, then they need to be the the same length as number of chosenMolecules
@@ -3717,7 +3717,7 @@ def parseUserInput(currentUserInput):
     #paralellVectorize data upper/lower bound and increments to the appropriate length
     currentUserInput.dataLowerBound = parse.parallelVectorize(currentUserInput.dataLowerBound,lenOfParallelVectorizingBruteSolvingRestrictionVars)
     currentUserInput.dataUpperBound = parse.parallelVectorize(currentUserInput.dataUpperBound,lenOfParallelVectorizingBruteSolvingRestrictionVars)
-    currentUserInput.increments = parse.parallelVectorize(currentUserInput.increments,lenOfParallelVectorizingBruteSolvingRestrictionVars)
+    currentUserInput.bruteIncrements = parse.parallelVectorize(currentUserInput.bruteIncrements,lenOfParallelVectorizingBruteSolvingRestrictionVars)
     
     #Set Scaling Factor
     if currentUserInput.scaleRawDataOption == 'manual':
@@ -3992,7 +3992,7 @@ def main():
         # Loading user choices for data analysis
         DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
                                   G.csvFile, G.moleculesToRestrict, G.csvFileName,G.dataUpperBound,
-                                  G.dataLowerBound, G.increments, G.permutationNum]
+                                  G.dataLowerBound, G.bruteIncrements, G.permutationNum]
         SLSChoices = [G.uniqueOrCommon, G.slsFinish, G.distinguished]
         ThresholdList = [G.rawSignalThresholdMethod, G.rawSignalThresholdValue, G.sensitivityThresholdValue,
                          G.rawSignalThresholdDivider, G.rawSignalThresholdLimit, G.rawSignalThresholdLimitPercent]
@@ -4001,7 +4001,7 @@ def main():
     
         # Calculate a coefficient for doing a unit conversion on concentrations #TODO resolve Ratio Finder issue, i.e. list of conversionValues
         ExperimentData = RatioFinder(currentReferenceData, ExperimentData, G.concentrationFinder,
-                                      G.molecule, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
+                                      G.moleculeToScaleConcentration, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
 	##End: Preparing data for data analysis based on user input choices
     
         #Initialize a current reference pattern index
