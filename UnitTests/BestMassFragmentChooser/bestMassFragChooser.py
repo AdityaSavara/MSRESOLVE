@@ -65,7 +65,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     #the SLS method.
     DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
 						  G.csvFile, G.moleculesToRestrict, G.csvFileName,G.dataUpperBound,
-						  G.dataLowerBound, G.increments, G.permutationNum]
+						  G.dataLowerBound, G.bruteIncrements, G.permutationNum]
     
     #Initializes the SLS choices variable. As of now, the the best mass frag
     #chooser can only run with unique SLS do to errors in the SLS common
