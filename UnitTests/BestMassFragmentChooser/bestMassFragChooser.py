@@ -64,7 +64,7 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     #frag choser, but is required as an arguement that needs to be passed to
     #the SLS method.
     DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
-						  G.csvFile, G.moleculesRange, G.csvFileName,G.dataUpperBound,
+						  G.csvFile, G.moleculesToRestrict, G.csvFileName,G.dataUpperBound,
 						  G.dataLowerBound, G.increments, G.permutationNum]
     
     #Initializes the SLS choices variable. As of now, the the best mass frag
