@@ -98,13 +98,13 @@ csvFile = 'yes'	#'yes' or 'no'
 moleculesToRestrict = []
 csvFileName = 'rangestemplate.csv'
 #NOTE: The increment choice of the user is then possibly overridden based on 
-# the values of maxPermutations (the number of molecules and increments might 
-# cause too large of a number of permutations, in which case larger increments 
+# the values of maxPermutations (the number of molecules and bruteIncrements might 
+# cause too large of a number of permutations, in which case larger bruteIncrements 
 # may be used).
 #TODO: Let’s rename increments to bruteIncrements
-#Increments sets the size of the increments for Brute (e.g., if we said  0.01 bar, it would make the 
+#bruteIncrements sets the size of the increments for Brute (e.g., if we said  0.01 bar, it would make the 
 # separation between points 0.01 bar in the grid, for that axis). 
-increments = []
+bruteIncrements = []
 permutationNum = 1000
 maxPermutations = 100001
 
@@ -208,8 +208,7 @@ SLSUniqueExport = 'SLSUniqueOrder.csv'
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
 #TODO The use of multiple reference patterns is not upgraded to work with concentrationFinder
 concentrationFinder = 'no'
-#TODO rename molecule to moleculeToScaleConcentrations
-molecule = 'Acetaldehyde'
+moleculeToScaleConcentration = 'Acetaldehyde'
 moleculeSignal = 1.66945
 massNumber = 29
 moleculeConcentration = 0.05	#pressure can also be used in subsitute
@@ -248,11 +247,11 @@ iterationNumber = None #just initializing.
 __var_list__ = ['referenceFileNameList','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
 				'specificMolecules','chosenMoleculesNames','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
-				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
+				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','bruteIncrements','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
 				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
 				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
-				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
+				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','moleculeToScaleConcentration','moleculeSignal','massNumber','moleculeConcentration',
 				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
 				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint', 'iterationNumber']
