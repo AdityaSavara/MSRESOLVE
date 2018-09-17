@@ -2221,20 +2221,19 @@ def ListLengthChecker(aList, desiredLength, defaultNum):
 #in that row and that molecules own value
 def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeLikelihoods,sensitivityValues):
     #the shape of the referenceData is found 
-    #TODO change row_num to num_rows and column_num to num_columns
-    row_num = len(refMassFrags[:,0])
-    column_num = len(refMassFrags[0,:])
+    num_rows = len(refMassFrags[:,0])
+    num_columns = len(refMassFrags[0,:])
     
     #The acceptable threshold is determined by the SensitivityValue function
-    sensitivityValues = ListLengthChecker(sensitivityValues, column_num, 1)
+    sensitivityValues = ListLengthChecker(sensitivityValues, num_columns, 1)
    
     #the moleculesLikelihood is corrected if it wasn't entered by the use.
-    moleculeLikelihoods = ListLengthChecker(moleculeLikelihoods, column_num, 1)
+    moleculeLikelihoods = ListLengthChecker(moleculeLikelihoods, num_columns, 1)
     
     #all values below the specified relative intensity must be set the minThreshold value
     #This is because a subfunction attempts to divide by each value
-    for columncounter in range(column_num):
-        for rowcounter in range(row_num):
+    for columncounter in range(num_columns):
+        for rowcounter in range(num_rows):
             if refMassFrags[rowcounter,columncounter] < sensitivityValues[columncounter]: 
                 refMassFrags[rowcounter,columncounter] = 0 #sensitivityThresholdValue[0]
                 
@@ -2258,11 +2257,11 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeL
     shortRawSignals = numpy.asarray(shortRawSignals)
     
     #finding the size of the new array
-    row_num = len(shortRefMassFrags[:,0])
-    column_num = len(shortRefMassFrags[0,:])
+    num_rows = len(shortRefMassFrags[:,0])
+    num_columns = len(shortRefMassFrags[0,:])
     #This section replaces the minThreshold's that were chosen as threshold values with 0s
-    for columncounter in range(column_num):
-        for rowcounter in range(row_num):
+    for columncounter in range(num_columns):
+        for rowcounter in range(num_rows):
             if shortRefMassFrags[rowcounter,columncounter] <= sensitivityValues[columncounter]: 
                 shortRefMassFrags[rowcounter,columncounter] = 0
                 
