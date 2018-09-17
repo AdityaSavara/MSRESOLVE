@@ -117,10 +117,13 @@ scaleRawDataFactor = 1
 #Note that 1 is the default and will make no alteration to the data
 
 #//Reference Correction Coefficients//
+#TODO Reference Correction Coefficients feature should be upgraded to enable separate coefficients for each molecule to allow mixing and matching of reference patterns
+#TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 measuredReferenceYorN='no'
 referenceMeasuredFileName='AcetaldehydeMeasuredRef.csv'
 referenceLiteratureFileName ='AcetaldehydeOnlyNISTRef.csv'
+#The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten (Ashi thinks it will generate a new reference pattern)
 referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
 
@@ -174,6 +177,7 @@ polynomialOrder = 1  #During the local smoothing, a linear fit (or polynomial fi
 
 #//Raw Signal Threshold//
 #To change the threshold at which raw signals are not longer relevant, change below (similar to above function, but for rows instead of columns)
+#We think the reference to the 'above function' in the previous line is referring to Data Threshold Filter
 #These signals get converted into 0.
 #WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
 rawSignalThresholdMethod = 'no'
