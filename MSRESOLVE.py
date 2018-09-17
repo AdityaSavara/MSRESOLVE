@@ -2313,6 +2313,7 @@ def MoleculeRange(molecules,timeIndex,molecules_copy,scaledConcentrationsarray):
                         moleculedata.append(moleculedata2[moleculedatacounter])
     return moleculedata
 
+#TODO Ashi needs to check that dataRangeSpecifier is working
 #this function here is called in the section at the bottom, right before BruteForce is called, because this function
 #sets the ranges and increments of search for the brute force function below. It does so by using prompts within a for
 #loop to get the upper and lower bounds and lastly the increments, all being added to a tuple which is then put into a 
@@ -2338,6 +2339,7 @@ def DataRangeSpecifier(molecules,timeIndex,molecules_copy,conversionfactor,dataf
                 place_holder = place_holder + 1
         if csvFile == 'no':# This part is for non csv file ranges- single ranges for the whole times
             specifications1 = []
+            #The conversion factor is used so that the user's specified molecular concentration boundaries can be convertd into boundaries for the scaled to CO concentrations that are solved for
             if lowerBound != []:#if they are not empty (they should not be since the user input 'yes'), then they are set as the permanent ranges 
                 if signalOrConcentrationRange == 'concentration':#if the user input concentration ranges, the ranges are divided by the conversion factor- because this function uses raw signals
                     lowerBound = lowerBound/float(conversionfactor)
@@ -3226,7 +3228,9 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
         else:#obtains raw signal threshold value
             rawSignalThresholdValue = summation/float(rawSignalThresholdDivider)
     if len(sensitivityThresholdValue) == 0:#user input
+        #TODO FIXME: this needs to be a 0 or a required variable
         sensitivityThresholdValue = 5
+    #TODO FIXME: we think the next two lines need to be deleted
     elif len(sensitivityThresholdValue) > 1:#user input
         sensitivityThresholdValue = sensitivityThresholdValue[0]
     #This for loop goes through all of the rows of the remaining_rawsignals_SLS and finds the values that are lower than the given 
