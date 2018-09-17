@@ -2221,7 +2221,6 @@ def ListLengthChecker(aList, desiredLength, defaultNum):
 #in that row and that molecules own value
 def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeLikelihoods,sensitivityValues):
     #the shape of the referenceData is found 
-    #TODO change row_num to num_rows and column_num to num_columns
     num_rows = len(refMassFrags[:,0])
     num_columns = len(refMassFrags[0,:])
     
