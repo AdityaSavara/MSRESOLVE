@@ -192,7 +192,7 @@ moleculesTSC_List = 'Acetaldehyde'
 moleculeSignalTSC_List = 1.66945
 massNumberTSC_List = 29
 moleculeConcentrationTSC_List = 0.05	#pressure can also be used in subsitute
-unitsTSC_List = 'bar'	#the units will not be used in calculations so any units may be used
+unitsTSC = 'bar'	#the units will not be used in calculations so any units may be used
 
 
 
