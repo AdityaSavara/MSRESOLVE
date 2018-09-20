@@ -3281,19 +3281,45 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
 #This little bit of code enables the user to input a couple values so that the conversion between signal relative to CO and 
 #concentration can be found, and as such the rest of the concentrations can be found as well. If no data is input here, then
 #there are no concentrations printed out, only signals. (if they are both printed, it is done on separate excel sheets)
-def RatioFinder (ReferenceData, ExperimentData, concentrationFinder,molecule,moleculeConcentration,massNumber,moleculeSignal,units):
-    #By putting these declarations first, the variables will always be initilized
-    #preventing errors further on in the code
-    ExperimentData.conversionfactor = 0
-    ExperimentData.units = 'torr'
-    
+def RatioFinder (ReferenceData, ExperimentData, concentrationFinder,molecule,moleculeConcentration,massNumber,moleculeSignal,units,referencePatternTimeRanges): 
     if concentrationFinder == 'yes':#user input
+        #initialize ExperimentData.conversionFactorAtEachTime to be a numpy array with the same length as the times array
+        ExperimentData.conversionFactorAtEachTime = numpy.zeros(len(ExperimentData.times))
+        #initialize conversionFactorForEachReferenceFile as a numpy array with the same length as the number of reference files given
+        conversionFactorForEachReferenceFile = numpy.zeros(len(ReferenceData))
         ExperimentData.units = units
-        for moleculecounter in range(len(ReferenceData.molecules)):#array-indexed for loop
-            for masscounter in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
-                if molecule == ReferenceData.molecules[moleculecounter]:#gets molecule index
-                    if massNumber == ExperimentData.mass_fragment_numbers[masscounter]:#gets index
-                        ExperimentData.conversionfactor = (moleculeConcentration*ReferenceData.matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal)
+        #Get the conversion factor for each reference pattern
+        for referencePatternIndex in range(len(ReferenceData)): #loop through all reference patterns
+            for moleculecounter in range(len(ReferenceData[referencePatternIndex].molecules)):#array-indexed for loop
+                for masscounter in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
+                    if molecule[referencePatternIndex] == ReferenceData[referencePatternIndex].molecules[moleculecounter]:#gets molecule index
+                        if massNumber[referencePatternIndex] == ExperimentData.mass_fragment_numbers[masscounter]:#gets index
+                            #solve for the conversion factor of this reference file
+                            conversionFactorForEachReferenceFile[referencePatternIndex] = (moleculeConcentration[referencePatternIndex]*ReferenceData[referencePatternIndex].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[referencePatternIndex])
+        #Now we need to populate conversionFactorAtEachTime with the proper conversion factors
+        if len(referencePatternTimeRanges) > 0: #If using reference pattern time chooser, loop through ExpData.times to determine which conversion factor goes where
+            for timeIndex in range(len(ExperimentData.times)): #Looping through all times
+                for rangeIndex in range(len(referencePatternTimeRanges)): #Looping through all referencePatternTimeRanges to see which range the current time falls in
+                    if ExperimentData.times[timeIndex] >= referencePatternTimeRanges[rangeIndex][0] and ExperimentData.times[timeIndex] <= referencePatternTimeRanges[rangeIndex][1]:
+                        ExperimentData.conversionFactorAtEachTime[timeIndex] = conversionFactorForEachReferenceFile[rangeIndex]
+                        break #Exit the for loop so the value does not get overwritten
+                    #This elif needs to come before the last elif since the last elif checks the start time of the next time range and if in the last time range there is no 'next' time range to check so an index error occurs
+                    elif rangeIndex == len(referencePatternTimeRanges)-1: #At the last rangeIndex if the time does not fall in any refPatternTimeRanges then the time either comes before the first time range begins or after the last time range ends
+                        pass #Leave the value as a 0 #TODO Ask Ashi what to do in this scenario
+                        break #Exit the for loop so the next elif statement is not read
+                    elif ExperimentData.times[timeIndex] >= referencePatternTimeRanges[rangeIndex][1] and ExperimentData.times[timeIndex] <= referencePatternTimeRanges[rangeIndex+1][0]: #Check if in a gap
+                        #If in a gap, linearly interpolate the conversion factor
+                        ExperimentData.conversionFactorAtEachTime[timeIndex] = DataFunctions.analyticalLinearInterpolator(conversionFactorForEachReferenceFile[rangeIndex],conversionFactorForEachReferenceFile[rangeIndex+1],ExperimentData.times[timeIndex],referencePatternTimeRanges[rangeIndex][1],referencePatternTimeRanges[rangeIndex+1][0])
+                        break #Exit the for loop so the value does not get overwritten
+                
+        elif len(referencePatternTimeRanges) == 0: #User is not using RPTC so just make each value the single conversion factor that was calculated
+            for index in range(len(ExperimentData.times)): 
+                ExperimentData.conversionFactorAtEachTime[index] = conversionFactorForEachReferenceFile[0]
+        #Reshape conversionFactorAtEachtime to be a vector of len(ExpData.times) (it gets created as shape (ExpData.times, ))
+        ExperimentData.conversionFactorAtEachTime = numpy.reshape(ExperimentData.conversionFactorAtEachTime,(len(ExperimentData.times),1))
+    elif concentrationFinder == 'no': #user input
+        ExperimentData.conversionFactorAtEachTime = 0 #Originally defaulted to 0
+        ExperimentData.units = 'torr' #Originally defaulted to torr
     return ExperimentData
     
     
@@ -3628,11 +3654,11 @@ def PopulateLogFile():
             f6.write('distinguished = %s \n'%(G.distinguished))
     if G.concentrationFinder == 'yes':
         f6.write('concentrationFinder = %s \n'%(G.concentrationFinder))
-        f6.write('molecule = %s \n'%(G.moleculeToScaleConcentration))
-        f6.write('moleculeSignal = %s \n'%(G.moleculeSignal))
-        f6.write('massNumber = %s \n'%(G.massNumber))
-        f6.write('moleculeConcentration = %s \n'%(G.moleculeConcentration))
-        f6.write('units = %s \n'%(G.units))
+        f6.write('molecule = %s \n'%(G.moleculesTSC_List))
+        f6.write('moleculeSignal = %s \n'%(G.moleculeSignalTSC_List))
+        f6.write('massNumber = %s \n'%(G.massNumberTSC_List))
+        f6.write('moleculeConcentration = %s \n'%(G.moleculeConcentrationTSC_List))
+        f6.write('units = %s \n'%(G.unitsTSC_List))
     f6.write('resolvedScaledConcentrationsOutputName  = %s \n'%(G.resolvedScaledConcentrationsOutputName ))
     f6.write('concentrationsOutputName = %s \n'%(G.concentrationsOutputName))
     f6.write('simulatedSignalsOutputName = %s \n'%(G.simulatedSignalsOutputName))
@@ -3781,8 +3807,18 @@ def parseUserInput(currentUserInput):
     
     #Concentration Finder
     if currentUserInput.concentrationFinder == 'yes':
-        currentUserInput.moleculeSignal = float(currentUserInput.moleculeSignal) #The molecule signal is a float
-        currentUserInput.moleculeConcentration = float(currentUserInput.moleculeConcentration) #the molecule's concentration is a float
+        #First cast the concentrationFinder variables as lists
+        currentUserInput.moleculesTSC_List = parse.listCast(currentUserInput.moleculesTSC_List)
+        currentUserInput.moleculeSignalTSC_List = parse.listCast(currentUserInput.moleculeSignalTSC_List)
+        currentUserInput.massNumberTSC_List = parse.listCast(currentUserInput.massNumberTSC_List)
+        currentUserInput.moleculeConcentrationTSC_List = parse.listCast(currentUserInput.moleculeConcentrationTSC_List)
+        #Then parallelize these variables to have the same length as number of reference patterns
+        currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referenceFileNameList))
+        currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referenceFileNameList))
+        currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referenceFileNameList))
+        currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referenceFileNameList))
+        
+
     return None
 
 
@@ -4003,13 +4039,13 @@ def main():
         currentReferenceData = ReferenceDataList[0] #TODO this line is placeholder by charles to fix currentRefenceData issue until Alex has a better solution 
     
         # Calculate a coefficient for doing a unit conversion on concentrations #TODO resolve Ratio Finder issue, i.e. list of conversionValues
-        ExperimentData = RatioFinder(currentReferenceData, ExperimentData, G.concentrationFinder,
-                                      G.moleculeToScaleConcentration, G.moleculeConcentration, G.massNumber, G.moleculeSignal, G.units)
+        ExperimentData = RatioFinder(ReferenceDataList, ExperimentData, G.concentrationFinder,
+                                      G.moleculesTSC_List, G.moleculeConcentrationTSC_List, G.massNumberTSC_List, G.moleculeSignalTSC_List, G.unitsTSC_List,G.referencePatternTimeRanges)
 	##End: Preparing data for data analysis based on user input choices
     
         #Initialize a current reference pattern index
         currentReferencePatternIndex = 0
-        for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time   
+        for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time  
             #This print statement was used to track the progress of the program during long analysis runs
             if ((timeIndex % 100) == 0 and timeIndex != 0):
                 print(timeIndex)
@@ -4057,10 +4093,10 @@ def main():
                     solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
 
             elif G.answer == 'sls':#user input, the SLS method is chosen)
-                solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, ExperimentData.conversionfactor, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
+                solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, ExperimentData.conversionFactorAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
         
             arrayline = []
-
+    
             for moleculecounter in range(len(currentReferenceData.molecules)):#array-indexed for loop, this is the same data structure as the inverse method above once the line of solutions is found, see above for comments
                 if moleculecounter == 0:#only for the first loop will times be added to new collected data
                     arrayline.append(ExperimentData.times[timeIndex])
@@ -4074,40 +4110,56 @@ def main():
             if G.negativeAnalyzerYorN == 'yes':
                 arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption)
             
-            
-            if timeIndex > 1:#all additons after second index
-                concentrationsScaledToCOarrayholder = numpy.zeros([len(concentrationsScaledToCOarray[:,0])+1,len(currentReferenceData.molecules)+1])
-                concentrationsScaledToCOarrayholder[0:len(concentrationsScaledToCOarray[:,0]),:] = concentrationsScaledToCOarray
-                concentrationsScaledToCOarray = concentrationsScaledToCOarrayholder
-                concentrationsScaledToCOarray[len(concentrationsScaledToCOarray[:,0])-1,:] = arrayline
-            if timeIndex == 1:#additions at second index index
-                concentrationsScaledToCOarrayholder = numpy.zeros([2,len(currentReferenceData.molecules)+1])
-                concentrationsScaledToCOarrayholder[0,:] = concentrationsScaledToCOarray
-                concentrationsScaledToCOarray = concentrationsScaledToCOarrayholder
-                concentrationsScaledToCOarray[len(concentrationsScaledToCOarray[:,0])-1,:] = arrayline
-            if timeIndex == 0:#first index
+            if timeIndex == 0: #Can't vstack with an array of zeros or else the first time is 0 with all data points at 0 so make first row the first arrayline provided
                 concentrationsScaledToCOarray = arrayline
-
-            if G.concentrationFinder == 'yes':
-                concentrationline = numpy.zeros(len(arrayline))
-                concentrationline[0] = arrayline[0]
-                concentrationline[1:] = arrayline[1:]*ExperimentData.conversionfactor
-    
-                if timeIndex > 1:#all additons after second index
-                    concentrationsarrayholder = numpy.zeros([len(concentrationsarray[:,0])+1,len(currentReferenceData.molecules)+1])
-                    concentrationsarrayholder[0:len(concentrationsarray[:,0]),:] = concentrationsarray                
-                    concentrationsarray = concentrationsarrayholder
-                    concentrationsarray[len(concentrationsarray[:,0])-1,:] = concentrationline
-                if timeIndex == 1:#additions at second index index
-                    concentrationsarrayholder = numpy.zeros([2,len(currentReferenceData.molecules)+1])
-                    concentrationsarrayholder[0,:] = concentrationsarray                
-                    concentrationsarray = concentrationsarrayholder
-                    concentrationsarray[len(concentrationsarray[:,0])-1,:] = concentrationline                
-                if timeIndex == 0:#first index
-                    concentrationsarray = concentrationline                
+            elif timeIndex > 0: #Everything else is appended via numpy.vstack
+                concentrationsScaledToCOarray = numpy.vstack((concentrationsScaledToCOarray,arrayline))
+                
+#            if G.concentrationFinder == 'yes':
+#                concentrationline = numpy.zeros(len(arrayline))
+#                concentrationline[0] = arrayline[0]
+#                concentrationline[1:] = arrayline[1:]*ExperimentData.conversionFactorAtEachTime
+#                
+#                if timeIndex == 0:
+#                    concentrationsarray = concentrationline
+#                elif timeIndex > 0:
+#                    concentrationsarray = numpy.vstack((concentrationsarray,concentrationline))
             
             
-            
+#            if timeIndex > 1:#all additons after second index
+#                concentrationsScaledToCOarrayholder = numpy.zeros([len(concentrationsScaledToCOarray[:,0])+1,len(currentReferenceData.molecules)+1])
+#                concentrationsScaledToCOarrayholder[0:len(concentrationsScaledToCOarray[:,0]),:] = concentrationsScaledToCOarray
+#                concentrationsScaledToCOarray = concentrationsScaledToCOarrayholder
+#                concentrationsScaledToCOarray[len(concentrationsScaledToCOarray[:,0])-1,:] = arrayline
+#            if timeIndex == 1:#additions at second index index
+#                concentrationsScaledToCOarrayholder = numpy.zeros([2,len(currentReferenceData.molecules)+1])
+#                concentrationsScaledToCOarrayholder[0,:] = concentrationsScaledToCOarray
+#                concentrationsScaledToCOarray = concentrationsScaledToCOarrayholder
+#                concentrationsScaledToCOarray[len(concentrationsScaledToCOarray[:,0])-1,:] = arrayline
+#            if timeIndex == 0:#first index
+#                concentrationsScaledToCOarray = arrayline
+#
+#            if G.concentrationFinder == 'yes':
+#                concentrationline = numpy.zeros(len(arrayline))
+#                concentrationline[0] = arrayline[0]
+#                concentrationline[1:] = arrayline[1:]*ExperimentData.conversionFactorAtEachTime
+#    
+#                if timeIndex > 1:#all additons after second index
+#                    concentrationsarrayholder = numpy.zeros([len(concentrationsarray[:,0])+1,len(currentReferenceData.molecules)+1])
+#                    concentrationsarrayholder[0:len(concentrationsarray[:,0]),:] = concentrationsarray                
+#                    concentrationsarray = concentrationsarrayholder
+#                    concentrationsarray[len(concentrationsarray[:,0])-1,:] = concentrationline
+#                if timeIndex == 1:#additions at second index index
+#                    concentrationsarrayholder = numpy.zeros([2,len(currentReferenceData.molecules)+1])
+#                    concentrationsarrayholder[0,:] = concentrationsarray                
+#                    concentrationsarray = concentrationsarrayholder
+#                    concentrationsarray[len(concentrationsarray[:,0])-1,:] = concentrationline                
+#                if timeIndex == 0:#first index
+#                    concentrationsarray = concentrationline                
+        
+        if G.concentrationFinder == 'yes': #If using concentration finder
+            concentrationsarray = copy.copy(concentrationsScaledToCOarray) #point concentrationsarray to a copy of concentrationsScaledToCOArray
+            concentrationsarray[:,1:] = concentrationsarray[:,1:]*ExperimentData.conversionFactorAtEachTime #Multiply the data points by the appropriate conversion factor
         print('Data Analysis Finished.')
         #show net time for Data Analysis
         G.timeSinceLastCheckpoint = timeit.default_timer() - G.checkpoint
@@ -4123,13 +4175,13 @@ def main():
         data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
         
         if G.concentrationFinder == 'yes':
-            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.units)
+            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC_List)
             times = concentrationsarray[:,0]
             data = concentrationsarray[:,1:]
         
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
-            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.units, graphFileName='graphAfterAnalysis', fileSuffix = G.iterationSuffix)
+            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC_List, graphFileName='graphAfterAnalysis', fileSuffix = G.iterationSuffix)
 
             
     if G.dataSimulation =='yes':
