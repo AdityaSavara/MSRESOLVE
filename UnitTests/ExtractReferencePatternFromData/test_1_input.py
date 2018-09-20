@@ -199,11 +199,11 @@ SLSUniqueExport = 'SLSUniqueOrder.csv'
 #this last set of inputs is where you enter your conversion factors from raw signal to concentration, unlike most rows, do not leave brackets around chosen numbers
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
 concentrationFinder = 'no'
-moleculeToScaleConcentration = 'Acetaldehyde'
-moleculeSignal = 1.66945
-massNumber = 29
-moleculeConcentration = 0.05	#pressure can also be used in subsitute
-units = 'bar'	#the units will not be used in calculations so any units may be used
+moleculesTSC_List = 'Acetaldehyde'
+moleculeSignalTSC_List = 1.66945
+massNumberTSC_List = 29
+moleculeConcentrationTSC_List = 0.05	#pressure can also be used in subsitute
+unitsTSC_List = 'bar'	#the units will not be used in calculations so any units may be used
 
 
 
