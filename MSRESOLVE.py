@@ -3658,7 +3658,7 @@ def PopulateLogFile():
         f6.write('moleculeSignal = %s \n'%(G.moleculeSignalTSC_List))
         f6.write('massNumber = %s \n'%(G.massNumberTSC_List))
         f6.write('moleculeConcentration = %s \n'%(G.moleculeConcentrationTSC_List))
-        f6.write('units = %s \n'%(G.unitsTSC_List))
+        f6.write('units = %s \n'%(G.unitsTSC))
     f6.write('resolvedScaledConcentrationsOutputName  = %s \n'%(G.resolvedScaledConcentrationsOutputName ))
     f6.write('concentrationsOutputName = %s \n'%(G.concentrationsOutputName))
     f6.write('simulatedSignalsOutputName = %s \n'%(G.simulatedSignalsOutputName))
@@ -4040,7 +4040,7 @@ def main():
     
         # Calculate a coefficient for doing a unit conversion on concentrations #TODO resolve Ratio Finder issue, i.e. list of conversionValues
         ExperimentData = RatioFinder(ReferenceDataList, ExperimentData, G.concentrationFinder,
-                                      G.moleculesTSC_List, G.moleculeConcentrationTSC_List, G.massNumberTSC_List, G.moleculeSignalTSC_List, G.unitsTSC_List,G.referencePatternTimeRanges)
+                                      G.moleculesTSC_List, G.moleculeConcentrationTSC_List, G.massNumberTSC_List, G.moleculeSignalTSC_List, G.unitsTSC,G.referencePatternTimeRanges)
 	##End: Preparing data for data analysis based on user input choices
     
         #Initialize a current reference pattern index
@@ -4175,13 +4175,13 @@ def main():
         data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
         
         if G.concentrationFinder == 'yes':
-            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC_List)
+            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
             times = concentrationsarray[:,0]
             data = concentrationsarray[:,1:]
         
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
-            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC_List, graphFileName='graphAfterAnalysis', fileSuffix = G.iterationSuffix)
+            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='graphAfterAnalysis', fileSuffix = G.iterationSuffix)
 
             
     if G.dataSimulation =='yes':
