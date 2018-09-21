@@ -3678,12 +3678,32 @@ def parseUserInput(currentUserInput):
     currentUserInput.form = parse.listCast(currentUserInput.form) #form needs to be a list
     currentUserInput.form = parse.parallelVectorize(currentUserInput.form,len(currentUserInput.referenceFileNameList)) #form needs to be a list of the same length as referenceFileName
     currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
+    if not isinstance(currentUserInput.collectedFileName,str): #collectedFileName must be a string
+        raise TypeError("collectedFileName must be of type str")  
     
+    #preProcessing, dataAnalysis, dataSimulation, grapher
+    if not isinstance(currentUserInput.preProcessing,str):
+        raise TypeError("preProcessing must be of type str")
+    if not isinstance(currentUserInput.dataAnalysis,str):
+        raise TypeError("dataAnalysis must be of type str")
+    if not isinstance(currentUserInput.dataSimulation,str):
+        raise TypeError("dataSimulation must be of type str")
+    if not isinstance(currentUserInput.grapher,str):
+        raise TypeError("grapher must be of type str")
+        
+    #Time Range
+    if not isinstance(currentUserInput.timeRangeLimit,str):
+        raise TypeError("timeRangeLimit must be of type str")
     #Time Ranges are both floats
     if currentUserInput.timeRangeLimit == 'yes':
         currentUserInput.timeRangeStart = float(currentUserInput.timeRangeStart) 
-        currentUserInput.timeRangeFinish = float(currentUserInput.timeRangeFinish)    
+        currentUserInput.timeRangeFinish = float(currentUserInput.timeRangeFinish)  
     
+    #Specific molecules/mass fragments
+    if not isinstance(currentUserInput.specificMolecules,str):
+        raise TypeError('specificMolecules must be of type str')
+    if not isinstance(currentUserInput.specificMassFragments,str):
+        raise TypeError('specificMassFragments must be of type str')
     #Chosen Molecules and Mass Fragments are both lists
     currentUserInput.chosenMoleculesNames = parse.listCast(currentUserInput.chosenMoleculesNames)
     currentUserInput.chosenMassFragments = parse.listCast(currentUserInput.chosenMassFragments)
@@ -3695,7 +3715,6 @@ def parseUserInput(currentUserInput):
         parse.compareElementsBetweenLists(currentUserInput.chosenMassFragments,currentUserInput.exp_mass_fragment_numbers,'chosenMassFragments','Mass Fragments from Data')
     elif currentUserInput.specificMassFragments == 'no': #Otherwise use all mass fragments
         chosenMassFragmentsForParsing = copy.deepcopy(currentUserInput.exp_mass_fragment_numbers)
-    
     #Populate chosenMolecules based on user input option to get a list of molecules
     if currentUserInput.specificMolecules == 'yes': #if yes, use the user's chosen moleclues
         chosenMoleculesForParsing = copy.deepcopy(currentUserInput.chosenMoleculesNames)
@@ -3711,6 +3730,8 @@ def parseUserInput(currentUserInput):
     currentUserInput.sensitivityValues = parse.parallelVectorize(currentUserInput.sensitivityValues,len(chosenMoleculesForParsing))
     
     #Linear Baseline Correction Semi-Automatic variables
+    if not isinstance(currentUserInput.linearBaselineCorrectionSemiAutomatic,str):
+        raise TypeError("linearBaselineCorrectionSemiAutomatic must be of type str")
     if currentUserInput.linearBaselineCorrectionSemiAutomatic == 'yes': #if using linear baseline correction semi automatic
         currentUserInput.baselineType = parse.listCast(currentUserInput.baselineType) #Baseline type needs to be a list
         currentUserInput.massesToBackgroundCorrect = parse.listCast(currentUserInput.massesToBackgroundCorrect) #Masses to background correct is a list        
@@ -3726,12 +3747,22 @@ def parseUserInput(currentUserInput):
         currentUserInput.lateBaselineTimes = parse.parallelVectorize(currentUserInput.lateBaselineTimes,len(currentUserInput.massesToBackgroundCorrect)) 
     
     #Data Solving Restrictions - Marginal Change Restrictor
+    if not isinstance(currentUserInput.interpolateYorN,str):
+        raise TypeError("interpolateYorN must be of type str")
     if currentUserInput.interpolateYorN == 'yes':
         #Marginal Change Restriction and Ignorable Delta Y Threshold are both floats
         currentUserInput.marginalChangeRestriction = float(currentUserInput.marginalChangeRestriction)
         currentUserInput.ignorableDeltaYThreshold = float(currentUserInput.ignorableDeltaYThreshold)
     
     #Data Solving Restrictions - Brute Solving Restrictions
+    if not isinstance(currentUserInput.dataRangeSpecifierYorN,str):
+        raise TypeError("dataRangeSpecifierYorN must be of type str")
+    if not isinstance(currentUserInput.signalOrConcentrationRange,str):
+        raise TypeError("signalOrConcentrationRange must be of type str")
+    if not isinstance(currentUserInput.csvFile,str):
+        raise TypeError("csvFile must be of type str")
+    if not isinstance(currentUserInput.csvFileName,str):
+        raise TypeError("csvFileName must be of type str")
     #Data  Upper/Lower Bound are both lists
     currentUserInput.dataLowerBound = parse.listCast(currentUserInput.dataLowerBound)
     currentUserInput.dataUpperBound = parse.listCast(currentUserInput.dataUpperBound)
@@ -3749,10 +3780,22 @@ def parseUserInput(currentUserInput):
     currentUserInput.bruteIncrements = parse.parallelVectorize(currentUserInput.bruteIncrements,lenOfParallelVectorizingBruteSolvingRestrictionVars)
     
     #Set Scaling Factor
+    if not isinstance(currentUserInput.scaleRawDataOption,str):
+        raise TypeError("scaleRawDataOption must be of type str")
     if currentUserInput.scaleRawDataOption == 'manual':
         currentUserInput.scaleRawDataFactor = float(currentUserInput.scaleRawDataFactor) #scaleRawDataFactor is a float
     
+    #Reference Correction Changer
+    if not isinstance(currentUserInput.measuredReferenceYorN,str):
+        raise TypeError('measuredReferenceYorN must be of type str')
+    if not isinstance(currentUserInput.referenceMeasuredFileName,str):
+        raise TypeError('referenceMeasuredFileName must be of type str')
+    if not isinstance(currentUserInput.referenceLiteratureFileName,str):
+        raise TypeError('referenceLiteratureFileName must be of type str')
+    
     #Reference Pattern Changer
+    if not isinstance(currentUserInput.extractReferencePatternFromDataOption,str):
+        raise TypeError('extractReferencePatternFromDataOption must be of type str')
     #If using reference pattern changer, check that all currentUserInput.rpcMoleculesToChange are in the referenceData
     if currentUserInput.extractReferencePatternFromDataOption == 'yes':
         #The molecules to change, their mass fragments, and time ranges are all lists
@@ -3763,12 +3806,16 @@ def parseUserInput(currentUserInput):
         parse.compareElementsBetweenLists(currentUserInput.rpcMoleculesToChange,chosenMoleculesForParsing,'rpcMoleculesToChange','chosenMolecules')
     
     #Reference Mass Fragmentation Threshold
+    if not isinstance(currentUserInput.minimalReferenceValue,str):
+        raise TypeError('minimalReferenceValue must be of type str')
     if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
         currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
         #The length of the reference values needs to be the same length as the number of molecules
         currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
     
     #Data Threshold Filter
+    if not isinstance(currentUserInput.lowerBoundThresholdChooser,str):
+        raise TypeError('lowerBoundThresholdChooser must be of type str')
     if currentUserInput.lowerBoundThresholdChooser == 'yes': #if using lowerBoundThresholdFilter
         #masstes to lower bound threshold filter and lower bound threshold percent/absolute are all three lists
         currentUserInput.massesToLowerBoundThresholdFilter = parse.listCast(currentUserInput.massesToLowerBoundThresholdFilter)
@@ -3784,6 +3831,10 @@ def parseUserInput(currentUserInput):
             currentUserInput.lowerBoundThresholdPercentage = parse.parallelVectorize(currentUserInput.lowerBoundThresholdPercentage,len(currentUserInput.massesToLowerBoundThresholdFilter))
     
     #Data Smoother
+    if not isinstance(currentUserInput.dataSmootherYorN,str):
+        raise TypeError('dataSmootherYorN must be of type str')
+    if not isinstance(currentUserInput.dataSmootherChoice,str):
+        raise TypeError('dataSmootherChoice must be of type str')
     if currentUserInput.dataSmootherYorN == 'yes': #If using dataSmoother
         #The headers to confine to in data smoother is a list
         currentUserInput.dataSmootherHeadersToConfineTo = parse.listCast(currentUserInput.dataSmootherHeadersToConfineTo)        
@@ -3791,6 +3842,10 @@ def parseUserInput(currentUserInput):
         parse.compareElementsBetweenLists(currentUserInput.dataSmootherHeadersToConfineTo,chosenMassFragmentsForParsing,'dataSmootherHeadersToConfineTo','chosenMolecules')
     
     #Raw Signal Threshold
+    if not isinstance(currentUserInput.rawSignalThresholdMethod,str):
+        raise TypeError('rawSignalThresholdMethod must be of type str')
+    if not isinstance(currentUserInput.rawSignalThresholdLimit,str):
+        raise TypeError('rawSignalThresholdLimit')
     if currentUserInput.rawSignalThresholdMethod == 'yes': #If using rawSignalThresholdMethod
         #raw signal threshold value, sensitivity value, raw signal threshold divider, and raw signal threshold limit percent are all lists
         currentUserInput.rawSignalThresholdValue = parse.listCast(currentUserInput.rawSignalThresholdValue)
@@ -3805,18 +3860,63 @@ def parseUserInput(currentUserInput):
         currentUserInput.rawSignalThresholdDivider = parse.parallelVectorize(currentUserInput.rawSignalThresholdDivider,len(chosenMassFragmentsForParsing))
         currentUserInput.rawSignalThresholdLimitPercent = parse.parallelVectorize(currentUserInput.rawSignalThresholdLimitPercent,len(chosenMassFragmentsForParsing))
     
+    #Negative Analyzer
+    if not isinstance(currentUserInput.negativeAnalyzerYorN,str): #Must be a string
+        raise TypeError('negativeAnalyzerYorN must be of type str')
+    
+    #Data Analysis Methods
+    #All must be strings
+    if not isinstance(currentUserInput.answer,str):
+        raise TypeError('answer must be of type str')
+    if not isinstance(currentUserInput.uniqueOrCommon,str):
+        raise TypeError('uniqueOrCommon must be of type str')
+    if not isinstance(currentUserInput.slsFinish,str):
+        raise TypeError('slsFinish must be of type str')
+    if not isinstance(currentUserInput.bruteOption,str):
+        raise TypeError('bruteOption must be of type str')
+    if not isinstance(currentUserInput.distinguished,str):
+        raise TypeError('distinguished must be of type str')
+    if not isinstance(currentUserInput.fullBrute,str):
+        raise TypeError('fullBrute must be of type str')
+    if not isinstance(currentUserInput.SLSUniquePrint,str):
+        raise TypeError('SLSUniquePrint must be of type str')
+    if not isinstance(currentUserInput.SLSUniqueExport,str):
+        raise TypeError("SLSUniqueExport must be of type str")
+        
     #Concentration Finder
+    if not isinstance(currentUserInput.concentrationFinder,str):
+        raise TypeError("concentrationFinder must be of type str")
     if currentUserInput.concentrationFinder == 'yes':
         #First cast the concentrationFinder variables as lists
         currentUserInput.moleculesTSC_List = parse.listCast(currentUserInput.moleculesTSC_List)
         currentUserInput.moleculeSignalTSC_List = parse.listCast(currentUserInput.moleculeSignalTSC_List)
         currentUserInput.massNumberTSC_List = parse.listCast(currentUserInput.massNumberTSC_List)
         currentUserInput.moleculeConcentrationTSC_List = parse.listCast(currentUserInput.moleculeConcentrationTSC_List)
+        #Units needs to be a string, if it is not a string, return an error
+        if  not isinstance(currentUserInput.unitsTSC,str):
+            raise TypeError("unitsTSC must be of type str")
         #Then parallelize these variables to have the same length as number of reference patterns
         currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referenceFileNameList))
         currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referenceFileNameList))
         currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referenceFileNameList))
         currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referenceFileNameList))
+        
+    #Output Files
+    #All must be strings
+    if not isinstance(currentUserInput.preProcessedDataOutputName,str):
+        raise TypeError('preProcessedDataOutputName must be of type str')
+    if not isinstance(currentUserInput.resolvedScaledConcentrationsOutputName,str):
+        raise TypeError('resolvedScaledConcentrationsOutputName must be of type str')
+    if not isinstance(currentUserInput.scaledConcentrationsPercentages,str):
+        raise TypeError('scaledConcentrationsPercentages must be of type str')
+    if not isinstance(currentUserInput.concentrationsOutputName,str):
+        raise TypeError('concentrationsOutputName must be of type str')
+    if not isinstance(currentUserInput.simulatedSignalsOutputName,str):
+        raise TypeError('simulatedSignalsOutputName must be of type str')
+        
+    #Iterative Analysis
+    if not isinstance(currentUserInput.TotalConcentrationsOutputName,str):
+        raise TypeError("TotalConcentrationsOutputName must be of type str")
         
 
     return None
