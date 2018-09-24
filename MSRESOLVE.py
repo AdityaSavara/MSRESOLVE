@@ -2665,6 +2665,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                         f.write("UsedMolecules \n")
                         
                     with open("SLSUniqueMassFragments.csv", 'a') as f:
+                        f.write('%s,' %timeIndex)
+                        f.write('%s,' %time)                        
                         f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
             
             
@@ -2772,6 +2774,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                     f.write("UsedMolecules \n")
                     
                 with open("SLSUniqueMassFragments.csv", 'a') as f:
+                    f.write('%s,' %timeIndex)
+                    f.write('%s,' %time)                    
                     f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
         if remaining_num_molecules == 0:
             break
@@ -3565,7 +3569,10 @@ def createSLSUniqueOrderFile(abscissaHeader, molecules):
         fp.write('\n')
     
     with open("SLSUniqueMassFragments.csv", 'w') as f:
-        f.write(str(list(ExperimentData.provided_mass_fragment_numbers))[1:-1] + "\n") #The [1:-1] is to get rid of the brackets from the list during export.
+        # Headers
+        f.write('{},{},'.format(
+            'Data Point',abscissaHeader))        
+        f.write(str(list(ExperimentData.mass_fragment_numbers))[1:-1] + "\n") #The [1:-1] is to get rid of the brackets from the list during export.
 
 '''
 This function takes in the end result of everything and exports it to the 
