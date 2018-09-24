@@ -50,3 +50,13 @@ def compareElementsBetweenLists(list1,list2,nameOfList1,nameOfList2):
             print(str(list1[i]) + ' in ' + nameOfList1 + ' but not in ' + nameOfList2)
             raise ValueError(str(list1[i]) + ' in ' + nameOfList1 + ' but not in ' + nameOfList2)
     return None
+
+'''
+strCheck is used to see if a variable that is supposed to be a string actually is a string
+Inputs are the variable that is supposed to be a string and the name of the variable as a string
+The name is default 'variable' so if the user forgets to put the variable name there it just prints 'variable must be of type string'
+'''
+def strCheck(stringVar,nameOfStringVar='variable'):
+    if not isinstance(stringVar,str):
+        raise TypeError('%s must be of type str' %(nameOfStringVar))
+    return None
