@@ -2657,14 +2657,22 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 #Check if we should export to file what happened.
                 #TODO: Below should probably be made  a function (occurs at another place below)
                 if G.SLSUniquePrint == 'yes':
-                    with open(G.SLSUniqueExport, 'a') as f:
+                    outputMoleculesOrderFileName = G.SLSUniqueExport
+                    if G.iterativeAnalysis:
+                        #then the filename will have a suffix attached
+                        outputMoleculesOrderFileName = outputMoleculesOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMoleculesOrderFileName[-4:] 
+                    with open(outputMoleculesOrderFileName, 'a') as f:
                         f.write('%s,' %timeIndex)
                         f.write('%s,' %time)
                         for x in range(len(usedmolecules)):
                             f.write('%s,' %usedmolecules[x])
                         f.write("UsedMolecules \n")
                         
-                    with open("SLSUniqueMassFragments.csv", 'a') as f:
+                    outputMassFragmentsOrderFileName = 'SLSUniqueMassFragments.csv'
+                    if G.iterativeAnalysis:
+                        #then the filename will have a suffix attached
+                        outputMassFragmentsOrderFileName = outputMassFragmentsOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMassFragmentsOrderFileName[-4:]
+                    with open(outputMassFragmentsOrderFileName, 'a') as f:
                         f.write('%s,' %timeIndex)
                         f.write('%s,' %time)                        
                         f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
@@ -2766,14 +2774,22 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             # This is a csv file so should be delimited with commas
             #TODO: Below should probably be made  a function (occurs at another place above)
             if G.SLSUniquePrint == 'yes':
-                with open(G.SLSUniqueExport, 'a') as f:
+                outputMoleculesOrderFileName = G.SLSUniqueExport
+                if G.iterativeAnalysis:
+                    #then the filename will have a suffix attached
+                    outputMoleculesOrderFileName = outputMoleculesOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMoleculesOrderFileName[-4:] 
+                with open(outputMoleculesOrderFileName, 'a') as f:
                     f.write('%s,' %timeIndex)
                     f.write('%s,' %time)
                     for x in range(len(usedmolecules)):
                         f.write('%s,' %usedmolecules[x])
                     f.write("UsedMolecules \n")
-                    
-                with open("SLSUniqueMassFragments.csv", 'a') as f:
+                
+                outputMassFragmentsOrderFileName = 'SLSUniqueMassFragments.csv'
+                if G.iterativeAnalysis:
+                    #then the filename will have a suffix attached
+                    outputMassFragmentsOrderFileName = outputMassFragmentsOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMassFragmentsOrderFileName[-4:] 
+                with open(outputMassFragmentsOrderFileName, 'a') as f:
                     f.write('%s,' %timeIndex)
                     f.write('%s,' %time)                    
                     f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
@@ -3552,12 +3568,12 @@ def CreateLogFile():
 # abscissaHeader - string name of the experiment data type (e.g. 'Temp' or 'time')
 # molecules - list of strings of molecule names from referenceData.molecules
 def createSLSUniqueOrderFile(abscissaHeader, molecules):
-    outputFileName = 'SLSUniqueOrder.csv'
+    outputMoleculeOrderFileName = 'SLSUniqueOrder.csv'
     if G.iterativeAnalysis:
         #then the filename will have a suffix attached
-        outputFileName = outputFileName[:-4] + '_iter_%s' %G.iterationNumber + outputFileName[-4:]
+        outputMoleculeOrderFileName = outputMoleculeOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMoleculeOrderFileName[-4:]
     
-    with open(outputFileName,'w') as fp:
+    with open(outputMoleculeOrderFileName,'w') as fp:
         # Headers
         fp.write('{},{}'.format(
             'Data Point',abscissaHeader))
@@ -3568,7 +3584,12 @@ def createSLSUniqueOrderFile(abscissaHeader, molecules):
             fp.write(",{}".format(molecule))
         fp.write('\n')
     
-    with open("SLSUniqueMassFragments.csv", 'w') as f:
+    outputMassFragmentOrderFileName = 'SLSUniqueMassFragments.csv'
+    if G.iterativeAnalysis:
+        #then the filename will have a suffix attached
+        outputMassFragmentOrderFileName = outputMassFragmentOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMassFragmentOrderFileName[-4:]    
+    
+    with open(outputMassFragmentOrderFileName, 'w') as f:
         # Headers
         f.write('{},{},'.format(
             'Data Point',abscissaHeader))        
