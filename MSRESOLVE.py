@@ -1378,7 +1378,7 @@ def SpecificIterationName(iterativeAnalysis, iterationNumber):
     return iterationDirectoryName
 
 def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = False):
-    #implied arguments for this function are G.referenceFileNameList and G.collectedFileName
+    #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
     if iterate:
         iterationNumber += 1
     G.iterationNumber = iterationNumber
@@ -1412,27 +1412,27 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
         
         G.oldReferenceFileName = []
         G.nextRefFileName = []
-        for RefIndex, RefName in enumerate(G.referenceFileNameList): #a list
+        for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
             #record the old file names 
             G.oldReferenceFileName.append(RefName)
             
             #construct the file names for the current run of the program
-            referenceFileNameTemp = G.referenceFileNameList[RefIndex][:-18] +  str(G.iterationSuffix) + G.referenceFileNameList[RefIndex][-4:]
+            referenceFileNameTemp = G.referenceFileNamesList[RefIndex][:-18] +  str(G.iterationSuffix) + G.referenceFileNamesList[RefIndex][-4:]
             
             #copy the experimental and reference files into new names for this iterative run
             shutil.copy(RefName, referenceFileNameTemp)
             
             #change the globals to reflect the renaming of the ref and exp files
-            G.referenceFileNameList[RefIndex] =  referenceFileNameTemp
+            G.referenceFileNamesList[RefIndex] =  referenceFileNameTemp
             
             #construct file names for the next run of the program 
             G.nextRefFileName.append(RefName[:-18] + '_unused_iter_%s' %G.iterationNumber + RefName[-4:])
     
     return None
-    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileNameList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileNamesList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
-    #implied arguments for this function are G.referenceFileNameList and G.collectedFileName
+    #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
     #this global value is set so that each export statement can label the output files correctly
     G.iterationNumber = iterationNumber
     
@@ -1458,19 +1458,19 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     G.nextExpFileName = G.collectedFileName[:-11] + '_remaining_iter_1' + G.collectedFileName[-4:]
     
     G.oldReferenceFileName = []
-    for RefIndex, RefName in enumerate(G.referenceFileNameList): #a list
+    for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
         G.oldReferenceFileName.append(RefName)
         #construct the file names for the first run of the program
-        G.referenceFileNameList[RefIndex] = G.referenceFileNameList[RefIndex][:-4] +  str(G.iterationSuffix) + G.referenceFileNameList[RefIndex][-4:]
+        G.referenceFileNamesList[RefIndex] = G.referenceFileNamesList[RefIndex][:-4] +  str(G.iterationSuffix) + G.referenceFileNamesList[RefIndex][-4:]
         #construct file names for the second run of the program 
         G.nextRefFileName.append(RefName[:-4] + '_unused_iter_1' + RefName[-4:])
     
     return None 
-    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileNameList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileNamesList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
 def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataListFullCopy):
-    #implied arguments: G.dataSimulation, G.referenceFileNameList, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMoleculesNames, G.iterationNumber
+    #implied arguments: G.dataSimulation, G.referenceFileNamesList, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMoleculesNames, G.iterationNumber
     #override data simulation to yes if it was not selected
     if G.dataSimulation != 'yes':
         print("Iterative analysis cannot find the remaining signals in the experiment without signal simulation being run.")
@@ -1499,7 +1499,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
         #Export current Reference Data  
         #Reference data is trimmed prior to this function
-        ExportXYYYData(G.referenceFileNameList[RefObjectIndex], RefObject.provided_reference_patterns, RefObject.molecules, abscissaHeader = 'M/Z')
+        ExportXYYYData(G.referenceFileNamesList[RefObjectIndex], RefObject.provided_reference_patterns, RefObject.molecules, abscissaHeader = 'M/Z')
     
     #Export current Experimental Data
     #Experimental data is trimmed prior to this function, but it still needs to be exported  
@@ -1535,7 +1535,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
      
     #save the new file name for the next user input file 
     G.collectedFileName = G.nextExpFileName 
-    G.referenceFileNameList = G.nextRefFileName
+    G.referenceFileNamesList = G.nextRefFileName
     #updating the selected molecules for the next user input file
     G.chosenMoleculesNames = G.unusedMolecules
     #Updating the selected masses for the next user input file
@@ -1561,9 +1561,9 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
         iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber - 1))
     #copy the experimental signals to the next iteration
     shutil.copy("..\%s\%s" %(iterationDirectoryName, G.collectedFileName), os.getcwd())
-    for RefIndex, RefName in enumerate(G.referenceFileNameList): #a list
+    for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
         #copy the next reference file from the previous iteration folder to the next iteration folder
-        shutil.copy("..\%s\%s" %(iterationDirectoryName, G.referenceFileNameList[RefIndex]), os.getcwd())
+        shutil.copy("..\%s\%s" %(iterationDirectoryName, G.referenceFileNamesList[RefIndex]), os.getcwd())
     
     #returning to the parent directory
     os.chdir('..')
@@ -1573,7 +1573,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     DataFunctions.AppendColumnsToCSV(G.TotalConcentrationsOutputName, concdata, moleculeConcLabels, times, ["Time"])
     
     return None
-     #implied returns: G.referenceFileNameList, G.collectedFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
+     #implied returns: G.referenceFileNamesList, G.collectedFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
 ###############################################################################
 #########################  Functions to read data files #######################
 ###############################################################################
@@ -2656,15 +2656,25 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
 
                 #Check if we should export to file what happened.
                 #TODO: Below should probably be made  a function (occurs at another place below)
-                if G.SLSUniquePrint == 'yes':
-                    with open(G.SLSUniqueExport, 'a') as f:
+                if G.SLSUniqueExport == 'yes':
+                    outputMoleculesOrderFileName = 'ExportedSLSUniqueMoleculesOrder.csv'
+                    if G.iterativeAnalysis:
+                        #then the filename will have a suffix attached
+                        outputMoleculesOrderFileName = outputMoleculesOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMoleculesOrderFileName[-4:] 
+                    with open(outputMoleculesOrderFileName, 'a') as f:
                         f.write('%s,' %timeIndex)
                         f.write('%s,' %time)
                         for x in range(len(usedmolecules)):
                             f.write('%s,' %usedmolecules[x])
                         f.write("UsedMolecules \n")
                         
-                    with open("SLSUniqueMassFragments.csv", 'a') as f:
+                    outputMassFragmentsOrderFileName = 'ExportedSLSUniqueMassFragmentsUsed.csv'
+                    if G.iterativeAnalysis:
+                        #then the filename will have a suffix attached
+                        outputMassFragmentsOrderFileName = outputMassFragmentsOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMassFragmentsOrderFileName[-4:]
+                    with open(outputMassFragmentsOrderFileName, 'a') as f:
+                        f.write('%s,' %timeIndex)
+                        f.write('%s,' %time)                        
                         f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
             
             
@@ -2763,15 +2773,25 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             # This block of code is a printing statement to show the user what order the molecules are being solved in
             # This is a csv file so should be delimited with commas
             #TODO: Below should probably be made  a function (occurs at another place above)
-            if G.SLSUniquePrint == 'yes':
-                with open(G.SLSUniqueExport, 'a') as f:
+            if G.SLSUniqueExport == 'yes':
+                outputMoleculesOrderFileName = 'ExportedSLSUniqueMoleculesOrder.csv'
+                if G.iterativeAnalysis:
+                    #then the filename will have a suffix attached
+                    outputMoleculesOrderFileName = outputMoleculesOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMoleculesOrderFileName[-4:] 
+                with open(outputMoleculesOrderFileName, 'a') as f:
                     f.write('%s,' %timeIndex)
                     f.write('%s,' %time)
                     for x in range(len(usedmolecules)):
                         f.write('%s,' %usedmolecules[x])
                     f.write("UsedMolecules \n")
-                    
-                with open("SLSUniqueMassFragments.csv", 'a') as f:
+                
+                outputMassFragmentsOrderFileName = 'ExportedSLSUniqueMassFragmentsUsed.csv'
+                if G.iterativeAnalysis:
+                    #then the filename will have a suffix attached
+                    outputMassFragmentsOrderFileName = outputMassFragmentsOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMassFragmentsOrderFileName[-4:] 
+                with open(outputMassFragmentsOrderFileName, 'a') as f:
+                    f.write('%s,' %timeIndex)
+                    f.write('%s,' %time)                    
                     f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
         if remaining_num_molecules == 0:
             break
@@ -3547,13 +3567,13 @@ def CreateLogFile():
 ## Parameters:
 # abscissaHeader - string name of the experiment data type (e.g. 'Temp' or 'time')
 # molecules - list of strings of molecule names from referenceData.molecules
-def createSLSUniqueOrderFile(abscissaHeader, molecules):
-    outputFileName = 'SLSUniqueOrder.csv'
+def createSLSUniqueExportFiles(abscissaHeader, molecules):
+    outputMoleculeOrderFileName = 'ExportedSLSUniqueMoleculesOrder.csv'
     if G.iterativeAnalysis:
         #then the filename will have a suffix attached
-        outputFileName = outputFileName[:-4] + '_iter_%s' %G.iterationNumber + outputFileName[-4:]
+        outputMoleculeOrderFileName = outputMoleculeOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMoleculeOrderFileName[-4:]
     
-    with open(outputFileName,'w') as fp:
+    with open(outputMoleculeOrderFileName,'w') as fp:
         # Headers
         fp.write('{},{}'.format(
             'Data Point',abscissaHeader))
@@ -3564,8 +3584,16 @@ def createSLSUniqueOrderFile(abscissaHeader, molecules):
             fp.write(",{}".format(molecule))
         fp.write('\n')
     
-    with open("SLSUniqueMassFragments.csv", 'w') as f:
-        f.write(str(list(ExperimentData.provided_mass_fragment_numbers))[1:-1] + "\n") #The [1:-1] is to get rid of the brackets from the list during export.
+    outputMassFragmentOrderFileName = 'ExportedSLSUniqueMassFragmentsUsed.csv'
+    if G.iterativeAnalysis:
+        #then the filename will have a suffix attached
+        outputMassFragmentOrderFileName = outputMassFragmentOrderFileName[:-4] + '_iter_%s' %G.iterationNumber + outputMassFragmentOrderFileName[-4:]    
+    
+    with open(outputMassFragmentOrderFileName, 'w') as f:
+        # Headers
+        f.write('{},{},'.format(
+            'Data Point',abscissaHeader))        
+        f.write(str(list(ExperimentData.mass_fragment_numbers))[1:-1] + "\n") #The [1:-1] is to get rid of the brackets from the list during export.
 
 '''
 This function takes in the end result of everything and exports it to the 
@@ -3575,8 +3603,8 @@ def PopulateLogFile():
     filename6 = 'LogFile.txt' #the log file is printed here
     f6 = open(filename6,'a')
     f6.write('\n')
-    f6.write('referenceFileName = %s \n'%(G.referenceFileNameList))
-    f6.write('form  = %s \n'%(G.form))
+    f6.write('referenceFileName = %s \n'%(G.referenceFileNamesList))
+    f6.write('form  = %s \n'%(G.referenceFormsList))
     f6.write('collectedFileName = %s \n'%(G.collectedFileName ))
     if G.timeRangeLimit == 'yes':#some of the lines in the backgroundinput file don't need to be printed unless a selection is made, so the if statements here make that happen
         f6.write('timeRangeLimit = %s \n'%(G.timeRangeLimit))
@@ -3674,9 +3702,9 @@ This function is designed to serve as a standard for parsing particular variable
 '''
 def parseUserInput(currentUserInput):
     #Input Files
-    currentUserInput.referenceFileNameList = parse.listCast(currentUserInput.referenceFileNameList) #referenceFileName needs to be a list
-    currentUserInput.form = parse.listCast(currentUserInput.form) #form needs to be a list
-    currentUserInput.form = parse.parallelVectorize(currentUserInput.form,len(currentUserInput.referenceFileNameList)) #form needs to be a list of the same length as referenceFileName
+    currentUserInput.referenceFileNamesList = parse.listCast(currentUserInput.referenceFileNamesList) #referenceFileName needs to be a list
+    currentUserInput.referenceFormsList = parse.listCast(currentUserInput.referenceFormsList) #form needs to be a list
+    currentUserInput.referenceFormsList = parse.parallelVectorize(currentUserInput.referenceFormsList,len(currentUserInput.referenceFileNamesList)) #form needs to be a list of the same length as referenceFileName
     currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
     parse.strCheck(currentUserInput.collectedFileName,'collectedFileName') #collectedFileName must be a string
  
@@ -3848,7 +3876,6 @@ def parseUserInput(currentUserInput):
     parse.strCheck(currentUserInput.bruteOption,'bruteOption')
     parse.strCheck(currentUserInput.distinguished,'distinguished')
     parse.strCheck(currentUserInput.fullBrute,'fullBrute')
-    parse.strCheck(currentUserInput.SLSUniquePrint,'SLSUniquePrint')
     parse.strCheck(currentUserInput.SLSUniqueExport,'SLSUniqueExport')
         
     #Concentration Finder
@@ -3907,12 +3934,12 @@ def main():
 
     #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
     if G.iterativeAnalysis and G.iterationNumber != 1:
-        #implied arguments for this function are G.referenceFileNameList and G.collectedFileName
+        #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
         IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
 
     #Read in the molecules used before parsing the user input file    
-    G.referenceFileNameList = parse.listCast(G.referenceFileNameList)
-    G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNameList[0])
+    G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
+    G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
     #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
     parseUserInput(G) #This parses the variables in the user input file
@@ -3934,20 +3961,20 @@ def main():
     global currentReferenceData
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
-    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNameList,G.form)
+    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList)
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers 
 
     prototypicalReferenceData = ReferenceDataList[0]
 
     #Prints a warning if the user has more reference files than specified time ranges
-    if len(G.referenceFileNameList) > len(G.referencePatternTimeRanges):
+    if len(G.referenceFileNamesList) > len(G.referencePatternTimeRanges):
         print("WARNING: There are more reference files given than time ranges")
     #save global variable into the class objects 
     ExperimentData.ExportAtEachStep = G.ExportAtEachStep
    
     #if this is the first iterative run, then the reference and experimental files need to have been imported before the iteration can begin
     if G.iterativeAnalysis and G.iterationNumber == 1 :
-        #implied arguments for the following function are G.referenceFileNameList and G.collectedFileName
+        #implied arguments for the following function are G.referenceFileNamesList and G.collectedFileName
         IterationFirstDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
 
     # Skip preProcessing all together if we are loading analyzed data
@@ -4079,8 +4106,8 @@ def main():
         # set up the 'SLSUniqueOrder.csv' file headers here
         # note that this open overwrites previous file contents
         # while subsequent opens to this file will append
-        if G.SLSUniquePrint == 'yes':
-            createSLSUniqueOrderFile(ExperimentData.abscissaHeader,
+        if G.SLSUniqueExport == 'yes':
+            createSLSUniqueExportFiles(ExperimentData.abscissaHeader,
                                      prototypicalReferenceData.molecules)
             
         #this numpy.zeros line is going to be the array that holds all of the answers before they are printed out, which

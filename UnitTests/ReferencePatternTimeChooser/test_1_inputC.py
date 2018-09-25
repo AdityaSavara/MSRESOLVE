@@ -6,8 +6,8 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileNameList = ['AcetaldehydeNISTRefMixed2.csv','AcetaldehydeNISTRefMixed2Edit.csv'] #enter the file name of the file containing reference information
-form = ['xyyy']	#form is either 'xyyy' or 'xyxy'
+referenceFileNamesList = ['AcetaldehydeNISTRefMixed2.csv','AcetaldehydeNISTRefMixed2Edit.csv'] #enter the file name of the file containing reference information
+referenceFormsList = ['xyyy']	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [[300,303],[306,309]]
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
 
@@ -188,8 +188,7 @@ slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
-SLSUniquePrint = 'yes'
-SLSUniqueExport = 'SLSUniqueOrder.csv'
+SLSUniqueExport = 'yes'
 
 
 #//Concentration Finder//

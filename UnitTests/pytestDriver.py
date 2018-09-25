@@ -13,5 +13,9 @@ for elem in listOfDirectoriesAndFiles:
 for directory in directoryList:
     print("Changing directory to "+directory)
     os.chdir(directory)
+    try:
+        os.system("del __pycache__ /Q")
+    except:
+        pass
     os.system("pytest")
     os.chdir("..")
