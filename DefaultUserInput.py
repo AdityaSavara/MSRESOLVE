@@ -6,8 +6,8 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileNameList = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
-form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
+referenceFileNamesList = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
+referenceFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy' (if using reference pattern time chooser enter as list with forms for each individual reference file ['xyyy','xyyy','xyyy'])
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
 
@@ -202,8 +202,7 @@ slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
-SLSUniquePrint = 'yes'
-SLSUniqueExport = 'SLSUniqueOrder.csv'
+SLSUniqueExport = 'yes'
 
 
 #//Concentration Finder//
@@ -247,7 +246,7 @@ nextRefFileName = []
 nextExpFileName = ''
 iterationNumber = None #just initializing.
 
-__var_list__ = ['referenceFileNameList','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+__var_list__ = ['referenceFileNamesList','referenceFormsList','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
 				'specificMolecules','chosenMoleculesNames','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','bruteIncrements','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
@@ -255,6 +254,6 @@ __var_list__ = ['referenceFileNameList','form','collectedFileName','referencePat
 				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
-				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','moleculesTSC_List','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List',
+				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniqueExport','concentrationFinder','moleculesTSC_List','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List',
 				'unitsTSC','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
 				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint', 'iterationNumber']
