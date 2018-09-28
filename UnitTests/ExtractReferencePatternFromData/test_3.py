@@ -5,9 +5,11 @@ Created on Wed Jul 11 13:26:37 2018
 @author: Alex
 """
 import sys
-sys.path.insert(1, "..\\lib")
-sys.path.insert(1, "..")
-sys.path.insert(1, "..\..")
+import os
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 #This test file tests the extractReferencePatternFromData feature
 
 import MSRESOLVE

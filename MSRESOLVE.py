@@ -1368,13 +1368,19 @@ def EnsureDirectory(dir_path):
         os.makedirs(directory)
 
 def SpecificIterationName(iterativeAnalysis, iterationNumber):
+    # Update: Clint, Sept 28 2018, this now returns an absolute path
+    # Previously a relative path was returned but it was in windows format
+    # i.e. ".\". That caused problems for linux.
     #if the user has entered an iteration name
     if iterativeAnalysis == False or iterativeAnalysis == True:
          #create the default directory
-        iterationDirectoryName = '.\\_iter_%s' %str(iterationNumber)
+         iterationDirectoryName = os.path.join(
+             os.getcwd(), "_iter_{}".format(str(iterationNumber)))
     else:
         #set that name to be the directory along with the correct number 
-        iterationDirectoryName = '.\\' + iterativeAnalysis + '_iter_%s' %str(iterationNumber)
+        iterationDirectoryName = os.path.join(os.getcwd(),
+            str(iterativeAnalysis),
+             "_iter_{}".format(str(iterationNumber)))
     return iterationDirectoryName
 
 def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = False):
@@ -1509,7 +1515,13 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
         #export reference data for next iteration
         if G.iterationNumber == 1: #first iteration files aren't in standard locations
-            DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, "..\\%s" %G.oldReferenceFileName[RefObjectIndex], unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
+            referenceFilePath = os.path.normpath(
+                os.path.join(os.getcwd(),
+                    os.pardir,
+                    str(G.oldReferenceFileName[RefObjectIndex])))
+            DataFunctions.TrimReferenceFileByMolecules(unusedMolecules,
+                referenceFilePath,
+                unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
         else: #not first iteration
         #generate unused reference data
             DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName[RefObjectIndex], unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
@@ -1560,10 +1572,17 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     if not G.iterativeAnalysis == True:
         iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber - 1))
     #copy the experimental signals to the next iteration
-    shutil.copy("..\%s\%s" %(iterationDirectoryName, G.collectedFileName), os.getcwd())
+    copyFromPath = os.path.join(os.getcwd(), os.pardir,
+            str(iterationDirectoryName),
+            str(G.collectedFileName))
+    shutil.copy(copyFromPath, os.getcwd())
     for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
         #copy the next reference file from the previous iteration folder to the next iteration folder
-        shutil.copy("..\%s\%s" %(iterationDirectoryName, G.referenceFileNamesList[RefIndex]), os.getcwd())
+        copyFromPath = os.path.join(os.getcwd(),
+            os.pardir,
+            str(iterationDirectoryName),
+            str(G.referenceFileNamesList[RefIndex]))
+        shutil.copy(copyFromPath, os.getcwd())
     
     #returning to the parent directory
     os.chdir('..')
@@ -4308,4 +4327,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
