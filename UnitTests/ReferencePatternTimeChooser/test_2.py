@@ -6,9 +6,11 @@ Created on Wed Jul 18 15:20:19 2018
 """
 
 import sys
-sys.path.insert(1, "..\\lib")
-sys.path.insert(1, "..")
-sys.path.insert(1, "..\..")
+import os
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 #This test file tests the ReferencePatternTimeChooser feature
 
 import MSRESOLVE

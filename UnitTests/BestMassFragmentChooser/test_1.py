@@ -7,9 +7,11 @@ Created on Wed Aug  1 13:47:18 2018
 #THE FOLLOWING LINES ARE MANDATORY FOR THE CODE
 #importing the functions from UnitTesterSG module
 import sys
-sys.path.insert(1, "..\\lib")
-sys.path.insert(1, "..")
-sys.path.insert(1, "..\..")
+import os
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 import UnitTesterSG as ut
 
 #BELOW ARE THE LINES INTENDED TO BE CHANGED BY THE USER	
