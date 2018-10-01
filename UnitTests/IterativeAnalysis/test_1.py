@@ -5,6 +5,8 @@ sys.path.insert(1, os.path.join(baseDir, os.pardir))
 sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
+import DefaultUserInput as G #This is needed because we need the __var_list__
+MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
     
 #get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
@@ -46,16 +48,20 @@ if os.path.isfile('TotalConcentrations.csv'):
     os.remove('TotalConcentrations.csv')
 
 #NON ITERATIVE WAY FIRST.    
+MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
 import test_1_initial_input_noniterative
 MSRESOLVE.G = test_1_initial_input_noniterative
+MSRESOLVE.G.__var_list__ = MSRESOLVE_var_list #need to repopulate var list since namespace was re-assigned.
 MSRESOLVE.main()
 
 #NOW DO THINGS THE ITERATIVE WAY.
 
 #ITERATION 1
 #now populate the globals with our first iteration's userinput.
+MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
 import test_1_initial_input_iterative
 MSRESOLVE.G = test_1_initial_input_iterative
+MSRESOLVE.G.__var_list__ = MSRESOLVE_var_list #need to repopulate var list since namespace was re-assigned.
 #now run MSRESOLVE.py for the first iteration.
 MSRESOLVE.main()
 
