@@ -1,6 +1,6 @@
 import os
 import sys 
-sys.path.insert(1, "..\..")
+sys.path.insert(1, os.path.join(os.getcwd(), os.pardir, os.pardir))
 if os.path.basename(__file__) != "DefaultUserInput.py":
     from DefaultUserInput import *
 
@@ -229,14 +229,4 @@ TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 ExportAtEachStep = 'yes'
 generatePercentages = 'no'
 
-__var_list__ = ['referenceFileNamesList','referenceFormsList','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
-				'specificMolecules','chosenMoleculesNames','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
-				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
-				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','bruteIncrements','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
-				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
-				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
-				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
-				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
-				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniqueExport','concentrationFinder','moleculesTSC_List','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List',
-				'unitsTSC','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
-				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']
+#Below is where __var_list__ used to be.
