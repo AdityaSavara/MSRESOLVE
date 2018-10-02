@@ -51,7 +51,7 @@ def test_Run(allowOverwrite = False):
         assert ut.check_results(resultObj, resultStr, prefix = '',
             suffix=suffix,
             allowOverwrite = False,
-            relativeTolerance=1e-30) == True
+            relativeTolerance=1.0e-8, absoluteTolerance=1.0E-5) == True
     
 if __name__ == "__main__":
    test_Run(allowOverwrite = True)
