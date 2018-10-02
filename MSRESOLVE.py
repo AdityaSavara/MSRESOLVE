@@ -3940,10 +3940,10 @@ def main():
         iterationDirectorySuffix = '_iter_%s' %str(highestIteration)
         for directoryName in os.listdir():
             if iterationDirectorySuffix in directoryName:
-                userInputPath = '{}.UserInput{}'.format(directoryName,
-                    iterationDirectorySuffix)
-                UserInput2 = importlib.import_module(str(userInputPath))
-                G = UserInput2
+                userInputName = 'UserInput{}'.format(iterationDirectorySuffix)
+                userInputPath = '{}.{}'.format(directoryName, userInputName)
+                UserInputCurrentIteration = importlib.import_module(str(userInputPath))
+                G = UserInputCurrentIteration
                 break
         if G.iterativeAnalysis:
             G.iterationNumber = highestIteration
