@@ -1,0 +1,12 @@
+1. Functionalize the selection of finisher methods
+2. JDX Converter: 
+    Add License from Ashi
+3. MSRESOLVE licenses:
+  Create a notice file with all licenses from other softwares that are incorporated
+      Mark for each license what functions use that software
+      Make sure to include Apache 2.0 for AppJar
+    See the following example for how to incorporate multiple licenses into a NOTICE file:	https://github.com/maunita/brackets/blob/master/NOTICE
+  Create a LICENSE file for our license 
+    Get this from Ashi
+    Possibly require a citation of the program every time it is used to generate published data 
+    Possibly have a comment on the NOTICE file in the LICENSE file 

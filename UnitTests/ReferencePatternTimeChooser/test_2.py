@@ -6,9 +6,11 @@ Created on Wed Jul 18 15:20:19 2018
 """
 
 import sys
-sys.path.insert(1, "..\\lib")
-sys.path.insert(1, "..")
-sys.path.insert(1, "..\..")
+import os
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 #This test file tests the ReferencePatternTimeChooser feature
 
 import MSRESOLVE
@@ -37,7 +39,7 @@ HandInterpolatedData[0].iterationSuffix = MSRESOLVE.G.iterationSuffix
 HandInterpolatedData[0] = MSRESOLVE.PrepareReferenceObjectsAndCorrectionValues(HandInterpolatedData[0],MSRESOLVE.ExperimentData,MSRESOLVE.G.extractReferencePatternFromDataOption,MSRESOLVE.G.rpcMoleculesToChange,MSRESOLVE.G.rpcMoleculesToChangeMF,MSRESOLVE.G.rpcTimeRanges,verbose=False)
 
 #Get reference intensities
-HandInterpolatedDataIntensities = HandInterpolatedData[0].standardized_reference_intensities
+HandInterpolatedDataIntensities = HandInterpolatedData[0].standardized_reference_patterns
 
 #Set the expected results
 #Commented out due to rounding errors: HandInterpolatedData.csv gave three small rounding errors
@@ -46,7 +48,7 @@ HandInterpolatedDataIntensities = HandInterpolatedData[0].standardized_reference
 
 #Get the interpolated reference pattern
 #currentReferenceData is the last referencePattern used by MSRESOLVE
-interpolatedIntensities = MSRESOLVE.currentReferenceData.standardized_reference_intensities
+interpolatedIntensities = MSRESOLVE.currentReferenceData.standardized_reference_patterns
 
 #set output
 output = interpolatedIntensities

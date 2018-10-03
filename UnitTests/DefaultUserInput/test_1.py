@@ -18,7 +18,8 @@ def CompareTwoFiles(fileName1, fileName2, filePath):
 #NOTE 1: Below is a non-standard implementation relative to normal unit testing (asks about and allows overwriting DefaultUserInput file)
 #NOTE 2: Below is not using the up to date UnitTesterSG module functionality of "doTest". (see examples in UnitTesting module)
 def test_Run(pytest = True):
-    result = CompareTwoFiles('DefaultUserInput.py', 'UserInput.py', '../..' )
+    filePath = os.path.join(os.pardir, os.pardir)
+    result = CompareTwoFiles('DefaultUserInput.py', 'UserInput.py', filePath )
     if pytest:
         assert result == True
         

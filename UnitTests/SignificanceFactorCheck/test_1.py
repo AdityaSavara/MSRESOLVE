@@ -8,9 +8,11 @@ Created on Wed Aug  1 13:47:18 2018
 #THE FOLLOWING LINES ARE MANDATORY FOR THE CODE
 #importing the functions from UnitTesterSG module
 import sys
-sys.path.insert(1, "..\\lib")
-sys.path.insert(1, "..")
-sys.path.insert(1, "..\..")
+import os
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 
 import UnitTesterSG as ut
 import numpy
@@ -18,9 +20,11 @@ import numpy
 #BELOW ARE THE LINES INTENDED TO BE CHANGED BY THE USER	
 #1) import the function whose results need to be checked
 import MSRESOLVE
+
 #2) getting the prefix (or suffix) arugument for check_results. This is just for the output filenames.
 suffix= ut.returnDigitFromFilename(__file__)
 prefix=''
+
 #3) provide the input for the function you want to test (you can also import it from a pickled object, for example)
 massFragCombinations=([1,2,3,4,5],[2,1,3,4,5],[3,4,5,6,7],[9,8,7,6,5],[3,4,5,1,2])
 
@@ -65,9 +69,11 @@ refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,
 #(topSignificanceFactorCheckList). This list was initialized and is to be 
 #appended to in a loop
 for massFragCombinationIndex, massFragCombination in enumerate(massFragCombinations):
-    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refPatternList[massFragCombinationIndex][:,1:],largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
+    refIntensity=refPatternList[massFragCombinationIndex][:,1:]
+    [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList]=MSRESOLVE.significanceFactorCheck(refIntensity,largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, massFragCombination, keep_N_ValuesInSignificanceFactorCheck, moleculesLikelihood)
 
 resultObj= [largestMagnitudeSigFactorSumsList,topMassFragCombinationsList, valuesStoredInSFTopList] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
 resultStr= str(resultObj)
 

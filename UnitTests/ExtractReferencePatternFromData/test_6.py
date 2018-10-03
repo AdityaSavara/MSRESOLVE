@@ -5,9 +5,11 @@ Created on Wed Jul 11 13:26:37 2018
 @author: Alex
 """
 import sys
-sys.path.insert(1, "..\\lib")
-sys.path.insert(1, "..")
-sys.path.insert(1, "..\..")
+import os
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 #This test file tests the extractReferencePatternFromData feature
 
 import MSRESOLVE
@@ -46,7 +48,10 @@ def test_Run(allowOverwrite = False):
     #this option allows pytest to call the function
     if not allowOverwrite: 
         #this assert statement is required for the pytest module 
-        assert ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False) == True
+        assert ut.check_results(resultObj, resultStr, prefix = '',
+            suffix=suffix,
+            allowOverwrite = False,
+            relativeTolerance=1.0e-8, absoluteTolerance=1.0E-5) == True
     
 if __name__ == "__main__":
    test_Run(allowOverwrite = True)

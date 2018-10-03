@@ -1,13 +1,13 @@
 import os
 import sys 
-sys.path.insert(1, "..\..")
+sys.path.insert(1, os.path.join(os.getcwd(), os.pardir, os.pardir))
 if os.path.basename(__file__) != "DefaultUserInput.py":
     from DefaultUserInput import *
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
-form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
+referenceFileNamesList = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
+referenceFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
 
@@ -16,6 +16,7 @@ collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw
 iterativeAnalysis = False
 #the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
+iterationNumber = None
 
 #do you wish for the program to institute preproccessing and/or Data analysis?
 #note that preproccesing must be done at least once before being bypassed 
@@ -39,7 +40,7 @@ timeRangeFinish = 900	#finish time (-int)
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
 specificMolecules = 'no'
-chosenMolecules = ['CO', 'CO2', 'H2O']
+chosenMoleculesNames = ['CO', 'CO2', 'H2O']
 
 #//Chosen Mass Fragments//
 #To choose only specific mass fragments from collected data, input below:
@@ -95,16 +96,15 @@ dataUpperBound = []
 dataRangeSpecifierYorN = 'no' 
 signalOrConcentrationRange = 'signal'	#'signal' or 'concentration'
 csvFile = 'yes'	#'yes' or 'no'
-moleculesRange = []
+moleculesToRestrict = []
 csvFileName = 'rangestemplate.csv'
 #NOTE: The increment choice of the user is then possibly overridden based on 
-# the values of maxPermutations (the number of molecules and increments might 
-# cause too large of a number of permutations, in which case larger increments 
+# the values of maxPermutations (the number of molecules and bruteIncrements might 
+# cause too large of a number of permutations, in which case larger bruteIncrements 
 # may be used).
-#TODO: Let’s rename increments to bruteIncrements
-#Increments sets the size of the increments for Brute (e.g., if we said  0.01 bar, it would make the 
+#bruteIncrements sets the size of the increments for Brute (e.g., if we said  0.01 bar, it would make the 
 # separation between points 0.01 bar in the grid, for that axis). 
-increments = []
+bruteIncrements = []
 permutationNum = 1000
 maxPermutations = 100001
 
@@ -191,19 +191,18 @@ slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
-SLSUniquePrint = 'no'
-SLSUniqueExport = 'SLSUniqueOrder.csv'
+SLSUniqueExport = 'no'
 
 
 #//Concentration Finder//
 #this last set of inputs is where you enter your conversion factors from raw signal to concentration, unlike most rows, do not leave brackets around chosen numbers
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
 concentrationFinder = 'no'
-molecule = 'Acetaldehyde'
-moleculeSignal = 1.66945
-massNumber = 29
-moleculeConcentration = 0.05	#pressure can also be used in subsitute
-units = 'bar'	#the units will not be used in calculations so any units may be used
+moleculesTSC_List = 'Acetaldehyde'
+moleculeSignalTSC_List = 1.66945
+massNumberTSC_List = 29
+moleculeConcentrationTSC_List = 0.05	#pressure can also be used in subsitute
+unitsTSC = 'bar'	#the units will not be used in calculations so any units may be used
 
 
 

@@ -1,20 +1,20 @@
 import os
 import sys 
-sys.path.insert(1, "..\..")
+sys.path.insert(1, os.path.join(os.getcwd(), os.pardir, os.pardir))
 if os.path.basename(__file__) != "DefaultUserInput.py":
     from DefaultUserInput import *
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
-form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
+referenceFileNamesList = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
+referenceFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy' (if using reference pattern time chooser enter as list with forms for each individual reference file ['xyyy','xyyy','xyyy'])
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
 iterativeAnalysis = False
-#the chosenMolecules argument is used for iterative analysis, so make sure that input is accurate
+#the chosenMoleculesNames argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 
 #do you wish for the program to institute preproccessing and/or Data analysis?
@@ -39,7 +39,7 @@ timeRangeFinish = 900	#finish time (-int)
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
 specificMolecules = 'no'
-chosenMolecules = ['Crotyl Alcohol']
+chosenMoleculesNames = ['Crotyl Alcohol']
 
 #//Chosen Mass Fragments//
 #To choose only specific mass fragments from collected data, input below:
@@ -95,16 +95,15 @@ dataUpperBound = []
 dataRangeSpecifierYorN = 'no' 
 signalOrConcentrationRange = 'signal'	#'signal' or 'concentration'
 csvFile = 'yes'	#'yes' or 'no'
-moleculesRange = []
+moleculesToRestrict = []
 csvFileName = 'rangestemplate.csv'
 #NOTE: The increment choice of the user is then possibly overridden based on 
-# the values of maxPermutations (the number of molecules and increments might 
-# cause too large of a number of permutations, in which case larger increments 
+# the values of maxPermutations (the number of molecules and bruteIncrements might 
+# cause too large of a number of permutations, in which case larger bruteIncrements 
 # may be used).
-#TODO: Let’s rename increments to bruteIncrements
-#Increments sets the size of the increments for Brute (e.g., if we said  0.01 bar, it would make the 
+#bruteIncrements sets the size of the increments for Brute (e.g., if we said  0.01 bar, it would make the 
 # separation between points 0.01 bar in the grid, for that axis). 
-increments = []
+bruteIncrements = []
 permutationNum = 1000
 maxPermutations = 100001
 
@@ -118,10 +117,13 @@ scaleRawDataFactor = 1
 #Note that 1 is the default and will make no alteration to the data
 
 #//Reference Correction Coefficients//
+#TODO Reference Correction Coefficients feature should be upgraded to enable separate coefficients for each molecule to allow mixing and matching of reference patterns
+#TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 measuredReferenceYorN='no'
 referenceMeasuredFileName='AcetaldehydeMeasuredRef.csv'
 referenceLiteratureFileName ='AcetaldehydeOnlyNISTRef.csv'
+#The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten (Ashi thinks it will generate a new reference pattern)
 referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
 
@@ -175,11 +177,12 @@ polynomialOrder = 1  #During the local smoothing, a linear fit (or polynomial fi
 
 #//Raw Signal Threshold//
 #To change the threshold at which raw signals are not longer relevant, change below (similar to above function, but for rows instead of columns)
+#We think the reference to the 'above function' in the previous line is referring to Data Threshold Filter
 #These signals get converted into 0.
 #WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
 rawSignalThresholdMethod = 'no'
 rawSignalThresholdValue = [.0000001]
-sensitivityThresholdValue = [1] #this is the number in the Reference given, the relative intensity of the signal of the mass fragment
+sensitivityThresholdValue = [1] #this is the number in the Reference given the relative intensity of the signal of the mass fragment
 rawSignalThresholdDivider = []
 #Part of previous entry function, but this function enables the user to change the sum of raw signals, allowing molecules with very high concentrations not to affect previous funciton
 rawSignalThresholdLimit = 'no'
@@ -199,8 +202,7 @@ slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
-SLSUniquePrint = 'yes'
-SLSUniqueExport = 'SLSUniqueOrder.csv'
+SLSUniqueExport = 'yes'
 
 
 #//Concentration Finder//
@@ -208,11 +210,11 @@ SLSUniqueExport = 'SLSUniqueOrder.csv'
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
 #TODO The use of multiple reference patterns is not upgraded to work with concentrationFinder
 concentrationFinder = 'no'
-molecule = 'Acetaldehyde'
-moleculeSignal = 1.66945
-massNumber = 29
-moleculeConcentration = 0.05	#pressure can also be used in subsitute
-units = 'bar'	#the units will not be used in calculations so any units may be used
+moleculesTSC_List = 'Acetaldehyde'
+moleculeSignalTSC_List = 1.66945
+massNumberTSC_List = 29
+moleculeConcentrationTSC_List = 0.05	#pressure can also be used in subsitute
+unitsTSC = 'bar'	#the units will not be used in calculations so any units may be used
 
 
 
@@ -225,8 +227,7 @@ scaledConcentrationsPercentages = 'ScaledConcentrationPercentages.csv'
 concentrationsOutputName= 'ResolvedConcentrations.csv'
 simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 
-#Only used in iterative analysis
-TotalConcentrationsOutputName = 'TotalConcentrations.csv'
+
 
 
 ExportAtEachStep = 'no'
@@ -235,22 +236,24 @@ generatePercentages = 'no'
 checkpoint = ''
 start = ''
 timeSinceLastCheckpoint = ''
-
+#Only used in iterative analysis
+TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 iterationSuffix= ''
 unusedMolecules =''
-oldReferenceFileName = ''
+oldReferenceFileName = []
 oldCollectedFileName ='' 
-nextRefFileName = ''
+nextRefFileName = []
 nextExpFileName = ''
+iterationNumber = None #just initializing.
 
-__var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
-				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
+__var_list__ = ['referenceFileNamesList','referenceFormsList','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+				'specificMolecules','chosenMoleculesNames','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
-				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
+				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','bruteIncrements','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
 				'measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
 				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
-				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
-				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
-				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']
+				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniqueExport','concentrationFinder','moleculesTSC_List','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List',
+				'unitsTSC','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
+				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint', 'iterationNumber']

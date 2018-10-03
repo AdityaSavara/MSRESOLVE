@@ -8,9 +8,11 @@ Created on Wed Aug  1 13:47:18 2018
 #THE FOLLOWING LINES ARE MANDATORY FOR THE CODE
 #importing the functions from UnitTesterSG module
 import sys
-sys.path.insert(1, "..\\lib")
-sys.path.insert(1, "..")
-sys.path.insert(1, "..\..")
+import os
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 import UnitTesterSG as ut
 
 #BELOW ARE THE LINES INTENDED TO BE CHANGED BY THE USER	
@@ -55,9 +57,12 @@ chosenReferenceForMassFragComb5=numpy.array([[1,1,1,1,1],
 refPatternList=[chosenReferenceForMassFragComb1,chosenReferenceForMassFragComb2,chosenReferenceForMassFragComb3,chosenReferenceForMassFragComb4,chosenReferenceForMassFragComb5]
 
 #Generate the sums across the mass fragments for each molecule.
+#The slicing occurs because the first element in each row represents the mass fragment number. The fragment number should not be kept during calculations.
+#The mass fragment numbers are kept to maintian consistency with the fuction they are added to.
 rowSumsList=[]
 for refPattern in refPatternList:
-    rowSumsList.append(numpy.sum(refPattern[:,1:]))
+    refIntensity=refPattern[:,1:]
+    rowSumsList.append(numpy.sum(refIntensity, axis=0))
 
 
 topRoughUniquenessSumsList=[]

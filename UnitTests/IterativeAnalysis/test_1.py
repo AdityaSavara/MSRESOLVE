@@ -1,9 +1,12 @@
 import os
 import sys
-sys.path.insert(1, "..\..")
-sys.path.insert(1, "..")
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
+import DefaultUserInput as G #This is needed because we need the __var_list__
+MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
     
 #get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
@@ -45,16 +48,20 @@ if os.path.isfile('TotalConcentrations.csv'):
     os.remove('TotalConcentrations.csv')
 
 #NON ITERATIVE WAY FIRST.    
+MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
 import test_1_initial_input_noniterative
 MSRESOLVE.G = test_1_initial_input_noniterative
+MSRESOLVE.G.__var_list__ = MSRESOLVE_var_list #need to repopulate var list since namespace was re-assigned.
 MSRESOLVE.main()
 
 #NOW DO THINGS THE ITERATIVE WAY.
 
 #ITERATION 1
 #now populate the globals with our first iteration's userinput.
+MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
 import test_1_initial_input_iterative
 MSRESOLVE.G = test_1_initial_input_iterative
+MSRESOLVE.G.__var_list__ = MSRESOLVE_var_list #need to repopulate var list since namespace was re-assigned.
 #now run MSRESOLVE.py for the first iteration.
 MSRESOLVE.main()
 
@@ -62,37 +69,37 @@ MSRESOLVE.main()
 #now we need to change the choices for iteration 2. 
 #we 1st need to make the strings we want to append into a list.
 #Then call main function again.
-listOfStringsToAppend = ["chosenMolecules = ['(E) 2-Butenal (Crotonaldehyde']", "chosenMassFragments = [39]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['(E) 2-Butenal (Crotonaldehyde']", "chosenMassFragments = [39]"]
 appendToIterFile(2, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 3
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['Ethanol']", "chosenMassFragments = [31]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['Ethanol']", "chosenMassFragments = [31]"]
 appendToIterFile(3, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 4
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['H2O']", "chosenMassFragments = [18]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['H2O']", "chosenMassFragments = [18]"]
 appendToIterFile(4, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 5
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['Acetaldehyde']", "chosenMassFragments = [41]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['Acetaldehyde']", "chosenMassFragments = [41]"]
 appendToIterFile(5, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 6
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['Ethylene (Ethene)']", "chosenMassFragments = [27]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['Ethylene (Ethene)']", "chosenMassFragments = [27]"]
 appendToIterFile(6, listOfStringsToAppend)
 MSRESOLVE.main()
 
 #ITERATION 7
 #now ready for iteration three.
-listOfStringsToAppend = ["chosenMolecules = ['CO', 'CO2', 'H2']", "chosenMassFragments = [2, 28, 44]"]
+listOfStringsToAppend = ["chosenMoleculesNames = ['CO', 'CO2', 'H2']", "chosenMassFragments = [2, 28, 44]"]
 appendToIterFile(7, listOfStringsToAppend)
 MSRESOLVE.main()
 

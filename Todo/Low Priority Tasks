@@ -1,0 +1,22 @@
+1. Unit test for inverse combinations with some unsolvable combination
+  Note: Ashi found that this can be accomplished with RawThresholdSignalFilter of 0.4 or something like that and our default data input file. But SLS still works in that situation.
+
+2. Search for a function that removes rows. (like keep only selected yyyy columns)
+
+3. Add to GitHub guide about:
+  Potentially add discussion of syncing with forks 
+    Chosen to use this
+    Needs to be added
+  Revise after receiving update on process workflow
+    Fix flowchart
+  Split into Owner Guide and Contributor Guide
+  
+4. Check if Brute Force and Interpolater use the same variable, make sure it isn’t hard-coded to 2
+  Investigate Specifications in Brute,  rename to bruteSpecifications if it isn’t used anywhere else
+  
+5. The First Time User tutorial needs an update. It might also be useful for it to be rewritten as a quickstart guide, so that first time users can see the program being run in under 5 min of their time. 
+
+6. Figure out how Brute will scale, 
+  At what point, is it useful for the program to switch to brute, rather than to inverse
+  Try some trials
+  Look at chris’ paper
