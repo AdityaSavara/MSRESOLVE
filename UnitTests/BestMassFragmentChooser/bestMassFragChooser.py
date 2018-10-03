@@ -76,8 +76,8 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     
     G.excludeMoleculesIfSignificantFragmentNotObserved=G.rawSignalThresholdMethod
     #Initialize a ReferenceData class object
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName, form]=MSRESOLVE.readReferenceFile(referenceFileName, referenceForm)
-    ReferenceData = MSRESOLVE.MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=MSRESOLVE.readReferenceFile(referenceFileName, referenceForm)
+    ReferenceData = MSRESOLVE.MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)
 
     truncatedReferenceData=copy.deepcopy(ReferenceData)
     
