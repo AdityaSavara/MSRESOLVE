@@ -1247,8 +1247,7 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
         ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
         #Only print if not called from interpolating reference objects
         if verbose:
-            print('ReferencePatternChanger complete')
-    
+            print('ReferencePatternChanger complete')    
     # Some initial preprocessing on the reference data
     ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose)
     # Set the ReferenceData.monitored_reference_intensities and
@@ -1370,13 +1369,19 @@ def EnsureDirectory(dir_path):
         os.makedirs(directory)
 
 def SpecificIterationName(iterativeAnalysis, iterationNumber):
+    # Update: Clint, Sept 28 2018, this now returns an absolute path
+    # Previously a relative path was returned but it was in windows format
+    # i.e. ".\". That caused problems for linux.
     #if the user has entered an iteration name
     if iterativeAnalysis == False or iterativeAnalysis == True:
          #create the default directory
-        iterationDirectoryName = '.\\_iter_%s' %str(iterationNumber)
+         iterationDirectoryName = os.path.join(
+             os.getcwd(), "_iter_{}".format(str(iterationNumber)))
     else:
         #set that name to be the directory along with the correct number 
-        iterationDirectoryName = '.\\' + iterativeAnalysis + '_iter_%s' %str(iterationNumber)
+        iterationDirectoryName = os.path.join(os.getcwd(),
+            str(iterativeAnalysis),
+             "_iter_{}".format(str(iterationNumber)))
     return iterationDirectoryName
 
 def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = False):
@@ -1511,7 +1516,13 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
         #export reference data for next iteration
         if G.iterationNumber == 1: #first iteration files aren't in standard locations
-            DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, "..\\%s" %G.oldReferenceFileName[RefObjectIndex], unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
+            referenceFilePath = os.path.normpath(
+                os.path.join(os.getcwd(),
+                    os.pardir,
+                    str(G.oldReferenceFileName[RefObjectIndex])))
+            DataFunctions.TrimReferenceFileByMolecules(unusedMolecules,
+                referenceFilePath,
+                unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
         else: #not first iteration
         #generate unused reference data
             DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName[RefObjectIndex], unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
@@ -1562,10 +1573,17 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     if not G.iterativeAnalysis == True:
         iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber - 1))
     #copy the experimental signals to the next iteration
-    shutil.copy("..\%s\%s" %(iterationDirectoryName, G.collectedFileName), os.getcwd())
+    copyFromPath = os.path.join(os.getcwd(), os.pardir,
+            str(iterationDirectoryName),
+            str(G.collectedFileName))
+    shutil.copy(copyFromPath, os.getcwd())
     for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
         #copy the next reference file from the previous iteration folder to the next iteration folder
-        shutil.copy("..\%s\%s" %(iterationDirectoryName, G.referenceFileNamesList[RefIndex]), os.getcwd())
+        copyFromPath = os.path.join(os.getcwd(),
+            os.pardir,
+            str(iterationDirectoryName),
+            str(G.referenceFileNamesList[RefIndex]))
+        shutil.copy(copyFromPath, os.getcwd())
     
     #returning to the parent directory
     os.chdir('..')
@@ -1893,6 +1911,9 @@ def getMassFragmentsFromCollectedData(CollectedFileName):
         massFragments[i] = float(massFragments[i][1:])
     return massFragments
 
+'''
+getIE_Data reads in the ionization data file name and generates a dictionary filled with MolecularIonizationData objects
+'''
 def getIE_Data(IonizationDataFileName):
     ionizationData = numpy.genfromtxt('IonizationData.csv',dtype=None,delimiter=',',encoding=None)
     AllMID_ObjectsDict = {} #initialize the MID Dictionary
@@ -1924,13 +1945,6 @@ def getIE_Data(IonizationDataFileName):
         else: #otherwise the object does not exist and needs to be created
             AllMID_ObjectsDict[MID_ObjectName] = MolecularIonizationData(moleculeName,RS_Value,moleculeElectronNumber,moleculeIonizationType,source) #Store MIDObject in AllMIDObjects Dictionary
     return AllMID_ObjectsDict
-
-
-            
-
-    
-    
-
 ###############################################################################
 #########################  Classes: Data Storage  #############################
 ###############################################################################
@@ -2120,7 +2134,12 @@ class MSReference (object):
                 if massListIndex == len(masslist)-1:#Once the larger for loop is done the 
                     reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
         self.provided_reference_patterns = reference_holder
-        
+
+#populateIonizationEfficiencies is an MSReference function that populates a variable, ionizationEfficienciesList, that contains the ionization factors used in CorrectionValuesObtain
+#If the ionization factor is known and in the reference data, then that value is used
+#If the ionization factor is unknown the the function will look in the MID Dictionary and check if the molecule exists in the ionization data.  If it does the the ionization average of the ionization factors for that particular molecule in the data is used
+#If the ionization factor is unknown and the particular molecule does not exist in the MID Data, then the function checks the molecule's ionization type(s).  The function will take all molecules from the MID data that have the same type and will perform a linear fit on the data.  The ionization factor for this molecule is determined based on the linear fit and number of electrons
+#If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
     def populateIonizationEfficiencies(self, AllMID_ObjectsDict={}):
         self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules
         for index in range(len(self.ionizationEfficienciesList)): #loop through our initialized array
@@ -2168,8 +2187,7 @@ class MolecularIonizationData (object):
         #if we have more than one RS_Value, then append to the list
         self.RS_ValuesList.append(float(RS_Value))
         #if we have more than one RS_Value, append the source
-        self.sourceList.append(source)
-        
+        self.sourceList.append(source)																	
 ############################################################################################################################################
 ###############################################Algorithm Part 2: Analysing the Processed Data###############################################
 ############################################################################################################################################
@@ -4086,19 +4104,19 @@ def parseUserInput(currentUserInput):
 ###############################################Algorithm Part 3: Main Control Function ###################################
 ##################################################################################################################
 def main():
-    global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
+    global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.
     if G.iterativeAnalysis:
         #This section is to overwrite the UI if iterative analysis is in the process of being run. 
         highestIteration = int(FindHighestDirNumber("_iter_"))
         iterationDirectorySuffix = '_iter_%s' %str(highestIteration)
         for directoryName in os.listdir():
             if iterationDirectorySuffix in directoryName:
-                userInputName = 'UserInput%s' %iterationDirectorySuffix
-                userInputPath = '%s.%s' %(directoryName, userInputName)
-                UserInput2 = importlib.import_module('..%s' %userInputName, '%s' %userInputPath)
-                G = UserInput2
+                userInputName = 'UserInput{}'.format(iterationDirectorySuffix)
+                userInputPath = '{}.{}'.format(directoryName, userInputName)
+                UserInputCurrentIteration = importlib.import_module(str(userInputPath))
+                G = UserInputCurrentIteration
                 break
-        if G.iterativeAnalysis:    
+        if G.iterativeAnalysis:
             G.iterationNumber = highestIteration
             G.iterationSuffix = iterationDirectorySuffix
         elif not G.iterativeAnalysis:
@@ -4488,4 +4506,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
