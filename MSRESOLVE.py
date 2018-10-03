@@ -1077,7 +1077,7 @@ list of forms.  A list is generated containing MSReference objects created based
 on the referenceFileName and the corresponding form
 It allows MSRESOLVE to be backwards compatible with previous user input files
 '''
-def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
+def GenerateReferenceDataList(referenceFileNames,referencePatternForm,AllMID_ObjectsDict={}):
     #referencePatternForm can take values of 'xyyy' or 'xyxy' and must be a string
     ##If referenceFileName is a string or if form is a string then make them lists
     if isinstance(referenceFileNames,str):
@@ -1088,7 +1088,7 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
     if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
-        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
+        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
         #save each global variable into the class objects 
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[0].iterationSuffix = G.iterationSuffix
@@ -1110,7 +1110,7 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm):
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNames)):
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
-        ReferenceDataAndFormsList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form))
+        ReferenceDataAndFormsList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
         #save each global variable into the class objects 
         ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataAndFormsList[i].iterationSuffix = G.iterationSuffix
@@ -1915,7 +1915,7 @@ def getMassFragmentsFromCollectedData(CollectedFileName):
 getIE_Data reads in the ionization data file name and generates a dictionary filled with MolecularIonizationData objects
 '''
 def getIE_Data(IonizationDataFileName):
-    ionizationData = numpy.genfromtxt('IonizationData.csv',dtype=None,delimiter=',',encoding=None)
+    ionizationData = numpy.genfromtxt(IonizationDataFileName,dtype=None,delimiter=',',encoding=None)
     AllMID_ObjectsDict = {} #initialize the MID Dictionary
     
     #For loop to get the column indexes of information in the ionization data csv file
@@ -2006,7 +2006,7 @@ class MSData (object):
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
                                         
 class MSReference (object):
-    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
+    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2=None, knownMoleculesIonizationTypes=None, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
         self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.knownIonizationFactorsRelativeToN2, self.knownMoleculesIonizationTypes, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
@@ -2141,35 +2141,48 @@ class MSReference (object):
 #If the ionization factor is unknown and the particular molecule does not exist in the MID Data, then the function checks the molecule's ionization type(s).  The function will take all molecules from the MID data that have the same type and will perform a linear fit on the data.  The ionization factor for this molecule is determined based on the linear fit and number of electrons
 #If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
     def populateIonizationEfficiencies(self, AllMID_ObjectsDict={}):
-        self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules
-        for index in range(len(self.ionizationEfficienciesList)): #loop through our initialized array
-            if isinstance(self.knownIonizationFactorsRelativeToN2[index],float):
-                self.ionizationEfficienciesList[index] = self.knownIonizationFactorsRelativeToN2[index]
-            elif self.knownIonizationFactorsRelativeToN2[index] == None or self.knownIonizationFactorsRelativeToN2[index] == 'unknown': #the ionization factor is not known so look in the AllMID_ObjectsDict
-                matchingMolecule = False #initialize a flag to overwrite with True if a matching molecule is found
-                for key in AllMID_ObjectsDict: #loop through the Dictionary containing MID Objects
-                    if AllMID_ObjectsDict[key].moleculeName == self.molecules[index]: #If the moleculeName in the MID dict matches our molecule, then use the average of the RS_Values given
-                        self.ionizationEfficienciesList[index] = numpy.mean(AllMID_ObjectsDict[key].RS_ValuesList) #Take the average of the values since there may be more than one RS_Value given
-                        matchingMolecule = True #overwrite with True if a matching molecule was found
-                        break #Exit the for loop
-            if matchingMolecule == False:
-                if self.knownMoleculesIonizationTypes[index] != None and self.knownMoleculesIonizationTypes[index] != 'unknown': #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
-                    #Then get an estimate by performing a linear fit on the data in the MID Dictionary
-                    #Initialize three lists
-                    MatchingMID_Objects = []
-                    MatchingMID_RS_Values = []
-                    MatchingMID_ElectronNumbers = []
-                    for key in AllMID_ObjectsDict: #Loop through the MID Dictionary
-                        if self.knownMoleculesIonizationTypes[index] == AllMID_ObjectsDict[key].moleculeIonizationType: #If the knownMoleculeType matches an MID object's molecule type
-                            MatchingMID_Objects.append(key) #Append the key
-                            MatchingMID_RS_Values.append(numpy.mean(AllMID_ObjectsDict[key].RS_ValuesList)) #Append the average of the RS values
-                            MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[key].moleculeElectronNumber) #append the electron number
-                    #Now we use polyfit, poly1d, and polyval to fit the data linearly and find an approximate ionization factor
-                    polynomialCoefficients = numpy.polyfit(MatchingMID_ElectronNumbers,MatchingMID_RS_Values,1) #Electron numbers as the independent var, RS_values as the dependent var, and 1 for 1st degree polynomial
-                    poly1dObject = numpy.poly1d(polynomialCoefficients) #create the poly1d object
-                    self.ionizationEfficienciesList[index] = numpy.polyval(poly1dObject,self.electronnumbers[index]) #use polyval to calculate the ionization factor based on the current molecule's electron number
-                else: #Otherwise use the original Madix and Ko equation
-                    self.ionizationEfficienciesList[index] = (0.6*self.electronnumbers[index]/14)+0.4        
+        self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here used in CorrectionValuesObtain
+        for moleculeIndex in range(len(self.molecules)): #loop through our initialized array
+            if isinstance(self.knownIonizationFactorsRelativeToN2[moleculeIndex],float): #if the knownIonizationFactor is a float, then that is the value defined by the user
+                self.ionizationEfficienciesList[moleculeIndex] = self.knownIonizationFactorsRelativeToN2[moleculeIndex]
+            else: #Ionization factor is not known so look at molecular ionization data from literatiure 
+                #Initialize three lists
+                MatchingMID_Objects = []
+                MatchingMID_RS_Values = []
+                MatchingMID_ElectronNumbers = []
+                #Initialize a flag to overwrite if a molecule is in both self.molecules and the MID_ObjectDict
+                matchingMolecule = False
+                if self.knownIonizationFactorsRelativeToN2[moleculeIndex] == None or self.knownIonizationFactorsRelativeToN2[moleculeIndex] == 'unknown': #the ionization factor is not known so look in the AllMID_ObjectsDict
+                    currentMoleculeKeyName = self.molecules[moleculeIndex] + '_IE' #holder variable to store the current molecule name + '_IE' to match the keys of AllMID_ObjectsDict (e.g. Acetaldehyde_IE)
+                    if currentMoleculeKeyName in AllMID_ObjectsDict.keys(): #If the current molecule is in the dictionary, use its RS_Value
+                        MatchingMID_Objects.append(currentMoleculeKeyName) #append the key
+                        MatchingMID_RS_Values.append(numpy.mean(AllMID_ObjectsDict[currentMoleculeKeyName].RS_ValuesList)) #append the average RS_Value
+                        MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[currentMoleculeKeyName].electronNumber) #append the electron number
+                        matchingMolecule = True #set the flag to be true
+                if matchingMolecule == True: #If the molecule matches a molecule in the MID dictionary, use the average RS_Value
+                    self.ionizationEfficienciesList[moleculeIndex] = MatchingMID_RS_Values[0]
+                elif matchingMolecule == False: #Otherwise matchingMolecule is False which means its not in the data from literature.  So we will approximate the ionization factor based on a linear fit of the data from literature that share the molecule's type(s) or use the Madix and Ko equation
+                    if self.knownMoleculesIonizationTypes[moleculeIndex] != None and self.knownMoleculesIonizationTypes[moleculeIndex] != 'unknown': #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
+                        #Then get an estimate by performing a linear fit on the data in the MID Dictionary
+                        for key in AllMID_ObjectsDict: #Loop through the MID Dictionary
+                            #TODO: When stringCompare is finished, this line will become - if stringCompare(self.knownMoleculesIonizationTypes[moleculeIndex],AllMID_Objects[key].moleculeIonizationType):
+                            if self.knownMoleculesIonizationTypes[moleculeIndex] == AllMID_ObjectsDict[key].moleculeIonizationType: #If the knownMoleculeType matches an MID object's molecule type
+                                MatchingMID_Objects.append(key) #Append the key
+                                MatchingMID_RS_Values.append(numpy.mean(AllMID_ObjectsDict[key].RS_ValuesList)) #Append the average of the RS values
+                                MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[key].moleculeElectronNumber) #append the electron number
+                        if len(MatchingMID_Objects) == 1: #If only one data point add (0,0) to the data
+                            MatchingMID_RS_Values.append(0)
+                            MatchingMID_ElectronNumbers.append(0)
+                        if len(MatchingMID_Objects) > 1: #When we have more than one value in the data, find a linear fit
+                                
+                            #Now we use polyfit, poly1d, and polyval to fit the data linearly and find an approximate ionization factor
+                            #TODO: We think we should use a power law with y = mx^b (this implies an intercept of 0 and retains the type of curvature we see in the data)
+                            #TODO: Link to do so: https://scipy-cookbook.readthedocs.io/items/FittingData.html
+                            polynomialCoefficients = numpy.polyfit(MatchingMID_ElectronNumbers,MatchingMID_RS_Values,1) #Electron numbers as the independent var, RS_values as the dependent var, and 1 for 1st degree polynomial
+                            poly1dObject = numpy.poly1d(polynomialCoefficients) #create the poly1d object
+                            self.ionizationEfficienciesList[moleculeIndex] = numpy.polyval(poly1dObject,self.electronnumbers[moleculeIndex]) #use polyval to calculate the ionization factor based on the current molecule's electron number
+                if len(MatchingMID_Objects) == 0: #Otherwise use the original Madix and Ko equation
+                    self.ionizationEfficienciesList[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
 
 '''
 The MolecularIonizationData class is used to generate a molecule's ionization factor based on its ionization type
@@ -4114,7 +4127,9 @@ def main():
                 userInputName = 'UserInput{}'.format(iterationDirectorySuffix)
                 userInputPath = '{}.{}'.format(directoryName, userInputName)
                 UserInputCurrentIteration = importlib.import_module(str(userInputPath))
+                AllMID_ObjectsDict = G.AllMID_ObjectsDict
                 G = UserInputCurrentIteration
+                G.AllMID_ObjectsDict = AllMID_ObjectsDict
                 break
         if G.iterativeAnalysis:
             G.iterationNumber = highestIteration
@@ -4128,7 +4143,7 @@ def main():
         IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
     if (not G.iterativeAnalysis) or (G.iterationNumber == 1):
         try:
-            G.AllMID_ObjectsDict = getIE_Data('IonizationData.csv') #Read the ionization data and put the information into a dictionary
+            G.AllMID_ObjectsDict = getIE_Data(G.ionizationDataFileName) #Read the ionization data and put the information into a dictionary
         except:
             G.AllMID_ObjectsDict = {}
     #Read in the molecules used before parsing the user input file    
@@ -4155,7 +4170,7 @@ def main():
     global currentReferenceData
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
-    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList)
+    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
 
     prototypicalReferenceData = ReferenceDataList[0]
@@ -4281,7 +4296,7 @@ def main():
         #for loop to preprocess the remaining MSReference objects and match correction values
         for i in range(len(ReferenceDataList)):
             try:
-                ReferenceDataList[i].populateIonizationEfficiencies(AllMID_ObjectsDict)
+                ReferenceDataList[i].populateIonizationEfficiencies(G.AllMID_ObjectsDict)
             except:
                 ReferenceDataList[i].populateIonizationEfficiencies()
             ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
@@ -4328,7 +4343,7 @@ def main():
                                       G.moleculesTSC_List, G.moleculeConcentrationTSC_List, G.massNumberTSC_List, G.moleculeSignalTSC_List, G.unitsTSC,G.referencePatternTimeRanges)
 	##End: Preparing data for data analysis based on user input choices
     
-        #Initialize a current reference pattern index
+        #Initialize a current reference pattern index)
         currentReferencePatternIndex = 0
         for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time  
             #This print statement was used to track the progress of the program during long analysis runs
