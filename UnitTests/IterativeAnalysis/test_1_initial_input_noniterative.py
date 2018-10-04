@@ -11,6 +11,8 @@ referenceFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
 
+ionizationDataFileName = '_ProvidedIonizationData.csv'
+
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
 iterativeAnalysis = False
