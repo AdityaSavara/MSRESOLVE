@@ -2185,7 +2185,6 @@ class MSReference (object):
                             poly1dObject = numpy.poly1d(polynomialCoefficients) #create the poly1d object
                             self.ionizationEfficienciesList[moleculeIndex] = numpy.polyval(poly1dObject,self.electronnumbers[moleculeIndex]) #use polyval to calculate the ionization factor based on the current molecule's electron number
                 if len(MatchingMID_Objects) == 0: #Otherwise use the original Madix and Ko equation
-                    print("HERE")
                     self.ionizationEfficienciesList[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
 
 '''
