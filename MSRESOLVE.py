@@ -2172,12 +2172,12 @@ class MSReference (object):
                             if self.knownMoleculesIonizationTypes[moleculeIndex] == AllMID_ObjectsDict[key].moleculeIonizationType: #If the knownMoleculeType matches an MID object's molecule type
                                 MatchingMID_Objects.append(key) #Append the key
                                 MatchingMID_RS_Values.append(numpy.mean(AllMID_ObjectsDict[key].RS_ValuesList)) #Append the average of the RS values
-                                MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[key].moleculeElectronNumber) #append the electron number
+                                MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[key].electronNumber) #append the electron number
                         if len(MatchingMID_Objects) == 1: #If only one data point add (0,0) to the data
-                            MatchingMID_RS_Values.append(0)
-                            MatchingMID_ElectronNumbers.append(0)
+                            MatchingMID_Objects.append(MatchingMID_Objects[0]) #append the molecule type to the objects list
+                            MatchingMID_RS_Values.append(0.0)
+                            MatchingMID_ElectronNumbers.append(0.0)
                         if len(MatchingMID_Objects) > 1: #When we have more than one value in the data, find a linear fit
-                                
                             #Now we use polyfit, poly1d, and polyval to fit the data linearly and find an approximate ionization factor
                             #TODO: We think we should use a power law with y = mx^b (this implies an intercept of 0 and retains the type of curvature we see in the data)
                             #TODO: Link to do so: https://scipy-cookbook.readthedocs.io/items/FittingData.html
@@ -2185,6 +2185,7 @@ class MSReference (object):
                             poly1dObject = numpy.poly1d(polynomialCoefficients) #create the poly1d object
                             self.ionizationEfficienciesList[moleculeIndex] = numpy.polyval(poly1dObject,self.electronnumbers[moleculeIndex]) #use polyval to calculate the ionization factor based on the current molecule's electron number
                 if len(MatchingMID_Objects) == 0: #Otherwise use the original Madix and Ko equation
+                    print("HERE")
                     self.ionizationEfficienciesList[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
 
 '''
@@ -2193,10 +2194,10 @@ The MolecularIonizationData class is used to generate a molecule's ionization fa
 class MolecularIonizationData (object):
     def __init__(self,moleculeName,RS_Value,electronNumber,moleculeIonizationType='unknown',source='unknown'):
         #Store the MID variables
-        self.moleculeName = moleculeName
+        self.moleculeName = moleculeName.strip()
         self.RS_ValuesList = [float(RS_Value)] #Since we can have slightly different RS_values for a molecule, make a list so a molecule with more than one RS_Value can contain all the info provided
-        self.electronNumber = electronNumber
-        self.moleculeIonizationType = moleculeIonizationType
+        self.electronNumber = float(electronNumber)
+        self.moleculeIonizationType = moleculeIonizationType.strip()
         self.sourceList = [source] #Different RS values can come from different sources so make a list that will be parallel to RS_ValuesList containing the source of each RS Value at the same index
         
     def addData(self,RS_Value,source):
