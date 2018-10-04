@@ -2161,9 +2161,12 @@ class MSReference (object):
                         matchingMolecule = True #set the flag to be true
                 if matchingMolecule == True: #If the molecule matches a molecule in the MID dictionary, use the average RS_Value
                     self.ionizationEfficienciesList[moleculeIndex] = MatchingMID_RS_Values[0]
-                elif matchingMolecule == False: #Otherwise matchingMolecule is False which means its not in the data from literature.  So we will approximate the ionization factor based on a linear fit of the data from literature that share the molecule's type(s) or use the Madix and Ko equation
+                elif matchingMolecule == False: #Otherwise matchingMolecule is False which means its not in the data from literature.  So we will approximate the ionization factor based on a linear fit of the data from literature that share the molecule's type or use the Madix and Ko equation
                     if self.knownMoleculesIonizationTypes[moleculeIndex] != None and self.knownMoleculesIonizationTypes[moleculeIndex] != 'unknown': #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
                         #Then get an estimate by performing a linear fit on the data in the MID Dictionary
+			#TODO:The program currently only takes in one type but it is a desired feature to allow users to put in multiple types such as type1+type2 which would make a linear fit of the combined data between the two types
+			#TODO:The user should also be able to put in type1;type2 and the program would find the ionization factor using a linear fit of data from type1 and using a linear fit of data from type2.  The largest of the two ionization factors would be used.
+			#TODO:Then doing type1+type2;type3 would take the larger value between the linear fit of the combined type1 and type2 data or the value from the linear fit of type3 data
                         for key in AllMID_ObjectsDict: #Loop through the MID Dictionary
                             #TODO: When stringCompare is finished, this line will become - if stringCompare(self.knownMoleculesIonizationTypes[moleculeIndex],AllMID_Objects[key].moleculeIonizationType):
                             if self.knownMoleculesIonizationTypes[moleculeIndex] == AllMID_ObjectsDict[key].moleculeIonizationType: #If the knownMoleculeType matches an MID object's molecule type
@@ -4127,9 +4130,9 @@ def main():
                 userInputName = 'UserInput{}'.format(iterationDirectorySuffix)
                 userInputPath = '{}.{}'.format(directoryName, userInputName)
                 UserInputCurrentIteration = importlib.import_module(str(userInputPath))
-                AllMID_ObjectsDict = G.AllMID_ObjectsDict
+                AllMID_ObjectsDict = G.AllMID_ObjectsDict #Temporarily store the global variable as a local variable
                 G = UserInputCurrentIteration
-                G.AllMID_ObjectsDict = AllMID_ObjectsDict
+                G.AllMID_ObjectsDict = AllMID_ObjectsDict #Put the local variable back into the namespace after G points to the new namespace.  This retains the MID dictionary through different iterations
                 break
         if G.iterativeAnalysis:
             G.iterationNumber = highestIteration
@@ -4141,10 +4144,12 @@ def main():
     if G.iterativeAnalysis and G.iterationNumber != 1:
         #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
         IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
-    if (not G.iterativeAnalysis) or (G.iterationNumber == 1):
+    if (not G.iterativeAnalysis) or (G.iterationNumber == 1): #If not using iterative analysis or running the first iteration
+	#Create the dictionary storing the Molecular Ionization Data objects if the ionization data file exists in the main directory
+	#If using iterative analysis, then the dictionary used in the first iteration is retained throughout each iteration
         try:
             G.AllMID_ObjectsDict = getIE_Data(G.ionizationDataFileName) #Read the ionization data and put the information into a dictionary
-        except:
+        except: #If the ionization file does not exist in the main directory, leave as an empty dictionary
             G.AllMID_ObjectsDict = {}
     #Read in the molecules used before parsing the user input file    
     G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
