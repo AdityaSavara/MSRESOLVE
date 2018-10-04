@@ -4343,7 +4343,7 @@ def main():
                                       G.moleculesTSC_List, G.moleculeConcentrationTSC_List, G.massNumberTSC_List, G.moleculeSignalTSC_List, G.unitsTSC,G.referencePatternTimeRanges)
 	##End: Preparing data for data analysis based on user input choices
     
-        #Initialize a current reference pattern index)
+        #Initialize a current reference pattern index
         currentReferencePatternIndex = 0
         for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time  
             #This print statement was used to track the progress of the program during long analysis runs
