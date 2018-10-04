@@ -120,12 +120,12 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     #molecules object. In order to reorder the molecular likelihoods, a 
     #dictionary was created to keep track of the molecular likelihoods for each
     #of the molecules
-    moleculesLikelihoodDict=dict([(molecule,moleculesLikelihood[moleculeIndex]) for moleculeIndex, molecule in enumerate(moleculesToMonitor)])
+    moleculesLikelihoodDict=dict([(moleculeName,moleculesLikelihood[moleculeIndex]) for moleculeIndex, moleculeName in enumerate(moleculesToMonitor)])
     reorderedMoleculesLikelihood=[]
     #A list of the reordered molecular likelihoods had to be created in order to
     #allow for multiplication in the following step.
-    for molecule in truncatedReferenceData.molecules:
-        reorderedMoleculesLikelihood.append(moleculesLikelihoodDict[molecule])
+    for moleculeName in truncatedReferenceData.molecules:
+        reorderedMoleculesLikelihood.append(moleculesLikelihoodDict[moleculeName])
 
         
     #Fabricate a data for a single abscissa value based on the probability of 
