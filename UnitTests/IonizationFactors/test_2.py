@@ -6,7 +6,6 @@ sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 import DefaultUserInput as G #This is needed because we need the __var_list__
-MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
     
 #get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
@@ -21,11 +20,12 @@ import numpy
 suffix = ut.returnDigitFromFilename(__file__)
 
 #import the test input file
-import test_2_input
+import UserInputIonizationUnitTests
 
 ##First Test input - First reference file
 #This replaces the globals variables being pointed to in MSRESOLVE
-MSRESOLVE.G = test_2_input
+MSRESOLVE.G = UserInputIonizationUnitTests
+MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefMatchingMolecule.csv'] #Overwrite with desired reference file
 
 #Run the main function in MSRESOLVE
 MSRESOLVE.main()
