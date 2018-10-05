@@ -1,6 +1,6 @@
 import os
 import sys 
-sys.path.insert(1, os.path.join(os.getcwd(), os.pardir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 if os.path.basename(__file__) != "DefaultUserInput.py":
     from DefaultUserInput import *
 
