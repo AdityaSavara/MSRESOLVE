@@ -65,29 +65,29 @@ for moleculeIndex in range(len(ionizationFactorsRN2)):
     if IonizationTypes[moleculeIndex] == 'Hydrogen non-metal-ides': #If hydrogen non-metal-ide then use hydrogen non-metal-ide's poly1d object
         ionizationFactorsRN2[moleculeIndex] = numpy.polyval(HydrogenNonMetalIdesPoly1dObject,ElectronNumbers[moleculeIndex])
 
-#Round functions added so strings continue to match
-ionizationFactorsRN2 = numpy.round(ionizationFactorsRN2,2)        
+       
 
 #the feature uses known ionization factors if they are available
 ut.set_expected_result(ionizationFactorsRN2,expected_result_str=str(ionizationFactorsRN2),prefix=prefix,suffix=suffix)
 
-#Round functions added so strings continue to match
-#The exact outputs are below
-#Expected Output is     [2.5992 4.1154 0.7695 2.0959 2.7435 3.2119 3.4891 1.4079 2.1711]
-#Calculated Output was  [2.6    4.1167 0.7668 2.0952 2.7428 3.2128 3.4905 1.407  2.1703]
 
 #set output
-output = numpy.round(MSRESOLVE.ReferenceDataList[0].ionizationEfficienciesList,2) #The ionization factors list is a subobject to the MSReference object
+output = MSRESOLVE.ReferenceDataList[0].ionizationEfficienciesList #The ionization factors list is a subobject to the MSReference object
 #Places object in a tuple
 resultObj = (output)
 
 #String is provided
 resultStr = str(resultObj)
 
+#set tolerances
+relativeTolerance = 1E-2
+absoluteTolerance = 1E-5
+
+
 #this is so that pytest can do UnitTesterSG tests.
 def test_pytest(): #note that it cannot have any required arguments for pytest to use it, and that it is using variables that are defined above in the module.
-    ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = False)
+    ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = False, relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance)
     
 if __name__ == "__main__":
    #This is the normal way of using the UnitTesterSG module, and will be run by UnitTesterSG or by running this test file by itself.
-   ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = True)
+   ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = True, relativeTolerance=relativeTolerance,absoluteTolerance=absoluteTolerance)
