@@ -1140,7 +1140,7 @@ If the time is at the beginning of the next time range, it will change the curre
 #TODO: This is not a good algorithm as written. Instead of assuming that points can only be between current and next, the function should consider the entire referencePatternTimeRanges to see where the currentTime falls.  Right now it  only considers likely possibilities rather than all possibilities.
 '''
 def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRanges, currentTime, firstReferenceObject, secondReferenceObject, ReferenceDataList):
-    #NOTE: If time ranges overlap, SelectReferencePattern will select the reference pattern with the same list index as the first time range
+    #NOTE: If time ranges overlap, SelectReferencePattern will select the reference pattern with the same list index as the first time range involved in the overlap
     #Print a warning if user has not filled time ranges from data analysis start and stop time
     if (currentTime > referencePatternTimeRanges[-1][1]) or (currentTime < referencePatternTimeRanges[0][0]):
         print("WARNING: User has chosen to use Reference Pattern Time Chooser.  \nUser needs to input reference pattern time ranges that fill the entirety of the data analysis time range. \nUser has not and the program is about to crash.")
