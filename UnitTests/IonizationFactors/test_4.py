@@ -19,13 +19,12 @@ import numpy
 #Get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
 
-#import the test input file
-import UserInputIonizationUnitTests
-
 ##First Test input - First reference file
 #This replaces the globals variables being pointed to in MSRESOLVE
-MSRESOLVE.G = UserInputIonizationUnitTests
 MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefDefault.csv'] #Overwrite with desired reference file
+MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated.csv'
+MSRESOLVE.G.grapher = 'no'
+MSRESOLVE.G.exportAtEachStep = 'no'
 
 #Run the main function in MSRESOLVE
 MSRESOLVE.main()
