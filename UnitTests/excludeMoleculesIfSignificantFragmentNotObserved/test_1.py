@@ -1,8 +1,7 @@
 import os
 import sys
-baseDir = os.getcwd()
-sys.path.insert(1, os.path.join(baseDir, os.pardir))
-sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
     

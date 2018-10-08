@@ -1376,10 +1376,10 @@ def SpecificIterationName(iterativeAnalysis, iterationNumber):
     if iterativeAnalysis == False or iterativeAnalysis == True:
          #create the default directory
          iterationDirectoryName = os.path.join(
-             os.getcwd(), "_iter_{}".format(str(iterationNumber)))
+             os.curdir, "_iter_{}".format(str(iterationNumber)))
     else:
         #set that name to be the directory along with the correct number 
-        iterationDirectoryName = os.path.join(os.getcwd(),
+        iterationDirectoryName = os.path.join(os.curdir,
             str(iterativeAnalysis),
              "_iter_{}".format(str(iterationNumber)))
     return iterationDirectoryName
@@ -1517,7 +1517,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
         #export reference data for next iteration
         if G.iterationNumber == 1: #first iteration files aren't in standard locations
             referenceFilePath = os.path.normpath(
-                os.path.join(os.getcwd(),
+                os.path.join(os.curdir,
                     os.pardir,
                     str(G.oldReferenceFileName[RefObjectIndex])))
             DataFunctions.TrimReferenceFileByMolecules(unusedMolecules,
@@ -1573,13 +1573,13 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     if not G.iterativeAnalysis == True:
         iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber - 1))
     #copy the experimental signals to the next iteration
-    copyFromPath = os.path.join(os.getcwd(), os.pardir,
+    copyFromPath = os.path.join(os.curdir, os.pardir,
             str(iterationDirectoryName),
             str(G.collectedFileName))
     shutil.copy(copyFromPath, os.getcwd())
     for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
         #copy the next reference file from the previous iteration folder to the next iteration folder
-        copyFromPath = os.path.join(os.getcwd(),
+        copyFromPath = os.path.join(os.curdir,
             os.pardir,
             str(iterationDirectoryName),
             str(G.referenceFileNamesList[RefIndex]))

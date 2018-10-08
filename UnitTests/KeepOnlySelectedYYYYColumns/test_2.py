@@ -6,10 +6,9 @@ Created on Tue Jun 12 14:07:44 2018
 """
 import sys
 import os
-baseDir = os.getcwd()
-sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
-sys.path.insert(1, os.path.join(baseDir, os.pardir))
-sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 
