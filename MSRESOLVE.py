@@ -1140,6 +1140,7 @@ If the time is at the beginning of the next time range, it will change the curre
 #TODO: This is not a good algorithm as written. Instead of assuming that points can only be between current and next, the function should consider the entire referencePatternTimeRanges to see where the currentTime falls.  Right now it  only considers likely possibilities rather than all possibilities.
 '''
 def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRanges, currentTime, firstReferenceObject, secondReferenceObject, ReferenceDataList):
+    #NOTE: If time ranges overlap, SelectReferencePattern will select the reference pattern with the same list index as the first time range involved in the overlap
     #Print a warning if user has not filled time ranges from data analysis start and stop time
     if (currentTime > referencePatternTimeRanges[-1][1]) or (currentTime < referencePatternTimeRanges[0][0]):
         print("WARNING: User has chosen to use Reference Pattern Time Chooser.  \nUser needs to input reference pattern time ranges that fill the entirety of the data analysis time range. \nUser has not and the program is about to crash.")
@@ -2722,7 +2723,7 @@ def BruteForce(molecules,specifications,matching_correction_values,rawsignalsarr
 
     return answers
 
-def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited):   
+def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited):   
     #initialize a variable for moleculeIndex before the loop across all molecules.
     # print("in the function start", remaining_num_molecules)
 
@@ -2733,14 +2734,14 @@ def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, rem
         if sum(referenceIntensitiesForThisMolecule) == 0.0:
             #Find the name of the molecule getting deleted.
             nameOfThisMolecule = remaining_molecules_SLS[moleculeIndexIncludingDeletions]
-            #Find the index of where that molecule was originally, to update usedmolecules accordingly, and also solutions accordingly.
+            #Find the index of where that molecule was originally, to update solvedmolecules accordingly, and also solutions accordingly.
             originalMolecularIndex = list(molecules_unedited).index(nameOfThisMolecule)
             #print("the above one got this molecule removed, index!", moleculeIndexIncludingDeletions)
             #this is setting concentration to 0 for that molecule, in this iteration.
             solutions[originalMolecularIndex] = 0.0  #note that we use the actual moleculeIndex here.
             #No need to subtract any signals
             #update the used molecules list, and amounts remaining for other things.
-            usedmolecules[originalMolecularIndex] = 1 #note that we use the actual moleculeIndex here. 
+            solvedmolecules[originalMolecularIndex] = 1 #note that we use the actual moleculeIndex here. 
             remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,(moleculeIndexIncludingDeletions),axis = 1)
             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexIncludingDeletions),axis = 1)
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
@@ -2752,7 +2753,7 @@ def excludeEmptyMolecules(remaining_num_molecules, solutions, usedmolecules, rem
     remaining_correction_factors_SLS_after_exclusion = remaining_correction_factors_SLS
     remaining_reference_intensities_SLS_after_exclusion = remaining_reference_intensities_SLS
     remaining_molecules_SLS_after_exclusion = remaining_molecules_SLS
-    return remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS_after_exclusion, remaining_reference_intensities_SLS_after_exclusion, remaining_molecules_SLS_after_exclusion
+    return remaining_num_molecules, solutions, solvedmolecules, remaining_correction_factors_SLS_after_exclusion, remaining_reference_intensities_SLS_after_exclusion, remaining_molecules_SLS_after_exclusion
     
 #this function is a path is sequential linear subtraction, which can be used alongside the inverse
 #method or as opposed to it. Either way, it only produces one set of values, so it has no need for the 
@@ -2791,7 +2792,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     #initiailzing some lists for population (and truncation).
     nonZeroCorrectionValuesList = []
     signalsCorrespondingToNonZeroCorrectionValuesList = []
-    usedmolecules = numpy.zeros(len(remaining_molecules_SLS))
+    solvedmolecules = numpy.zeros(len(remaining_molecules_SLS))
     #To keep track of the mass fragments used. (just an array of zeros to start, then fill with ones)
     used_mass_fragments= numpy.array(copy.deepcopy(original_list_of_mass_fragments))*0.0
 
@@ -2810,7 +2811,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             solutions[moleculeIndex] = 0.0  #note that we use the actual moleculeIndex here.
             #No need to subtract any signals
             #update the used molecules list, and amounts remaining for other things.
-            usedmolecules[moleculeIndex] = 1 #note that we use the actual moleculeIndex here. 
+            solvedmolecules[moleculeIndex] = 1 #note that we use the actual moleculeIndex here. 
             remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,(moleculeIndexIncludingDeletions),axis = 1)
             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexIncludingDeletions),axis = 1)
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
@@ -2849,9 +2850,9 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             #now we exclude (remove) molecules with no signals left in their reference patterns on any of the remaining mass fragments, which can happen due to the rawThresholdFilter.
             
             #Now we need to actually delete the molecules that have 0's thanks to the signalThreshold filter. The delting is what excludeEmptyMolecules does.
-            remaining_num_molecules, solutions, usedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, \
+            remaining_num_molecules, solutions, solvedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, \
                                             remaining_molecules_SLS = excludeEmptyMolecules(remaining_num_molecules, solutions,  \
-                                            usedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, \
+                                            solvedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, \
                                             remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited)  
             numMoleculesExcluded = remaining_num_molecules_before_excluding - remaining_num_molecules #note that here remaining_num_molecules is after excluding.
 
@@ -2870,9 +2871,9 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                     with open(outputMoleculesOrderFileName, 'a') as f:
                         f.write('%s,' %timeIndex)
                         f.write('%s,' %time)
-                        for x in range(len(usedmolecules)):
-                            f.write('%s,' %usedmolecules[x])
-                        f.write("UsedMolecules \n")
+                        for x in range(len(solvedmolecules)):
+                            f.write('%s,' %solvedmolecules[x])
+                        f.write("SolvedMolecules \n")
                         
                     outputMassFragmentsOrderFileName = 'ExportedSLSUniqueMassFragmentsUsed.csv'
                     if G.iterativeAnalysis:
@@ -2958,7 +2959,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 if remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
                     solvedSignalsForSubtractionArray[massFragmentIndex_jj] = remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
             solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
-            usedmolecules[chosenMolecule_original_molecular_index] = 1 #This updates a list that keeps track of which molecules have been used up.
+            solvedmolecules[chosenMolecule_original_molecular_index] = 1 #This updates a list that keeps track of which molecules have been used up.
 
             #The below line is the key line where the subtraction is done.
             remaining_rawsignals_SLS = remaining_rawsignals_SLS - solvedSignalsForSubtractionArray        
@@ -2987,9 +2988,9 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 with open(outputMoleculesOrderFileName, 'a') as f:
                     f.write('%s,' %timeIndex)
                     f.write('%s,' %time)
-                    for x in range(len(usedmolecules)):
-                        f.write('%s,' %usedmolecules[x])
-                    f.write("UsedMolecules \n")
+                    for x in range(len(solvedmolecules)):
+                        f.write('%s,' %solvedmolecules[x])
+                    f.write("SolvedMolecules \n")
                 
                 outputMassFragmentsOrderFileName = 'ExportedSLSUniqueMassFragmentsUsed.csv'
                 if G.iterativeAnalysis:
@@ -3013,12 +3014,12 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 remaining_rawsignals_SLS = numpy.delete(remaining_rawsignals_SLS,correctionIndex-place_holder,axis = 0)
                 remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,correctionIndex-place_holder,axis = 0)
                 place_holder = place_holder + 1#since the arrays are being deleted, this keeps the indexing correct
-    if sum(usedmolecules) == 0:#if none of the solutions have been found
+    if sum(solvedmolecules) == 0:#if none of the solutions have been found
         solutions = []
-        usedmolecules = []   
+        solvedmolecules = []   
     # print("Bottom of Function", molNumIndex, num_remaining_molecules_before_loop )
-    # print(remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules)
-    return [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules]
+    # print(remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules)
+    return [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules]
     
 #this sls method cuts smaller, solvable arrays out of the large array and uses numpy.linalg.solve to find the signals
 #relative to Co for those molecules, then via the SLSMethod function below the function works in conjunction with the 
@@ -3164,14 +3165,14 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                                     place_holder2 = place_holder2 + 1
                                     place_holder = 0
                                     place_holder2 = 0
-                                    usedmolecules = selectedvariable
+                                    solvedmolecules = selectedvariable
                                     for selectedcounter in range(len(selectedvariable)):#array-indexed for loop
                                         if selectedvariable[selectedcounter - place_holder] == 0:#all of the zeros in the chosen rows are eliminated, because they will only make solving more difficult
                                             selectedvariable = numpy.delete(selectedvariable,selectedcounter - place_holder)
                                             useablecorrections = numpy.delete(useablecorrections,selectedcounter - place_holder,axis = 1)
                                             useablemassfrags = numpy.delete(useablemassfrags,selectedcounter - place_holder,axis = 1)
                                             place_holder = place_holder + 1 #saves place when deleting
-                                        if usedmolecules[selectedcounter] == 1:# in same loop, the values that are going to be used will be deleted from the arrays getting passed on- that are not solved yet
+                                        if solvedmolecules[selectedcounter] == 1:# in same loop, the values that are going to be used will be deleted from the arrays getting passed on- that are not solved yet
                                             remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,selectedcounter - place_holder2,axis = 1)
                                             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,selectedcounter - place_holder2,axis = 1)
                                             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,selectedcounter - place_holder2)
@@ -3212,18 +3213,18 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
         selectedrawsigsholder.append(selectedrawsigs)
     if reminder3 == 0:#if no solutions have been found
         solutions = []
-        usedmolecules = []
+        solvedmolecules = []
     else: #sets solutions based on the used molecules array that was made
-        solutionsholder = numpy.zeros(len(usedmolecules))
+        solutionsholder = numpy.zeros(len(solvedmolecules))
         place_holder = 0 
         
-        for usedmoleculesIndex in range(len(usedmolecules)):#array-indexed for loop
+        for solvedmoleculesIndex in range(len(solvedmolecules)):#array-indexed for loop
 
-            if usedmolecules[usedmoleculesIndex] == 1:#when there is a molecule in that position
-                solutionsholder[usedmoleculesIndex] = solutions[place_holder]
+            if solvedmolecules[solvedmoleculesIndex] == 1:#when there is a molecule in that position
+                solutionsholder[solvedmoleculesIndex] = solutions[place_holder]
                 place_holder = place_holder + 1 #helps add the two arrays together
         solutions = solutionsholder
-    return [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,usedmolecules]
+    return [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,solvedmolecules]
 
 
 #this function simply calls the other functions to be used, based on the user input pathway, that means that this
@@ -3250,7 +3251,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
     [uniqueOrCommon,slsFinish,distinguished] = SLSChoices
                    
     if uniqueOrCommon == 'unique': #user input
-        [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules] = SLSUniqueFragments(remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time)
+        [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules] = SLSUniqueFragments(remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time)
     #should the user choose the common fragments method, it must be realized that once you solve a two by two or three
     #by three array using the common fragments method you can then possibly solve using the unique fragments method once 
     #again. This while loop makes sure that as long as there are possibilities after either method is used, it will keep
@@ -3275,18 +3276,18 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                                     zerosrows = zerosrows + 1
                     if zerosrows >= desirednum: #if the number of matching rows is equal to or greater than the size being looked for
                         if desirednum == 1: #unique method used if there are rows with only one correction value
-                            [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,usedmolecules] = SLSUniqueFragments (remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time)
-                            if len(usedmolecules) != 0:
-                                unique.append([solutions,molecules_unedited,usedmolecules])
+                            [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules] = SLSUniqueFragments (remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time)
+                            if len(solvedmolecules) != 0:
+                                unique.append([solutions,molecules_unedited,solvedmolecules])
                                 order.append('unique')
                             place_holder = place_holder +1 #if this happens, than place_holder is made equal to 1, so that the loop must run all the way through again
                             if len(solutions) == 0: #in case no solutions were found
                                 place_holder = place_holder - 1 #while loop can stop- so it does not get stuck
                         else: #common fragments method 
                             
-                            [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,usedmolecules] = SLSCommonFragments (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,remaining_molecules_SLS,scaledConcentrationsarray,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,bruteOption,timeIndex, maxPermutations)
-                            if len(usedmolecules) != 0:
-                                common.append([solutions,molecules_unedited,usedmolecules])
+                            [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,solvedmolecules] = SLSCommonFragments (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,remaining_molecules_SLS,scaledConcentrationsarray,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,bruteOption,timeIndex, maxPermutations)
+                            if len(solvedmolecules) != 0:
+                                common.append([solutions,molecules_unedited,solvedmolecules])
                                 order.append('common')
                             place_holder = place_holder + 1#if this happens, than place_holder is made equal to 1, so that the loop must run all the way through again
                             if len(solutions) == 0:#in case no solutions found 
@@ -3340,11 +3341,11 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                 if order[ordercounter] == 'unique':#if the last one of the order was unique
                     solutions = unique[0][0] #assigns the solutions
                     molecules_unedited = unique[0][1] #assigns the molecules from the last order (these are the stable molecules for this whole method)
-                    usedmolecules = unique[0][2] #usedmolecules is set based on the first one used as well
+                    solvedmolecules = unique[0][2] #solvedmolecules is set based on the first one used as well
                 if order[ordercounter] == 'common':#if the last item of the order list was common
                     solutions = common[0][0]
                     molecules_unedited = common[0][1]
-                    usedmolecules = common[0][2]
+                    solvedmolecules = common[0][2]
     else: # throw error because uniqueOrCommon is not set properly
         raise ValueError("The value of 'uniqueOrCommon' is {}, it should be either 'common' or 'unique'".format(uniqueOrCommon)) 
     
@@ -3386,11 +3387,11 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
         #print remainingMolecules
         #adds the finisher solutions with the inital analysis solutions 
         for molecule_iiii in range(len(molecules_unedited)):
-            if len(usedmolecules) == 0:
+            if len(solvedmolecules) == 0:
                 print("Warning: if you have chosen to use unique fragment SLS and your data has no unique fragments (not unique to any molecule), "\
                 "then the program may be about to crash. If it does, change SLS method to common.")
             #if the molecule wasn't solved for in the inital analysis
-            if usedmolecules[molecule_iiii] == 0:
+            if solvedmolecules[molecule_iiii] == 0:
                 # then add the appropriate Finisher concentration for that molecule  
                 solutions[molecule_iiii] = remainingMolecules.pop(0) 
             
@@ -3726,7 +3727,7 @@ def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '',
     box = ax.get_position()
     ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
     ax.legend(molecules,loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.xlabel('Time (minutes)')
+    plt.xlabel(ExperimentData.abscissaHeader) #Get the x-axis title from the collected data csv file
     if concentrationFinder == 'yes':
         plt.ylabel('Concentration (%s)'%(units))
     else:
