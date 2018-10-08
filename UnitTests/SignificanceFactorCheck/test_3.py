@@ -9,10 +9,9 @@ Created on Wed Aug  1 13:47:18 2018
 #importing the functions from UnitTesterSG module
 import sys
 import os
-baseDir = os.getcwd()
-sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
-sys.path.insert(1, os.path.join(baseDir, os.pardir))
-sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 
 import UnitTesterSG as ut
 import numpy

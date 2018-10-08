@@ -6,10 +6,9 @@ Created on Wed Jul 11 13:26:37 2018
 """
 import sys
 import os
-baseDir = os.getcwd()
-sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
-sys.path.insert(1, os.path.join(baseDir, os.pardir))
-sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #This test file tests the extractReferencePatternFromData feature
 
 import MSRESOLVE
