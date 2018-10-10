@@ -5,7 +5,7 @@ Created on Mon Aug 27 16:52:12 2018
 @author: Alex
 """
 
-import re
+
 
 '''
 listCast converts objects to lists
@@ -69,6 +69,7 @@ Added: 181008
 Last modified: 181008
 '''
 def stringCompare(firstString,secondString):
+    import re
     #First store the strings into a variable that will be standardized
     standardizedFirstString = firstString
     standardizedSecondString = secondString
