@@ -112,7 +112,7 @@ def customCompare(firstInComparison,secondInComparison, relativeTolerance=None, 
                         comparison = (firstInComparison == secondInComparison)
                     return comparison
                 else: #user is not using stringCompare
-                    comparison = (firstInComparison == secondInComparison)
+                    return (firstInComparison == secondInComparison)
             except: #Unsure what conditions would throw an error here but just in case, return false if error is thrown
                 return False
     else: #one of the items is a string
