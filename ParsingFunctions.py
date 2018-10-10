@@ -5,6 +5,8 @@ Created on Mon Aug 27 16:52:12 2018
 @author: Alex
 """
 
+import re
+
 '''
 listCast converts objects to lists
 '''
@@ -60,3 +62,28 @@ def strCheck(stringVar,nameOfStringVar='variable'):
     if not isinstance(stringVar,str):
         raise TypeError('%s must be of type str' %(nameOfStringVar))
     return None
+
+'''
+stringCompare takes in two strings and compares a standardized version of the two to see if they match
+Added: 181008
+Last modified: 181008
+'''
+def stringCompare(firstString,secondString):
+    #First store the strings into a variable that will be standardized
+    standardizedFirstString = firstString
+    standardizedSecondString = secondString
+    #Strip the strings of any whitespace on the outsides
+    standardizedFirstString = standardizedFirstString.strip()
+    standardizedSecondString = standardizedSecondString.strip()
+    #Make both strings lowercase
+    standardizedFirstString = standardizedFirstString.lower()
+    standardizedSecondString = standardizedSecondString.lower()
+    #Using regex, find any style of whitespace on the inside and replace it with a standardized space
+    standardizedFirstString = re.sub('\s+',' ',standardizedFirstString)
+    standardizedSecondString = re.sub('\s+',' ',standardizedSecondString)
+    
+    #If the standardized strings match return True
+    if standardizedFirstString == standardizedSecondString:
+        return True
+    else: #Otherwise return false
+        return False

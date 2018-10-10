@@ -2169,8 +2169,8 @@ class MSReference (object):
 			#TODO:The user should also be able to put in type1;type2 and the program would find the ionization factor using a linear fit of data from type1 and using a linear fit of data from type2.  The largest of the two ionization factors would be used.
 			#TODO:Then doing type1+type2;type3 would take the larger value between the linear fit of the combined type1 and type2 data or the value from the linear fit of type3 data
                         for key in AllMID_ObjectsDict: #Loop through the MID Dictionary
-                            #TODO: When stringCompare is finished, this line will become - if stringCompare(self.knownMoleculesIonizationTypes[moleculeIndex],AllMID_Objects[key].moleculeIonizationType):
-                            if self.knownMoleculesIonizationTypes[moleculeIndex] == AllMID_ObjectsDict[key].moleculeIonizationType: #If the knownMoleculeType matches an MID object's molecule type
+                            #Use stringCompare to check if a molecule in the MID Dictionary matches a molecule in the reference data since casing and spacing may differ between the two (e.g. reference data may have carbon dioxide while MID Dictionary may have Carbon Dioxide)
+                            if parse.stringCompare(self.knownMoleculesIonizationTypes[moleculeIndex],AllMID_ObjectsDict[key].moleculeIonizationType): #If the knownMoleculeType matches an MID object's molecule type
                                 MatchingMID_Objects.append(key) #Append the key
                                 MatchingMID_RS_Values.append(numpy.mean(AllMID_ObjectsDict[key].RS_ValuesList)) #Append the average of the RS values
                                 MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[key].electronNumber) #append the electron number
