@@ -673,8 +673,11 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules. Do the same for molecularWeights and sourceInfo
     trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True)	    
-    trimmedRefererenceData.molecularWeights, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.molecularWeights, allMoleculesList, chosenMolecules, Array1D = True)	    
-    trimmedRefererenceData.sourceInfo, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.sourceInfo, allMoleculesList, chosenMolecules, Array1D = True)	    
+    trimmedRefererenceData.molecularWeights, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.molecularWeights, allMoleculesList, chosenMolecules, Array1D = True)
+    trimmedRefererenceData.knownMoleculesIonizationTypes, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownMoleculesIonizationTypes, allMoleculesList, chosenMolecules, Array1D = True)
+    trimmedRefererenceData.knownIonizationFactorsRelativeToN2, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownIonizationFactorsRelativeToN2, allMoleculesList, chosenMolecules, Array1D = True)
+    trimmedRefererenceData.SourceOfFragmentationPatterns, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfFragmentationPatterns, allMoleculesList, chosenMolecules, Array1D = True)
+    trimmedRefererenceData.SourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True)
     
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
@@ -1087,8 +1090,8 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm,AllMID_Obj
     #If referenceFileNames and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
     if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
-        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
+        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
         #save each global variable into the class objects 
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[0].iterationSuffix = G.iterationSuffix
@@ -1109,8 +1112,8 @@ def GenerateReferenceDataList(referenceFileNames,referencePatternForm,AllMID_Obj
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNames)):
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
-        ReferenceDataAndFormsList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
+        ReferenceDataAndFormsList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
         #save each global variable into the class objects 
         ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataAndFormsList[i].iterationSuffix = G.iterationSuffix
@@ -1712,10 +1715,14 @@ def readReferenceFile(referenceFileName, form):
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
                 break #exit the for loop
             except: #Otherwise the row consists of other information
-                if dataFrame.iloc[rowIndex][0] == 'Source:': #if the abscissa titles the source
-                    dfsourceInfo = dataFrame.iloc[rowIndex][1:] #select the row of names
-                    sourceInfo = dfsourceInfo.values #convert to matrix
-                    sourceInfo = sourceInfo.astype(numpy.str) #save as class object with type string
+                if (dataFrame.iloc[rowIndex][0] == 'SourceOfFragmentationPatterns') or (dataFrame.iloc[rowIndex][0] == 'Source:'): #if the abscissa titles the source (both old and new reference files)
+                    dfSourceOfFragmentationPatterns = dataFrame.iloc[rowIndex][1:] #select the row of names
+                    SourceOfFragmentationPatterns = dfSourceOfFragmentationPatterns.values #convert to matrix
+                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(numpy.str) #save as class object with type string
+                elif dataFrame.iloc[rowIndex][0] == 'SourceOfIonizationData':
+                    dfSourceOfIonizationData = dataFrame.iloc[rowIndex][1:] #Select the row of names
+                    SourceOfIonizationData = dfSourceOfIonizationData.values #convert to matrix
+                    SourceOfIonizationData = SourceOfIonizationData.astype(numpy.str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Molecules': #if the abscissa titles the molecule names
                     dfmolecules = dataFrame.iloc[rowIndex][1:] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
@@ -1728,11 +1735,11 @@ def readReferenceFile(referenceFileName, form):
                     dfmolecularWeights = dataFrame.iloc[rowIndex][1:] #select row of names
                     molecularWeights = dfmolecularWeights.values #convert to matrix
                     molecularWeights = molecularWeights.astype(numpy.float) #save as class object with type float
-                elif dataFrame.iloc[rowIndex][0] == 'Molecule Ionization Type':
+                elif dataFrame.iloc[rowIndex][0] == 'knownMoleculesIonizationTypes':
                     dfknownMoleculesIonizationTypes = dataFrame.iloc[rowIndex][1:] #select row of names
                     knownMoleculesIonizationTypes = dfknownMoleculesIonizationTypes.values #convert to matrix
                     knownMoleculesIonizationTypes = knownMoleculesIonizationTypes.astype(numpy.str) #save as class object with type string
-                elif dataFrame.iloc[rowIndex][0] == 'Ionization Factor RN2':
+                elif dataFrame.iloc[rowIndex][0] == 'knownIonizationFactorsRelativeToN2':
                     dfknownIonizationFactorsRelativeToN2 = dataFrame.iloc[rowIndex][1:] #select row of names
                     knownIonizationFactorsRelativeToN2 = dfknownIonizationFactorsRelativeToN2.values #convert to matrix
                     for index in range(len(knownIonizationFactorsRelativeToN2)):
@@ -1756,6 +1763,13 @@ def readReferenceFile(referenceFileName, form):
             knownMoleculesIonizationTypes = parse.parallelVectorize(knownMoleculesIonizationTypes,len(molecules)) #parallel vectorize to length of molecules
             knownMoleculesIonizationTypes = numpy.array(knownMoleculesIonizationTypes) #convert to matrix
             
+        try: #If using an older reference file, it will not have SourceOfIonizationInfo so the elif statement never gets entered meaning the variable does not exist
+            SourceOfIonizationData #try calling the variable, if it exists there will be no error
+        except: #If it does not exist, populate with empty strings
+            SourceOfIonizationData = [''] #initialize as a list of len(1)
+            SourceOfIonizationData = parse.parallelVectorize(SourceOfIonizationData,len(molecules)) #parallel vectorize to length of molecules
+            SourceOfIonizationData = numpy.array(SourceOfIonizationData) #convert to matrix
+          
                 
 #        ''' generate reference matrix'''
 #        #remove top 4 rows
@@ -1878,7 +1892,7 @@ def readReferenceFile(referenceFileName, form):
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
         
-    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
+    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
 
 '''
 getMoleculesFromReferenceData is a function that takes in the reference filename and just returns the molecules present
@@ -2007,8 +2021,8 @@ class MSData (object):
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
                                         
 class MSReference (object):
-    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2=None, knownMoleculesIonizationTypes=None, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
-        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.sourceInfo, self.knownIonizationFactorsRelativeToN2, self.knownMoleculesIonizationTypes, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
+    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2=None, knownMoleculesIonizationTypes=None, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
+        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.SourceOfFragmentationPatterns, self.SourceOfIonizationData, self.knownIonizationFactorsRelativeToN2, self.knownMoleculesIonizationTypes, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         self.iterationSuffix = ''

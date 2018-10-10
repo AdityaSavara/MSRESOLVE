@@ -76,8 +76,8 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     
     G.excludeMoleculesIfSignificantFragmentNotObserved=G.rawSignalThresholdMethod
     #Initialize a ReferenceData class object
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=MSRESOLVE.readReferenceFile(referenceFileName, referenceForm)
-    ReferenceData = MSRESOLVE.MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, sourceInfo, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=MSRESOLVE.readReferenceFile(referenceFileName, referenceForm)
+    ReferenceData = MSRESOLVE.MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)
 
     truncatedReferenceData=copy.deepcopy(ReferenceData)
     
@@ -337,12 +337,19 @@ def bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFra
     totalTime=end-start
 #If there is a solvable set of mass fragments, a reference data set containing only the best mass fragment combination and the selected molecules will be exported. 
     if len(topBestMassFragments)!=0:
-        sourceHeader=numpy.append('Source:',truncatedReferenceData.sourceInfo)
+        commentsLine = copy.copy(truncatedReferenceData.SourceOfFragmentationPatterns)
+        for elemIndex in range(len(commentsLine)):
+            commentsLine[elemIndex] = ''
+        commentsHeader = numpy.append('#ComentsLine',commentsLine)
         moleculesHeader=numpy.append('Molecules',truncatedReferenceData.molecules)
         electronHeader=numpy.append('Electron Numbers',truncatedReferenceData.electronnumbers)
+        knownMoleculeIonizationTypeHeader = numpy.append('knownMoleculesIonizationTypes',truncatedReferenceData.knownMoleculesIonizationTypes)
+        knownIonizationFactorsRelativeToN2Header = numpy.append('knownIonizationFactorsRelativeToN2',truncatedReferenceData.knownIonizationFactorsRelativeToN2)
+        fragmentationSourceHeader = numpy.append('SourceOfFragmentationPatterns',truncatedReferenceData.SourceOfFragmentationPatterns)
+        ionizationSourceHeader = numpy.append("SourceOfIonizationData",truncatedReferenceData.SourceOfIonizationData)
         massHeader=numpy.append('Molecular Mass', truncatedReferenceData.molecularWeights)
         #The header will be stacked before saving the data array. In order to get the multiple headers present, an array will be used to contain all of the information to allow for stacking.
-        fullHeaderArray=numpy.array([sourceHeader,moleculesHeader,electronHeader,massHeader])
+        fullHeaderArray=numpy.array([commentsHeader,moleculesHeader,electronHeader,knownMoleculeIonizationTypeHeader,knownIonizationFactorsRelativeToN2Header,fragmentationSourceHeader,ionizationSourceHeader,massHeader])
     	#In order to export the proper header using the stacking, the abscissa header is set as blank so it doesn't cause anything to be written where the full header should go.
         MSRESOLVE.ExportXYYYData('bestMassFragReference.csv', bestMassFragReference,fullHeaderArray, abscissaHeader='')    
     else:

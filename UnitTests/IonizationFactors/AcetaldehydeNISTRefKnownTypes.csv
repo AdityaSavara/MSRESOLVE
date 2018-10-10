@@ -1,8 +1,8 @@
 Source:,Not Specified,Not Specified,Not Specified,Not Specified,Not Specified,Not Specified,Not Specified,Not Specified,Not Specified
 Molecules,Ethanal,(E) 2-Butenal (Crotonaldehyde,CO,CO2,Ethylene (Ethene),EtOH,Crotyl Alcohol,H2,H2O
 Electron Numbers,24,38,14,22,16,26,40,2,10
-Molecule Ionization Type,Aldehyde,Aldehyde,Carbon containing nonmetals,Carbon containing nonmetals,Hydrogen non-metal-ides,Alcohol,Alcohol,Hydrogen non-metal-ides,Hydrogen non-metal-ides
-Ionization Factor RN2,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown
+knownMoleculesIonizationTypes,Aldehyde,Aldehyde,Carbon containing nonmetals,Carbon containing nonmetals,Hydrogen non-metal-ides,Alcohol,Alcohol,Hydrogen non-metal-ides,Hydrogen non-metal-ides
+knownIonizationFactorsRelativeToN2,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown,unknown
 Molecular Mass,44.0526,70.0898,28.01,44.01,28.0532,46.0684,72.1057,2.01588,18
 1,0,0,0,0,0,0,0,210,0
 2,0,0,0,0,10,0,0,9999,0
