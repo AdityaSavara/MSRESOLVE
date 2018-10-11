@@ -271,17 +271,36 @@ DataHeaders- List of floats/strings/etc. (or 1-d numpy array)
 HeaderValuesToKeep- List of floats/strings/etc. NOTE: HeaderValuesToKeep is not necessarily 
                       smaller than DataHeaders, it may contain values not included
                       in DataHeaders.
+header_dtype_casting is the type the elements will be cast into during the comparison (int, float, or str). If None, no casting occurs
 '''
-def KeepOnlySelectedYYYYColumns(YYYYData, DataHeaders, HeaderValuesToKeep, Array1D = False):
-    
+def KeepOnlySelectedYYYYColumns(YYYYData, DataHeaders, HeaderValuesToKeep, Array1D = False, header_dtype_casting=None):
+    import ParsingFunctions as parse
+    #Initialize a copy of data headers and header values to keep as empty lists
+    copyOfDataHeaders = []
+    copyOfHeaderValuesToKeep = []    
+    if header_dtype_casting != None: #user is using header_dtype_casting argument
+        for elem in DataHeaders: #Loop through data headers
+            castElem = header_dtype_casting(elem) #cast elem into the proper type
+            if header_dtype_casting == str: #If the preferred type is a string, standardize it
+                castElem = parse.standardizeString(castElem)
+            copyOfDataHeaders.append(castElem) #append to copied list with the casted elem
+        for elem in HeaderValuesToKeep: #Loop through header values to keep
+            castElem = header_dtype_casting(elem) #cast elem into the proper type
+            if header_dtype_casting == str: #If the preferred type is a string, standardize it
+                castElem = parse.standardizeString(castElem)
+            copyOfHeaderValuesToKeep.append(castElem) #append to copied list with the casted elem
+    else: #If left as default, make copies a direct copy of DataHeaders and HeaderValuesToKeep
+        copyOfDataHeaders = copy.copy(DataHeaders)
+        copyOfHeaderValuesToKeep = copy.copy(HeaderValuesToKeep)
+        
     # list to track indices that should be deleted
     deletion_indices = []
 
     # loop through DataHeaders, record the indices
     # of values not also found in AbscissaValuesToKeep
     # for deletion
-    for (valueIndex,value) in enumerate(DataHeaders):
-        if value not in HeaderValuesToKeep:
+    for (valueIndex,value) in enumerate(copyOfDataHeaders):
+        if value not in copyOfHeaderValuesToKeep:
             deletion_indices.append(valueIndex)
 
     # Now remove the unwanted values from DataHeaders
