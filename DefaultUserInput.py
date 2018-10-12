@@ -214,9 +214,9 @@ SLSUniqueExport = 'yes'
 concentrationFinder = 'no'
 TSC_List_Type = 'MultipleReferencePatterns' #Options are 'MultipleReferencePatterns' or 'SeparateMoleculesFactors'
 moleculesTSC_List = 'Acetaldehyde'
-moleculeSignalTSC_List = 1.66945
-moleculeConcentrationTSC_List = 0.05	#pressure can also be used in substitute
 massNumberTSC_List = 29
+moleculeSignalTSC_List = 1.66945
+moleculeConcentrationTSC_List = 0.05	#this is the concentration/pressure associated with the signal.
 unitsTSC = 'bar'	#the units will not be used in calculations so any units may be used
 
 
