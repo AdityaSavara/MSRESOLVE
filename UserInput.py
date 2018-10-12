@@ -212,10 +212,11 @@ SLSUniqueExport = 'yes'
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
 #TODO The use of multiple reference patterns is not upgraded to work with concentrationFinder
 concentrationFinder = 'no'
+TSC_List_Type = 'MultipleReferencePatterns' #Options are 'MultipleReferencePatterns' or 'SeparateMoleculesFactors'
 moleculesTSC_List = 'Acetaldehyde'
 moleculeSignalTSC_List = 1.66945
+moleculeConcentrationTSC_List = 0.05	#pressure can also be used in substitute
 massNumberTSC_List = 29
-moleculeConcentrationTSC_List = 0.05	#pressure can also be used in subsitute
 unitsTSC = 'bar'	#the units will not be used in calculations so any units may be used
 
 
@@ -256,6 +257,6 @@ __var_list__ = ['referenceFileNamesList','referenceFormsList','collectedFileName
 				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
-				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniqueExport','concentrationFinder','moleculesTSC_List','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List',
+				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniqueExport','concentrationFinder','moleculesTSC_List','TSC_List_Type','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List',
 				'unitsTSC','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
 				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint', 'iterationNumber']

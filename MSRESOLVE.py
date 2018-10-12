@@ -672,7 +672,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules. Do the same for molecularWeights and sourceInfo
-    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)	    
+    trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.molecularWeights, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.molecularWeights, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.knownMoleculesIonizationTypes, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownMoleculesIonizationTypes, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.knownIonizationFactorsRelativeToN2, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownIonizationFactorsRelativeToN2, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
@@ -1618,8 +1618,8 @@ def readDataFile(collectedFileName):
     for i in range(0,len(masses)):
         masses[i] = masses[i].replace('mass','')
         masses[i] = masses[i].replace('m','')
-    #convert the matrix to integers 
-    mass_fragment_numbers = masses.astype(numpy.float32)
+    #convert the matrix to doubles
+    mass_fragment_numbers = masses.astype(numpy.double)
             
     '''generate time list'''
     # set abscissa header (time or Temp, etc.)
@@ -1730,11 +1730,11 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1:] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
-                    electronnumbers = electronnumbers.astype(numpy.float) #save as class object with type float
+                    electronnumbers = electronnumbers.astype(numpy.int) #save as class object with type int
                 elif dataFrame.iloc[rowIndex][0] == 'Molecular Mass': #if the abscissa titles the molecular weights
                     dfmolecularWeights = dataFrame.iloc[rowIndex][1:] #select row of names
                     molecularWeights = dfmolecularWeights.values #convert to matrix
-                    molecularWeights = molecularWeights.astype(numpy.float) #save as class object with type float
+                    molecularWeights = molecularWeights.astype(numpy.double) #save as class object with type double
                 elif dataFrame.iloc[rowIndex][0] == 'knownMoleculesIonizationTypes':
                     dfknownMoleculesIonizationTypes = dataFrame.iloc[rowIndex][1:] #select row of names
                     knownMoleculesIonizationTypes = dfknownMoleculesIonizationTypes.values #convert to matrix
@@ -3522,42 +3522,77 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
 #This little bit of code enables the user to input a couple values so that the conversion between signal relative to CO and 
 #concentration can be found, and as such the rest of the concentrations can be found as well. If no data is input here, then
 #there are no concentrations printed out, only signals. (if they are both printed, it is done on separate excel sheets)
-def RatioFinder (ReferenceData, ExperimentData, concentrationFinder,molecule,moleculeConcentration,massNumber,moleculeSignal,units,referencePatternTimeRanges): 
+def RatioFinder (ReferenceData, ExperimentData, concentrationFinder,TSC_List_Type,molecule,moleculeConcentration,massNumber,moleculeSignal,units,referencePatternTimeRanges): 
     if concentrationFinder == 'yes':#user input
-        #initialize ExperimentData.conversionFactorAtEachTime to be a numpy array with the same length as the times array
-        ExperimentData.conversionFactorAtEachTime = numpy.zeros(len(ExperimentData.times))
-        #initialize conversionFactorForEachReferenceFile as a numpy array with the same length as the number of reference files given
-        conversionFactorForEachReferenceFile = numpy.zeros(len(ReferenceData))
-        ExperimentData.units = units
-        #Get the conversion factor for each reference pattern
-        for referencePatternIndex in range(len(ReferenceData)): #loop through all reference patterns
-            for moleculecounter in range(len(ReferenceData[referencePatternIndex].molecules)):#array-indexed for loop
-                for masscounter in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
-                    if molecule[referencePatternIndex] == ReferenceData[referencePatternIndex].molecules[moleculecounter]:#gets molecule index
-                        if massNumber[referencePatternIndex] == ExperimentData.mass_fragment_numbers[masscounter]:#gets index
-                            #solve for the conversion factor of this reference file
-                            conversionFactorForEachReferenceFile[referencePatternIndex] = (moleculeConcentration[referencePatternIndex]*ReferenceData[referencePatternIndex].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[referencePatternIndex])
-        #Now we need to populate conversionFactorAtEachTime with the proper conversion factors
-        if len(referencePatternTimeRanges) > 0: #If using reference pattern time chooser, loop through ExpData.times to determine which conversion factor goes where
-            for timeIndex in range(len(ExperimentData.times)): #Looping through all times
-                for rangeIndex in range(len(referencePatternTimeRanges)): #Looping through all referencePatternTimeRanges to see which range the current time falls in
-                    if ExperimentData.times[timeIndex] >= referencePatternTimeRanges[rangeIndex][0] and ExperimentData.times[timeIndex] <= referencePatternTimeRanges[rangeIndex][1]:
-                        ExperimentData.conversionFactorAtEachTime[timeIndex] = conversionFactorForEachReferenceFile[rangeIndex]
-                        break #Exit the for loop so the value does not get overwritten
-                    #This elif needs to come before the last elif since the last elif checks the start time of the next time range and if in the last time range there is no 'next' time range to check so an index error occurs
-                    elif rangeIndex == len(referencePatternTimeRanges)-1: #At the last rangeIndex if the time does not fall in any refPatternTimeRanges then the time either comes before the first time range begins or after the last time range ends
-                        pass #Leave the value as a 0 #TODO Ask Ashi what to do in this scenario
-                        break #Exit the for loop so the next elif statement is not read
-                    elif ExperimentData.times[timeIndex] >= referencePatternTimeRanges[rangeIndex][1] and ExperimentData.times[timeIndex] <= referencePatternTimeRanges[rangeIndex+1][0]: #Check if in a gap
-                        #If in a gap, linearly interpolate the conversion factor
-                        ExperimentData.conversionFactorAtEachTime[timeIndex] = DataFunctions.analyticalLinearInterpolator(conversionFactorForEachReferenceFile[rangeIndex],conversionFactorForEachReferenceFile[rangeIndex+1],ExperimentData.times[timeIndex],referencePatternTimeRanges[rangeIndex][1],referencePatternTimeRanges[rangeIndex+1][0])
-                        break #Exit the for loop so the value does not get overwritten
+        if TSC_List_Type == 'MultipleReferencePatterns':
+            #initialize ExperimentData.conversionFactorAtEachTime to be a numpy array with the same length as the times array
+            ExperimentData.conversionFactorAtEachTime = numpy.zeros(len(ExperimentData.times))
+            #initialize conversionFactorForEachReferenceFile as a numpy array with the same length as the number of reference files given
+            conversionFactorForEachReferenceFile = numpy.zeros(len(ReferenceData))
+            ExperimentData.units = units
+            #Get the conversion factor for each reference pattern
+            for referencePatternIndex in range(len(ReferenceData)): #loop through all reference patterns
+                for moleculecounter in range(len(ReferenceData[referencePatternIndex].molecules)):#array-indexed for loop
+                    for masscounter in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
+                        if molecule[referencePatternIndex] == ReferenceData[referencePatternIndex].molecules[moleculecounter]:#gets molecule index
+                            if massNumber[referencePatternIndex] == ExperimentData.mass_fragment_numbers[masscounter]:#gets index
+                                #solve for the conversion factor of this reference file
+                                conversionFactorForEachReferenceFile[referencePatternIndex] = (moleculeConcentration[referencePatternIndex]*ReferenceData[referencePatternIndex].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[referencePatternIndex])
+            #Now we need to populate conversionFactorAtEachTime with the proper conversion factors
+            if len(referencePatternTimeRanges) > 0: #If using reference pattern time chooser, loop through ExpData.times to determine which conversion factor goes where
+                for timeIndex in range(len(ExperimentData.times)): #Looping through all times
+                    for rangeIndex in range(len(referencePatternTimeRanges)): #Looping through all referencePatternTimeRanges to see which range the current time falls in
+                        if ExperimentData.times[timeIndex] >= referencePatternTimeRanges[rangeIndex][0] and ExperimentData.times[timeIndex] <= referencePatternTimeRanges[rangeIndex][1]:
+                            ExperimentData.conversionFactorAtEachTime[timeIndex] = conversionFactorForEachReferenceFile[rangeIndex]
+                            break #Exit the for loop so the value does not get overwritten
+                        #This elif needs to come before the last elif since the last elif checks the start time of the next time range and if in the last time range there is no 'next' time range to check so an index error occurs
+                        elif rangeIndex == len(referencePatternTimeRanges)-1: #At the last rangeIndex if the time does not fall in any refPatternTimeRanges then the time either comes before the first time range begins or after the last time range ends
+                            pass #Leave the value as a 0 #TODO Ask Ashi what to do in this scenario
+                            break #Exit the for loop so the next elif statement is not read
+                        elif ExperimentData.times[timeIndex] >= referencePatternTimeRanges[rangeIndex][1] and ExperimentData.times[timeIndex] <= referencePatternTimeRanges[rangeIndex+1][0]: #Check if in a gap
+                            #If in a gap, linearly interpolate the conversion factor
+                            ExperimentData.conversionFactorAtEachTime[timeIndex] = DataFunctions.analyticalLinearInterpolator(conversionFactorForEachReferenceFile[rangeIndex],conversionFactorForEachReferenceFile[rangeIndex+1],ExperimentData.times[timeIndex],referencePatternTimeRanges[rangeIndex][1],referencePatternTimeRanges[rangeIndex+1][0])
+                            break #Exit the for loop so the value does not get overwritten
+                    
+            elif len(referencePatternTimeRanges) == 0: #User is not using RPTC so just make each value the single conversion factor that was calculated
+                for index in range(len(ExperimentData.times)): 
+                    ExperimentData.conversionFactorAtEachTime[index] = conversionFactorForEachReferenceFile[0]
+            #Reshape conversionFactorAtEachtime to be a vector of len(ExpData.times) (it gets created as shape (ExpData.times, ))
+            ExperimentData.conversionFactorAtEachTime = numpy.reshape(ExperimentData.conversionFactorAtEachTime,(len(ExperimentData.times),1))
+            
+        elif TSC_List_Type == 'SeparateMoleculesFactors':
+            #TODO: change the variable name of conversionFactorAtEachTime since it can now refer to numerous molecules
+            ExperimentData.conversionFactorAtEachTime = numpy.zeros(len(ReferenceData[0].molecules))
+            ExperimentData.units = units
+            
+            #Default concentration factors at each molecule to match the first moleculeTSC input
+            for moleculecounter in range(len(ReferenceData[0].molecules)): #loop over molecules
+                for masscounter in range(len(ExperimentData.mass_fragment_numbers)): #loop over mass fragments
+                    if molecule[0] == ReferenceData[0].molecules[moleculecounter]: #gets index of first moleculeTSC in the reference data
+                        if massNumber[0] == ExperimentData.mass_fragment_numbers[masscounter]: #Gets index of first massNumberTSC in the collected data
+                            #Get the concentration factor for the first molecule listed
+                            conversionFactorForFirstMoleculeTSC = (moleculeConcentration[0]*ReferenceData[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[0])
+            #Overwrite all values in conversion factor at each time with the conversion factor of the first moleculeTSC
+            for conversionIndex in range(len(ExperimentData.conversionFactorAtEachTime)):
+                ExperimentData.conversionFactorAtEachTime[conversionIndex] = conversionFactorForFirstMoleculeTSC
                 
-        elif len(referencePatternTimeRanges) == 0: #User is not using RPTC so just make each value the single conversion factor that was calculated
-            for index in range(len(ExperimentData.times)): 
-                ExperimentData.conversionFactorAtEachTime[index] = conversionFactorForEachReferenceFile[0]
-        #Reshape conversionFactorAtEachtime to be a vector of len(ExpData.times) (it gets created as shape (ExpData.times, ))
-        ExperimentData.conversionFactorAtEachTime = numpy.reshape(ExperimentData.conversionFactorAtEachTime,(len(ExperimentData.times),1))
+            #Now populate the conversion factors for the molecules that were listed
+            for moleculeTSC_Index in range(len(molecule)): #Loop through the moleculesTSC_List
+                for moleculecounter in range(len(ReferenceData[0].molecules)): #Looping through all molecules
+                    for masscounter in range(len(ExperimentData.mass_fragment_numbers)): #Looping through all mass fragments
+                        if molecule[moleculeTSC_Index] == ReferenceData[0].molecules[moleculecounter]: #Gets the molecule index
+                            if massNumber[moleculeTSC_Index] == ExperimentData.mass_fragment_numbers[masscounter]: #Gets the mass fragment index
+                                #Solve for the new conversion factor
+                                ExperimentData.conversionFactorAtEachTime[moleculecounter] = (moleculeConcentration[moleculeTSC_Index]*ReferenceData[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[moleculeTSC_Index])
+            #Reshape conversionFactorAtEachTime to be a vector of len(molecules)
+            ExperimentData.conversionFactorAtEachTime = numpy.reshape(ExperimentData.conversionFactorAtEachTime,(1,len(ReferenceData[0].molecules)))
+                                
+                
+            
+            
+            
+        else:
+            raise ValueError('Invalid option for TSC_List_Type')
     elif concentrationFinder == 'no': #user input
         ExperimentData.conversionFactorAtEachTime = 0 #Originally defaulted to 0
         ExperimentData.units = 'torr' #Originally defaulted to torr
@@ -4086,8 +4121,7 @@ def parseUserInput(currentUserInput):
         currentUserInput.rawSignalThresholdLimitPercent = parse.parallelVectorize(currentUserInput.rawSignalThresholdLimitPercent,len(chosenMassFragmentsForParsing))
     
     #Negative Analyzer
-    if not isinstance(currentUserInput.negativeAnalyzerYorN,str): #Must be a string
-        raise TypeError('negativeAnalyzerYorN must be of type str')
+    parse.strCheck(currentUserInput.negativeAnalyzerYorN,'negativeAnalyzerYorN')
     
     #Data Analysis Methods
     #All must be strings
@@ -4108,13 +4142,18 @@ def parseUserInput(currentUserInput):
         currentUserInput.massNumberTSC_List = parse.listCast(currentUserInput.massNumberTSC_List)
         currentUserInput.moleculeConcentrationTSC_List = parse.listCast(currentUserInput.moleculeConcentrationTSC_List)
         #Units needs to be a string, if it is not a string, return an error
-        parse.strCheck(currentUserInput.unitsTSC,'unitsTSC')
-        #Then parallelize these variables to have the same length as number of reference patterns
-        currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referenceFileNameList))
-        currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referenceFileNameList))
-        currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referenceFileNameList))
-        currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referenceFileNameList))
+        parse.strCheck(currentUserInput.unitsTSC,'unitsTSC')																																        
+        #Make sure the molecules listed are in the reference data
+        parse.compareElementsBetweenLists(currentUserInput.moleculesTSC_List,chosenMoleculesForParsing,'moleculesTSC_List','chosenMolecules')
         
+        if currentUserInput.TSC_List_Type == 'MultipleReferencePatterns': #If using multiple reference patterns then the user must input 1 value to use for each reference file or a value for each reference file
+            #Then parallelize these variables to have the same length as number of reference patterns
+            currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referenceFileNamesList))
+            currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referenceFileNamesList))
+            currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referenceFileNamesList))
+            currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referenceFileNamesList))
+            #NOTE: vectorizing these lists for 'SeparateMoleculesFactors' occurs in RatioFinder
+            
     #Output Files
     #All must be strings
     parse.strCheck(currentUserInput.preProcessedDataOutputName,'preProcessedDataOutputName')
@@ -4359,7 +4398,7 @@ def main():
         currentReferenceData = ReferenceDataList[0] #TODO this line is placeholder by charles to fix currentRefenceData issue until Alex has a better solution 
     
         # Calculate a coefficient for doing a unit conversion on concentrations #TODO resolve Ratio Finder issue, i.e. list of conversionValues
-        ExperimentData = RatioFinder(ReferenceDataList, ExperimentData, G.concentrationFinder,
+        ExperimentData = RatioFinder(ReferenceDataList, ExperimentData, G.concentrationFinder, G.TSC_List_Type,
                                       G.moleculesTSC_List, G.moleculeConcentrationTSC_List, G.massNumberTSC_List, G.moleculeSignalTSC_List, G.unitsTSC,G.referencePatternTimeRanges)
 	##End: Preparing data for data analysis based on user input choices
     
