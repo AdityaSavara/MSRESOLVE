@@ -48,9 +48,18 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert,
     first one. Using a binary search method, it will find the location where 
     the value to insert will be inserted(if possible). The
     value will be inserted there and the last value removed from the list 
-    (if applicable).  The bisect method used requires the list be 
+    (if applicable). The bisect method used requires the list be 
     presorted in ascending order. The bisect method used inserts to 
     keep the list in a sorted order. 
+    
+    If the objectiveFunctionValuesList is 
+    ordered from highest to lowest (i.e we want to keep the maximimum values) 
+    the reverseOrder flag can be switched to True.
+    
+    If the values in the sample space for parallelList are not unique it is 
+    possible that this repeated calls to this function could lead to 
+    a parallelList of a particular value repeated many times. If this behavior
+    is desired then excludeDuplicates can be set to False.
     
     Arguments:
       objectiveFunctionValuesList:
@@ -80,10 +89,15 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert,
         
       reverseOrder:
         Sometimes it makes sense for the objectiveFunctionValuesList 
-        to be in reverse order, that is ordered from highest to lowest.
+        to be in reverse order, that is, ordered from highest to lowest.
         Then the objective function value is some metric that we want to 
-        maximize rather than the traditional minimization.
-        That is indicated with this flag. (default = False).
+        maximize rather than the traditional minimization. This is effected 
+        by in-place reversing both lists prior to performing the 
+        binary search with bisect.bisect to determine an appropriate insertion
+        index. After an insertion is made (if appropriate) and before the list is 
+        truncated (again, only if appropriate) the lists are both in-place
+        reversed again and returned.
+        (default = False).
         
       excludeDuplicates:
         If there is the possiblity for duplicates in parallelList and the 
@@ -91,8 +105,9 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert,
         can be set to False. (default = True)
     """
     
-    #if the oFVL is ordered with the highest values first we need
-    #to reverse the order of both lists for bisect.bisect()
+    #if the objectiveFunctionValuesList is ordered with the highest values 
+    #first we need to reverse the order of both lists for bisect.bisect() to
+    #work properly (it requires ascending order).
     if reverseOrder:
         objectiveFunctionValuesList.reverse()
         parallelList.reverse()
@@ -109,8 +124,9 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert,
     #If it is a duplicate exit now without checking everything else
     if (excludeDuplicates and len(parallelList) and 
         (parallelList[insertionIndex-1] == valueToInsertInParallelList)):
-        #this value is a duplicate, reverse the list if necessary and return
-        #lists unchanged
+        
+        #this value is a duplicate. If the list was provided in reverse order
+        #we need to reverse it again here before returning it.
         if reverseOrder:
             objectiveFunctionValuesList.reverse()
             parallelList.reverse()
@@ -124,6 +140,8 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert,
         parallelList.insert(insertionIndex, valueToInsertInParallelList)
         valueStoredInList=True
     
+        #If the list was provided in reverse order
+        #we need to reverse it again here before returning it.
         if reverseOrder:    
             objectiveFunctionValuesList.reverse()
             parallelList.reverse()
@@ -145,8 +163,10 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert,
         parallelList.insert(insertionIndex, valueToInsertInParallelList)
         valueStoredInList=True
     
-        #Change back to original order before deleting the last element,
-        #otherwise we would lose our best element.
+        #If the list was provided in reverse order
+        #we need to reverse it again here before returning it.
+        #We need to change back to original order before 
+        #deleting the last element, otherwise we would lose our best element.
         if reverseOrder:    
             objectiveFunctionValuesList.reverse()
             parallelList.reverse()
