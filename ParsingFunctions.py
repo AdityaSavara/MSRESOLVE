@@ -64,24 +64,31 @@ def strCheck(stringVar,nameOfStringVar='variable'):
     return None
 
 '''
-stringCompare takes in two strings and compares a standardized version of the two to see if they match
-Added: 181008
-Last modified: 181008
+standardzieString standardizes the stringObject that is input
+It removes all whitespace on the outsides, forces to lowercase, and then takes all whitespace on the inside and standardizes it to the same type of space ' '.
+Was previously in stringCompare (moved out 181011)
 '''
-def stringCompare(firstString,secondString):
+def standardizeString(stringObject):
     import re
     #First store the strings into a variable that will be standardized
-    standardizedFirstString = firstString
-    standardizedSecondString = secondString
+    standardizedString = stringObject
     #Strip the strings of any whitespace on the outsides
-    standardizedFirstString = standardizedFirstString.strip()
-    standardizedSecondString = standardizedSecondString.strip()
+    standardizedString = standardizedString.strip()
     #Make both strings lowercase
-    standardizedFirstString = standardizedFirstString.lower()
-    standardizedSecondString = standardizedSecondString.lower()
+    standardizedString = standardizedString.lower()
     #Using regex, find any style of whitespace on the inside and replace it with a standardized space
-    standardizedFirstString = re.sub('\s+',' ',standardizedFirstString)
-    standardizedSecondString = re.sub('\s+',' ',standardizedSecondString)
+    standardizedString = re.sub('\s+',' ',standardizedString)
+    
+    return standardizedString
+
+'''
+stringCompare takes in two strings and compares a standardized version of the two to see if they match
+Added: 181008
+Last modified: 181011
+'''
+def stringCompare(firstString,secondString):
+    standardizedFirstString = standardizeString(firstString)
+    standardizedSecondString = standardizeString(secondString)
     
     #If the standardized strings match return True
     if standardizedFirstString == standardizedSecondString:
