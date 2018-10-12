@@ -36,43 +36,145 @@ def passesRowsSumChecks(rowSumsList, massFragCombination, allOverlappingPatterns
     elif 0 in rowSumsList: #Check if any row is entirely full of zeros
         passesRowsSumChecks=False
     return passesRowsSumChecks, allOverlappingPatterns #Return true if the rowsSumsList passes the check
-#The function maintains two lists: 1)that contains the objective function values that 
-#need to be kept in a sorted order 2) a parallel list where a value needs to be inserted 
-#according to the sorting of the first one. It also takes in an integer value,N, that limits 
-#the the length of the two lists to N values. Using a binary search method, it will 
-#find the location where the value to insert will be inserted(if possible). The
-#value will be inserted there and the last value removed from the list (if
-#applicable).  The bisect method used requires the list be presorted in ascending order.
-#The bisect method used inserts to keep the list in a sorted order. 
-def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert, parallelList, valueToInsertInParallelList,maxItemsAllowed):
+
+
+def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert, 
+                parallelList, valueToInsertInParallelList, maxItemsAllowed,
+                reverseOrder=False, excludeDuplicates=True):
+    """
+    The function maintains two lists: 1)that contains the objective 
+    function values that need to be kept in a sorted order 2) a parallel 
+    list where a value needs to be inserted according to the sorting of the 
+    first one. Using a binary search method, it will find the location where 
+    the value to insert will be inserted(if possible). The
+    value will be inserted there and the last value removed from the list 
+    (if applicable). The bisect method used requires the list be 
+    presorted in ascending order. The bisect method used inserts to 
+    keep the list in a sorted order. 
+    
+    If the objectiveFunctionValuesList is 
+    ordered from highest to lowest (i.e we want to keep the maximimum values) 
+    the reverseOrder flag can be switched to True.
+    
+    If the values in the sample space for parallelList are not unique it is 
+    possible that this repeated calls to this function could lead to 
+    a parallelList of a particular value repeated many times. If this behavior
+    is desired then excludeDuplicates can be set to False.
+    
+    Arguments:
+      objectiveFunctionValuesList:
+        Ordered list of objective values. Can be single numbers or tuples of
+        them. By default they are expected to be sorted from lowest to 
+        highest. With flag reverseOrder == True they can be provided sorted
+        highest to lowest. The tuple sort is nested, i.e. (4,1) > (3,2) but 
+        (3,2) > (3,1).
+        
+      objectiveFunctionValueToInsert:
+        A single value (or tuple) that is a potential element of 
+        objectiveFunctionValuesList. A binary search is performed to determine
+        if it should be added into the sorted list.
+        
+      parallelList:
+        A list the same length as objectiveFunctionValuesList. Each 
+        element in objectiveFunctionValuesList corresponds to a particular
+        element of this list. 
+    
+      valueToInsertInParallelList:
+        If objectiveFunctionValueToInsert is inserted into 
+        objectiveFunctionValuesList then valueToInsertInParallelList will 
+        be inserted into parallelList at the same index.
+    
+      maxItemsAllowed:
+        Limits the size of objectiveFunctionValuesList and parallelList
+        
+      reverseOrder:
+        Sometimes it makes sense for the objectiveFunctionValuesList 
+        to be in reverse order, that is, ordered from highest to lowest.
+        Then the objective function value is some metric that we want to 
+        maximize rather than the traditional minimization. This is effected 
+        by in-place reversing both lists prior to performing the 
+        binary search with bisect.bisect to determine an appropriate insertion
+        index. After an insertion is made (if appropriate) and before the list is 
+        truncated (again, only if appropriate) the lists are both in-place
+        reversed again and returned.
+        (default = False).
+        
+      excludeDuplicates:
+        If there is the possiblity for duplicates in parallelList and the 
+        user wishes to include them in the output then this flag 
+        can be set to False. (default = True)
+    """
+    
+    #if the objectiveFunctionValuesList is ordered with the highest values 
+    #first we need to reverse the order of both lists for bisect.bisect() to
+    #work properly (it requires ascending order).
+    if reverseOrder:
+        objectiveFunctionValuesList.reverse()
+        parallelList.reverse()
+    
     #Find the insertion index where the value will be inserted by using a binary
     #search
-    insertionIndex=bisect.bisect(objectiveFunctionValuesList, objectiveFunctionValueToInsert)
+    insertionIndex=bisect.bisect(
+        objectiveFunctionValuesList, objectiveFunctionValueToInsert)
 
     #Initialize a variable to keep track of if a value was inserted into the
     #list.
     valueStoredInList=False
     
+    #If it is a duplicate exit now without checking everything else
+    if (excludeDuplicates and len(parallelList) and 
+        (parallelList[insertionIndex-1] == valueToInsertInParallelList)):
+        
+        #this value is a duplicate. If the list was provided in reverse order
+        #we need to reverse it again here before returning it.
+        if reverseOrder:
+            objectiveFunctionValuesList.reverse()
+            parallelList.reverse()
+        return objectiveFunctionValuesList, parallelList, valueStoredInList
+    
     #If the list isn't yet filled, the value will inherently be in the top N
-    #value in the list. This vlaue can just be inserted at the insertionIndex.
-    if len(objectiveFunctionValuesList)<maxItemsAllowed:    
+    #value in the list. This value can just be inserted at the insertionIndex.
+    if len(objectiveFunctionValuesList)<maxItemsAllowed:
+    
         objectiveFunctionValuesList.insert(insertionIndex, objectiveFunctionValueToInsert)
         parallelList.insert(insertionIndex, valueToInsertInParallelList)
         valueStoredInList=True
+    
+        #If the list was provided in reverse order
+        #we need to reverse it again here before returning it.
+        if reverseOrder:    
+            objectiveFunctionValuesList.reverse()
+            parallelList.reverse()
+                                    
     #If the list already contains N elements, a new element could either be 
     #inserted in the list or at the end of the list. Because the list is 
-    #already at its maximum length, nothing shouold be added to the end. This
+    #already at its maximum length, nothing should be added to the end. This
     #check is to make sure nothing is going to be added to the end.
-    elif len(objectiveFunctionValuesList)== maxItemsAllowed and insertionIndex<maxItemsAllowed:
-        #insert the value to insert in the location found through the binary
-        #search
-        objectiveFunctionValuesList.insert(insertionIndex, objectiveFunctionValueToInsert)
+    
+    #In the case that reverseOrder==True, it is problematic to check
+    #that insertionIndex<maxItemsAllowed alone because we could
+    #miss the best (i.e. top of the reversed list) entry that way
+    elif (len(objectiveFunctionValuesList) == maxItemsAllowed and
+            ((insertionIndex < maxItemsAllowed) or (reverseOrder))):    
+    
+        #insert the value in the location found through the binary search
+        objectiveFunctionValuesList.insert(
+            insertionIndex, objectiveFunctionValueToInsert)
         parallelList.insert(insertionIndex, valueToInsertInParallelList)
         valueStoredInList=True
-        #delete the last element since somthing was added to the list
+    
+        #If the list was provided in reverse order
+        #we need to reverse it again here before returning it.
+        #We need to change back to original order before 
+        #deleting the last element, otherwise we would lose our best element.
+        if reverseOrder:    
+            objectiveFunctionValuesList.reverse()
+            parallelList.reverse()
+    
+        #delete the last element since something was added to the list
         del objectiveFunctionValuesList[-1]
         del parallelList[-1]
-    #elif len(sortedList)== maxLengthOfList and insertionIndex==maxLengthOfList: #in this case, nothing should be added, because it would be past the length limit.
+    
     return objectiveFunctionValuesList, parallelList, valueStoredInList
 
 #The rough uniqueness check is a limiting check that takes the mass fragment
