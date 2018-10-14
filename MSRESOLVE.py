@@ -44,26 +44,24 @@ def passesRowsSumChecks(rowSumsList, massFragCombination, allOverlappingPatterns
 #find the location where the value to insert will be inserted(if possible). The
 #value will be inserted there and the last value removed from the list (if
 #applicable).  The bisect method used requires the list be presorted in ascending order.
-#The bisect method used inserts to keep the list in a sorted order. 
+#Thus, the algorithm here inserts values in a way to create an ascending ordered list.
 
-#By default storeAndPop is used to keep values corresponding to the minimum
-#objective function values. If instead it is desirable to retain values 
-#with the maximum objective function values the optional argument 'optimumType'
-#should be set to `Maximum`, it defaults to `Minimum`. If it is set to 
-#'Maximum' the values in objectiveFunctionValuesList still need to be 
-#ordered from least to greatest. 
+#By default storeAndPop is used to keep the best N values based on minimizing
+#the objective function values. If instead it is desirable to retain values 
+#with the objective function maximized, the optional argument 'optimumType'
+#should be set to `Maximum`.
 
-#If the objective function values are in descending order it is
-#usually most performant to negate their values prior to passing them to 
-#this function. In this case the optimumType selected will need to be flipped.
-#Alternatively the list can be reversed and the original selection for 
-#optimumType should be kept. In either case objectiveFunctionValuesList
-#must be passed in ASCENDING ORDER.
+#Alternatively, the objective function values could be multiplied by -1.
+#The function supports multidimensional objective functions in nested objects
+#such as tuples or lists, e.g., (A,B,C) in which case it will be sorted
+#by A, then B, then C.  For multidimensional objective functions, it is
+#necessary to have the dimensions as either all "maximum" or all "minimum" type.
+#Using a -1 factor can be helpful in this regard (e.g., passing in (A,-B,C) etc.
 
 #If the values in the sample space for parallelList are not unique it is 
 #possible that this repeated calls to this function could lead to 
-#a parallelList of a particular value repeated many times. If this behavior
-#is desired then excludeDuplicates can be set to False.
+#a parallelList of a particular value repeated many times. If repeated values
+#are undesired, then excludeDuplicates can be set to False.
 def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert, 
                 parallelList, valueToInsertInParallelList, maxItemsAllowed,
                 optimumType="Minimum", excludeDuplicates=True):
