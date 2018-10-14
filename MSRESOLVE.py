@@ -36,43 +36,89 @@ def passesRowsSumChecks(rowSumsList, massFragCombination, allOverlappingPatterns
     elif 0 in rowSumsList: #Check if any row is entirely full of zeros
         passesRowsSumChecks=False
     return passesRowsSumChecks, allOverlappingPatterns #Return true if the rowsSumsList passes the check
+
 #The function maintains two lists: 1)that contains the objective function values that 
 #need to be kept in a sorted order 2) a parallel list where a value needs to be inserted 
-#according to the sorting of the first one. It also takes in an integer value,N, that limits 
+#according to the sorting of the first one. It also takes in an integer value, N, that limits 
 #the the length of the two lists to N values. Using a binary search method, it will 
 #find the location where the value to insert will be inserted(if possible). The
 #value will be inserted there and the last value removed from the list (if
 #applicable).  The bisect method used requires the list be presorted in ascending order.
-#The bisect method used inserts to keep the list in a sorted order. 
-def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert, parallelList, valueToInsertInParallelList,maxItemsAllowed):
+#Thus, the algorithm here inserts values in a way to create an ascending ordered list.
+
+#By default storeAndPop is used to keep the best N values based on minimizing
+#the objective function values. If instead it is desirable to retain values 
+#with the objective function maximized, the optional argument 'optimumType'
+#should be set to `Maximum`.
+
+#Alternatively, the objective function values could be multiplied by -1.
+#The function supports multidimensional objective functions in nested objects
+#such as tuples or lists, e.g., (A,B,C) in which case it will be sorted
+#by A, then B, then C.  For multidimensional objective functions, it is
+#necessary to have the dimensions as either all "maximum" or all "minimum" type.
+#Using a -1 factor can be helpful in this regard (e.g., passing in (A,-B,C) etc.
+
+#If the values in the sample space for parallelList are not unique it is 
+#possible that this repeated calls to this function could lead to 
+#a parallelList of a particular value repeated many times. If repeated values
+#are undesired, then excludeDuplicates can be set to False.
+def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert, 
+                parallelList, valueToInsertInParallelList, maxItemsAllowed,
+                optimumType="Minimum", excludeDuplicates=True):
+    
     #Find the insertion index where the value will be inserted by using a binary
     #search
-    insertionIndex=bisect.bisect(objectiveFunctionValuesList, objectiveFunctionValueToInsert)
+    insertionIndex=bisect.bisect(objectiveFunctionValuesList,
+                                 objectiveFunctionValueToInsert)
 
     #Initialize a variable to keep track of if a value was inserted into the
     #list.
     valueStoredInList=False
     
+    #If it is a duplicate exit now without checking everything else
+    #Note that we only check the value in parallel list to the left of
+    #the insertion index. This is because bisect.bisect() will specify 
+    #and insertion index such that a duplicate is inserted
+    #to the right of the original.
+    if (excludeDuplicates and len(parallelList) and 
+        (parallelList[insertionIndex-1] == valueToInsertInParallelList)):
+        
+        #This value is a duplicate. Return the original lists.
+        return objectiveFunctionValuesList, parallelList, valueStoredInList    
+    
     #If the list isn't yet filled, the value will inherently be in the top N
-    #value in the list. This vlaue can just be inserted at the insertionIndex.
+    #value in the list. This value can just be inserted at the insertionIndex.
     if len(objectiveFunctionValuesList)<maxItemsAllowed:    
-        objectiveFunctionValuesList.insert(insertionIndex, objectiveFunctionValueToInsert)
+        objectiveFunctionValuesList.insert(insertionIndex,
+                                           objectiveFunctionValueToInsert)
         parallelList.insert(insertionIndex, valueToInsertInParallelList)
         valueStoredInList=True
     #If the list already contains N elements, a new element could either be 
-    #inserted in the list or at the end of the list. Because the list is 
-    #already at its maximum length, nothing shouold be added to the end. This
-    #check is to make sure nothing is going to be added to the end.
-    elif len(objectiveFunctionValuesList)== maxItemsAllowed and insertionIndex<maxItemsAllowed:
+    #inserted in the list or at the end of the list. For optimumType == Minimum,
+    #an item at the end would be worse and thus nothing should be added. 
+    #However, for optimumType == Maximum an object at the end would be the best
+    #and thus should be added.
+    elif (len(objectiveFunctionValuesList) == maxItemsAllowed and 
+            (insertionIndex<maxItemsAllowed or optimumType=="Maximum")):
         #insert the value to insert in the location found through the binary
         #search
-        objectiveFunctionValuesList.insert(insertionIndex, objectiveFunctionValueToInsert)
+        objectiveFunctionValuesList.insert(insertionIndex,
+                                           objectiveFunctionValueToInsert)
         parallelList.insert(insertionIndex, valueToInsertInParallelList)
         valueStoredInList=True
-        #delete the last element since somthing was added to the list
-        del objectiveFunctionValuesList[-1]
-        del parallelList[-1]
-    #elif len(sortedList)== maxLengthOfList and insertionIndex==maxLengthOfList: #in this case, nothing should be added, because it would be past the length limit.
+        
+        if optimumType == 'Minimum':
+            #delete the last element since something was added to the list
+            del objectiveFunctionValuesList[-1]
+            del parallelList[-1]
+        elif optimumType == 'Maximum':
+            #delete the first element since something was added to the list
+            del objectiveFunctionValuesList[0]
+            del parallelList[0]   
+        else:
+            raise  ValueError("optimumType must be either 'Maximum' " +
+                              "or 'Minimum'")
+
     return objectiveFunctionValuesList, parallelList, valueStoredInList
 
 #The rough uniqueness check is a limiting check that takes the mass fragment
