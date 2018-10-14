@@ -94,9 +94,10 @@ def storeAndPop(objectiveFunctionValuesList, objectiveFunctionValueToInsert,
         parallelList.insert(insertionIndex, valueToInsertInParallelList)
         valueStoredInList=True
     #If the list already contains N elements, a new element could either be 
-    #inserted in the list or at the end of the list. Because the list is 
-    #already at its maximum length, nothing shouold be added to the end. This
-    #check is to make sure nothing is going to be added to the end.
+    #inserted in the list or at the end of the list. For optimumType == Minimum,
+    #an item at the end would be worse and thus nothing should be added. 
+    #However, for optimumType == Maximum an object at the end would be the best
+    #and thus should be added.
     elif (len(objectiveFunctionValuesList) == maxItemsAllowed and 
             (insertionIndex<maxItemsAllowed or optimumType=="Maximum")):
         #insert the value to insert in the location found through the binary
