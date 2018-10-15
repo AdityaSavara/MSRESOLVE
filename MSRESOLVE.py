@@ -4522,47 +4522,7 @@ def main():
             elif timeIndex > 0: #Everything else is appended via numpy.vstack
                 concentrationsScaledToCOarray = numpy.vstack((concentrationsScaledToCOarray,arrayline))
                 
-#            if G.concentrationFinder == 'yes':
-#                concentrationline = numpy.zeros(len(arrayline))
-#                concentrationline[0] = arrayline[0]
-#                concentrationline[1:] = arrayline[1:]*ExperimentData.conversionFactorAtEachTime
-#                
-#                if timeIndex == 0:
-#                    concentrationsarray = concentrationline
-#                elif timeIndex > 0:
-#                    concentrationsarray = numpy.vstack((concentrationsarray,concentrationline))
-            
-            
-#            if timeIndex > 1:#all additons after second index
-#                concentrationsScaledToCOarrayholder = numpy.zeros([len(concentrationsScaledToCOarray[:,0])+1,len(currentReferenceData.molecules)+1])
-#                concentrationsScaledToCOarrayholder[0:len(concentrationsScaledToCOarray[:,0]),:] = concentrationsScaledToCOarray
-#                concentrationsScaledToCOarray = concentrationsScaledToCOarrayholder
-#                concentrationsScaledToCOarray[len(concentrationsScaledToCOarray[:,0])-1,:] = arrayline
-#            if timeIndex == 1:#additions at second index index
-#                concentrationsScaledToCOarrayholder = numpy.zeros([2,len(currentReferenceData.molecules)+1])
-#                concentrationsScaledToCOarrayholder[0,:] = concentrationsScaledToCOarray
-#                concentrationsScaledToCOarray = concentrationsScaledToCOarrayholder
-#                concentrationsScaledToCOarray[len(concentrationsScaledToCOarray[:,0])-1,:] = arrayline
-#            if timeIndex == 0:#first index
-#                concentrationsScaledToCOarray = arrayline
-#
-#            if G.concentrationFinder == 'yes':
-#                concentrationline = numpy.zeros(len(arrayline))
-#                concentrationline[0] = arrayline[0]
-#                concentrationline[1:] = arrayline[1:]*ExperimentData.conversionFactorAtEachTime
-#    
-#                if timeIndex > 1:#all additons after second index
-#                    concentrationsarrayholder = numpy.zeros([len(concentrationsarray[:,0])+1,len(currentReferenceData.molecules)+1])
-#                    concentrationsarrayholder[0:len(concentrationsarray[:,0]),:] = concentrationsarray                
-#                    concentrationsarray = concentrationsarrayholder
-#                    concentrationsarray[len(concentrationsarray[:,0])-1,:] = concentrationline
-#                if timeIndex == 1:#additions at second index index
-#                    concentrationsarrayholder = numpy.zeros([2,len(currentReferenceData.molecules)+1])
-#                    concentrationsarrayholder[0,:] = concentrationsarray                
-#                    concentrationsarray = concentrationsarrayholder
-#                    concentrationsarray[len(concentrationsarray[:,0])-1,:] = concentrationline                
-#                if timeIndex == 0:#first index
-#                    concentrationsarray = concentrationline                
+               
         resultsObjects['concentrationsScaledToCOarray'] = concentrationsScaledToCOarray #Store in the global resultsObjects dictionary
         if G.concentrationFinder == 'yes': #If using concentration finder
             concentrationsarray = copy.copy(concentrationsScaledToCOarray) #point concentrationsarray to a copy of concentrationsScaledToCOArray
