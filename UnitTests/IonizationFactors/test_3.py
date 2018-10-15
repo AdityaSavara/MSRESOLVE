@@ -42,7 +42,7 @@ IonizationTypes = ReferenceInfo[3][1:]
 AldehydesCoefficients = numpy.array([0.1083, 0])
 CarbonContainingNonmetalsCoefficients = numpy.array([0.1658, -1.5517])
 AlcoholsCoefficients = numpy.array([0.0198, 2.6971])
-HydrogenNonMetalIdesCoefficients = numpy.array([0.0954, 1.2171])
+HydrogenNonMetalIdesCoefficients = numpy.array([0.0902, 1.1942])
 
 #Convert to poly1dObjects
 AldehydesPoly1dObject = numpy.poly1d(AldehydesCoefficients)
