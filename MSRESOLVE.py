@@ -1997,6 +1997,7 @@ def getIE_Data(IonizationDataFileName):
         RS_Value = ionizationData[rowIndex][RSIndex] #Get the ionization factor
         moleculeElectronNumber = ionizationData[rowIndex][ENumberIndex] #get the molecule's electron number
         moleculeIonizationType = ionizationData[rowIndex][TypeIndex] #get the molecule 
+        moleculeIonizationTypeList = moleculeIonizationType.split(';')
         source = ionizationData[rowIndex][SourceIndex]
         
         MID_ObjectName = moleculeName + '_IE' #The object name will be the moleculeName_IE
@@ -2004,7 +2005,7 @@ def getIE_Data(IonizationDataFileName):
         if MID_ObjectName in AllMID_ObjectsDict: #If we already have this molecule in AllMID_ObjectsDict then we just need to add the RS_Value and source to the appropriate list
             AllMID_ObjectsDict[MID_ObjectName].addData(RS_Value,source)
         else: #otherwise the object does not exist and needs to be created
-            AllMID_ObjectsDict[MID_ObjectName] = MolecularIonizationData(moleculeName,RS_Value,moleculeElectronNumber,moleculeIonizationType,source) #Store MIDObject in AllMIDObjects Dictionary
+            AllMID_ObjectsDict[MID_ObjectName] = MolecularIonizationData(moleculeName,RS_Value,moleculeElectronNumber,moleculeIonizationTypeList,source) #Store MIDObject in AllMIDObjects Dictionary
     return AllMID_ObjectsDict
 ###############################################################################
 #########################  Classes: Data Storage  #############################
@@ -2229,11 +2230,12 @@ class MSReference (object):
 			#TODO:The user should also be able to put in type1;type2 and the program would find the ionization factor using a linear fit of data from type1 and using a linear fit of data from type2.  The largest of the two ionization factors would be used.
 			#TODO:Then doing type1+type2;type3 would take the larger value between the linear fit of the combined type1 and type2 data or the value from the linear fit of type3 data
                         for key in AllMID_ObjectsDict: #Loop through the MID Dictionary
-                            #Use stringCompare to check if a molecule in the MID Dictionary matches a molecule in the reference data since casing and spacing may differ between the two (e.g. reference data may have carbon dioxide while MID Dictionary may have Carbon Dioxide)
-                            if parse.stringCompare(self.knownMoleculesIonizationTypes[moleculeIndex],AllMID_ObjectsDict[key].moleculeIonizationType): #If the knownMoleculeType matches an MID object's molecule type
-                                MatchingMID_Objects.append(key) #Append the key
-                                MatchingMID_RS_Values.append(numpy.mean(AllMID_ObjectsDict[key].RS_ValuesList)) #Append the average of the RS values
-                                MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[key].electronNumber) #append the electron number
+                            for MID_MoleculeType in AllMID_ObjectsDict[key].moleculeIonizationType: #Loop through the ionization types to get all the ionization types of a particular molecule (e.g. Ethanol is both an alcohol and a hydrogen non-metal-ide so its RS value(s) will be included if the user has a molecule that is either an alcohol or a hydrogen non-metal-ide)
+                                #Use stringCompare to check if a molecule in the MID Dictionary matches a molecule in the reference data since casing and spacing may differ between the two (e.g. reference data may have carbon dioxide while MID Dictionary may have Carbon Dioxide)
+                                if parse.stringCompare(self.knownMoleculesIonizationTypes[moleculeIndex],MID_MoleculeType): #If the knownMoleculeType matches an MID object's molecule type
+                                    MatchingMID_Objects.append(key) #Append the key
+                                    MatchingMID_RS_Values.append(numpy.mean(AllMID_ObjectsDict[key].RS_ValuesList)) #Append the average of the RS values
+                                    MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[key].electronNumber) #append the electron number
                         if len(MatchingMID_Objects) == 1: #If only one data point add (0,0) to the data
                             MatchingMID_Objects.append(MatchingMID_Objects[0]) #append the molecule type to the objects list
                             MatchingMID_RS_Values.append(0.0)
@@ -2257,7 +2259,7 @@ class MolecularIonizationData (object):
         self.moleculeName = moleculeName.strip()
         self.RS_ValuesList = [float(RS_Value)] #Since we can have slightly different RS_values for a molecule, make a list so a molecule with more than one RS_Value can contain all the info provided
         self.electronNumber = float(electronNumber)
-        self.moleculeIonizationType = moleculeIonizationType.strip()
+        self.moleculeIonizationType = parse.listCast(moleculeIonizationType)
         self.sourceList = [source] #Different RS values can come from different sources so make a list that will be parallel to RS_ValuesList containing the source of each RS Value at the same index
         
     def addData(self,RS_Value,source):

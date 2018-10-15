@@ -1,11 +1,11 @@
 Name,RS,Electron Number,Type,Source
-Ethanol,3.6,26,Alcohol,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Ethanol,2.9,26,Alcohol,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Isoamyl Alcohol,2.9,78,Alcohol,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Methanol,1.8,18,Alcohol,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Methanol,1.9,18,Alcohol,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Phenol,6.2,50,Alcohol,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Acetaldehyde,2.6,24,Aldehyde,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Ethanol,3.6,26,Alcohol; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Ethanol,2.9,26,Alcohol; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Isoamyl Alcohol,2.9,78,Alcohol; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Methanol,1.8,18,Alcohol; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Methanol,1.9,18,Alcohol; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Phenol,6.2,50,Alcohol; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Acetaldehyde,2.6,24,Aldehyde; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Cesium,4.3,55,Alkali Metal,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Cesium,2,55,Alkali Metal,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Cesium,4.8,55,Alkali Metal,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
@@ -13,13 +13,13 @@ Lithium,1.9,3,Alkali Metal,UHV-24/UHV-24p Ionization Gauge Instruction Manual - 
 Potassium,3.6,19,Alkali Metal,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Rubidium,4.3,37,Alkali Metal,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Sodium,3,11,Alkali Metal,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Benzoic Acid,5.5,40,Carboxylic Acid,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Ethylene Oxide,2.5,24,Epoxide,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Propene Oxide,3.9,32,Epoxide,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Ethyl Ether,5.1,42,Ether,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Ethyl Ether,5.1,42,Ether,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Methyl Ether,3,26,Ether,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Methyl Ether,3,26,Ether,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Benzoic Acid,5.5,40,Carboxylic Acid; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Ethylene Oxide,2.5,24,Epoxide; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Propene Oxide,3.9,32,Epoxide; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Ethyl Ether,5.1,42,Ether; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Ethyl Ether,5.1,42,Ether; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Methyl Ether,3,26,Ether; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Methyl Ether,3,26,Ether; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Bromomethane,3.7,44,Halocarbon,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Carbon Tetrachloride,6,74,Halocarbon,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Carbon Tetrachloride,6.3,74,Halocarbon,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
@@ -126,11 +126,11 @@ Oxygen,0.9,16,Inert,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A
 Xenon,2.9,54,Inert,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Xenon,2.2,54,Inert,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Xenon,2.4,54,Inert,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Acetone,3.6,32,Ketone,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Acetone,4,32,Ketone,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Acetone,3.6,32,Ketone,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Ethyl Acetate,5,48,Ketone,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
-Methyl Acetate,4,40,Ketone,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Acetone,3.6,32,Ketone; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Acetone,4,32,Ketone; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Acetone,3.6,32,Ketone; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Ethyl Acetate,5,48,Ketone; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
+Methyl Acetate,4,40,Ketone; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Hydrogen Bromide,2,36,Halide,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Hydrogen Chloride,1.5,18,Halide,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Hydrogen Chloride,1.6,18,Halide,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
