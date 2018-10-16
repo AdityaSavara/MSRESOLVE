@@ -1121,44 +1121,44 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     return ReferenceData
 
 '''
-GenerateReferenceDataAndFormsList takes in the list of referenceFileNames and the
+GenerateReferenceDataAndFormsList takes in the list of referenceFileNamesList and the
 list of forms.  A list is generated containing MSReference objects created based
 on the referenceFileName and the corresponding form
 It allows MSRESOLVE to be backwards compatible with previous user input files
 '''
-def GenerateReferenceDataList(referenceFileNames,referencePatternForm,AllMID_ObjectsDict={}):
-    #referencePatternForm can take values of 'xyyy' or 'xyxy' and must be a string
-    ##If referenceFileName is a string or if form is a string then make them lists
-    if isinstance(referenceFileNames,str):
-        referenceFileNames = [referenceFileNames]
-    if isinstance(referencePatternForm,str):
-        referencePatternForm = [referencePatternForm]
-    #If referenceFileNames and forms are lists of 1 then create a list of the single MSReference object
+def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_ObjectsDict={}):
+    #referenceFormsList can take values of 'xyyy' or 'xyxy' and must be a string
+    ##If referenceFileNamesList is a string or if form is a string then make them lists
+    if isinstance(referenceFileNamesList,str):
+        referenceFileNamesList = [referenceFileNamesList]
+    if isinstance(referenceFormsList,str):
+        referenceFormsList = [referenceFormsList]
+    #If referenceFileNamesList and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
-    if len(referencePatternForm) == 1 and len(referenceFileNames) == 1:
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[0],referencePatternForm[0])
+    if len(referenceFormsList) == 1 and len(referenceFileNamesList) == 1:
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[0],referenceFormsList[0])
         ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
         #save each global variable into the class objects 
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[0].iterationSuffix = G.iterationSuffix
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
-    #If just one form is used, make a list of forms that is the same length as referenceFileNames
-    if len(referencePatternForm) == 1:
-        #Generate a copy of referenceFileNames to be overwritten with forms
-        listOfForms = copy.copy(referenceFileNames)
+    #If just one form is used, make a list of forms that is the same length as referenceFileNamesList
+    if len(referenceFormsList) == 1:
+        #Generate a copy of referenceFileNamesList to be overwritten with forms
+        listOfForms = copy.copy(referenceFileNamesList)
         #replace each value with the given form
-        for i in range(len(referenceFileNames)):
-            listOfForms[i] = referencePatternForm[0]
-    #If list of forms is the same length of referenceFileNames then each form should correspond to the referenceFile of the same index
-    elif len(referencePatternForm) == len(referenceFileNames):
+        for i in range(len(referenceFileNamesList)):
+            listOfForms[i] = referenceFormsList[0]
+    #If list of forms is the same length of referenceFileNamesList then each form should correspond to the referenceFile of the same index
+    elif len(referenceFormsList) == len(referenceFileNamesList):
         #So just set listOfForms equal to forms
-        listOfForms = referencePatternForm
+        listOfForms = referenceFormsList
     #Initialize ReferenceDataAndFormsList so it can be appended to
     ReferenceDataAndFormsList = []
     #For loop to generate each MSReferenceObject and append it to a list
-    for i in range(len(referenceFileNames)):
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNames[i],listOfForms[i])
+    for i in range(len(referenceFileNamesList)):
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[i],listOfForms[i])
         ReferenceDataAndFormsList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
         #save each global variable into the class objects 
         ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
