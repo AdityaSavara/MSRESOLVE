@@ -1989,7 +1989,7 @@ def getIE_Data(IonizationDataFileName):
             ENumberIndex = colIndex
         elif ionizationData[0][colIndex] == 'Type': #If header is Type, then this column index points to the molecules' ionization types
             TypeIndex = colIndex
-        elif ionizationData[0][colIndex] == 'Source': #If header is source, then this column index points to the source of information
+        elif ionizationData[0][colIndex] == 'Source of Ionization Data': #If header is source, then this column index points to the source of information
             SourceIndex = colIndex
 
     for rowIndex in range(1,len(ionizationData)): #loop across each row (not including the header)
@@ -1998,14 +1998,14 @@ def getIE_Data(IonizationDataFileName):
         moleculeElectronNumber = ionizationData[rowIndex][ENumberIndex] #get the molecule's electron number
         moleculeIonizationType = ionizationData[rowIndex][TypeIndex] #get the molecule 
         moleculeIonizationTypeList = moleculeIonizationType.split(';')
-        source = ionizationData[rowIndex][SourceIndex]
+        sourceOfIonizationData = ionizationData[rowIndex][SourceIndex]
         
         MID_ObjectName = moleculeName + '_IE' #The object name will be the moleculeName_IE
         
         if MID_ObjectName in AllMID_ObjectsDict: #If we already have this molecule in AllMID_ObjectsDict then we just need to add the RS_Value and source to the appropriate list
-            AllMID_ObjectsDict[MID_ObjectName].addData(RS_Value,source)
+            AllMID_ObjectsDict[MID_ObjectName].addData(RS_Value,sourceOfIonizationData)
         else: #otherwise the object does not exist and needs to be created
-            AllMID_ObjectsDict[MID_ObjectName] = MolecularIonizationData(moleculeName,RS_Value,moleculeElectronNumber,moleculeIonizationTypeList,source) #Store MIDObject in AllMIDObjects Dictionary
+            AllMID_ObjectsDict[MID_ObjectName] = MolecularIonizationData(moleculeName,RS_Value,moleculeElectronNumber,moleculeIonizationTypeList,sourceOfIonizationData) #Store MIDObject in AllMIDObjects Dictionary
     return AllMID_ObjectsDict
 ###############################################################################
 #########################  Classes: Data Storage  #############################
@@ -2089,7 +2089,9 @@ class MSReference (object):
         self.exportSuffix = ''
         #self.experimentTimes = []       
         self.provided_mass_fragments = self.provided_reference_patterns[:,0]
+        #Get ionization efficiencies and export their values and what method was used to obtain them
         self.populateIonizationEfficiencies(AllMID_ObjectsDict)
+        self.exportIonizationInfo()
     #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     def ExportCollector(self, callingFunction, use_provided_reference_patterns = False):
@@ -2204,9 +2206,11 @@ class MSReference (object):
 #If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
     def populateIonizationEfficiencies(self, AllMID_ObjectsDict={}):
         self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here and used in CorrectionValuesObtain
+        self.ionizationEfficienciesSourcesList = copy.copy(self.molecules) #initialize an array to store which method was used to obtain a molecule's ionization factor
         for moleculeIndex in range(len(self.molecules)): #loop through our initialized array
             if isinstance(self.knownIonizationFactorsRelativeToN2[moleculeIndex],float): #if the knownIonizationFactor is a float, then that is the value defined by the user
                 self.ionizationEfficienciesList[moleculeIndex] = self.knownIonizationFactorsRelativeToN2[moleculeIndex]
+                self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownFactor' #the molecule's factor was known
             else: #Ionization factor is not known so look at molecular ionization data from literatiure 
                 #Initialize three lists
                 MatchingMID_Objects = []
@@ -2223,6 +2227,7 @@ class MSReference (object):
                         matchingMolecule = True #set the flag to be true
                 if matchingMolecule == True: #If the molecule matches a molecule in the MID dictionary, use the average RS_Value
                     self.ionizationEfficienciesList[moleculeIndex] = MatchingMID_RS_Values[0]
+                    self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownMolecule' #A molecule in the reference data is also in the ionization data
                 elif matchingMolecule == False: #Otherwise matchingMolecule is False which means its not in the data from literature.  So we will approximate the ionization factor based on a linear fit of the data from literature that share the molecule's type or use the Madix and Ko equation
                     if self.knownMoleculesIonizationTypes[moleculeIndex] != None and self.knownMoleculesIonizationTypes[moleculeIndex] != 'unknown': #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
                         #Then get an estimate by performing a linear fit on the data in the MID Dictionary
@@ -2247,26 +2252,37 @@ class MSReference (object):
                             polynomialCoefficients = numpy.polyfit(MatchingMID_ElectronNumbers,MatchingMID_RS_Values,1) #Electron numbers as the independent var, RS_values as the dependent var, and 1 for 1st degree polynomial
                             poly1dObject = numpy.poly1d(polynomialCoefficients) #create the poly1d object
                             self.ionizationEfficienciesList[moleculeIndex] = numpy.polyval(poly1dObject,self.electronnumbers[moleculeIndex]) #use polyval to calculate the ionization factor based on the current molecule's electron number
+                            self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownIonizationType' #ionization factor was determined via a linear fit based on a molecule's ionization type
                 if len(MatchingMID_Objects) == 0: #Otherwise use the original Madix and Ko equation
                     self.ionizationEfficienciesList[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
+                    self.ionizationEfficienciesSourcesList[moleculeIndex] = 'MadixAndKo' #ionization efficiency obtained via Madix and Ko equation
 
+#Export the ionization efficiencies used and their respective method used to obtain them (known factor, known molecule, known ionization type, or Madix and Ko)    
+    def exportIonizationInfo(self):
+        ionizationData = numpy.vstack((self.molecules,self.ionizationEfficienciesList,self.ionizationEfficienciesSourcesList)) #make a 2d array containing molecule names (for the header), the ionization efficiencies, and which method was chosen
+        ionizationDataAbsicca = numpy.array([['Molecule'],
+                                             ['Ionization Efficiency'],
+                                             ['Method to Obtain Ionization Efficiency']]) #create the abscissa headers for the csv file
+        ionizationDataToExport = numpy.hstack((ionizationDataAbsicca,ionizationData)) #use hstack to obtain a 2d array with the first column being the abscissa headers
+        numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file
+                    
 '''
 The MolecularIonizationData class is used to generate a molecule's ionization factor based on its ionization type
 '''        
 class MolecularIonizationData (object):
-    def __init__(self,moleculeName,RS_Value,electronNumber,moleculeIonizationType='unknown',source='unknown'):
+    def __init__(self,moleculeName,RS_Value,electronNumber,moleculeIonizationType='unknown',sourceOfIonizationData='unknown'):
         #Store the MID variables
         self.moleculeName = moleculeName.strip()
         self.RS_ValuesList = [float(RS_Value)] #Since we can have slightly different RS_values for a molecule, make a list so a molecule with more than one RS_Value can contain all the info provided
         self.electronNumber = float(electronNumber)
         self.moleculeIonizationType = parse.listCast(moleculeIonizationType)
-        self.sourceList = [source] #Different RS values can come from different sources so make a list that will be parallel to RS_ValuesList containing the source of each RS Value at the same index
+        self.sourceOfIonizationDataList = [sourceOfIonizationData] #Different RS values can come from different sources so make a list that will be parallel to RS_ValuesList containing the source of each RS Value at the same index
         
-    def addData(self,RS_Value,source):
+    def addData(self,RS_Value,sourceOfIonizationData):
         #if we have more than one RS_Value, then append to the list
         self.RS_ValuesList.append(float(RS_Value))
         #if we have more than one RS_Value, append the source
-        self.sourceList.append(source)																	
+        self.sourceOfIonizationDataList.append(sourceOfIonizationData)																	
 ############################################################################################################################################
 ###############################################Algorithm Part 2: Analysing the Processed Data###############################################
 ############################################################################################################################################
