@@ -1,4 +1,4 @@
-Name,RS,Electron Number,Type,Source
+Name,RS,Electron Number,Type,sourceOfIonizationData
 Ethanol,3.6,26,Alcohol; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Ethanol,2.9,26,Alcohol; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Isoamyl Alcohol,2.9,78,Alcohol; Hydrogen non-metal-ides,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
