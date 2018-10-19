@@ -24,6 +24,7 @@ suffix = ut.returnDigitFromFilename(__file__)
 #This replaces the globals variables being pointed to in MSRESOLVE
 MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefMatchingMolecule.csv'] #Overwrite with desired reference file
 MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated.csv'
+MSRESOLVE.G.ionizationDataFileName = 'ProvidedIonizationDataExample.csv'
 MSRESOLVE.G.grapher = 'no'
 MSRESOLVE.G.exportAtEachStep = 'no'
 
@@ -33,32 +34,28 @@ MSRESOLVE.main()
 #Get data from the reference file
 ReferenceInfo = numpy.genfromtxt('AcetaldehydeNISTRefMatchingMolecule.csv',dtype=None,delimiter=',',encoding=None)
 
-#ionization factors are on the fifth row
-ionizationFactorsRN2 = ReferenceInfo[4][1:]
+#Get a list the same length as the number of molecules
+ionizationFactorsRN2 = numpy.zeros(len(ReferenceInfo[0][1:]))
 
-#The only two molecules in the reference data and _ProvidedIonizationData.csv that match is Acetaldehyde and Ethanol
-#From the data: Acetaldehyde has an RS_Value of 2.6
-#From the data: Ethanol has an average RS_Value of 3.25
+#The only two molecules in the reference data and ProvidedIonizationDataExample.csv that match is Carbon Monoxide and Carbon Dioxide
+#From the data: Carbon Monoxide has an RS_Value of 1.05
+#From the data: Carbon Dioxide has an average RS_Value of 1.4
 #Acetaldehyde is in the first column of the reference data and ethanol is in the sixth column
-ionizationFactorsRN2[0] = '2.6'
-ionizationFactorsRN2[5] = '3.25'
+ionizationFactorsRN2[2] = 1.05 
+ionizationFactorsRN2[3] = 1.4
+ionizationFactorsOutput = ionizationFactorsRN2[2:4] #get an array of just the two ionization factors
 
 
-#convert to float
-ionizationFactorsRN2 = ionizationFactorsRN2.astype(float)
-
-
-#the feature uses known ionization factors if they are available
-ut.set_expected_result(ionizationFactorsRN2,expected_result_str=str(ionizationFactorsRN2),prefix=prefix,suffix=suffix)
+#set the expected results to be the output array
+ut.set_expected_result(ionizationFactorsOutput[2:4],expected_result_str=str(ionizationFactorsRN2[2:4]),prefix=prefix,suffix=suffix)
 
 #set output
-output = MSRESOLVE.ReferenceDataList[0].ionizationEfficienciesList #The ionization factors list is a subobject to the MSReference object
+output = MSRESOLVE.ReferenceDataList[0].ionizationEfficienciesList[2:4] #The ionization factors list is a subobject to the MSReference object, indices 2 and 3 refer to CO and CO2
 #Places object in a tuple
 resultObj = (output)
 
 #String is provided
 resultStr = str(resultObj)
-
 
 #this is so that pytest can do UnitTesterSG tests.
 def test_pytest(): #note that it cannot have any required arguments for pytest to use it, and that it is using variables that are defined above in the module.

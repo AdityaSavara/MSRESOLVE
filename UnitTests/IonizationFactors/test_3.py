@@ -23,6 +23,7 @@ suffix = ut.returnDigitFromFilename(__file__)
 #This replaces the globals variables being pointed to in MSRESOLVE
 MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefKnownTypes.csv'] #Overwrite with desired reference file
 MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated.csv'
+MSRESOLVE.G.ionizationDataFileName = 'ProvidedIonizationDataExample.csv'
 MSRESOLVE.G.grapher = 'no'
 MSRESOLVE.G.exportAtEachStep = 'no'
 
@@ -39,30 +40,24 @@ IonizationTypes = ReferenceInfo[3][1:]
 #In the reference data, Acetaldehyde was renamed to Ethanal and Ethanol was renamed to EtOH, this way all nine molecules will be solved via a linear fit rather than molecule matching between reference data and ionization data
 
 #The polynomial coefficients determined in Excel (LinearFits.xlsx)
-AldehydesCoefficients = numpy.array([0.1083, 0])
-CarbonContainingNonmetalsCoefficients = numpy.array([0.1658, -1.5517])
-AlcoholsCoefficients = numpy.array([0.0198, 2.6971])
-HydrogenNonMetalIdesCoefficients = numpy.array([0.0902, 1.1942])
+InertsCoefficients = [0.0427, 0.0871]
+MainGroupCoefficients = [0.1163, -0.7131]
 
 #Convert to poly1dObjects
-AldehydesPoly1dObject = numpy.poly1d(AldehydesCoefficients)
-CarbonContainingNonmetalsPoly1dObject = numpy.poly1d(CarbonContainingNonmetalsCoefficients)
-AlcoholsPoly1dObject = numpy.poly1d(AlcoholsCoefficients)
-HydrogenNonMetalIdesPoly1dObject = numpy.poly1d(HydrogenNonMetalIdesCoefficients)
+InertsPolyl1dObject = numpy.poly1d(InertsCoefficients)
+MainGroupPoly1dObject = numpy.poly1d(MainGroupCoefficients)
 
 #initalize a row of zeros to hold the ionization factors
 ionizationFactorsRN2 = numpy.zeros(len(ElectronNumbers))
 
 #Find the molecules type and calculate its ionization factor
 for moleculeIndex in range(len(ionizationFactorsRN2)):
-    if IonizationTypes[moleculeIndex] == 'Alcohol': #If alcohol evaluate using alcohol's poly1d object
-        ionizationFactorsRN2[moleculeIndex] = numpy.polyval(AlcoholsPoly1dObject,ElectronNumbers[moleculeIndex])
-    if IonizationTypes[moleculeIndex] == 'Aldehyde': #If aldehyde evaluate using aldehyde's poly1d object
-        ionizationFactorsRN2[moleculeIndex] = numpy.polyval(AldehydesPoly1dObject,ElectronNumbers[moleculeIndex])
-    if IonizationTypes[moleculeIndex] == 'Carbon containing nonmetals': #If carbon containing nonmetal evaluate using carbon containing nonmetal's poly1d object
-        ionizationFactorsRN2[moleculeIndex] = numpy.polyval(CarbonContainingNonmetalsPoly1dObject,ElectronNumbers[moleculeIndex])
-    if IonizationTypes[moleculeIndex] == 'Hydrogen non-metal-ides': #If hydrogen non-metal-ide then use hydrogen non-metal-ide's poly1d object
-        ionizationFactorsRN2[moleculeIndex] = numpy.polyval(HydrogenNonMetalIdesPoly1dObject,ElectronNumbers[moleculeIndex])
+    if IonizationTypes[moleculeIndex] == 'Inert':
+        ionizationFactorsRN2[moleculeIndex] = numpy.polyval(InertsPolyl1dObject,ElectronNumbers[moleculeIndex])
+    if IonizationTypes[moleculeIndex] == 'Main Group':
+        ionizationFactorsRN2[moleculeIndex] = numpy.polyval(MainGroupPoly1dObject,ElectronNumbers[moleculeIndex])
+    else:
+        ionizationFactorsRN2[moleculeIndex] = ElectronNumbers[moleculeIndex]*(0.6/14) + 0.4
 
        
 
