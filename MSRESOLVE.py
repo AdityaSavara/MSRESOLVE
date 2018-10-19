@@ -1989,7 +1989,7 @@ def getIE_Data(IonizationDataFileName):
             ENumberIndex = colIndex
         elif ionizationData[0][colIndex] == 'Type': #If header is Type, then this column index points to the molecules' ionization types
             TypeIndex = colIndex
-        elif ionizationData[0][colIndex] == 'Source of Ionization Data': #If header is source, then this column index points to the source of information
+        elif ionizationData[0][colIndex] == 'sourceOfIonizationData': #If header is source, then this column index points to the source of information
             SourceIndex = colIndex
 
     for rowIndex in range(1,len(ionizationData)): #loop across each row (not including the header)
