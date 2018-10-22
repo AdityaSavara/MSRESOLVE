@@ -210,7 +210,7 @@ SLSUniqueExport = 'yes'
 #//Concentration Finder//
 #this last set of inputs is where you enter your conversion factors from raw signal to concentration, unlike most rows, do not leave brackets around chosen numbers
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
-#TODO The use of multiple reference patterns is not upgraded to work with concentrationFinder
+#TODO Note: Concentration Finder is not compatible with simultaneous use of multiple reference files AND separate molecules' factors as of 181022. Currently, it a user may use either one or the other.
 concentrationFinder = 'no'
 TSC_List_Type = 'MultipleReferencePatterns' #Options are 'MultipleReferencePatterns' or 'SeparateMoleculesFactors'
 moleculesTSC_List = 'Acetaldehyde'
