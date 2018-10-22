@@ -3586,6 +3586,13 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
 #This little bit of code enables the user to input a couple values so that the conversion between signal relative to CO and 
 #concentration can be found, and as such the rest of the concentrations can be found as well. If no data is input here, then
 #there are no concentrations printed out, only signals. (if they are both printed, it is done on separate excel sheets)
+#TODO Make RatioFinder capable of using both numerous reference patterns and separate molecules and then remove the TODO comment with concentrationFinder in user input
+#TODO One solution would be to check if moleculesTSC_List is a list of lists (make this the first if statement after the line if concentrationFinder == 'yes')
+#TODO Initialize conversionFactorsAtEachTime (maybe change to conversionFactorArray) as an array of zeros that has the same shape as the experimental data (without the headers or abscissa headers) (maybe make a copy of experiment data or a sliced copy to remove headers) and populate it with the proper conversion factor
+#TODO To do so, find the first reference file's conversion factors based on the values in the first list of moleculeConcentrationTSC, moleculeSignalTSC, and moleculeTSC from the user input
+#TODO In conversionFactorAtEachTime, populate the rows associating the reference pattern's time ranges with the calculated conversion factors
+#TODO Repeat for each list in moleculeTSC_List
+#TODO In the case of gaps in time ranges, just interpolate the conversion factors (of like molecules) between the two time ranges
 def RatioFinder (ReferenceData, ExperimentData, concentrationFinder,TSC_List_Type,molecule,moleculeConcentration,massNumber,moleculeSignal,units,referencePatternTimeRanges): 
     if concentrationFinder == 'yes':#user input
         if TSC_List_Type == 'MultipleReferencePatterns':
