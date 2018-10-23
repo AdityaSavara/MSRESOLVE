@@ -16,7 +16,7 @@ import UnitTesterSG as ut
 
 #BELOW ARE THE LINES INTENDED TO BE CHANGED BY THE USER	
 #1) import the function whose results need to be checked
-import MSRESOLVE
+import MSRESOLVE, imp; imp.reload(MSRESOLVE)
 import numpy
 #2) getting the prefix (or suffix) arugument for check_results. This is just for the output filenames.
 suffix= ut.returnDigitFromFilename(__file__)
