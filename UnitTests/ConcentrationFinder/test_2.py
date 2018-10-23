@@ -22,15 +22,16 @@ suffix = ut.returnDigitFromFilename(__file__)
 #Replace the global variables being pointed to in MSRESOLVE
 #This reference file has two molecules: Acetaldehyde and Acetaldehyde_easy_to_ionize
 #They are identical with the exceptions that Acetaldehyde has an ionization factor of 1 and signal peaks at m29 and m29.2 are 9999 and 0, respectively, and Acetaldehyde_easy_to_ionize has an ionization factor of 2 and signal peaks at m29 and m29.2 are 0 and 9999, respectively.
-MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefMixed2_test_1.csv']
+MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefMixed2_test_2.csv','AcetaldehydeNISTRefMixed2_test_2.csv'] #List the reference file twice
+MSRESOLVE.G.referencePatternTimeRanges = [[1,4],[5,8]] #Give time ranges for each reference file
 #Use the truncated reference data that contains only m29 and m29.2 with signals of 1 for each time for both mass fragments
-MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated.csv'
+MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated2.csv'
 MSRESOLVE.G.concentrationFinder = 'yes' #Turn on concentrationFinder
-MSRESOLVE.G.TSC_List_Type = 'SeparateMoleculesFactors' #Use factors for separate molecules rather than numerous reference files
-MSRESOLVE.G.moleculesTSC_List = ['Acetaldehyde'] #Using the 'known' concentration values for Acetaldehyde with SeparateMoleculesFactors, concentrationFinder will calculate a conversion factor based on this info and apply to it the scaled concentration of itself and Acetaldehyde_easy_to_ionize
-MSRESOLVE.G.moleculeSignalTSC_List = [1.66945]
-MSRESOLVE.G.moleculeConcentrationTSC_List = [0.05]
-MSRESOLVE.G.massNumberTSC_List = [29]
+MSRESOLVE.G.TSC_List_Type = 'MultipleReferencePatterns' #Use factors for numerous reference files
+MSRESOLVE.G.moleculesTSC_List = ['Acetaldehyde','Acetaldehyde'] 
+MSRESOLVE.G.moleculeSignalTSC_List = [1.66945,1.66945]
+MSRESOLVE.G.moleculeConcentrationTSC_List = [0.05,0.1] #Make the known concentration for the second reference pattern to be 2x what the known concentration is for the first reference file
+MSRESOLVE.G.massNumberTSC_List = [29,29]
 MSRESOLVE.G.grapher = 'no'
 MSRESOLVE.G.exportAtEachStep = 'no'
 MSRESOLVE.G.timeRangeLimit = 'no'
@@ -40,18 +41,21 @@ MSRESOLVE.main()
 
 ResolvedConcentrationsData = MSRESOLVE.resultsObjects['concentrationsarray'] #get the concentrations array from the global resultsObjects dictionary
 
-ut.set_expected_result(2.0,str(2.0),prefix=prefix,suffix=suffix)
+ResolvedConcentrationsFirstHalf = ResolvedConcentrationsData[3][1] #Resolved concentration at time 4
+ResolvedConcentrationsSecondHalf = ResolvedConcentrationsData[4][1] #Resolved concentration at time 5
+
+ut.set_expected_result(0.5,str(0.5),prefix=prefix,suffix=suffix) #set the expected result to be 0.5
 
 #set output
-output = ResolvedConcentrationsData[0][1]/ResolvedConcentrationsData[0][2] #find the ratio of the second column to the third column.  The time value is the first column.  Use the first value in the column since each value in a particular column is the same
+output = ResolvedConcentrationsFirstHalf/ResolvedConcentrationsSecondHalf #Take the ratio of the resolved concentrations from the first half to the resolved concentrations of the second half
 #Places object in a tuple
 resultObj = output
 
 #String is provided
 resultStr = str(resultObj)
 
-relativeTolerance = 1.0E-2
-absoluteTolerance = 1.0E-2
+relativeTolerance = 1.0E-5
+absoluteTolerance = 1.0E-8
 
 
 #this is so that pytest can do UnitTesterSG tests.

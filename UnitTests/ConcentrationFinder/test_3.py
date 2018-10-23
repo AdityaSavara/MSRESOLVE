@@ -27,10 +27,10 @@ MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefMixed2_test_1.csv']
 MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated.csv'
 MSRESOLVE.G.concentrationFinder = 'yes' #Turn on concentrationFinder
 MSRESOLVE.G.TSC_List_Type = 'SeparateMoleculesFactors' #Use factors for separate molecules rather than numerous reference files
-MSRESOLVE.G.moleculesTSC_List = ['Acetaldehyde'] #Using the 'known' concentration values for Acetaldehyde with SeparateMoleculesFactors, concentrationFinder will calculate a conversion factor based on this info and apply to it the scaled concentration of itself and Acetaldehyde_easy_to_ionize
-MSRESOLVE.G.moleculeSignalTSC_List = [1.66945]
-MSRESOLVE.G.moleculeConcentrationTSC_List = [0.05]
-MSRESOLVE.G.massNumberTSC_List = [29]
+MSRESOLVE.G.moleculesTSC_List = ['Acetaldehyde','Acetaldehyde_Easy_To_Ionize'] #the conversion factor for both molecules are determined based on the known concentrations at a particular signal for both molecules
+MSRESOLVE.G.moleculeSignalTSC_List = [1.66945,1.66945]
+MSRESOLVE.G.moleculeConcentrationTSC_List = [0.05,0.15]
+MSRESOLVE.G.massNumberTSC_List = [29,29.2]
 MSRESOLVE.G.grapher = 'no'
 MSRESOLVE.G.exportAtEachStep = 'no'
 MSRESOLVE.G.timeRangeLimit = 'no'
@@ -39,19 +39,20 @@ MSRESOLVE.G.timeRangeLimit = 'no'
 MSRESOLVE.main()
 
 ResolvedConcentrationsData = MSRESOLVE.resultsObjects['concentrationsarray'] #get the concentrations array from the global resultsObjects dictionary
+print(ResolvedConcentrationsData)
 
-ut.set_expected_result(2.0,str(2.0),prefix=prefix,suffix=suffix)
+ut.set_expected_result(3.0,str(3.0),prefix=prefix,suffix=suffix) #since the concentrations differ by a factor of three, the ratio of the resolved concentrations should also differ by a factor of 3
 
 #set output
-output = ResolvedConcentrationsData[0][1]/ResolvedConcentrationsData[0][2] #find the ratio of the second column to the third column.  The time value is the first column.  Use the first value in the column since each value in a particular column is the same
+output = ResolvedConcentrationsData[0][2]/ResolvedConcentrationsData[0][1] #find the ratio of the third column to the second column.  The time value is the first column.  Use the first value in the column since each value in a particular column is the same
 #Places object in a tuple
 resultObj = output
 
 #String is provided
 resultStr = str(resultObj)
 
-relativeTolerance = 1.0E-2
-absoluteTolerance = 1.0E-2
+relativeTolerance = 1.0E-5
+absoluteTolerance = 1.0E-8
 
 
 #this is so that pytest can do UnitTesterSG tests.
