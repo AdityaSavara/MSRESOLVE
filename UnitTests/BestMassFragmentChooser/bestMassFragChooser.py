@@ -4,7 +4,7 @@ Created on Tue Jun 26 14:56:24 2018
 @author: Andrea
 """
 
-import MSRESOLVE
+import MSRESOLVE, imp; imp.reload(MSRESOLVE)
 import numpy
 import XYYYDataFunctionsSG as DataFunctions
 import UserInput as G
