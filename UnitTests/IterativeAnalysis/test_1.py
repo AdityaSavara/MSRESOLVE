@@ -4,8 +4,8 @@ sys.path.insert(1, os.path.join(os.curdir, os.pardir))
 sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
-import MSRESOLVE
-import DefaultUserInput as G, imp; imp.reload(G); imp.reload(MSRESOLVE) #This is needed because we need the __var_list__
+import MSRESOLVE, imp; imp.reload(MSRESOLVE)
+import DefaultUserInput as G, imp; imp.reload(G) #This is needed because we need the __var_list__
 MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
     
 #get the suffix argument for check_results
