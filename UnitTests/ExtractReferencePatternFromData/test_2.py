@@ -11,7 +11,7 @@ sys.path.insert(1, os.path.join(os.curdir, os.pardir))
 sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #This test file tests the extractReferencePatternFromData feature
 
-import MSRESOLVE
+import MSRESOLVE, imp; imp.reload(MSRESOLVE)
 import UnitTesterSG as ut
 
 #Import the test input file
