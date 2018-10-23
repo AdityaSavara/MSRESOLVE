@@ -12,7 +12,7 @@ sys.path.insert(1, os.path.join(os.curdir, os.pardir))
 sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #This test file tests the ReferencePatternTimeChooser feature
 
-import MSRESOLVE
+import MSRESOLVE, imp; imp.reload(MSRESOLVE)
 import UnitTesterSG as ut
 import pandas
 import numpy as np
