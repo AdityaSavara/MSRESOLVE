@@ -13,7 +13,7 @@ prefix = ''
 import numpy as np
 import copy
 import shutil
-import MSRESOLVE
+import MSRESOLVE, imp; imp.reload(MSRESOLVE)
 import test_1_input
 MSRESOLVE.G = test_1_input
 
