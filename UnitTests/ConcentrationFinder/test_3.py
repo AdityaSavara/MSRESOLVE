@@ -5,14 +5,14 @@ sys.path.insert(1, os.path.join(os.curdir, os.pardir))
 sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
-import DefaultUserInput as G #This is needed because we need the __var_list__
+import MSRESOLVE
+import DefaultUserInput as G, imp; imp.reload(G); imp.reload(MSRESOLVE) #This is needed because we need the __var_list__
     
 #get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
 #prefix. Make this '' if you do not want any prefix.
 prefix = ''
 
-import MSRESOLVE
 import UnitTesterSG as ut
 import numpy as np
 
@@ -47,7 +47,6 @@ ut.set_expected_result(3.0,str(3.0),prefix=prefix,suffix=suffix) #since the conc
 output = ResolvedConcentrationsData[0][2]/ResolvedConcentrationsData[0][1] #find the ratio of the third column to the second column.  The time value is the first column.  Use the first value in the column since each value in a particular column is the same
 #Places object in a tuple
 resultObj = output
-print(resultObj)
 
 #String is provided
 resultStr = str(resultObj)

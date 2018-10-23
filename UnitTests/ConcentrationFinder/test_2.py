@@ -5,14 +5,14 @@ sys.path.insert(1, os.path.join(os.curdir, os.pardir))
 sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
-import DefaultUserInput as G #This is needed because we need the __var_list__
+import MSRESOLVE
+import DefaultUserInput as G, imp; imp.reload(G); imp.reload(MSRESOLVE) #This is needed because we need the __var_list__
     
 #get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
 #prefix. Make this '' if you do not want any prefix.
 prefix = ''
 
-import MSRESOLVE
 import UnitTesterSG as ut
 import numpy as np
 
