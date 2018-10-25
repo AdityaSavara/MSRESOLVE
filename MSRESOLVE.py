@@ -1206,6 +1206,8 @@ def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRan
             currentReferenceData = InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
             #Prepare the current reference data
             currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
+            if G.iterativeAnalysis: #If using iterative analysis, interpolate the subtracted signals' matching correction factors between the two reference objects
+                currentReferenceData.SSmatching_correction_values = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.SSmatching_correction_values,secondReferenceObject.SSmatching_correction_values,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
         #If we are out of the first time range, not in a gap, and not in the last time range, then we are in the next time range
         elif currentTime >= referencePatternTimeRanges[currentReferencePatternIndex+1][0]:
             #Increase the index
@@ -1539,13 +1541,14 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
         sys.exit()
 
     ReferenceDataSS = []
-    ReferenceDataSSmatching_correction_valuesList = []
+    ReferenceDataSSmatching_correction_valuesList = [] #This list will hold the correction factors used for each individual reference pattern
     for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
         #Creating a correction values matrix list for signal simulation at the end of the program
         ReferenceDataSS.append(copy.deepcopy(RefObject))
         ReferenceDataSS[RefObjectIndex] = ReferenceInputPreProcessing(ReferenceDataSS[RefObjectIndex])
         ReferenceDataSS[RefObjectIndex] = Populate_matching_correction_values(ExperimentDataFullCopy.mass_fragment_numbers,ReferenceDataSS[RefObjectIndex])
         ReferenceDataSSmatching_correction_valuesList.append(ReferenceDataSS[RefObjectIndex].matching_correction_values)
+        RefObject.SSmatching_correction_values = ReferenceDataSS[RefObjectIndex].matching_correction_values
         
     #Selecting unused Reference Data
     unusedMolecules = []
@@ -3674,11 +3677,11 @@ def RatioFinder (ReferenceData, ExperimentData, concentrationFinder,TSC_List_Typ
 #signals that we acquired, which will later be printed out in the main() function. The inputs for this function are the signals 
 #array as well as the correction values, in order to simulate the raw signals
 def RawSignalsSimulation (scaledConcentrationsarray,matching_correction_values):
-    simulateddata = numpy.zeros([len(scaledConcentrationsarray[:,0]),len(matching_correction_values[:,0])+1])#a simulated data array made the height of the signals array and the width equal to the correction arrays height
+    simulateddata = numpy.zeros([len(scaledConcentrationsarray[:,0]),len(matching_correction_values[0][:,0])+1])#a simulated data array made the height of the signals array and the width equal to the correction arrays height
     times = scaledConcentrationsarray[:,0]#the first row of the signals array is the times
     scaledConcentrationsarray = scaledConcentrationsarray[:,1:] #because one of the lines here is the times, and it need to be removed
     for scaledtimeIndex in range(len(scaledConcentrationsarray[:,0])):#array-indexed for loop
-        simulateddata[scaledtimeIndex:scaledtimeIndex+1,1:] = numpy.transpose(numpy.matrix(matching_correction_values) * numpy.matrix(numpy.vstack(scaledConcentrationsarray[scaledtimeIndex,:])))#the data is simulated by multiplying the matrix of correction values by the raw signals for each row
+        simulateddata[scaledtimeIndex:scaledtimeIndex+1,1:] = numpy.transpose(numpy.matrix(matching_correction_values[scaledtimeIndex]) * numpy.matrix(numpy.vstack(scaledConcentrationsarray[scaledtimeIndex,:])))#the data is simulated by multiplying the matrix of correction values by the raw signals for each row
     simulateddata[:,0] = times #the times are added back in so they can be printed more easily
     return simulateddata
     
@@ -4459,7 +4462,9 @@ def main():
         #is done in order to save time and decrease expense
         concentrationsScaledToCOarray = numpy.zeros(len(prototypicalReferenceData.molecules)+1)
         concentrationsarray = numpy.zeros(len(prototypicalReferenceData.molecules)+1)
-
+        correctionFactorArraysList = [] #initialize the correctionFactorArray as an empty list
+        SS_matching_correction_values_TimesList = [] #initialze ReferenceDataSSmatching_correction_valuesList as an empty list.  This list will store correction values used at each time point
+        
         # Loading user choices for data analysis
         DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
                                   G.csvFile, G.moleculesToRestrict, G.csvFileName,G.dataUpperBound,
@@ -4474,7 +4479,7 @@ def main():
         ExperimentData = RatioFinder(ReferenceDataList, ExperimentData, G.concentrationFinder, G.TSC_List_Type,
                                       G.moleculesTSC_List, G.moleculeConcentrationTSC_List, G.massNumberTSC_List, G.moleculeSignalTSC_List, G.unitsTSC,G.referencePatternTimeRanges)
 	##End: Preparing data for data analysis based on user input choices
-    
+
         #Initialize a current reference pattern index
         currentReferencePatternIndex = 0
         for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time  
@@ -4490,7 +4495,6 @@ def main():
                     currentReferenceData, currentReferencePatternIndex = SelectReferencePattern(currentReferencePatternIndex, G.referencePatternTimeRanges, ExperimentData.times[timeIndex], ReferenceDataList[currentReferencePatternIndex], ReferenceDataList[currentReferencePatternIndex+1], ReferenceDataList)
             else: #referencePatternTimeRanges is empty so user is opting to not use reference pattern time chooser
                 currentReferenceData = ReferenceDataList[0]
-
             
             #populate the mass fragments monitored subobject for the current reference pattern
             currentReferenceData.mass_fragment_numbers_monitored = ExperimentData.mass_fragment_numbers
@@ -4541,13 +4545,16 @@ def main():
             
             if G.negativeAnalyzerYorN == 'yes':
                 arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption)
-            
+                
             if timeIndex == 0: #Can't vstack with an array of zeros or else the first time is 0 with all data points at 0 so make first row the first arrayline provided
                 concentrationsScaledToCOarray = arrayline
             elif timeIndex > 0: #Everything else is appended via numpy.vstack
                 concentrationsScaledToCOarray = numpy.vstack((concentrationsScaledToCOarray,arrayline))
-                
-               
+            correctionFactorArraysList.append(currentReferenceData.matching_correction_values) #populate the list with the proper correction values
+            if G.iterativeAnalysis: #If using iterative analysis, append the subtracted signals' matching correction values that were used to SS_matching_correction_values_TimesList
+                SS_matching_correction_values_TimesList.append(currentReferenceData.SSmatching_correction_values)
+        
+        
         resultsObjects['concentrationsScaledToCOarray'] = concentrationsScaledToCOarray #Store in the global resultsObjects dictionary
         if G.concentrationFinder == 'yes': #If using concentration finder
             concentrationsarray = copy.copy(concentrationsScaledToCOarray) #point concentrationsarray to a copy of concentrationsScaledToCOArray
@@ -4564,12 +4571,12 @@ def main():
             percentagesOutputArray = GeneratePercentages(concentrationsScaledToCOarray)
             resultsObjects['percentagesOutputArray'] = percentagesOutputArray
             ExportXYYYData(G.scaledConcentrationsPercentages, percentagesOutputArray, currentReferenceData.molecules, fileSuffix = G.iterationSuffix)
-        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = str('scaled'))
+        ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = str('scaled'))
         times = concentrationsScaledToCOarray[:,0]#the times are just the first column of the array
         data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
         
         if G.concentrationFinder == 'yes':
-            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
+            ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
             times = concentrationsarray[:,0]
             data = concentrationsarray[:,1:]
         
@@ -4590,16 +4597,18 @@ def main():
         G.checkpoint = timeit.default_timer()
         if G.iterativeAnalysis:
             #TODO when RawSignalSimulation is rewritten for multiple reference patterns, ReferenceDataSSmatching_correction_valuesList[0] should be replaced with ReferenceDataSSmatching_correction_valuesList
+            SS_matching_correction_values_TimesArray = numpy.stack(SS_matching_correction_values_TimesList) #use numpy.stack to make an array of all the arrays
             #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
-            simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, ReferenceDataSSmatching_correction_valuesList[0])
+            simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, SS_matching_correction_values_TimesArray)
         if not G.iterativeAnalysis:
+            correctionFactorsAtEachTime = numpy.stack(correctionFactorArraysList) #use numpy.stack to make an array of all the arrays
             #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
-            simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, currentReferenceData.matching_correction_values)
+            simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, correctionFactorsAtEachTime)
         #Exporting the simulated signals data
         if G.iterativeAnalysis:
-            ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentDataCopy.mass_fragment_numbers, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'simulated')
+            ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentDataCopy.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'simulated')
         if not G.iterativeAnalysis:
-            ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'simulated')
+            ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'simulated')
         #show net time for simulation
         G.timeSinceLastCheckPoint = timeit.default_timer() - G.checkpoint
         G.checkPoint = timeit.default_timer()

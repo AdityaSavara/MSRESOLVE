@@ -29,3 +29,6 @@ Then MSRESOLVE.main() was run again using AcetaldehydeNISTRefMixedEdit.csv and t
 HandInterpolatedReferenceData.csv contains the interpolation of these files at time 304.8878 (the last time before 305)
 Data Analysis is run using the time range 300 to 305 so at 305, currentReferenceData (a global variable) can be accessed in test_2.py
 Comparing the standardized_reference_intensities of the two, there were three small rounding errors that was close enough to overwrite the expected_results
+
+test_3.py tests simulated raw data signals when using two reference files
+The test is run exactly the same as test_1 but instead of comparing scaledConcentrations, the test compares simulatedRawSignals
