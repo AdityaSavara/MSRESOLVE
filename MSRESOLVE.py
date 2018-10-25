@@ -1206,7 +1206,7 @@ def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRan
             currentReferenceData = InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
             #Prepare the current reference data
             currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
-            if G.iterativeAnalysis:
+            if G.iterativeAnalysis: #If using iterative analysis, interpolate the subtracted signals' matching correction factors between the two reference objects
                 currentReferenceData.SSmatching_correction_values = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.SSmatching_correction_values,secondReferenceObject.SSmatching_correction_values,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
         #If we are out of the first time range, not in a gap, and not in the last time range, then we are in the next time range
         elif currentTime >= referencePatternTimeRanges[currentReferencePatternIndex+1][0]:
@@ -1548,7 +1548,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
         ReferenceDataSS[RefObjectIndex] = ReferenceInputPreProcessing(ReferenceDataSS[RefObjectIndex])
         ReferenceDataSS[RefObjectIndex] = Populate_matching_correction_values(ExperimentDataFullCopy.mass_fragment_numbers,ReferenceDataSS[RefObjectIndex])
         ReferenceDataSSmatching_correction_valuesList.append(ReferenceDataSS[RefObjectIndex].matching_correction_values)
-        RefObject.SSmatching_correction_values = ReferenceDataSS[RefObjectIndex].matching_correction_values #Make SSmatching_correction_values an object of its corresponding reference object
+        RefObject.SSmatching_correction_values = ReferenceDataSS[RefObjectIndex].matching_correction_values
         
     #Selecting unused Reference Data
     unusedMolecules = []
@@ -4479,7 +4479,6 @@ def main():
         ExperimentData = RatioFinder(ReferenceDataList, ExperimentData, G.concentrationFinder, G.TSC_List_Type,
                                       G.moleculesTSC_List, G.moleculeConcentrationTSC_List, G.massNumberTSC_List, G.moleculeSignalTSC_List, G.unitsTSC,G.referencePatternTimeRanges)
 	##End: Preparing data for data analysis based on user input choices
-        
         #Initialize a current reference pattern index
         currentReferencePatternIndex = 0
         for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time  
@@ -4551,7 +4550,7 @@ def main():
             elif timeIndex > 0: #Everything else is appended via numpy.vstack
                 concentrationsScaledToCOarray = numpy.vstack((concentrationsScaledToCOarray,arrayline))
             correctionFactorArraysList.append(currentReferenceData.matching_correction_values) #populate the list with the proper correction values
-            if G.iterativeAnalysis:
+            if G.iterativeAnalysis: #If using iterative analysis, append the subtracted signals' matching correction values that were used to SS_matching_correction_values_TimesList
                 SS_matching_correction_values_TimesList.append(currentReferenceData.SSmatching_correction_values)
         
         
