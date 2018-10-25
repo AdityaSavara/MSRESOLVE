@@ -39,7 +39,7 @@ simulatedRawSignalsAArray = np.array(simulatedRawSignalsA)
 MSRESOLVE.G = test_1_inputB
 #Run MSRESOLVE main
 MSRESOLVE.main()
-#Get scaledConcentrations
+#Get simulatedRawSignals
 simulatedRawSignalsB = pandas.read_csv('SimulatedRawSignals.csv',header = 0)
 simulatedRawSignalsBArray = np.array(simulatedRawSignalsB)
 
@@ -48,7 +48,7 @@ simulatedRawSignalsBArray = np.array(simulatedRawSignalsB)
 MSRESOLVE.G = test_1_inputC
 #Run MSRESOLVE main
 MSRESOLVE.main()
-#Get scalendConcentrations
+#Get simulatedRawSignals
 simulatedRawSignalsC = pandas.read_csv('SimulatedRawSignals.csv',header = 0)
 simulatedRawSignalsCArray = np.array(simulatedRawSignalsC)
 
@@ -57,8 +57,8 @@ simulatedRawSignalsCArray = np.array(simulatedRawSignalsC)
 expected_results = (simulatedRawSignalsAArray[:3,:-1], simulatedRawSignalsBArray[7:,:-1])
 ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
 
-#Output should be the first three rows of C which are scaled concentrations found using reference pattern A
-#and the last 3 rows of C which are scaled concentrations found using reference pattern B
+#Output should be the first three rows of C which are simulated raw signals found using reference pattern A
+#and the last 3 rows of C which are simulated raw signals found using reference pattern B
 #The second slice of :-1 removes all 'Nan' from arrays
 #Places object in a tuple
 output = (simulatedRawSignalsCArray[:3,:-1], simulatedRawSignalsCArray[7:,:-1])
