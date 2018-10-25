@@ -28,7 +28,3 @@ Since the ratio of 0.05 to 0.15 is a factor of 3, we expect the ratio of resolve
 In this test, Acetaldehyde_copy will use the same conversion factor as Acetaldehyde so the resolved concentrations of the two molecules should be the same, or in other words the ratio of the two will be 1.
 
 Test_4 is testing the concentrationFinder feature with numerous reference patterns that require interpolating due to a gap in between time ranges.
-Test_4.py uses AcetaldehydeNISTRefMix2_test_2.csv and 2-CrotAcetExp#2Truncated2.csv (the same input files as test_2.py).  This test is set up identically to test 2 but the time ranges are now [1,1] for the first reference pattern and [8,8] for the second reference pattern (which is identical to the first reference pattern)
-Since there is a gap in time ranges the conversion factors are interpolated between the two times.  At time 1 and time 8 the concentrations are determined based directly on the known concentration information in the user input.  For times 2 through 7, the conversion factors are obtained by interpolating the conversion factor for the first reference file and the conversion factor for the second reference file at the current time.
-To test this, we interpolate the first calculated concentration and the last calculated concentration with the current time and store the values in an array.
-The created array is compared to the resolved concentrations that were output by MSRESOLVE.
