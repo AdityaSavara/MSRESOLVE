@@ -1548,7 +1548,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
         ReferenceDataSS[RefObjectIndex] = ReferenceInputPreProcessing(ReferenceDataSS[RefObjectIndex])
         ReferenceDataSS[RefObjectIndex] = Populate_matching_correction_values(ExperimentDataFullCopy.mass_fragment_numbers,ReferenceDataSS[RefObjectIndex])
         ReferenceDataSSmatching_correction_valuesList.append(ReferenceDataSS[RefObjectIndex].matching_correction_values)
-        RefObject.SSmatching_correction_values = ReferenceDataSS[RefObjectIndex].matching_correction_values
+        RefObject.SSmatching_correction_values = ReferenceDataSS[RefObjectIndex].matching_correction_values #Make SSmatching_correction_values an object of its corresponding reference object
         
     #Selecting unused Reference Data
     unusedMolecules = []
