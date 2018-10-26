@@ -27,4 +27,9 @@ In this case we use the test input file to indicate that we "know" the concentra
 Since the ratio of 0.05 to 0.15 is a factor of 3, we expect the ratio of resolved concentrations of Acetaldehyde_Easy_To_Ionize to Acetaldehye to be 3.
 In this test, Acetaldehyde_copy will use the same conversion factor as Acetaldehyde so the resolved concentrations of the two molecules should be the same, or in other words the ratio of the two will be 1.
 
-Test_4 is testing the concentrationFinder feature with numerous reference patterns that require interpolating due to a gap in between time ranges.
+Test_4 is testing the concentrationFinder feature with numerous reference patterns that require interpolating due to a gap in between time ranges.  
+Test_4.py is set up almost indentically to test_2.py where the same reference file is used for two different time ranges and the same collected data file is used.
+The first time range is from 1 to 1 and the last time range is from 8 to 8.  By doing this, every molecule that is not in the first or last time point will be solved by using a conversion factor that was obtained via interpolation.
+Like test_2, the concentration at point 8 will be twice the concentration at point 1.
+To check that our interpolation is accurate, we can interpolate the concentration of our molecule from the first time point and the last time point at each individual time point (i.e. at time point 3, interpolate the concentration of time 3 between the concentrations from time points 1 and 8)
+ 
