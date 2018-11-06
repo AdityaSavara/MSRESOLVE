@@ -1457,6 +1457,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
         G.oldcollectedFileName = G.collectedFileName
         
         #construct the file names for the current run of the program
+        #TODO FIXME, This syntax with -21 will not allow iterative to be compatible with more than 9 iterations
         collectedFileNameTemp = G.collectedFileName[:-21] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
         
         #copy the experimental and reference files into new names for this iterative run
@@ -1466,6 +1467,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
         G.collectedFileName =  collectedFileNameTemp
         
         #construct file names for the next run of the program 
+        #TODO FIXME, This syntax with -11 will not allow iterative to be compatible with more than 9 iterations
         G.nextExpFileName = G.collectedFileName[:-11] +  str('_remaining') + G.collectedFileName[-11:]
         #naming for reference files
         
@@ -1476,6 +1478,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
             G.oldReferenceFileName.append(RefName)
             
             #construct the file names for the current run of the program
+            #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
             referenceFileNameTemp = G.referenceFileNamesList[RefIndex][:-18] +  str(G.iterationSuffix) + G.referenceFileNamesList[RefIndex][-4:]
             
             #copy the experimental and reference files into new names for this iterative run
@@ -1485,6 +1488,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
             G.referenceFileNamesList[RefIndex] =  referenceFileNameTemp
             
             #construct file names for the next run of the program 
+            #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
             G.nextRefFileName.append(RefName[:-18] + '_unused_iter_%s' %G.iterationNumber + RefName[-4:])
     
     return None
@@ -1514,6 +1518,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     #construct the file names for the first run of the program
     G.collectedFileName = G.collectedFileName[:-4] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
     #construct file names for the second run of the program 
+    #TODO FIXME, This syntax with -11 will not allow iterative to be compatible with more than 9 iterations
     G.nextExpFileName = G.collectedFileName[:-11] + '_remaining_iter_1' + G.collectedFileName[-4:]
     
     G.oldReferenceFileName = []
@@ -1573,12 +1578,14 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
                 os.path.join(os.curdir,
                     os.pardir,
                     str(G.oldReferenceFileName[RefObjectIndex])))
-            DataFunctions.TrimReferenceFileByMolecules(unusedMolecules,
-                referenceFilePath,
-                unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
+            referenceDataToExport = DataFunctions.TrimReferenceFileByMolecules(unusedMolecules,
+                referenceFilePath)
+            referenceDataToExport.to_csv(G.nextRefFileName[RefObjectIndex], header = False, index = False)
         else: #not first iteration
         #generate unused reference data
-            DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName[RefObjectIndex], unusedReferenceFileName = G.nextRefFileName[RefObjectIndex])
+            referenceDataToExport = DataFunctions.TrimReferenceFileByMolecules(unusedMolecules, G.oldReferenceFileName[RefObjectIndex])
+            
+            referenceDataToExport.to_csv(G.nextRefFileName[RefObjectIndex], header = False, index = False)
     
     return ReferenceDataSSmatching_correction_valuesList, unusedMolecules
 
@@ -4271,7 +4278,7 @@ def main():
     #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
     if G.iterativeAnalysis and G.iterationNumber != 1:
         #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
-        IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
+        IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber) #This function also changes the working directory
     if (not G.iterativeAnalysis) or (G.iterationNumber == 1): #If not using iterative analysis or running the first iteration
 	#Create the dictionary storing the Molecular Ionization Data objects if the ionization data file exists in the main directory
 	#If using iterative analysis, then the dictionary used in the first iteration is retained throughout each iteration

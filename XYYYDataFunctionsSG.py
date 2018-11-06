@@ -33,7 +33,7 @@ def AppendColumnsToCSV(CSVName, YYYYData, columnheaders, rowIndex = [], rowIndex
     
     return None
 
-def TrimReferenceFileByMolecules(moleculesToSave, referenceFileName, unusedReferenceFileName = None):
+def TrimReferenceFileByMolecules(moleculesToSave, referenceFileName):
     
     #it is useful to trim whitespace from each string. This prevents future errors in comparison. 
     for moleculeIndex in range(len(moleculesToSave)):
@@ -51,9 +51,10 @@ def TrimReferenceFileByMolecules(moleculesToSave, referenceFileName, unusedRefer
             moleculesToDelete.append(1+moleculeCount)
     #delete all the unspecified molecules 
     referenceFile = referenceFile.drop(moleculesToDelete, axis = 1)
-    if unusedReferenceFileName != None:
-        referenceFile.to_csv(unusedReferenceFileName, header = False, index = False)      
-    else: return referenceFile
+#    if unusedReferenceFileName != None:
+#        referenceFile.to_csv(unusedReferenceFileName, header = False, index = False)      
+#    else: return referenceFile
+    return referenceFile
 
 '''
 MSDataWriterXYYY() replaces ExportXYYYData() for writing
