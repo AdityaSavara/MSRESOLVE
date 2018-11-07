@@ -3622,10 +3622,10 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
             #initialize ExperimentData.conversionFactorAtEachTime to be a numpy array with the same length as the times array
             ExperimentData.conversionFactorAtEachTime = numpy.zeros(len(ExperimentData.times))
             #initialize conversionFactorForEachReferenceFile as a numpy array with the same length as the number of reference files given
-            conversionFactorForEachReferenceFile = numpy.zeros(len(AllMoleculesReferenceDataList))
+            conversionFactorForEachReferenceFile = numpy.zeros(len(ReferenceData))
             ExperimentData.units = units
             #Get the conversion factor for each reference pattern
-            for referencePatternIndex in range(len(AllMoleculesReferenceDataList)): #loop through all reference patterns
+            for referencePatternIndex in range(len(AllMoleculesReferenceDataList)): #loop through all reference patterns containing all molecules
                 for moleculecounter in range(len(AllMoleculesReferenceDataList[referencePatternIndex].molecules)):#array-indexed for loop
                     for masscounter in range(len(AllMassFragmentsExperimentData.mass_fragment_numbers)):#array-indexed for loop
                         if molecule[referencePatternIndex] == AllMoleculesReferenceDataList[referencePatternIndex].molecules[moleculecounter]:#gets molecule index
@@ -3656,12 +3656,12 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
             
         elif TSC_List_Type == 'SeparateMoleculesFactors':
             #TODO: change the variable name of conversionFactorAtEachTime since it can now refer to numerous molecules
-            ExperimentData.conversionFactorAtEachTime = numpy.zeros(len(ReferenceData[0].molecules))
+            ExperimentData.conversionFactorAtEachTime = numpy.zeros(len(ReferenceData[0].molecules)) #initialize ExperimentData.conversionFactorAtEachTime to be an array the length of the number of molecules from the trimmed reference data
             ExperimentData.units = units
             
             #Default concentration factors at each molecule to match the first moleculeTSC input
-            for moleculecounter in range(len(AllMoleculesReferenceDataList[0].molecules)): #loop over molecules
-                for masscounter in range(len(AllMassFragmentsExperimentData.mass_fragment_numbers)): #loop over mass fragments
+            for moleculecounter in range(len(AllMoleculesReferenceDataList[0].molecules)): #loop over ALL molecules
+                for masscounter in range(len(AllMassFragmentsExperimentData.mass_fragment_numbers)): #loop over ALL mass fragments
                     if molecule[0] == AllMoleculesReferenceDataList[0].molecules[moleculecounter]: #gets index of first moleculeTSC in the reference data
                         if massNumber[0] == AllMassFragmentsExperimentData.mass_fragment_numbers[masscounter]: #Gets index of first massNumberTSC in the collected data
                             #Get the concentration factor for the first molecule listed
@@ -3672,13 +3672,13 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                 
             #Now populate the conversion factors for the molecules that were listed
             for moleculeTSC_Index in range(len(molecule)): #Loop through the moleculesTSC_List
-                for moleculecounter in range(len(AllMoleculesReferenceDataList[0].molecules)): #Looping through all molecules
-                    for masscounter in range(len(AllMassFragmentsExperimentData.mass_fragment_numbers)): #Looping through all mass fragments
-                        if molecule[moleculeTSC_Index] == AllMoleculesReferenceDataList[0].molecules[moleculecounter]: #Gets the molecule index
-                            if massNumber[moleculeTSC_Index] == AllMassFragmentsExperimentData.mass_fragment_numbers[masscounter]: #Gets the mass fragment index
-                                if molecule[moleculeTSC_Index] in ReferenceData[0].molecules: #If the molecule is in the trimmed reference data find the index
+                for moleculecounter in range(len(AllMoleculesReferenceDataList[0].molecules)): #Looping through ALL molecules
+                    for masscounter in range(len(AllMassFragmentsExperimentData.mass_fragment_numbers)): #Looping through ALL mass fragments
+                        if molecule[moleculeTSC_Index] == AllMoleculesReferenceDataList[0].molecules[moleculecounter]: #Gets the molecule index from all molecules
+                            if massNumber[moleculeTSC_Index] == AllMassFragmentsExperimentData.mass_fragment_numbers[masscounter]: #Gets the mass fragment index from all mass fragments
+                                if molecule[moleculeTSC_Index] in ReferenceData[0].molecules: #If the molecule is in the trimmed reference data find the index of where it appears
                                     ReferenceDataMoleculeIndex = numpy.where(ReferenceData[0].molecules == molecule[moleculeTSC_Index])[0][0] #np.where returns an array with the first element being a list of the indicies.  So using [0][0] as syntax we can pull the index out as an int assuming there are no repeats in molecule names
-                                    #Solve for the new conversion factor
+                                    #Solve for the new conversion factor and place it at the index of the molecule's appearance in the trimmed reference data
                                     ExperimentData.conversionFactorAtEachTime[ReferenceDataMoleculeIndex] = (moleculeConcentration[moleculeTSC_Index]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[moleculeTSC_Index])
                                 else: #if the molecule is not in the trimmed data then just use the conversion factor of the first molecule listed which is what already populates conversionFactorAtEachTime
                                     pass
@@ -4299,8 +4299,8 @@ def main():
         except: #If the ionization file does not exist in the main directory, leave as an empty dictionary
             G.AllMID_ObjectsDict = {}
     
-    #Save an MSReference object containing all molecules and an MSData object containing all mass fragments, respectively
-    if G.iterativeAnalysis and G.iterationNumber != 1: #If using iterative and not on the first iteration
+    #Save an MSReference object containing all molecules and an MSData object containing all mass fragments
+    if G.iterativeAnalysis and G.iterationNumber != 1: #If using iterative and not on the first iteration we will need to remove _iter_x from the file names
         AllMoleculesReferenceFileNamesList = [] #Initialize AllMoleculesReferenceDataList as an empty list
         for referenceFileNameIndex in range(len(G.referenceFileNamesList)): #Loop through the reference file names list
             AllMoleculesReferenceFileName = remove_iter_fromFileName(G.referenceFileNamesList[referenceFileNameIndex]) #Remove the _iter_ from the name so the program has the original filename to access from the parent directory
@@ -4310,19 +4310,17 @@ def main():
                              AllMoleculesReferenceFileName)) #This function will get the path of the reference file from the parent directory 
             AllMoleculesReferenceFileNamesList.append(AllMoleculesReferenceDataFilePath) #Append the path to the list and the program will read the reference file from the path name
         AllMassFragmentsExperimentDataFileName = remove_iter_fromFileName(G.collectedFileName) #Remove _iter_ from the data filename so the program has the original filename to access from the parent directory
-        AllMassFragmentsExperimentDataFileName = os.path.normpath(
+        AllMassFragmentsExperimentDataFileNamePath = os.path.normpath(
             os.path.join(os.curdir,
             os.pardir,
             AllMassFragmentsExperimentDataFileName)) #This function will get the path of the data file from the parent directory
     else: #Otherwise not running iterative or in the first iteration, just copy the filename
         AllMoleculesReferenceFileNamesList = copy.copy(G.referenceFileNamesList)
-        AllMassFragmentsExperimentDataFileName = copy.copy(G.collectedFileName)
-
+        AllMassFragmentsExperimentDataFileNamePath = copy.copy(G.collectedFileName)
     #Create the MSReference and MSData objects containing all molecules and all mass fragments, respectively
-    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(AllMassFragmentsExperimentDataFileName)
+    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(AllMassFragmentsExperimentDataFileNamePath)
     AllMassFragmentsExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)        
     AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesReferenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
-    
     #Then prepare AllMoleculesReferenceDataList to get matching_correction_values, this value is fed into RatioFinder
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
         AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
