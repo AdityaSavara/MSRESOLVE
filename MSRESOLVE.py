@@ -3631,7 +3631,7 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                         if molecule[referencePatternIndex] == AllMoleculesReferenceDataList[referencePatternIndex].molecules[moleculecounter]:#gets molecule index
                             if massNumber[referencePatternIndex] == AllMassFragmentsExperimentData.mass_fragment_numbers[masscounter]:#gets index
                                 #solve for the conversion factor of this reference file
-                                conversionFactorForEachReferenceFile[referencePatternIndex] = (moleculeConcentration[referencePatternIndex]*AllMoleculesReferenceDataList[referencePatternIndex].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[referencePatternIndex])
+                                conversionFactorForEachReferenceFile[referencePatternIndex] = (moleculeConcentration[referencePatternIndex]*AllMoleculesReferenceDataList[referencePatternIndex].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[referencePatternIndex]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
             #Now we need to populate conversionFactorAtEachTime with the proper conversion factors
             if len(referencePatternTimeRanges) > 0: #If using reference pattern time chooser, loop through ExpData.times to determine which conversion factor goes where
                 for timeIndex in range(len(ExperimentData.times)): #Looping through all times
@@ -3665,7 +3665,7 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                     if molecule[0] == AllMoleculesReferenceDataList[0].molecules[moleculecounter]: #gets index of first moleculeTSC in the reference data
                         if massNumber[0] == AllMassFragmentsExperimentData.mass_fragment_numbers[masscounter]: #Gets index of first massNumberTSC in the collected data
                             #Get the concentration factor for the first molecule listed
-                            conversionFactorForFirstMoleculeTSC = (moleculeConcentration[0]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[0])
+                            conversionFactorForFirstMoleculeTSC = (moleculeConcentration[0]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[0]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
             #Overwrite all values in conversion factor at each time with the conversion factor of the first moleculeTSC
             for conversionIndex in range(len(ExperimentData.conversionFactorAtEachTime)):
                 ExperimentData.conversionFactorAtEachTime[conversionIndex] = conversionFactorForFirstMoleculeTSC
@@ -3679,7 +3679,7 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                                 if molecule[moleculeTSC_Index] in ReferenceData[0].molecules: #If the molecule is in the trimmed reference data find the index of where it appears
                                     ReferenceDataMoleculeIndex = numpy.where(ReferenceData[0].molecules == molecule[moleculeTSC_Index])[0][0] #np.where returns an array with the first element being a list of the indicies.  So using [0][0] as syntax we can pull the index out as an int assuming there are no repeats in molecule names
                                     #Solve for the new conversion factor and place it at the index of the molecule's appearance in the trimmed reference data
-                                    ExperimentData.conversionFactorAtEachTime[ReferenceDataMoleculeIndex] = (moleculeConcentration[moleculeTSC_Index]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[moleculeTSC_Index])
+                                    ExperimentData.conversionFactorAtEachTime[ReferenceDataMoleculeIndex] = (moleculeConcentration[moleculeTSC_Index]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignal[moleculeTSC_Index]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
                                 else: #if the molecule is not in the trimmed data then just use the conversion factor of the first molecule listed which is what already populates conversionFactorAtEachTime
                                     pass
             #Reshape conversionFactorAtEachTime to be a vector of len(molecules)
