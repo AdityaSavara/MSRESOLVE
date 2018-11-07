@@ -4238,7 +4238,7 @@ def parseUserInput(currentUserInput):
         parse.strCheck(currentUserInput.unitsTSC,'unitsTSC')																																        
         #Make sure the molecules listed are in the reference data and the mass fragments are in the collected data
         parse.compareElementsBetweenLists(currentUserInput.moleculesTSC_List,currentUserInput.moleculesNames,'moleculesTSC_List','Molecules from Reference Data')
-        parse.compareElementsBetweenLists(currentUserInput.massNumberTSC_List,currentUserInput.exp_mass_fragments,'massNumberTSC_List','Mass Fragments from Data')
+        parse.compareElementsBetweenLists(currentUserInput.massNumberTSC_List,currentUserInput.exp_mass_fragment_numbers,'massNumberTSC_List','Mass Fragments from Data')
         
         if currentUserInput.TSC_List_Type == 'MultipleReferencePatterns': #If using multiple reference patterns then the user must input 1 value to use for each reference file or a value for each reference file
             #Then parallelize these variables to have the same length as number of reference patterns
