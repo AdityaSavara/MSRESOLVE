@@ -1113,6 +1113,9 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
         ReferenceData.standardized_reference_patterns = ReferenceThreshold(ReferenceData.standardized_reference_patterns,G.referenceValueThreshold)
         ReferenceData.ExportCollector('ReferenceThreshold')
     
+    #As the program is currently written, this function is called to act upon already threshold filtered standardized reference patterns which could cause innaccuracy.  
+    #One could move this function prior to threshold filtering however then correction values would not be correctly calculated for interpolated reference patterns
+    #We are not sure there are any other reasons we can't move this function call
     ReferenceData.correction_values = CorrectionValuesObtain(ReferenceData)
     #Only print if not called from interpolating reference objects
     if verbose:
@@ -1169,6 +1172,7 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
 InterpolateReferencePatterns is a function used in the reference pattern time chooser feature when a gap occurs between two time ranges
 It inputs two reference files, the current time, the start time of the gap, and the end time of the gap
 It interpolates row by row and returns the new interpolated data
+As the program is currently written, this function is called to act upon already threshold filtered standardized reference patterns which could cause innaccuracy.  This prevents discontinuities in the interpolated intensities, in prinicpal it would sometimes be more accurate to do threshold filtering after interpolation
 '''
 def InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,time,gapStart,gapEnd):
     #Since we probably need values from firstReferenceObject for another interpolation, create a deepcopy of firstReferenceObject
@@ -1389,6 +1393,15 @@ def StringSearch(string, keyword = '', antikeyword = ''):
     else:
         return False
 
+'''
+This is a helper function that removes the _iter_ from fileNames so the program can access reference files and collected files from the parent directory when running iterative analysis
+'''    
+def remove_iter_fromFileName(fileName):
+    startingIndexOfStringToRemove = fileName.find('_iter_')
+    endingIndexOfStringToRemove = fileName.find('.csv')
+    originalFileName = fileName[0:startingIndexOfStringToRemove] + fileName[endingIndexOfStringToRemove:len(fileName)]
+    return originalFileName
+    
 #This supporting function of IterativeAnalysisPreProcessing finds the highest suffix of any file that contains a given keyword. 
 def FindHighestDirNumber(keyword):
     listIterDirectories =[]
@@ -4225,7 +4238,7 @@ def parseUserInput(currentUserInput):
         #Units needs to be a string, if it is not a string, return an error
         parse.strCheck(currentUserInput.unitsTSC,'unitsTSC')																																        
         #Make sure the molecules listed are in the reference data
-        parse.compareElementsBetweenLists(currentUserInput.moleculesTSC_List,chosenMoleculesForParsing,'moleculesTSC_List','chosenMolecules')
+#        parse.compareElementsBetweenLists(currentUserInput.moleculesTSC_List,chosenMoleculesForParsing,'moleculesTSC_List','chosenMolecules')
         
         if currentUserInput.TSC_List_Type == 'MultipleReferencePatterns': #If using multiple reference patterns then the user must input 1 value to use for each reference file or a value for each reference file
             #Then parallelize these variables to have the same length as number of reference patterns
@@ -4255,7 +4268,7 @@ def parseUserInput(currentUserInput):
 ###############################################Algorithm Part 3: Main Control Function ###################################
 ##################################################################################################################
 def main():
-    global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.
+    global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
     if G.iterativeAnalysis:
         #This section is to overwrite the UI if iterative analysis is in the process of being run. 
         highestIteration = int(FindHighestDirNumber("_iter_"))
@@ -4286,6 +4299,36 @@ def main():
             G.AllMID_ObjectsDict = getIE_Data(G.ionizationDataFileName) #Read the ionization data and put the information into a dictionary
         except: #If the ionization file does not exist in the main directory, leave as an empty dictionary
             G.AllMID_ObjectsDict = {}
+    
+    #Save an MSReference object containing all molecules and an MSData object containing all mass fragments, respectively
+    if G.iterativeAnalysis and G.iterationNumber != 1: #If using iterative and not on the first iteration
+        AllMoleculesReferenceFileNamesList = [] #Initialize AllMoleculesReferenceDataList as an empty list
+        for referenceFileNameIndex in range(len(G.referenceFileNamesList)): #Loop through the reference file names list
+            AllMoleculesReferenceFileName = remove_iter_fromFileName(G.referenceFileNamesList[referenceFileNameIndex]) #Remove the _iter_ from the name so the program has the original filename to access from the parent directory
+            AllMoleculesReferenceDataFilePath = os.path.normpath(
+                os.path.join(os.curdir,
+                             os.pardir,
+                             AllMoleculesReferenceFileName)) #This function will get the path of the reference file from the parent directory 
+            AllMoleculesReferenceFileNamesList.append(AllMoleculesReferenceDataFilePath) #Append the path to the list and the program will read the reference file from the path name
+        AllMassFragmentsExperimentDataFileName = remove_iter_fromFileName(G.collectedFileName) #Remove _iter_ from the data filename so the program has the original filename to access from the parent directory
+        AllMassFragmentsExperimentDataFileName = os.path.normpath(
+            os.path.join(os.curdir,
+            os.pardir,
+            AllMassFragmentsExperimentDataFileName)) #This function will get the path of the data file from the parent directory
+    else: #Otherwise not running iterative or in the first iteration, just copy the filename
+        AllMoleculesReferenceFileNamesList = copy.copy(G.referenceFileNamesList)
+        AllMassFragmentsExperimentDataFileName = copy.copy(G.collectedFileName)
+
+    #Create the MSReference and MSData objects containing all molecules and all mass fragments, respectively
+    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(AllMassFragmentsExperimentDataFileName)
+    AllMassFragmentsExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)        
+    AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesReferenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
+    
+    #Then prepare AllMoleculesReferenceDataList to get matching_correction_values, this value is fed into RatioFinder
+    for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
+        AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
+        PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],AllMassFragmentsExperimentData)
+        
     #Read in the molecules used before parsing the user input file    
     G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
     G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
