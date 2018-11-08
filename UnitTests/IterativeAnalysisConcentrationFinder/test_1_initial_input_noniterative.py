@@ -208,7 +208,7 @@ SLSUniqueExport = 'yes'
 #this last set of inputs is where you enter your conversion factors from raw signal to concentration, unlike most rows, do not leave brackets around chosen numbers
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
 concentrationFinder = 'yes'
-TSC_List_Type = 'SeparateMoleculesFactors'
+TSC_List_Type = 'SeparateMolecularFactors'
 moleculesTSC_List = ['Acetaldehyde','CO','Ethanol']
 moleculeSignalTSC_List = [1.66945,1.2,1.1]
 massNumberTSC_List = [29,28,44]
