@@ -3665,6 +3665,7 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                             #Get the concentration factor for the first molecule listed
                             conversionFactorForFirstMoleculeTSC = (moleculeConcentrationTSC_List[0]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignalTSC_List[0]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
             #Overwrite all values in conversion factor at each time with the conversion factor of the first moleculeTSC
+	    #This for loop is looping conversionFactorsAtEachTime array which is the same length as the trimmed molecules
             for conversionIndex in range(len(conversionFactorsAtEachTime)):
                 conversionFactorsAtEachTime[conversionIndex] = conversionFactorForFirstMoleculeTSC
                 
