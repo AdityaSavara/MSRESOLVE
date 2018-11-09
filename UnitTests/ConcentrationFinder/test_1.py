@@ -26,7 +26,7 @@ MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefMixed2_test_1.csv']
 #Use the truncated reference data that contains only m29 and m29.2 with signals of 1 for each time for both mass fragments
 MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated.csv'
 MSRESOLVE.G.concentrationFinder = 'yes' #Turn on concentrationFinder
-MSRESOLVE.G.TSC_List_Type = 'SeparateMoleculesFactors' #Use factors for separate molecules rather than numerous reference files
+MSRESOLVE.G.TSC_List_Type = 'SeparateMolecularFactors' #Use factors for separate molecules rather than numerous reference files
 MSRESOLVE.G.moleculesTSC_List = ['Acetaldehyde'] #Using the 'known' concentration values for Acetaldehyde with SeparateMoleculesFactors, concentrationFinder will calculate a conversion factor based on this info and apply to it the scaled concentration of itself and Acetaldehyde_easy_to_ionize
 MSRESOLVE.G.moleculeSignalTSC_List = [1.66945]
 MSRESOLVE.G.moleculeConcentrationTSC_List = [0.05]
