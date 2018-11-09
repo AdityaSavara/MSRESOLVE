@@ -3609,7 +3609,9 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
 #This little bit of code enables the user to input a couple values so that the conversion between signal relative to CO and 
 #concentration can be found, and as such the rest of the concentrations can be found as well. If no data is input here, then
 #there are no concentrations printed out, only signals. (if they are both printed, it is done on separate excel sheets)
-#TODO Make RatioFinder capable of using both numerous reference patterns and separate molecules and then remove the TODO comment with concentrationFinder in user input
+#TODO Make RatioFinder capable of using both numerous reference patterns and separate molecules (right now can only use one of these features at a time) and then remove the TODO comment with concentrationFinder in user input
+#TODO continued: As seen below we have conversionFactorsAtEachTime initialized as an array of the same length as either the number of data points or number of molecules depending on which feature is being used.
+#TODO continued: To make compatible with both features at the same time the array will need to be initialized as numpy.zeros((len(ExperimentData.times),len(ReferenceData[0].molecules))
 #TODO continued: One solution would be to check if moleculesTSC_List is a list of lists (make this the first if statement after the line if concentrationFinder == 'yes')
 #TODO continued: Initialize conversionFactorsAtEachTime (maybe change to conversionFactorArray) as an array of zeros that has the same shape as the experimental data (without the headers or abscissa headers) (maybe make a copy of experiment data or a sliced copy to remove headers) and populate it with the proper conversion factor
 #TODO continued: To do so, find the first reference file's conversion factors based on the values in the first list of moleculeConcentrationTSC, moleculeSignalTSC, and moleculeTSC from the user input
