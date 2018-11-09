@@ -3618,7 +3618,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
 #TODO continued: In the case of gaps in time ranges, just interpolate the conversion factors (of like molecules) between the two time ranges
 def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, ReferenceData, ExperimentData, concentrationFinder,TSC_List_Type,moleculesTSC_List,moleculeConcentrationTSC_List,massNumberTSC_List,moleculeSignalTSC_List,referencePatternTimeRanges): 
     if concentrationFinder == 'yes':#user input
-        if TSC_List_Type == 'MultipleReferencePatterns' or TSC_List_Type == 'UniformMolecularPatterns':
+        if TSC_List_Type == 'MultipleReferencePatterns' or TSC_List_Type == 'UniformMolecularFactors':
             #initialize conversionFactorsAtEachTime to be a numpy array with the same length as the times array
             conversionFactorsAtEachTime = numpy.zeros(len(ExperimentData.times))
             #initialize conversionFactorForEachReferenceFile as a numpy array with the same length as the number of reference files given
@@ -3665,7 +3665,6 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                             #Get the concentration factor for the first molecule listed
                             conversionFactorForFirstMoleculeTSC = (moleculeConcentrationTSC_List[0]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignalTSC_List[0]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
             #Overwrite all values in conversion factor at each time with the conversion factor of the first moleculeTSC
-	    #This for loop is looping conversionFactorsAtEachTime array which is the same length as the trimmed molecules
             for conversionIndex in range(len(conversionFactorsAtEachTime)):
                 conversionFactorsAtEachTime[conversionIndex] = conversionFactorForFirstMoleculeTSC
                 
@@ -3681,8 +3680,6 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                                     conversionFactorsAtEachTime[ReferenceDataMoleculeIndex] = (moleculeConcentrationTSC_List[moleculeTSC_Index]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignalTSC_List[moleculeTSC_Index]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
                                 else: #if the molecule is not in the trimmed data then just use the conversion factor of the first molecule listed which is what already populates conversionFactorAtEachTime
                                     pass
-            #Reshape conversionFactorAtEachTime to be a vector of len(molecules)
-            conversionFactorsAtEachTime = numpy.reshape(conversionFactorsAtEachTime,(1,len(ReferenceData[0].molecules)))
         else:
             raise ValueError('Invalid option for TSC_List_Type')
     elif concentrationFinder == 'no': #user input
