@@ -2030,6 +2030,19 @@ def getIE_Data(IonizationDataFileName):
         else: #otherwise the object does not exist and needs to be created
             AllMID_ObjectsDict[MID_ObjectName] = MolecularIonizationData(moleculeName,RS_Value,moleculeElectronNumber,moleculeIonizationTypeList,sourceOfIonizationData) #Store MIDObject in AllMIDObjects Dictionary
     return AllMID_ObjectsDict
+
+'''
+populateAllMID_ObjectsDict tries to read the ionizationFileName and populates the dictionary
+If unable to read the file an empty dictionary is returned
+'''
+def populateAllMID_ObjectsDict(ionizationDataFileName):
+    try:
+        AllMID_ObjectsDict = getIE_Data(ionizationDataFileName) #Read the ionization data and put the information into a dictionary
+    except: #If the ionization file does not exist in the main directory, leave as an empty dictionary
+        AllMID_ObjectsDict = {}
+        
+    return AllMID_ObjectsDict
+
 ###############################################################################
 #########################  Classes: Data Storage  #############################
 ###############################################################################
@@ -4289,12 +4302,10 @@ def main():
         #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
         IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber) #This function also changes the working directory
     if (not G.iterativeAnalysis) or (G.iterationNumber == 1): #If not using iterative analysis or running the first iteration
-	#Create the dictionary storing the Molecular Ionization Data objects if the ionization data file exists in the main directory
-	#If using iterative analysis, then the dictionary used in the first iteration is retained throughout each iteration
-        try:
-            G.AllMID_ObjectsDict = getIE_Data(G.ionizationDataFileName) #Read the ionization data and put the information into a dictionary
-        except: #If the ionization file does not exist in the main directory, leave as an empty dictionary
-            G.AllMID_ObjectsDict = {}
+    	#Create the dictionary storing the Molecular Ionization Data objects if the ionization data file exists in the main directory
+    	#If using iterative analysis, then the dictionary used in the first iteration is retained throughout each iteration
+        G.AllMID_ObjectsDict = populateAllMID_ObjectsDict(G.ionizationDataFileName)
+
     
     #Save an MSReference object containing all molecules and an MSData object containing all mass fragments
     if G.iterativeAnalysis and G.iterationNumber != 1: #If using iterative and not on the first iteration we will need to remove _iter_x from the file names
