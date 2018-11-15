@@ -2436,7 +2436,7 @@ def InverseMethod(matching_correction_values,rawsignalsarrayline,monitored_refer
     
 
 #this function finds the significance of a specified value in an array to the array as a whole
-def IndElemSignificanceCalculator(rowDataArray, columnIndex, moleculesLikelihood):
+def IndElemSignificanceCalculator(rowDataArray, specifiedColumnIndex, moleculesLikelihood):
     length = len(rowDataArray)
     #variable to hold the terms in the summation
     allSummationTerms = []
@@ -2444,15 +2444,15 @@ def IndElemSignificanceCalculator(rowDataArray, columnIndex, moleculesLikelihood
     for moleculecounter in range(length):
         if rowDataArray[moleculecounter] != 0: #if the value is zero, then the final value will be zero as well: it doesn't have to be changed
             #calculates the unweighted ratio of each value, scaled by the likelihood of that molecule 
-            indSummationTerm = abs((moleculesLikelihood[moleculecounter]*rowDataArray[moleculecounter])**float(-1)*(moleculesLikelihood[columnIndex]*rowDataArray[columnIndex]-1))
+            indSummationTerm = abs((moleculesLikelihood[moleculecounter]*rowDataArray[moleculecounter])**float(-1)*(moleculesLikelihood[specifiedColumnIndex]*rowDataArray[specifiedColumnIndex]-1))
             allSummationTerms.append(indSummationTerm)
-    #the following line can be replace with code such as "significance = (sum(allSummationTerms)**SumCoeffient)*(array[columnIndex]**ValueCoefficent)"
+    #the following line can be replace with code such as "significance = (sum(allSummationTerms)**SumCoeffient)*(array[specifiedColumnIndex]**ValueCoefficent)"
     # if you would like to add coefficents to increase or decrease the weighting of each term
-    significance = sum(allSummationTerms)*rowDataArray[columnIndex]*moleculesLikelihood[columnIndex]
+    significance = sum(allSummationTerms)*rowDataArray[specifiedColumnIndex]*moleculesLikelihood[specifiedColumnIndex]
     return significance
 
 #This function compiles a list of the significances of each row to a particular column 
-def ElemSignificanceCalculator(anArray,columnIndex, moleculesLikelihood):
+def ElemSignificanceCalculator(anArray,specifiedColumnIndex, moleculesLikelihood):
     #find the number of rows
     row_num = len(anArray)
     #empty list to store values
@@ -2460,7 +2460,7 @@ def ElemSignificanceCalculator(anArray,columnIndex, moleculesLikelihood):
     #for each row...
     for rowcounter in range(row_num):
         # the "Significance" of that row to the column is calculated
-        sigValue = IndElemSignificanceCalculator(anArray[rowcounter], columnIndex, moleculesLikelihood)
+        sigValue = IndElemSignificanceCalculator(anArray[rowcounter], specifiedColumnIndex, moleculesLikelihood)
         # the significance is stored in a list
         sigValuesList.append(sigValue)
         
