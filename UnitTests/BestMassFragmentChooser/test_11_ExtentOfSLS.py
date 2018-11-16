@@ -8,9 +8,10 @@ Created on Wed Aug  1 13:47:18 2018
 #importing the functions from UnitTesterSG module
 import sys
 import os
-sys.path.insert(1, os.path.join(os.curdir, os.pardir, "lib"))
-sys.path.insert(1, os.path.join(os.curdir, os.pardir))
-sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 import UnitTesterSG as ut
 
 #BELOW ARE THE LINES INTENDED TO BE CHANGED BY THE USER	
@@ -19,7 +20,7 @@ import bestMassFragChooser as bmfc
 
 #Import the UserInput to turnoff the SLSUniqueExport option. This will be the same module as the one bmfc is using, so it will turn off there also.
 import UserInput as G
-G.SLSUniqueExport = 'no'
+G.SLSUniqueExport == 'no'
 
 #2) getting the prefix (or suffix) arugument for check_results. This is just for the output filenames.
 suffix= ut.returnDigitFromFilename(__file__)
@@ -29,16 +30,19 @@ prefix=''
 #Declare variables to be used. These will be included in the UserInput file
 #once fully integrated into MSRESOLVE
 #Select the molecules to be monitored
-moleculesToMonitor=['Ethylene (Ethene)', 'Ethanol', 'Crotyl Alcohol' ]
+moleculesToMonitor=['Ethylene (Ethene)', 'Ethanol' ]
 #Enter the likelihood for each molecule in the order shown above.
 #**IDEA could the user input directly into a dictionary initialization?
-moleculesLikelihood=[1,0.5,1]
+moleculesLikelihood=[1,0.5]
 #Enter the number of mass fragements to monitor
-numberOfMassFragsToMonitor=4
+numberOfMassFragsToMonitor=3
 
 #4) get the output of the function, which is what will typically be checked.
 
-topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor,'AcetaldehydeNISTRefMixed2.csv','xyyy',keep_N_ValuesInRoughUniquenessCheck=False, keep_N_ValuesInSignificanceFactorCheck=False, onTheFlySLS=True , useExtentOfSLSUniqueSolvable = False)[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+#, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, 
+    moleculesLikelihood, numberOfMassFragsToMonitor,
+    'AcetaldehydeNISTRefMixed2.csv','xyyy' , useExtentOfSLSUniqueSolvable = True)[0]
 resultObj=topBestMassFragments
 
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
@@ -47,9 +51,11 @@ resultStr= str(resultObj)
 
 #this is so that pytest can do UnitTesterSG tests.
 def test_pytest(): #note that it cannot have any required arguments for pytest to use it, and that it is using variables that are defined above in the module.
-    ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = False)
+    ut.doTest(resultObj, resultStr, prefix=prefix,
+        suffix=suffix, allowOverwrite = False)
     
     
 if __name__ == "__main__":
-   #This is the normal way of using the UnitTesterSG module, and will be run by UnitTesterSG or by running this test file by itself.
-   ut.doTest(resultObj, resultStr, prefix=prefix,suffix=suffix, allowOverwrite = True)
+    #This is the normal way of using the UnitTesterSG module, and will be run by UnitTesterSG or by running this test file by itself.
+    ut.doTest(resultObj, resultStr, prefix=prefix, suffix=suffix,
+        allowOverwrite = True)

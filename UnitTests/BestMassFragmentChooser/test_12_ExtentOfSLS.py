@@ -8,9 +8,10 @@ Created on Wed Aug  1 13:47:18 2018
 #importing the functions from UnitTesterSG module
 import sys
 import os
-sys.path.insert(1, os.path.join(os.curdir, os.pardir, "lib"))
-sys.path.insert(1, os.path.join(os.curdir, os.pardir))
-sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
+baseDir = os.getcwd()
+sys.path.insert(1, os.path.join(baseDir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(baseDir, os.pardir))
+sys.path.insert(1, os.path.join(baseDir, os.pardir, os.pardir))
 import UnitTesterSG as ut
 
 #BELOW ARE THE LINES INTENDED TO BE CHANGED BY THE USER	
@@ -19,7 +20,7 @@ import bestMassFragChooser as bmfc
 
 #Import the UserInput to turnoff the SLSUniqueExport option. This will be the same module as the one bmfc is using, so it will turn off there also.
 import UserInput as G
-G.SLSUniqueExport = 'no'
+G.SLSUniqueExport == 'no'
 
 #2) getting the prefix (or suffix) arugument for check_results. This is just for the output filenames.
 suffix= ut.returnDigitFromFilename(__file__)
@@ -38,7 +39,7 @@ numberOfMassFragsToMonitor=4
 
 #4) get the output of the function, which is what will typically be checked.
 
-topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor,'AcetaldehydeNISTRefMixed2.csv','xyyy',keep_N_ValuesInRoughUniquenessCheck=False, keep_N_ValuesInSignificanceFactorCheck=False, onTheFlySLS=True , useExtentOfSLSUniqueSolvable = False)[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor,'AcetaldehydeNISTRefMixed2.csv','xyyy',keep_N_ValuesInRoughUniquenessCheck=False, keep_N_ValuesInSignificanceFactorCheck=False, onTheFlySLS=True, useExtentOfSLSUniqueSolvable = True )[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 resultObj=topBestMassFragments
 
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
