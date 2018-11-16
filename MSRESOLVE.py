@@ -25,16 +25,18 @@ import UserInput as G, imp; imp.reload(G) #import the user input and reload the 
 #SLS method. There are 2 cases where this occurs :1) a molecule does not 
 #contain reference intensities for any mass fragments in the combination or 2)
 #The reference data for the mass fragments does not contain any zeros.
-def passesRowsSumChecks(rowSumsList, massFragCombination, allOverlappingPatterns):
-    numberOfMassFragments=len(massFragCombination)##Potentially pass in the length variable to make it shorter
+def passesRowsSumChecks(rowSumsList, massFragCombination, allOverlappingPatterns, numberOfMassFragments=None, numberOfRows=None):
+    if numberOfMassFragments==None:
+        numberOfMassFragments=len(massFragCombination)##It is slightly faster to pass in the length variable to make it shorter      
     passesRowsSumChecks=True#Initialize return variable as true
-    if all(rowSum==numberOfMassFragments for rowSum in rowSumsList): #Check if the array passed to it is full. If it is full, it appends to the allOverlapping patterns list
+    if 0 in rowSumsList: #Check if any row is entirely full of zeros
+        passesRowsSumChecks=False
+    elif numpy.array(rowSumsList).all() == numberOfMassFragments: #Check if the array passed to it is full. If it is full, it appends to the allOverlapping patterns list
         allOverlappingPatterns.append(massFragCombination)###May be an error with the use of allOverlapping patterns
         #FIXME: #TODO: should be printed to a file.
-        print(allOverlappingPatterns)
+        #print(allOverlappingPatterns)
         passesRowsSumChecks=False
-    elif 0 in rowSumsList: #Check if any row is entirely full of zeros
-        passesRowsSumChecks=False
+
     return passesRowsSumChecks, allOverlappingPatterns #Return true if the rowsSumsList passes the check
 
 #The function maintains two lists: 1)that contains the objective function values that 
@@ -2436,23 +2438,39 @@ def InverseMethod(matching_correction_values,rawsignalsarrayline,monitored_refer
     
 
 #this function finds the significance of a specified value in an array to the array as a whole
-def IndElemSignificanceCalculator(rowDataArray, specifiedColumnIndex, moleculesLikelihood):
+def IndElemSignificanceCalculator(rowDataArray, specifiedColumnIndex, moleculesLikelihood, minThreshold=None, maxIntensityPossible=100):
     length = len(rowDataArray)
     #variable to hold the terms in the summation
     allSummationTerms = []
     #for each value in the array
+
+    if minThreshold == 0: minThreshold=None #the code is written to have minThreshold as None or not None, but 0 counts as None  for this purpose.
+    if minThreshold != None: #assume the minThreshold is some kind of number, and use it to calculate and cap the indSummationTerm.
+        indSummationTermCap = maxIntensityPossible/minThreshold - 1 #note that the 100 is the default maxIntensityPossible, with the assumption that standardized intensities  are capped at 100.
+    
     for moleculecounter in range(length):
-        if rowDataArray[moleculecounter] != 0: #if the value is zero, then the final value will be zero as well: it doesn't have to be changed
-            #calculates the unweighted ratio of each value, scaled by the likelihood of that molecule 
-            indSummationTerm = abs((moleculesLikelihood[moleculecounter]*rowDataArray[moleculecounter])**float(-1)*(moleculesLikelihood[specifiedColumnIndex]*rowDataArray[specifiedColumnIndex]-1))
-            allSummationTerms.append(indSummationTerm)
+        if rowDataArray[moleculecounter] != 0: #if the value is not zero, calculate 
+            if minThreshold == None: #just calculate the indSummationTerm as normal.
+                #calculates the unweighted ratio of each value, scaled by the likelihood of that molecule 
+                indSummationTerm = abs((moleculesLikelihood[moleculecounter]*rowDataArray[moleculecounter])**float(-1)*(moleculesLikelihood[specifiedColumnIndex]*rowDataArray[specifiedColumnIndex]-1))
+                allSummationTerms.append(indSummationTerm)       
+            if minThreshold != None: #assume the minThreshold is some kind of number, and use it to calculate and cap the indSummationTerm.
+                indSummationTerm = abs((moleculesLikelihood[moleculecounter]*rowDataArray[moleculecounter])**float(-1)*(moleculesLikelihood[specifiedColumnIndex]*rowDataArray[specifiedColumnIndex]-1))
+                if indSummationTerm > indSummationTermCap: indSummationTerm = indSummationTermCap
+                allSummationTerms.append(indSummationTerm)
+        if rowDataArray[moleculecounter] == 0: 
+            if minThreshold == None: 
+                pass #the pass is like allSummationTerms.append(0) #if the intensity/value is zero, and we don't have a minThreshold to use, then the final value will be zero as well.
+            if minThreshold != None: #else assume the minThreshold is some kind of number.
+                indSummationTerm = indSummationTermCap #use the cap directly if the term for rowDataArray[moleculecounter] == 0, because that means a denominator of 0 which is like infinity. 
+                allSummationTerms.append(indSummationTerm)            
     #the following line can be replace with code such as "significance = (sum(allSummationTerms)**SumCoeffient)*(array[specifiedColumnIndex]**ValueCoefficent)"
     # if you would like to add coefficents to increase or decrease the weighting of each term
     significance = sum(allSummationTerms)*rowDataArray[specifiedColumnIndex]*moleculesLikelihood[specifiedColumnIndex]
     return significance
 
 #This function compiles a list of the significances of each row to a particular column 
-def ElemSignificanceCalculator(anArray,specifiedColumnIndex, moleculesLikelihood):
+def ElemSignificanceCalculator(anArray,specifiedColumnIndex, moleculesLikelihood, minThreshold=None, maxIntensityPossible=100):
     #find the number of rows
     row_num = len(anArray)
     #empty list to store values
@@ -2460,7 +2478,7 @@ def ElemSignificanceCalculator(anArray,specifiedColumnIndex, moleculesLikelihood
     #for each row...
     for rowcounter in range(row_num):
         # the "Significance" of that row to the column is calculated
-        sigValue = IndElemSignificanceCalculator(anArray[rowcounter], specifiedColumnIndex, moleculesLikelihood)
+        sigValue = IndElemSignificanceCalculator(anArray[rowcounter], specifiedColumnIndex, moleculesLikelihood, minThreshold=minThreshold, maxIntensityPossible=maxIntensityPossible)
         # the significance is stored in a list
         sigValuesList.append(sigValue)
         
