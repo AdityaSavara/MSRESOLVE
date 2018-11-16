@@ -1,4 +1,6 @@
-This directory test the Best Mass Fragment Chooser
+This directory test the Best Mass Fragment Chooser. 
+
+NOTE: Now, by default, it uses ExtentOfSLSUniqueSolvable.py and does not do on the fly SLS, nor does it do the significance checks etc.
 
 The Best Mass Fragment Chooser selects mass fragment combinaitons that have unique fragments and can therefore pass the SLS Unique Fragments solution method. It ranks the mass fragment combination in terms the sum of the significance factors across the reference data for the selected masss fragments and returns the fragment combinations having the largest significance sum. It also returns a reference file containing refernce data for only the specified mass fragments and molecules.
 
