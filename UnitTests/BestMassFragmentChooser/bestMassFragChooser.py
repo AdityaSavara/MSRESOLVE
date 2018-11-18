@@ -11,10 +11,8 @@ import itertools
 import copy
 import time
 import bisect
-
-
-#NOTE: At the end of those file, there is a section which tries to import MSRESOLVE, and includes external dependences such as the Reference Data class.
-#The idea of separating that class out of the MSRESOLVE module was considered, e.g. to make a module called MSDataStructures or something like that, but separating has not been done at this time.
+#Implict Import: Near the top of the bestMassFragChooser function there is a section which tries to import MSRESOLVE, and if not then separapte imports external dependences such as the Reference Data class.
+#The idea of permanently separating that class out of the MSRESOLVE module was considered, e.g. to make a module called MSDataStructures or something like that, but separating has been decided-against at this time.
 
             
                 
