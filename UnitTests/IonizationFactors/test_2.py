@@ -32,7 +32,7 @@ MSRESOLVE.G.exportAtEachStep = 'no'
 MSRESOLVE.main()
 
 #Get data from the reference file
-ReferenceInfo = numpy.genfromtxt('AcetaldehydeNISTRefMatchingMolecule.csv',dtype=None,delimiter=',',encoding=None)
+ReferenceInfo = numpy.genfromtxt('AcetaldehydeNISTRefMatchingMolecule.csv',dtype=None,delimiter=',')
 
 #Get a list the same length as the number of molecules
 ionizationFactorsRN2 = numpy.zeros(len(ReferenceInfo[0][1:]))
