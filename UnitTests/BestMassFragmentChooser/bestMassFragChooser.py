@@ -12,32 +12,7 @@ import itertools
 import copy
 import time
 import bisect
-import ExtentOfSLSUniqueSolvable as ESUS
-
-
-
-#TODO finish ranking systems to use update or insert. This will keep a list 
-#containing 2 tuples: 1) the mass fragment combinaiton and 2) the values of the
-#Objective functions. The values of the objective functions will contain 3
-#elementss: 1) the number of remaining molecules left from SLS, 2) the negative
-#significance sum and 3) the rough uniqueness value. After the loop though SLS,
-#the mass fragments will be sorted by objective values in an ascending order.
-#The value to insert tuple will contian the mass fragment and the objective
-#functions tuple.
-
-def updateOrInsert(storeInObjectiveFunctionValuesList, valueToInsertTuple):
-    #If the mass fragment combination is not already present in the list insert
-    #it
-    if valueToInsertTuple[0] not in storeInObjectiveFunctionValuesList[:][0]:
-        storeInObjectiveFunctionValuesList=bisect.insort(storeInObjectiveFunctionValuesList,valueToInsertTuple)
-    else: #If the mass fragment combinaiton is already in the list
-        #Loop throught the storedInObjectiveFunctionValuesList to determine where
-        #The mass fragment combination was
-        for storeInObjectiveFunctionValuesIndex, storedInObjectiveFunctionValues in enumerate(storeInObjectiveFunctionValuesList):
-            #If the mass fragment combinaiton was in the list, set the
-            if valueToInsertTuple[1]==storedInObjectiveFunctionValues[1]:
-                storeInObjectiveFunctionValuesList[storeInObjectiveFunctionValuesIndex]=valueToInsertTuple
-                
+            
                 
 #The best mass frag chooser, uses reference patterns for selected molecules to
 #deteremine which mass fragements would be the best to monitor in order to 
@@ -47,7 +22,7 @@ def updateOrInsert(storeInObjectiveFunctionValuesList, valueToInsertTuple):
 #of mamss fragments will result in a solution via SLS. It will return the N 
 #most significant possible combinaitons (if any). Currently, the feature 
 #does not work with SLS common due to errors in SLS common.
-def bestMassFragChooser(moleculesToMonitor,
+def bestMassFragChooser(chosenMolecules,
     moleculesLikelihood,
     numberOfMassFragsToMonitor,
     referenceFileName,
@@ -67,7 +42,7 @@ def bestMassFragChooser(moleculesToMonitor,
     
     #A solution cannot be found if the number of fragments to monitor is less 
     #than the number of molecules to monitor
-    if len(moleculesToMonitor)>numberOfMassFragsToMonitor: 
+    if len(chosenMolecules)>numberOfMassFragsToMonitor: 
         raise ValueError('The number of mass fragments to monitor must be larger than or equal to the number of molecules to monitor')
     
     #The 4th "theoretical" case of having no limits post-loop SLS does not make sense, because there is a risk of too many combinations (which is why we make limits).
@@ -109,10 +84,8 @@ def bestMassFragChooser(moleculesToMonitor,
     truncatedReferenceData=copy.deepcopy(ReferenceData)
     
     #Truncate the data so that it matches the molecules chosen for consideration. 
-    #TODO: should probably change moleculesToMonitor to be G.chosenMolecules
-    
     truncatedReferenceData = MSRESOLVE.trimDataMoleculesToMatchChosenMolecules(
-        truncatedReferenceData, moleculesToMonitor)
+        truncatedReferenceData, chosenMolecules)
 
     
     # standardize the reference data columns such that the maximum value is 
@@ -159,7 +132,7 @@ def bestMassFragChooser(moleculesToMonitor,
     #molecules object. In order to reorder the molecular likelihoods, a 
     #dictionary was created to keep track of the molecular likelihoods for each
     #of the molecules
-    moleculesLikelihoodDict=dict([(moleculeName,moleculesLikelihood[moleculeIndex]) for moleculeIndex, moleculeName in enumerate(moleculesToMonitor)])
+    moleculesLikelihoodDict=dict([(moleculeName,moleculesLikelihood[moleculeIndex]) for moleculeIndex, moleculeName in enumerate(chosenMolecules)])
     reorderedMoleculesLikelihood=[]
     #A list of the reordered molecular likelihoods had to be created in order to
     #allow for multiplication in the following step.
@@ -217,7 +190,7 @@ def bestMassFragChooser(moleculesToMonitor,
     #Using intensityMatrix calculate the signficance of every 
     #intensity value. These are stored in significance matrix which has the 
     #same shape as intensityMatrix
-    significanceMatrix = ESUS.generateSignificanceMatrix(
+    significanceMatrix = generateSignificanceMatrix(
         intensityMatrix, moleculesLikelihood, minThreshold=significantPeakThreshold)
     
     if useExtentOfSLSUniqueSolvable:
@@ -301,8 +274,8 @@ def bestMassFragChooser(moleculesToMonitor,
                 #Perform a simplified SLS to check how well this combination 
                 #performs.
                 (extentSolvable, summedSignificance,
-                solvedSpecies, massFragsUsed) = ESUS.ExtentOfSLSUniqueSolvable(
-                    massFragCombination, moleculesToMonitor,
+                solvedSpecies, massFragsUsed) = ExtentOfSLSUniqueSolvable(
+                    massFragCombination, chosenMolecules,
                     relevantIntensities1sand0s, relevantSignificanceMatrix)
                     
                 #Pass to storeAndPop to see how this combination compares 
@@ -548,3 +521,206 @@ def bestMassFragChooser(moleculesToMonitor,
     else:
         print('There are no SLS Solvable mass fragment combinations')
     return topBestMassFragments, allOverlappingPatterns
+
+
+def ExtentOfSLSUniqueSolvable(massFrags, species, 
+    onesAndZeros, significanceMatrix):
+    """
+    Arguments:
+        massFrags - An n by 1 numpy array that holds the mass fragment 
+                    masses. This is an index on the vertical axis of 
+                    the onesAndZeros matrix.
+    
+        species - An m by 1 numpy array that holds the names of the
+                  species being considered as strings. This is an index
+                  for the horizontal axis of the onesAndZeros matrix.
+                    
+        onesAndZeros - This is the n by m 2-d numpy array of one and zeros.
+                       Each row corresponds to a particular mass fragment
+                       and each column to a species. Should be 
+                       cleaned by this point to remove irrelevant
+                       mass fragment rows.
+                       
+        significanceMatrix - A n by m 2-d numpy array that mirrors onesAndZeros.
+                             The elements of this matrix indicate the 
+                             significance of the corresponding intensity. This 
+                             is used to select the best unique value/row in 
+                             situations where more than one are available.
+                       
+    Returns a 3-tuple (extentSolvable, solvedSpecies, massFragsUsed):
+    
+        extentSolvable - An integer that indicates how many species were 
+                         solved through unique SLS. It is the primary 
+                         metric to judge the suitability of a particular
+                         mass fragment combination
+                         
+        summedSignificance - An scalar that is the sum of the significances 
+                             of the intensities used for SLS. It serves
+                             as a secondary metric for selecting mass 
+                             fragement combinations. 
+                             
+        
+        solvedSpecies - 1-d numpy Array, shadows the species argument to this 
+                        function. Initially set to all zeros. When a species is 
+                        solvable through unique SLS we change the appropriate 
+                        element from 0 to 1 to indicate that fact.
+                         
+        massFragsUsed - A list that specifies, in order, which 
+                        mass fragments were used for the SLS unique 
+                        solutions.
+    """
+        
+    extentSolvable = 0 
+    summedSignificance = 0
+    solvedSpecies = numpy.zeros(len(species))
+    massFragsUsed = []
+    
+    for molecule in range(len(species) + 1):
+            
+        rowSum = numpy.sum(onesAndZeros, axis=1)
+    
+        #Is there a 1 in the rowSum numpy array?
+        #Note: See https://stackoverflow.com/questions/432112/is-there-a-numpy-function-to-return-the-first-index-of-something-in-an-array
+        #For info on numpy.where function
+        onesIndices = numpy.where(rowSum == 1)[0]
+        if len(onesIndices) > 0: #If there is at least 1, then there is at least one unique row.
+                        
+            #get a list of the unique value coordinates within onesAndZeros
+            #where those coordinates are stored as tuples (row,col)
+            #Below, for (rowOfUnique, colOfUnique), the rowOfUnique is the index of the unique mass fragment *within* the massFrags combination provided, and colOfUnique is the index of them molecule.
+            uniqueCoordinates = []
+            for rowOfUnique in onesIndices:
+                colOfUnique = numpy.where(onesAndZeros[rowOfUnique,:] == 1)
+                uniqueCoordinates.append((rowOfUnique, colOfUnique))
+            
+            #If there is more than one unique coordinate
+            #pick the best one based on the significanceMatrix
+            #Below, for (r,c), the r is the index of the unique mass fragment *within* the massFrags combination provided, and c is the index of them molecule.
+            if len(uniqueCoordinates) > 1:
+                coordSignificances = [significanceMatrix[r,c] for 
+                    (r,c) in uniqueCoordinates]
+                
+                #reorder uniqueCoordinates by significance
+                orderedUniqueCoordinates = [
+                    x for (molecule,x) in sorted(zip(
+                        coordSignificances, uniqueCoordinates),
+                        key=lambda pair:pair[0])]
+                
+                #Take the coordinates with the highest significance
+                bestUniqueRowIdx = orderedUniqueCoordinates[-1][0]
+                bestUniqueColIdx = orderedUniqueCoordinates[-1][1]
+            
+            # if there is only a single unique value then it's the best
+            else:
+                bestUniqueRowIdx = uniqueCoordinates[0][0]
+                bestUniqueColIdx = uniqueCoordinates[0][1]
+            
+            
+            
+            #indicate that the mass fragment corresponding to this row
+            #was used. 
+            massFragsUsed.append(massFrags[bestUniqueRowIdx])
+            
+            #indicate that this species is now solved for
+            solvedSpecies[bestUniqueColIdx] = 1
+            
+            #Set the column that corresponds to the species we have just 
+            #solved to zeros. Now we can sum rows again
+            onesAndZeros[:,bestUniqueColIdx] = 0
+        
+            extentSolvable += 1
+            summedSignificance += float(
+                significanceMatrix[bestUniqueRowIdx, bestUniqueColIdx])
+            #print(massFrags)
+            #print(extentSolvable, solvedSpecies, summedSignificance, massFragsUsed)
+                
+        #Else there was no unique one in the rowSum. 
+        #We can proceed no further with unique SLS.
+        else:
+            #print(extentSolvable, solvedSpecies, summedSignificance, massFragsUsed)
+            return (extentSolvable, summedSignificance,
+                    solvedSpecies, massFragsUsed)   
+                      
+                      
+def generateSignificanceMatrix(intensityMatrix, moleculesLikelihood=None, minThreshold=None, maxIntensityPossible=100): 
+    """
+    Given a matrix of reference intensities, with a horizontal
+    axis of species and a vertical axis of mass fragments (excluding 
+    label columns/rows), this function
+    determines the significance of each intensity in the matrix
+    
+    Arguments:
+        intensityMatrix - An n by m 2-d numpy array that contains the 
+                          reference intensities corresponding to 
+                          n mass fragments and m species.
+                          
+      moleculesLikelihood - this is a one-dimensional array of values between 0 and 1
+                         which are basically the probabilities of each of the m species.
+                         
+        minThreshold -  this is basically the lower cutoff for intensity of a fragment, and is necessary
+                         to have in order to make the best possible significance matrix.
+                         
+     minThreshold -  this is basically the maximum intensity possible of a fragment, and is necessary
+                         to have in order to make the best possible significance matrix.
+                          
+    Returns:
+        significanceMatrix - An n by m 2-d numpy array that mirrors 
+                             intensityMatrix. Each element in significanceMatrix
+                             is the significance of the corresponding intensity 
+                             from intensityMatrix.
+    """
+
+    numberOfMolecules = len(intensityMatrix[0])
+    if moleculesLikelihood == None: #if it is not provided, assume a likelihood of 1 for each molecule.
+        numpy.ones(numberOfMolecules)
+    
+    #We need to form  2-d array that shadows the intensity data
+    #from intensityMatrix.
+    #Initially we will set it to zeros and then populate in loop.
+    significanceMatrix = numpy.zeros(
+        intensityMatrix.shape)
+        
+    #loop through columns (i.e. species)
+    ##TODO this loop was designed to work with the ElemSignificanceCalculator
+    ## and IndElemSignificanceCalculator functions in MSRESOLVE that are
+    ## apparently designed for a different application.
+    ## If it proves to be a performance bottleneck (which I doubt since 
+    ## we aren't looping here), we can rewrite those to cut down on the 
+    ## required number of row sums. As it is now we sum a row for every element
+    ## in each column, and we do this for every column.
+    for (columnIdx, _) in enumerate(significanceMatrix.T):
+        #determine, for every element in this column (i.e. for this
+        #species) the element's significance
+        colSignificances = MSRESOLVE.ElemSignificanceCalculator(
+            intensityMatrix, columnIdx, moleculesLikelihood, 
+            minThreshold=minThreshold, maxIntensityPossible=maxIntensityPossible)
+            
+        #Now record these significances
+        significanceMatrix[:,columnIdx] = colSignificances
+        
+    return significanceMatrix
+
+    
+#Optional todo item (probably to never finish)
+# finish ranking systems to use update or insert. This will keep a list 
+#containing 2 tuples: 1) the mass fragment combinaiton and 2) the values of the
+#Objective functions. The values of the objective functions will contain 3
+#elementss: 1) the number of remaining molecules left from SLS, 2) the negative
+#significance sum [or significance sum in case of ExtentOfSLSUniqueSolvable] 
+#and 3) the rough uniqueness value. After the loop though SLS,
+#the mass fragments will be sorted by objective values in an ascending order.
+#The value to insert tuple will contian the mass fragment and the objective
+#functions tuple.
+
+def updateOrInsert(storeInObjectiveFunctionValuesList, valueToInsertTuple):
+    #If the mass fragment combination is not already present in the list insert
+    #it
+    if valueToInsertTuple[0] not in storeInObjectiveFunctionValuesList[:][0]:
+        storeInObjectiveFunctionValuesList=bisect.insort(storeInObjectiveFunctionValuesList,valueToInsertTuple)
+    else: #If the mass fragment combinaiton is already in the list
+        #Loop throught the storedInObjectiveFunctionValuesList to determine where
+        #The mass fragment combination was
+        for storeInObjectiveFunctionValuesIndex, storedInObjectiveFunctionValues in enumerate(storeInObjectiveFunctionValuesList):
+            #If the mass fragment combinaiton was in the list, set the
+            if valueToInsertTuple[1]==storedInObjectiveFunctionValues[1]:
+                storeInObjectiveFunctionValuesList[storeInObjectiveFunctionValuesIndex]=valueToInsertTuple
