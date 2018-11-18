@@ -4,14 +4,18 @@ Created on Tue Jun 26 14:56:24 2018
 @author: Andrea
 """
 
-import MSRESOLVE, imp; imp.reload(MSRESOLVE)
+
 import numpy
 import XYYYDataFunctionsSG as DataFunctions
-import UserInput as G
 import itertools
 import copy
 import time
 import bisect
+
+
+#NOTE: At the end of those file, there is a section which tries to import MSRESOLVE, and includes external dependences such as the Reference Data class.
+#The idea of separating that class out of the MSRESOLVE module was considered, e.g. to make a module called MSDataStructures or something like that, but separating has not been done at this time.
+
             
                 
 #The best mass frag chooser, uses reference patterns for selected molecules to
@@ -33,7 +37,16 @@ def bestMassFragChooser(chosenMolecules,
     keep_N_ValuesInSignificanceFactorCheck=1000,
     finalNumberOfCombinationsToKeep=10,
     exportToFile=True,
-    useExtentOfSLSUniqueSolvable=True, printProgress=False):
+    useExtentOfSLSUniqueSolvable=True, printProgress=False,
+    minimizeDependencies = False):
+    
+    #The below code is to allow replacing MSRESOLVE with the "standalone" dependencies file.
+    global MSRESOLVE
+    if minimizeDependencies == False:
+        import MSRESOLVE, imp; imp.reload(MSRESOLVE)
+    elif minimizeDependencies == True:
+        import MSResolveDependenciesForExtentOfSLSsolvable
+        MSRESOLVE = MSResolveDependenciesForExtentOfSLSsolvable
     
     progressCounter = 0 #just initializing here.
     
@@ -45,27 +58,31 @@ def bestMassFragChooser(chosenMolecules,
     if len(chosenMolecules)>numberOfMassFragsToMonitor: 
         raise ValueError('The number of mass fragments to monitor must be larger than or equal to the number of molecules to monitor')
     
-    #The 4th "theoretical" case of having no limits post-loop SLS does not make sense, because there is a risk of too many combinations (which is why we make limits).
-    #So if someone tries to choose that, we force it into on the fly SLS (without limits).
-    if (keep_N_ValuesInRoughUniquenessCheck == False and keep_N_ValuesInSignificanceFactorCheck == False) and onTheFlySLS == False:
-        onTheFlySLS == True
-    
-    #Initiialize the data range specifier list. This list contains variables
-    #defined in the user input file. It is not of importnace for the best mass
-    #frag choser, but is required as an arguement that needs to be passed to
-    #the SLS method.
-    DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
-						  G.csvFile, G.moleculesToRestrict, G.csvFileName,G.dataUpperBound,
-						  G.dataLowerBound, G.bruteIncrements, G.permutationNum]
-    
-    #Initializes the SLS choices variable. As of now, the the best mass frag
-    #chooser can only run with unique SLS do to errors in the SLS common
-    #method.
-    SLSChoices = ['unique', G.slsFinish, G.distinguished]
-    
-    G.uniqueOrCommon='unique'
-    
-    G.excludeMoleculesIfSignificantFragmentNotObserved=G.rawSignalThresholdMethod
+
+    #The below options are only relevant if SLS is going to be used.  So they do not matter if the person is using useExtentOfSLSUniqueSolvable.
+    if useExtentOfSLSUniqueSolvable == False:
+        import UserInput as G
+        #The 4th "theoretical" case of having no limits post-loop SLS does not make sense, because there is a risk of too many combinations (which is why we make limits).
+        #So if someone tries to choose that, we force it into on the fly SLS (without limits).
+        if (keep_N_ValuesInRoughUniquenessCheck == False and keep_N_ValuesInSignificanceFactorCheck == False) and onTheFlySLS == False:
+            onTheFlySLS == True
+        
+        #Initiialize the data range specifier list. This list contains variables
+        #defined in the user input file. It is not of importnace for the best mass
+        #frag choser, but is required as an arguement that needs to be passed to
+        #the SLS method.
+        DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
+                              G.csvFile, G.moleculesToRestrict, G.csvFileName,G.dataUpperBound,
+                              G.dataLowerBound, G.bruteIncrements, G.permutationNum]
+        
+        #Initializes the SLS choices variable. As of now, the the best mass frag
+        #chooser can only run with unique SLS do to errors in the SLS common
+        #method.
+        SLSChoices = ['unique', G.slsFinish, G.distinguished]
+        
+        G.uniqueOrCommon='unique'
+        
+        G.excludeMoleculesIfSignificantFragmentNotObserved=G.rawSignalThresholdMethod
     #Initialize a ReferenceData class object
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
         SourceOfFragmentationPatterns, SourceOfIonizationData,
@@ -93,9 +110,13 @@ def bestMassFragChooser(chosenMolecules,
     #value scaling
     truncatedReferenceData.standardized_reference_patterns=MSRESOLVE.StandardizeReferencePattern(
         truncatedReferenceData.provided_reference_patterns,len(truncatedReferenceData.molecules))
-    truncatedReferenceData.standardized_reference_patterns = MSRESOLVE.CorrectionValueCorrector(
-        truncatedReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
-        G.referenceLiteratureFileName, G.referenceMeasuredFileName, G.measuredReferenceYorN)  
+    
+    #if using the CorrectionValueCorrector, then there is another external dependency
+    if minimizeDependencies == False:
+        import UserInput as G
+        truncatedReferenceData.standardized_reference_patterns = MSRESOLVE.CorrectionValueCorrector(
+            truncatedReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
+            G.referenceLiteratureFileName, G.referenceMeasuredFileName, G.measuredReferenceYorN)  
     
     #Removing entire rows of data for mass fragments with all reference
     #intensities below the threshold.
@@ -122,10 +143,12 @@ def bestMassFragChooser(chosenMolecules,
     #objects inside the Reference object.
     #So until someone thinks further about the algorithm, it might have to stay this way.
     truncatedReferenceData.standardized_reference_patterns = truncatedReferenceData.standardized_reference_patterns_thresholdFiltered
-  
-    truncatedReferenceData.correction_values = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData) 
-    #Create the correction values to be used in the SLS method
-    truncatedReferenceData.correction_values = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData)
+    
+    #The below options are only relevant if SLS is going to be used.  So they do not matter if the person is using useExtentOfSLSUniqueSolvable.
+    if minimizeDependencies == False:
+        truncatedReferenceData.correction_values = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData) 
+        #Create the correction values to be used in the SLS method
+        truncatedReferenceData.correction_values = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData)
 
     
     #Need to reorder the list of molecular likelihoods so they match the class
@@ -180,9 +203,7 @@ def bestMassFragChooser(chosenMolecules,
     topBestMassFragments=[]
     topSignificanceSumsForMassFrags=[]
     bestMassFragReference=None
-    
-    MSRESOLVE.currentReferenceData=copy.deepcopy(truncatedReferenceData)
-    
+ 
     #Trim the mass number column from 
     #truncatedReferenceData.standardized_reference_patterns
     intensityMatrix = truncatedReferenceData.standardized_reference_patterns[:,1:]
@@ -192,6 +213,9 @@ def bestMassFragChooser(chosenMolecules,
     #same shape as intensityMatrix
     significanceMatrix = generateSignificanceMatrix(
         intensityMatrix, moleculesLikelihood, minThreshold=significantPeakThreshold)
+    
+    #we need a version that is pristine before the later parts of the algorithm.
+    MSRESOLVE.currentReferenceData=copy.deepcopy(truncatedReferenceData)
     
     if useExtentOfSLSUniqueSolvable:
         
@@ -226,9 +250,10 @@ def bestMassFragChooser(chosenMolecules,
                 #need to be set back to zero. 
                 else:         
                     currentMassFragmentsas1sand0s[index]=0
-                    
+
             MSRESOLVE.currentReferenceData.mass_fragment_numbers_monitored=(
                 massFragCombination)
+            
             #Reference data arrays need to be multiplied by the 
             #currentMassFragmentsas1sand0s in order to only keep the data that is
             #representative of the current mass fragments.
@@ -298,7 +323,7 @@ def bestMassFragChooser(chosenMolecules,
         
         #End for loop over all combinations of mass frags
         print("finished the for loop")
-    else:
+    elif useExtentOfSLSUniqueSolvable == False: #when useExtentOfSLSUniqueSolvable is False, actual SLS is performed.
         #Loop through all of the possible mass fragment combinations
         for massFragCombination in itertools.combinations(truncatedReferenceData.provided_mass_fragments,numberOfMassFragsToMonitor):    
             if printProgress==True:
@@ -472,7 +497,8 @@ def bestMassFragChooser(chosenMolecules,
                         [topSignificanceSumsForMassFrags, topBestMassFragments,valueStored]=MSRESOLVE.significanceFactorCheck(currentFragReferencePattern[:,1:] ,topSignificanceSumsForMassFrags,topBestMassFragments, massFragCombination, finalNumberOfCombinationsToKeep, reorderedMoleculesLikelihood)
                         if massFragCombination==topBestMassFragments[0]: 
                             bestMassFragReference=currentFragReferencePatternTruncated
-                  
+
+    #Everything below is exporting etc. and happens regardless of useExtentOfSLSUniqueSolvable.
     end=time.time()
     #The time is kept for printing purposes
     totalTime=end-start
@@ -489,20 +515,24 @@ def bestMassFragChooser(chosenMolecules,
                 commentsLine[elemIndex] = ''
             commentsHeader = numpy.append('#ComentsLine',commentsLine)        
             moleculesHeader=numpy.append('Molecules',truncatedReferenceData.molecules)
-            electronHeader=numpy.append('Electron Numbers',truncatedReferenceData.electronnumbers)
-            knownMoleculeIonizationTypeHeader = numpy.append('knownMoleculesIonizationTypes',truncatedReferenceData.knownMoleculesIonizationTypes)
-            knownIonizationFactorsRelativeToN2Header = numpy.append('knownIonizationFactorsRelativeToN2',truncatedReferenceData.knownIonizationFactorsRelativeToN2)
-            fragmentationSourceHeader = numpy.append('SourceOfFragmentationPatterns',truncatedReferenceData.SourceOfFragmentationPatterns)
-            ionizationSourceHeader = numpy.append("SourceOfIonizationData",truncatedReferenceData.SourceOfIonizationData)        
-            massHeader=numpy.append('Molecular Mass', truncatedReferenceData.molecularWeights)
-            #The header will be stacked before saving the data array. 
-            #In order to get the multiple headers present, an array will be used 
-            #to contain all of the information to allow for stacking.
-            fullHeaderArray=numpy.array([
-                commentsHeader, moleculesHeader, electronHeader,
-                knownMoleculeIonizationTypeHeader,
-                knownIonizationFactorsRelativeToN2Header, fragmentationSourceHeader,
-                ionizationSourceHeader, massHeader])
+            if minimizeDependencies == False: #below are only populated if we are using the full MRESOLVE
+                electronHeader=numpy.append('Electron Numbers',truncatedReferenceData.electronnumbers)
+                knownMoleculeIonizationTypeHeader = numpy.append('knownMoleculesIonizationTypes',truncatedReferenceData.knownMoleculesIonizationTypes)
+                knownIonizationFactorsRelativeToN2Header = numpy.append('knownIonizationFactorsRelativeToN2',truncatedReferenceData.knownIonizationFactorsRelativeToN2)
+                fragmentationSourceHeader = numpy.append('SourceOfFragmentationPatterns',truncatedReferenceData.SourceOfFragmentationPatterns)
+                ionizationSourceHeader = numpy.append("SourceOfIonizationData",truncatedReferenceData.SourceOfIonizationData)        
+                massHeader=numpy.append('Molecular Mass', truncatedReferenceData.molecularWeights)
+                #The header will be stacked before saving the data array. 
+                #In order to get the multiple headers present, an array will be used 
+                #to contain all of the information to allow for stacking.
+                fullHeaderArray=numpy.array([
+                    commentsHeader, moleculesHeader, electronHeader,
+                    knownMoleculeIonizationTypeHeader,
+                    knownIonizationFactorsRelativeToN2Header, fragmentationSourceHeader,
+                    ionizationSourceHeader, massHeader])
+            if minimizeDependencies == True:
+                fullHeaderArray=numpy.array([
+                    commentsHeader, moleculesHeader])                    
             #In order to export the proper header using the stacking, the abscissa header is set as blank so it doesn't cause anything to be written where the full header should go.
             MSRESOLVE.ExportXYYYData('bestMassFragReference.csv', 
                 bestMassFragReference,
