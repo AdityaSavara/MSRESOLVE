@@ -35,7 +35,7 @@ ReferenceInfo = numpy.genfromtxt('AcetaldehydeNISTRefKnownTypes.csv',dtype=None,
 #Electron Numbers are on the third row
 ElectronNumbers = ReferenceInfo[2][1:].astype(float) #convert to floats
 #Ionization Types are on the fourth row
-IonizationTypes = ReferenceInfo[3][1:]
+IonizationTypes = ReferenceInfo[3][1:].astype(str) #conver to strings
 
 #In the reference data, Acetaldehyde was renamed to Ethanal and Ethanol was renamed to EtOH, this way all nine molecules will be solved via a linear fit rather than molecule matching between reference data and ionization data
 
