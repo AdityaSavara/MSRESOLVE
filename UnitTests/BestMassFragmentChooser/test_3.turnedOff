@@ -29,16 +29,16 @@ prefix=''
 #Declare variables to be used. These will be included in the UserInput file
 #once fully integrated into MSRESOLVE
 #Select the molecules to be monitored
-moleculesToMonitor=['Ethylene (Ethene)', 'Ethanol' ]
+moleculesToMonitor=['Ethylene (Ethene)', 'Ethanol', 'Crotyl Alcohol' ]
 #Enter the likelihood for each molecule in the order shown above.
 #**IDEA could the user input directly into a dictionary initialization?
-moleculesLikelihood=[1,0.5]
+moleculesLikelihood=[1,0.5,1]
 #Enter the number of mass fragements to monitor
-numberOfMassFragsToMonitor=3
+numberOfMassFragsToMonitor=4
 
 #4) get the output of the function, which is what will typically be checked.
 
-topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor,'AcetaldehydeNISTRefMixed2.csv','xyyy' ,  useExtentOfSLSUniqueSolvable = False)[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor,'AcetaldehydeNISTRefMixed2.csv','xyyy', onTheFlySLS=True, useExtentOfSLSUniqueSolvable = False )[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 resultObj=topBestMassFragments
 
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.

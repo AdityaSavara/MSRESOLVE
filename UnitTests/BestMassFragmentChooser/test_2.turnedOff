@@ -17,6 +17,10 @@ import UnitTesterSG as ut
 #1) import the function whose results need to be checked
 import bestMassFragChooser as bmfc
 
+#Import the UserInput to turnoff the SLSUniqueExport option. This will be the same module as the one bmfc is using, so it will turn off there also.
+import UserInput as G
+G.SLSUniqueExport = 'no'
+
 #2) getting the prefix (or suffix) arugument for check_results. This is just for the output filenames.
 suffix= ut.returnDigitFromFilename(__file__)
 prefix=''
@@ -34,7 +38,7 @@ numberOfMassFragsToMonitor=4
 
 #4) get the output of the function, which is what will typically be checked.
 
-topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor,'AcetaldehydeNISTRefMixed2.csv','xyyy', onTheFlySLS=True )[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor,'AcetaldehydeNISTRefMixed2.csv','xyyy',keep_N_ValuesInRoughUniquenessCheck=False, keep_N_ValuesInSignificanceFactorCheck=False, onTheFlySLS=True , useExtentOfSLSUniqueSolvable = False)[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 resultObj=topBestMassFragments
 
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.

@@ -31,7 +31,7 @@ MSRESOLVE.G.exportAtEachStep = 'no'
 MSRESOLVE.main()
 
 #Get data from the reference file
-ReferenceInfo = numpy.genfromtxt('AcetaldehydeNISTRefDefault.csv',dtype=None,delimiter=',',encoding=None)
+ReferenceInfo = numpy.genfromtxt('AcetaldehydeNISTRefDefault.csv',dtype=None,delimiter=',')
 #Electron Numbers are on the third row
 ElectronNumbers = ReferenceInfo[2][1:].astype(float) #convert to floats
 
