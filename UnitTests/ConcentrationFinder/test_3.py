@@ -29,11 +29,12 @@ MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated3.csv'
 MSRESOLVE.G.concentrationFinder = 'yes' #Turn on concentrationFinder
 MSRESOLVE.G.TSC_List_Type = 'SeparateMolecularFactors' #Use factors for separate molecules rather than numerous reference files
 MSRESOLVE.G.moleculesTSC_List = ['Acetaldehyde','Acetaldehyde_Easy_To_Ionize'] #the conversion factor for both molecules are determined based on the known concentrations at a particular signal for both molecules
+MSRESOLVE.G.massNumberTSC_List = [29,29.2]
 MSRESOLVE.G.moleculeSignalTSC_List = [1.66945,1.66945]
 #The known concentration of acetaldehyde_easy_to_ionize is 3x the known concentration for Acetaldehyde so we expect the resolved concentrations to differ by a factor of 3
 #Using this syntax, since Acetaldehyde was listed first, the concentration factor for any unlisted molecule is determined base it the known concentration information given on acetaldehyde, so we expect to see the resolved concentrations of acetaldehyde and acetaldehyde_copy to be the same (or differ by a factor of 1)
 MSRESOLVE.G.moleculeConcentrationTSC_List = [0.05,0.15] 
-MSRESOLVE.G.massNumberTSC_List = [29,29.2]
+
 MSRESOLVE.G.grapher = 'no'
 MSRESOLVE.G.exportAtEachStep = 'no'
 MSRESOLVE.G.timeRangeLimit = 'no'

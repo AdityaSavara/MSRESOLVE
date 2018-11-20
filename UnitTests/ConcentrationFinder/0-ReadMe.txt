@@ -25,7 +25,7 @@ Test_3 is testing the concentrationFinder feature with different scaling factors
 Test_3.py uses AcetaldehdyeNISTRefMix2_test_3.csv and 2-CrotAcetExp#2Truncated3.csv. The purpose of this test is for having separate concentration factors for separate molecules. This is the same reference file and collected data file as test_2.py with Acetaldehyde_copy added to the reference data and m29.3 added to the collected data.  Acetaldehyde_copy is a copy of Acetaldehyde but the signal at m29 is 0 and at m29.3 is 9999.  m29.3, like m29 and m29.2, has a signal of 1 at each time point.
 In this case we use the test input file to indicate that we "know" the concentration of Acetaldehyde to be 0.05 bar at a m29 signal of 1.66945 and Acetaldehyde_Easy_To_Ionize to be 0.15 bar at a m29.2 signal of 1.66945.
 Since the ratio of 0.05 to 0.15 is a factor of 3, we expect the ratio of resolved concentrations of Acetaldehyde_Easy_To_Ionize to Acetaldehye to be 3.
-In this test, Acetaldehyde_copy will use the same conversion factor as Acetaldehyde so the resolved concentrations of the two molecules should be the same, or in other words the ratio of the two will be 1.
+In this test, Acetaldehyde_copy will use the same conversion factor as Acetaldehyde, because all unspecified molecules use the first molecule listed's scaling factor, so the resolved concentrations of the two molecules should be the same, or in other words the ratio of the two will be 1.
 
 Test_4 is testing the concentrationFinder feature with numerous reference patterns that require interpolating due to a gap in between time ranges.  
 Test_4.py is set up almost indentically to test_2.py where the same reference file is used for two different time ranges and the same collected data file is used.
