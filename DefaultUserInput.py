@@ -215,9 +215,9 @@ concentrationFinder = 'no'
 TSC_List_Type = 'MultipleReferencePatterns' #Options are 'MultipleReferencePatterns' or 'SeparateMoleculesFactors'
 moleculesTSC_List = 'Acetaldehyde'
 massNumberTSC_List = 29
-moleculeSignalTSC_List = 1.66945
+moleculeSignalTSC_List = 1.66945 #This is the list of intensity values that correspond to a known concentration to scale with for the same mass fragments
 moleculeConcentrationTSC_List = 0.05	#this is the concentration/pressure associated with the signal.
-unitsTSC = 'bar'	#the units will not be used in calculations so any units may be used
+unitsTSC = 'bar'	#this string is the unit for the concentration. The unit will not be used in calculations so any units may be used
 
 
 
