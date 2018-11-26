@@ -226,7 +226,7 @@ def bestMassFragChooser(chosenMolecules,
     if printProgress==True:
             try:
                 from tqdm import tqdm #this is a module for a progress bar. It's a bit weird that you import the function with same name as module.
-                t = tqdm(total=combinationsToConsider)
+                t = tqdm(total=combinationsToConsider, position = 0) #position = 0 shouldn't be required, but helps prevent buggy bar behaviour.
                 tqdm_Failed = False
             except:
                 tqdm_Failed = True
