@@ -224,8 +224,12 @@ def bestMassFragChooser(chosenMolecules,
         print("There will be more than 1 million combinations explored, print progress is being set to true to show a progress bar.")
         printProgress=True
     if printProgress==True:
-            from tqdm import tqdm #this is a module for a progress bar. It's a bit weird that you import the function with same name as module.
-            t = tqdm(total=combinationsToConsider)
+            try:
+                from tqdm import tqdm #this is a module for a progress bar. It's a bit weird that you import the function with same name as module.
+                t = tqdm(total=combinationsToConsider)
+                tqdm_Failed = False
+            except:
+                tqdm_Failed = True
     
     if useExtentOfSLSUniqueSolvable:
         
@@ -244,8 +248,10 @@ def bestMassFragChooser(chosenMolecules,
                 #combinations are “k items from a set of n... Find all the ways to pick (k) numberOfMassFragsToMonitor people from (n) provided_mass_fragments, and divide by the k! (numberOfMassFragsToMonitor!) variants”
                 #general formula  is n!/(n-k)!k!
                 progressCounter += 1
-                t.update(1) #this is updating the progress bar.
-                #print(progressCounter, "out of", combinationsToConsider)
+                if tqdm_Failed == False:
+                    t.update(1) #this is updating the progress bar.
+                else: 
+                    print(progressCounter, "out of", combinationsToConsider)
                 
             
             #Alter the currentMassFragmentsas1sand0s array so that 1s represent the
@@ -341,9 +347,10 @@ def bestMassFragChooser(chosenMolecules,
         for massFragCombination in itertools.combinations(truncatedReferenceData.provided_mass_fragments,numberOfMassFragsToMonitor):    
             if printProgress==True:
                 progressCounter += 1
-                t.update(1) #this is updating the progress bar.
-                #print(progressCounter, "out of", combinationsToConsider)
-
+                if tqdm_Failed == False:
+                    t.update(1) #this is updating the progress bar.
+                else: 
+                    print(progressCounter, "out of", combinationsToConsider)
             #Alter the currentMassFragmentsas1sand0s array so that 1s represent the
             #location of any current mass fragments. Loops through the monitored
             #mass fragments for those found in the mass fragment combination.
@@ -515,7 +522,8 @@ def bestMassFragChooser(chosenMolecules,
 
     #Everything below is exporting etc. and happens regardless of useExtentOfSLSUniqueSolvable.
     if printProgress==True:
-        t.close() #this will close the progress bar.
+        if tqdm_Failed == False:
+            t.close() #this will close the progress bar.
     end=time.time()
     #The time is kept for printing purposes
     totalTime=end-start
