@@ -215,6 +215,18 @@ def bestMassFragChooser(chosenMolecules,
     #we need a version that is pristine before the later parts of the algorithm.
     MSRESOLVE.currentReferenceData=copy.deepcopy(truncatedReferenceData)
     
+    #ccalculate the number of combinations to consider, because if it is large we will force the progress bar to turn on.
+    import math
+    k_c = numberOfMassFragsToMonitor
+    n_c = len(truncatedReferenceData.provided_mass_fragments)
+    combinationsToConsider = int(math.factorial(n_c)/  (math.factorial(n_c-k_c)*math.factorial(k_c)))
+    if combinationsToConsider > 1E6:
+        print("There will be more than 1 million combinations explored, print progress is being set to true to show a progress bar.")
+        printProgress=True
+    if printProgress==True:
+            from tqdm import tqdm #this is a module for a progress bar. It's a bit weird that you import the function with same name as module.
+            t = tqdm(total=combinationsToConsider)
+    
     if useExtentOfSLSUniqueSolvable:
         
         #List store the best solvabilities, same shape and with
@@ -223,15 +235,18 @@ def bestMassFragChooser(chosenMolecules,
         #for every combination in topBestMassFragments
         topSolvabilitiesAndSignificance = []
         
-        
         #Loop through all of the possible mass fragment combinations
         #Assume that the masses within each combination are ordered
         for massFragCombination in itertools.combinations(
             truncatedReferenceData.provided_mass_fragments,
             numberOfMassFragsToMonitor):
             if printProgress==True:
+                #combinations are “k items from a set of n... Find all the ways to pick (k) numberOfMassFragsToMonitor people from (n) provided_mass_fragments, and divide by the k! (numberOfMassFragsToMonitor!) variants”
+                #general formula  is n!/(n-k)!k!
                 progressCounter += 1
-                print(progressCounter)
+                t.update(1) #this is updating the progress bar.
+                #print(progressCounter, "out of", combinationsToConsider)
+                
             
             #Alter the currentMassFragmentsas1sand0s array so that 1s represent the
             #location of any current mass fragments. Loops through the monitored
@@ -322,11 +337,13 @@ def bestMassFragChooser(chosenMolecules,
         #End for loop over all combinations of mass frags
         print("finished the for loop")
     elif useExtentOfSLSUniqueSolvable == False: #when useExtentOfSLSUniqueSolvable is False, actual SLS is performed.
-        #Loop through all of the possible mass fragment combinations
+        #Loop through all of the possible mass fragment combinations            
         for massFragCombination in itertools.combinations(truncatedReferenceData.provided_mass_fragments,numberOfMassFragsToMonitor):    
             if printProgress==True:
                 progressCounter += 1
-                print(progressCounter)     
+                t.update(1) #this is updating the progress bar.
+                #print(progressCounter, "out of", combinationsToConsider)
+
             #Alter the currentMassFragmentsas1sand0s array so that 1s represent the
             #location of any current mass fragments. Loops through the monitored
             #mass fragments for those found in the mass fragment combination.
@@ -497,6 +514,8 @@ def bestMassFragChooser(chosenMolecules,
                             bestMassFragReference=currentFragReferencePatternTruncated
 
     #Everything below is exporting etc. and happens regardless of useExtentOfSLSUniqueSolvable.
+    if printProgress==True:
+        t.close() #this will close the progress bar.
     end=time.time()
     #The time is kept for printing purposes
     totalTime=end-start
