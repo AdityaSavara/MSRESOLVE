@@ -1604,6 +1604,72 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     
     return ReferenceDataSSmatching_correction_valuesList, unusedMolecules
 
+#sortArrayByHeader is used in exportSimulatedSignalsSoFar to sort simulated data in order by mass fragment
+def sortArrayByHeader(headerArray,dataArray):
+    for headerIndex in range(len(headerArray)): #Loop through header
+        headerArray[headerIndex] = headerArray[headerIndex][1:] #remove the 'm' on each string
+    headerArray = headerArray.astype(float) #convert array to array of floats for sorting
+    indiciesArray = numpy.argsort(headerArray) #return an array of indicies determined by sorting
+    sortedArray = copy.copy(dataArray) #create a copy of the data array
+    sortedHeader = copy.copy(headerArray)
+    
+    for index in range(0,len(headerArray)): #loop through the header array
+        sortedHeader[index] = headerArray[indiciesArray[index]]
+        sortedArray[:,index] = dataArray[:,indiciesArray[index]]
+    
+    sortedHeader = sortedHeader.astype(str)
+    for headerIndex in range(len(headerArray)):
+        sortedHeader[headerIndex] = 'm' + sortedHeader[headerIndex]
+        
+    return sortedArray, sortedHeader
+
+def exportSimulatedSignalsSoFar(simulatedSignalsOutputName,iterationDirectoryName,iterationNumber):
+    #read the simulated raw signals from the iteration's csv file
+    simulatedSignalsOutputNameIterative = simulatedSignalsOutputName[:-4] + iterationDirectoryName + simulatedSignalsOutputName[-4:] #get the filename with the iterative suffix on it
+    simulatedSignalsFromIterativeAbsoluteFileName = os.path.join(os.getcwd(),iterationDirectoryName,simulatedSignalsOutputNameIterative) #get the absolute path
+    
+    simulatedSignalsFromIterative = numpy.genfromtxt(simulatedSignalsFromIterativeAbsoluteFileName,delimiter=',',dtype=None).astype(str) #Get the data from the iteration's simultaed raw signals file (use astype(str) to keep b' from showing up before each entry)
+
+    if iterationNumber == 1: #if in the first iteration we do not have SimulatedRawSignalsSoFarIterative.csv so we create it by saving the first iteration's simulated signals to it
+        #Create the array to export
+        numpy.savetxt('SimulatedRawSignalsSoFarIterative.csv',simulatedSignalsFromIterative,fmt='%s',delimiter=',')
+    elif iterationNumber != 1: #We are at a later iteration so we need to read simulatedRawSignalsSoFarIterative.csv to see what signals are there
+        simulatedSignalsSoFar = numpy.genfromtxt('SimulatedRawSignalsSoFarIterative.csv',delimiter=',',dtype=None) #read the simulatedRawSignalsSoFarIterative.csv file
+        #Break up the simulated signals so far data into arrays
+        SS_SoFarHeader = simulatedSignalsSoFar[0,1:].astype(str) #get the header
+        SS_SoFarAbscissa = simulatedSignalsSoFar[1:,0].astype(float) #Get the abscissa
+        SS_SoFarData = simulatedSignalsSoFar[1:,1:].astype(float) #get the data
+        SS_SoFarAbscissaHeader = simulatedSignalsSoFar[0,0] #get the abscissa header
+        
+        #Similarly break up the iteration's simulated signals into arrays
+        SS_IterativeHeader = simulatedSignalsFromIterative[0,1:].astype(str) #get the header
+        SS_IterativeAbscissa = simulatedSignalsFromIterative[1:,0].astype(float) #Get the abscissa
+        SS_IterativeData = simulatedSignalsFromIterative[1:,1:].astype(float) #get the data
+        SS_IterativeAbscissaHeader = simulatedSignalsFromIterative[0,0] #get the abscissa header
+        
+        
+        SS_SoFarAbscissa = numpy.reshape(SS_SoFarAbscissa,(len(SS_SoFarAbscissa),1)) #reshape the abscissa so it's at least in 2d with only 1 column
+        
+        #Loop through mass fragments in the current in this iteration and see if it is in simulatedRawSignalsSoFarIterative
+        for massFragmentIndex in range(len(SS_IterativeHeader)):
+            if SS_IterativeHeader[massFragmentIndex] in SS_SoFarHeader: #if the mass fragment is in both simulatedSignalsSoFar and the current iteration's simulated signals, then we need to add the columns
+                currentMFIndex = numpy.where(SS_IterativeHeader[massFragmentIndex] == SS_SoFarHeader)[0][0] #Get the column index in SS_SoFar, use [0][0] since numpy.where returns an an array in an array
+                SS_SoFarData[:,currentMFIndex] = SS_SoFarData[:,currentMFIndex] + SS_IterativeData[:,massFragmentIndex] #add the signals to the appropriate column
+            else: #otherwise the mass fragment is not in simulatedSignalsSoFar and needs to be appended to the data
+                SS_SoFarHeader = numpy.append(SS_SoFarHeader,SS_IterativeHeader[massFragmentIndex]) #append the mass fragment to the header
+                columnToAppend = numpy.atleast_2d(SS_IterativeData[:,massFragmentIndex])
+                columnToAppend = columnToAppend.transpose()
+                SS_SoFarData = numpy.hstack((SS_SoFarData,columnToAppend))
+        
+        sortedData, sortedHeaders = sortArrayByHeader(SS_SoFarHeader,SS_SoFarData) #Sort the data by the mass fragment number
+        
+        stackedData = numpy.vstack((sortedHeaders,sortedData)) #stack the sorted headers on the sorted data
+        stackedAbscissa = numpy.vstack((SS_SoFarAbscissaHeader,SS_SoFarAbscissa)) #stack the abscissa header with the abscissa
+        
+        simulatedDataToExport = numpy.hstack((stackedAbscissa,stackedData))
+        
+        numpy.savetxt('SimulatedRawSignalsSoFarIterative.csv',simulatedDataToExport,fmt='%s',delimiter=',')
+
 def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment_numbers,ExperimentDataFullCopy, times, concdata, molecules):
     #implied arguments: G.iterationSuffix, G.nextRefFileName, G.nextExpFileName, G.iterativeAnalysis, G.unusedMolecules, G.iterationNumber
     #remove the signals that have already been solved for from the data set
@@ -1666,6 +1732,9 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     #Adding the Additional concentrations to the overall concentration results
     moleculeConcLabels = ['%s Concentration Relative to CO' % molecule for molecule in molecules] 
     DataFunctions.AppendColumnsToCSV(G.TotalConcentrationsOutputName, concdata, moleculeConcLabels, times, ["Time"])
+    
+    #This function will take in the iteration directory name, iteration number, ExperimentDataFullCopy.abscissaHeader,simulated data, mass fragment numbers, and the times array and will add or append the simulated signals to a file called SimulatedRawSignalsSoFarIterative.csv
+    exportSimulatedSignalsSoFar(G.simulatedSignalsOutputName,iterationDirectoryName,G.iterationNumber-1) #subtract 1 from the iteration number since the iteration number has already been changed
     
     return None
      #implied returns: G.referenceFileNamesList, G.collectedFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
@@ -3637,7 +3706,8 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
     solutions = absentmolecules
     return solutions
     
-#This little bit of code enables the user to input a couple values so that the conversion between signal relative to CO and 
+#This little bit of code enables the user to input values for a raw signal intensity and the corresponding concentration of that molecule 
+#such that the conversion between that mass fragment's signal_relative_to_CO and 
 #concentration can be found, and as such the rest of the concentrations can be found as well. If no data is input here, then
 #there are no concentrations printed out, only signals. (if they are both printed, it is done on separate excel sheets)
 #TODO Make RatioFinder capable of using both numerous reference patterns and separate molecules (right now can only use one of these features at a time) and then remove the TODO comment with concentrationFinder in user input
@@ -4330,16 +4400,10 @@ def main():
         AllMoleculesReferenceFileNamesList = [] #Initialize AllMoleculesReferenceDataList as an empty list
         for referenceFileNameIndex in range(len(G.referenceFileNamesList)): #Loop through the reference file names list
             AllMoleculesReferenceFileName = remove_iter_fromFileName(G.referenceFileNamesList[referenceFileNameIndex]) #Remove the _iter_ from the name so the program has the original filename to access from the parent directory
-            AllMoleculesReferenceDataFilePath = os.path.normpath(
-                os.path.join(os.curdir,
-                             os.pardir,
-                             AllMoleculesReferenceFileName)) #This function will get the path of the reference file from the parent directory 
+            AllMoleculesReferenceDataFilePath = os.path.normpath(os.path.join(os.curdir, os.pardir,AllMoleculesReferenceFileName)) #This function will get the path of the reference file from the parent directory 
             AllMoleculesReferenceFileNamesList.append(AllMoleculesReferenceDataFilePath) #Append the path to the list and the program will read the reference file from the path name
         AllMassFragmentsExperimentDataFileName = remove_iter_fromFileName(G.collectedFileName) #Remove _iter_ from the data filename so the program has the original filename to access from the parent directory
-        AllMassFragmentsExperimentDataFileNamePath = os.path.normpath(
-            os.path.join(os.curdir,
-            os.pardir,
-            AllMassFragmentsExperimentDataFileName)) #This function will get the path of the data file from the parent directory
+        AllMassFragmentsExperimentDataFileNamePath = os.path.normpath(os.path.join(os.curdir, os.pardir, AllMassFragmentsExperimentDataFileName)) #This function will get the path of the data file from the parent directory
     else: #Otherwise not running iterative or in the first iteration, just copy the filename
         AllMoleculesReferenceFileNamesList = copy.copy(G.referenceFileNamesList)
         AllMassFragmentsExperimentDataFileNamePath = copy.copy(G.collectedFileName)

@@ -144,16 +144,42 @@ arrayToFillFromIterativeAnalysis[7] = arrayReadFromIterativeAnalysis[1]
 arrayToFillFromIterativeAnalysis[8] = arrayReadFromIterativeAnalysis[9]
 arrayToFillFromIterativeAnalysis[9] = arrayReadFromIterativeAnalysis[4]
 
+
+#For the simulated raw signals we only need simulated signals from the non-iterative's specific mass fragments
+simulatedArrayReadFromNonIterativeAnalysis = np.genfromtxt("SimulatedRawSignals.csv", skip_header = 1, delimiter=',' , unpack=True)
+simulatedArrayReadFromIterativeAnalysis = np.genfromtxt("SimulatedRawSignalsSoFarIterative.csv", skip_header = 1, delimiter=',', unpack=True)
+
+#Make a copy of the simulated signals array from non iterative so we have two arrays of the same size.  We can then populate the copy with values from simulatedRawSignalsSoFarIterative
+simulatedArrayToFillFromIterativeAnalysis = copy.deepcopy(simulatedArrayReadFromNonIterativeAnalysis)
+#Non-iterative has mass fragments in the order: Time, 2, 18, 27, 28, 31, 39, 41, 44, 57, 70
+#Iterative has mass fragments in the order: Time, 2, 18, 26, 27, 28, 29, 31, 39, 41, 44, 45, 56, 57, 70
+simulatedArrayToFillFromIterativeAnalysis[0] = simulatedArrayReadFromIterativeAnalysis[0] #Time
+simulatedArrayToFillFromIterativeAnalysis[1] = simulatedArrayReadFromIterativeAnalysis[1] #m2
+simulatedArrayToFillFromIterativeAnalysis[2] = simulatedArrayReadFromIterativeAnalysis[2] #m18
+simulatedArrayToFillFromIterativeAnalysis[3] = simulatedArrayReadFromIterativeAnalysis[4] #m27
+simulatedArrayToFillFromIterativeAnalysis[4] = simulatedArrayReadFromIterativeAnalysis[5] #m28
+simulatedArrayToFillFromIterativeAnalysis[5] = simulatedArrayReadFromIterativeAnalysis[7] #m31
+simulatedArrayToFillFromIterativeAnalysis[6] = simulatedArrayReadFromIterativeAnalysis[8] #m39
+simulatedArrayToFillFromIterativeAnalysis[7] = simulatedArrayReadFromIterativeAnalysis[9] #m41
+simulatedArrayToFillFromIterativeAnalysis[8] = simulatedArrayReadFromIterativeAnalysis[10] #m44
+simulatedArrayToFillFromIterativeAnalysis[9] = simulatedArrayReadFromIterativeAnalysis[13] #m57
+simulatedArrayToFillFromIterativeAnalysis[10] = simulatedArrayReadFromIterativeAnalysis[14] #m70
+
+
 #before comparing the arrays, we now need to round them.
 roundedArrayReadFromNonIterativeAnalysis  = np.round(arrayReadFromNonIterativeAnalysis, decimals=4)
 roundedArrayFilledFromIterativeAnalysis = np.round(arrayToFillFromIterativeAnalysis, decimals=4)
+roundedSimulatedArrayReadFromNonIterative = np.round(simulatedArrayReadFromNonIterativeAnalysis, decimals=4)
+roundedSimulatedArrayReadFromIterativeAnalysis = np.round(simulatedArrayToFillFromIterativeAnalysis, decimals=4)
 
-ut.set_expected_result(roundedArrayReadFromNonIterativeAnalysis,expected_result_str=str(roundedArrayReadFromNonIterativeAnalysis), prefix=prefix,suffix=suffix)
+expectedResult = (roundedArrayReadFromNonIterativeAnalysis,roundedSimulatedArrayReadFromNonIterative) #Make the expected results a tuple
 
-resultObj = roundedArrayFilledFromIterativeAnalysis
+ut.set_expected_result(expectedResult,expected_result_str=str(expectedResult), prefix=prefix,suffix=suffix)
+
+resultObj = (roundedArrayFilledFromIterativeAnalysis,roundedSimulatedArrayReadFromIterativeAnalysis)
 
 #String must be provided provided. Make it '' if you do not want to use a result string.
-resultStr = str(roundedArrayFilledFromIterativeAnalysis)
+resultStr = str(resultObj)
 
 
 #this is so that pytest can do UnitTesterSG tests.
