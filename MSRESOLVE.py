@@ -4220,6 +4220,8 @@ def main():
     G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
     #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
+    
+    from userInputValidityFunctions import parseUserInput
     parseUserInput(G) #This parses the variables in the user input file
             
     #it is useful to trim whitespace from each chosenMolecules string. The same thing is done to the molecule names of each reference pattern when an MSReference object is created.
