@@ -4143,9 +4143,7 @@ def PopulateLogFile():
     f6.write('###################################################################### \n')
     f6.close()#once the log file is printed the program is finished
     return None
-
-from userInputValidityFunctions import parseUserInput, userInputValidityCheck, settingsCompatibilityCheck, settingsDependenciesCheck,populateModuleVariablesFromDictionary,populateModuleVariablesFromNestedDictionary
-    
+   
 ##################################################################################################################
 ###############################################Algorithm Part 3: Main Control Function ###################################
 ##################################################################################################################
@@ -4153,7 +4151,8 @@ def main():
     global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
     
     # #The below try statement is to check the user input dictionary's existence. Older MSRESOLVE did not use a dictionary.
-    # for now, these types of lines are at the bottom of the UserInput and DefaultUserInput files.
+    # for now, these types of lines are at the bottom of the UserInput and DefaultUserInput files. I'm considering keeping there permanently and then deleting these commented out lines.
+    #from userInputValidityFunctions import parseUserInput, userInputValidityCheck, settingsCompatibilityCheck, #settingsDependenciesCheck,populateModuleVariablesFromDictionary,populateModuleVariablesFromNestedDictionary
     # try:
         # len(G.UserChoices) #this will fail if the dictionary has not yet been defined.
         # UserChoicesExists = True
