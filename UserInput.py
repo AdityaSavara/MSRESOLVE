@@ -137,7 +137,7 @@ UserChoices['bruteSolvingRestrictions']['maxPermutations'] = 100001
 
 #// Set Scaling Factor?
 UserChoices['scaleRawDataYorN'] = {} #initialize the scaleRawDataYorN container
-UserChoices['scaleRawDataYorN']['on'] = 'no'
+UserChoices['scaleRawDataYorN']['on'] = 'no' #This variable is currently unused, but later choosing "no" will set things to "manual" and change "scaleRawDataFactor" to 1.
 UserChoices['scaleRawDataYorN']['scaleRawDataOption'] = 'manual' #Choices are 'manual' or 'auto'
 #'auto' automatically scales the data so that the smallest value is equal to 1
 #If manual is chosen above, this option allows the user to scale all raw data by a factor of their choosing 
@@ -256,7 +256,7 @@ UserChoices['outputFiles']['concentrationsOutputName'] = 'ResolvedConcentrations
 UserChoices['outputFiles']['simulatedSignalsOutputName'] = 'SimulatedRawSignals.csv'
 
 UserChoices['ExportAtEachStep'] = {} #initialize the ExportAtEachStep container
-UserChoices['ExportAtEachStep']['on'] = 'no'
+UserChoices['ExportAtEachStep']['on'] = 'yes'
 UserChoices['generatePercentages'] = {} #initialize the generatePercentages container
 UserChoices['generatePercentages']['on'] = 'no'
 
@@ -272,7 +272,8 @@ UserChoices['checkpoint']['timeSinceLastCheckpoint'] = '' #just initializing, no
 import sys
 thisModuleObject = sys.modules[__name__]
 
-print("This is in UserInput.py. This module gets reloaded intentionally, so messages below will appear twice.")
+print("This is in DefaultUserInput.py. DefaultUserInput gets loaded before UserInput to make sure all variables are populated with defaults.")
+
 from userInputValidityFunctions import userInputValidityCheck
 from userInputValidityFunctions import populateModuleVariablesFromDictionary
 SettingsVDictionary = userInputValidityCheck(UserChoices)
