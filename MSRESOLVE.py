@@ -1,5 +1,6 @@
 import bisect
 import copy 
+import ParsingFunctions as parse
 import numpy
 import csv
 import time
@@ -13,7 +14,6 @@ import shutil
 import importlib
 from numpy import genfromtxt
 import export_import as ei
-import ParsingFunctions as parse
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
 import UserInput as G, imp; imp.reload(G) #import the user input and reload the module to get rid of any unwanted variables in the namespace
 
@@ -3064,7 +3064,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
 
                 #Check if we should export to file what happened.
                 #TODO: Below should probably be made  a function (occurs at another place below)
-                if G.SLSUniqueExport == 'yes':
+                if G.SLSUniqueExport == 'yes' and G.answer == 'sls':
                     outputMoleculesOrderFileName = 'ExportedSLSUniqueMoleculesOrder.csv'
                     if G.iterativeAnalysis:
                         #then the filename will have a suffix attached
@@ -4143,229 +4143,28 @@ def PopulateLogFile():
     f6.write('###################################################################### \n')
     f6.close()#once the log file is printed the program is finished
     return None
-
-'''
-parseUserInput parses the variables in the user input file
-It passes in G as an argument
-This function is designed to serve as a standard for parsing particular variables
-'''
-def parseUserInput(currentUserInput):
-    #Input Files
-    currentUserInput.referenceFileNamesList = parse.listCast(currentUserInput.referenceFileNamesList) #referenceFileName needs to be a list
-    currentUserInput.referenceFormsList = parse.listCast(currentUserInput.referenceFormsList) #form needs to be a list
-    currentUserInput.referenceFormsList = parse.parallelVectorize(currentUserInput.referenceFormsList,len(currentUserInput.referenceFileNamesList)) #form needs to be a list of the same length as referenceFileName
-    currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
-    parse.strCheck(currentUserInput.collectedFileName,'collectedFileName') #collectedFileName must be a string
- 
-    
-    #preProcessing, dataAnalysis, dataSimulation, grapher
-    parse.strCheck(currentUserInput.preProcessing,'preProcessing')
-    parse.strCheck(currentUserInput.dataAnalysis,'dataAnalysis')
-    parse.strCheck(currentUserInput.dataSimulation,'dataSimulation')
-    parse.strCheck(currentUserInput.grapher,'grapher')
-        
-    #Time Range
-    parse.strCheck(currentUserInput.timeRangeLimit,'timeRangeLimit')
-    #Time Ranges are both floats
-    if currentUserInput.timeRangeLimit == 'yes':
-        currentUserInput.timeRangeStart = float(currentUserInput.timeRangeStart) 
-        currentUserInput.timeRangeFinish = float(currentUserInput.timeRangeFinish)  
-    
-    #Specific molecules/mass fragments
-    parse.strCheck(currentUserInput.specificMolecules,'specificMolecules')
-    parse.strCheck(currentUserInput.specificMassFragments,'specificMassFragments')
-    #Chosen Molecules and Mass Fragments are both lists
-    currentUserInput.chosenMoleculesNames = parse.listCast(currentUserInput.chosenMoleculesNames)
-    currentUserInput.chosenMassFragments = parse.listCast(currentUserInput.chosenMassFragments)
-    #currentUserInput.exp_mass_fragment_numbers and currentUserInput.moleculesNames are the molecules and the mass fragments from the referece data and collected data, respectively
-    #Populate chosenMassFragmentsForParsing based on user input option to get a list of mass fragments
-    if currentUserInput.specificMassFragments == 'yes': #if yes, use the user's chosen mass fragments
-        chosenMassFragmentsForParsing = copy.deepcopy(currentUserInput.chosenMassFragments)
-        #If using specificMassFragments, make sure all selected fragments are in the collected data
-        parse.compareElementsBetweenLists(currentUserInput.chosenMassFragments,currentUserInput.exp_mass_fragment_numbers,'chosenMassFragments','Mass Fragments from Data')
-    elif currentUserInput.specificMassFragments == 'no': #Otherwise use all mass fragments
-        chosenMassFragmentsForParsing = copy.deepcopy(currentUserInput.exp_mass_fragment_numbers)
-    #Populate chosenMolecules based on user input option to get a list of molecules
-    if currentUserInput.specificMolecules == 'yes': #if yes, use the user's chosen moleclues
-        chosenMoleculesForParsing = copy.deepcopy(currentUserInput.chosenMoleculesNames)
-        #If using specificMolecules, make sure all selected molecules are in the reference data
-        parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNames,'chosenMolecules','Molecules from Reference Data')
-    elif currentUserInput.specificMolecules == 'no': #Otherwise use all molecules
-        chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNames)
-    
-    #Molecule Likelihoods and Sensitivity Values are lists with the same length as the number of molecules
-    currentUserInput.moleculeLikelihoods = parse.listCast(currentUserInput.moleculeLikelihoods)
-    currentUserInput.moleculeLikelihoods = parse.parallelVectorize(currentUserInput.moleculeLikelihoods,len(chosenMoleculesForParsing))
-    currentUserInput.sensitivityValues = parse.listCast(currentUserInput.sensitivityValues)
-    currentUserInput.sensitivityValues = parse.parallelVectorize(currentUserInput.sensitivityValues,len(chosenMoleculesForParsing))
-    
-    #Linear Baseline Correction Semi-Automatic variables
-    parse.strCheck(currentUserInput.linearBaselineCorrectionSemiAutomatic,'linearBaselineCorrectionSemiAutomatic')
-    if currentUserInput.linearBaselineCorrectionSemiAutomatic == 'yes': #if using linear baseline correction semi automatic
-        currentUserInput.baselineType = parse.listCast(currentUserInput.baselineType) #Baseline type needs to be a list
-        currentUserInput.massesToBackgroundCorrect = parse.listCast(currentUserInput.massesToBackgroundCorrect) #Masses to background correct is a list        
-        if len(currentUserInput.massesToBackgroundCorrect) == 0: #If massesToBackgroundCorrect is empty
-            currentUserInput.massesToBackgroundCorrect = chosenMassFragmentsForParsing #Use the chosenMassFragments
-        #Check that all masses in currentUserInput.massesToBackgroundCorrect are in the collected data
-        parse.compareElementsBetweenLists(currentUserInput.massesToBackgroundCorrect,chosenMassFragmentsForParsing,"massesToBackgroundCorrect","chosenMassFragments")
-        #Early and Late baseline times are lists
-        currentUserInput.earlyBaselineTimes = parse.listCast(currentUserInput.earlyBaselineTimes) 
-        currentUserInput.lateBaselineTimes = parse.listCast(currentUserInput.lateBaselineTimes)
-        #Early and late baseline times are also the same length as masses to background correct
-        currentUserInput.earlyBaselineTimes = parse.parallelVectorize(currentUserInput.earlyBaselineTimes,len(currentUserInput.massesToBackgroundCorrect))
-        currentUserInput.lateBaselineTimes = parse.parallelVectorize(currentUserInput.lateBaselineTimes,len(currentUserInput.massesToBackgroundCorrect)) 
-    
-    #Data Solving Restrictions - Marginal Change Restrictor
-    parse.strCheck(currentUserInput.interpolateYorN,'interpolateYorN')
-    if currentUserInput.interpolateYorN == 'yes':
-        #Marginal Change Restriction and Ignorable Delta Y Threshold are both floats
-        currentUserInput.marginalChangeRestriction = float(currentUserInput.marginalChangeRestriction)
-        currentUserInput.ignorableDeltaYThreshold = float(currentUserInput.ignorableDeltaYThreshold)
-    
-    #Data Solving Restrictions - Brute Solving Restrictions
-    parse.strCheck(currentUserInput.dataRangeSpecifierYorN,'dataRangeSpecifierYorN')
-    parse.strCheck(currentUserInput.signalOrConcentrationRange,'signalOrConcentrationRange')
-    parse.strCheck(currentUserInput.csvFile,'csvFile')
-    parse.strCheck(currentUserInput.csvFileName,'csvFileName')
-    #Data  Upper/Lower Bound are both lists
-    currentUserInput.dataLowerBound = parse.listCast(currentUserInput.dataLowerBound)
-    currentUserInput.dataUpperBound = parse.listCast(currentUserInput.dataUpperBound)
-    currentUserInput.bruteIncrements = parse.listCast(currentUserInput.bruteIncrements) #increments is a list
-    currentUserInput.moleculesToRestrict = parse.listCast(currentUserInput.moleculesToRestrict) #Molecules range is a list    
-    #if using signal range, then data lower/upper bound and increments needs to be the same length as the number of chosenMassFragments
-    #if using concentration range, then they need to be the the same length as number of chosenMolecules
-    if currentUserInput.signalOrConcentrationRange == 'signal': #So set lenOfParallelVectorizingBruteSolvingRestrictionVars to be the length of chosenMassFragments if using signal
-        lenOfParallelVectorizingBruteSolvingRestrictionVars = len(chosenMassFragmentsForParsing)
-    elif currentUserInput.signalOrConcentrationRange == 'concentration': #and set it equal to the length of chosenMolecules if using concentration
-        lenOfParallelVectorizingBruteSolvingRestrictionVars = len(chosenMoleculesForParsing)
-    #paralellVectorize data upper/lower bound and increments to the appropriate length
-    currentUserInput.dataLowerBound = parse.parallelVectorize(currentUserInput.dataLowerBound,lenOfParallelVectorizingBruteSolvingRestrictionVars)
-    currentUserInput.dataUpperBound = parse.parallelVectorize(currentUserInput.dataUpperBound,lenOfParallelVectorizingBruteSolvingRestrictionVars)
-    currentUserInput.bruteIncrements = parse.parallelVectorize(currentUserInput.bruteIncrements,lenOfParallelVectorizingBruteSolvingRestrictionVars)
-    
-    #Set Scaling Factor
-    parse.strCheck(currentUserInput.scaleRawDataOption,'scaleRawDataOption')
-    if currentUserInput.scaleRawDataOption == 'manual':
-        currentUserInput.scaleRawDataFactor = float(currentUserInput.scaleRawDataFactor) #scaleRawDataFactor is a float
-    
-    #Reference Correction Changer
-    parse.strCheck(currentUserInput.measuredReferenceYorN,'measuredReferenceYorN')
-    parse.strCheck(currentUserInput.referenceMeasuredFileName,'referenceMeasuredFileName')
-    parse.strCheck(currentUserInput.referenceLiteratureFileName,'referenceLiteratureFileName')
-    
-    #Reference Pattern Changer
-    parse.strCheck(currentUserInput.extractReferencePatternFromDataOption,'extractReferencePatternFromDataOption')
-    #If using reference pattern changer, check that all currentUserInput.rpcMoleculesToChange are in the referenceData
-    if currentUserInput.extractReferencePatternFromDataOption == 'yes':
-        #The molecules to change, their mass fragments, and time ranges are all lists
-        currentUserInput.rpcMoleculesToChange = parse.listCast(currentUserInput.rpcMoleculesToChange)
-        currentUserInput.rpcTimeRanges = parse.listCast(currentUserInput.rpcTimeRanges)
-        currentUserInput.rpcTimeRanges = parse.parallelVectorize(currentUserInput.rpcTimeRanges,len(currentUserInput.rpcMoleculesToChange)) #rpcTimeRanges needs to have the same number of time ranges as moleculesToChange
-        currentUserInput.rpcMoleculesToChangeMF = parse.listCast(currentUserInput.rpcMoleculesToChangeMF) #rpcMoleculesToChangeMF also needs to be of the same length but the mass fragments to change need to be hard coded in the user input so parallel vectorize is not feasible
-        parse.compareElementsBetweenLists(currentUserInput.rpcMoleculesToChange,chosenMoleculesForParsing,'rpcMoleculesToChange','chosenMolecules')
-    
-    #Reference Mass Fragmentation Threshold
-    parse.strCheck(currentUserInput.minimalReferenceValue,'minimalReferenceValue')
-    if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
-        currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
-        #The length of the reference values needs to be the same length as the number of molecules
-        currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
-    
-    #Data Threshold Filter
-    parse.strCheck(currentUserInput.lowerBoundThresholdChooser,'lowerBoundThresholdChooser')
-    if currentUserInput.lowerBoundThresholdChooser == 'yes': #if using lowerBoundThresholdFilter
-        #masstes to lower bound threshold filter and lower bound threshold percent/absolute are all three lists
-        currentUserInput.massesToLowerBoundThresholdFilter = parse.listCast(currentUserInput.massesToLowerBoundThresholdFilter)
-        currentUserInput.lowerBoundThresholdPercentage = parse.listCast(currentUserInput.lowerBoundThresholdPercentage)
-        currentUserInput.lowerBoundThresholdAbsolute = parse.listCast(currentUserInput.lowerBoundThresholdAbsolute)        
-        if len(currentUserInput.massesToLowerBoundThresholdFilter) == 0: #If currentUserInput.massesToLowerBoundThresholdFilter is empty
-            currentUserInput.massesToLowerBoundThresholdFilter = chosenMassFragmentsForParsing #populate it with chosenMassFragments
-        #if lowerBoundThresholdPercentage is empty, then user is option to use lowerBoundThresholdAbsolute
-        if len(currentUserInput.lowerBoundThresholdPercentage) == 0:
-            #and currentUserInput.lowerBoundThresholdAbsolute needs to be the same length as massesToLowerBoundThresholdFilter
-            currentUserInput.lowerBoundThresholdAbsolute = parse.parallelVectorize(currentUserInput.lowerBoundThresholdAbsolute,len(currentUserInput.massesToLowerBoundThresholdFilter))
-        elif len(currentUserInput.lowerBoundThresholdAbsolute) == 0: #Otherwise lowerBoundThresholdAbsolute is empty and the user has opted to use lowerBoundThresholdPercentage
-            currentUserInput.lowerBoundThresholdPercentage = parse.parallelVectorize(currentUserInput.lowerBoundThresholdPercentage,len(currentUserInput.massesToLowerBoundThresholdFilter))
-    
-    #Data Smoother
-    parse.strCheck(currentUserInput.dataSmootherYorN,'dataSmootherYorN')
-    parse.strCheck(currentUserInput.dataSmootherChoice,'dataSmootherChoice')
-    if currentUserInput.dataSmootherYorN == 'yes': #If using dataSmoother
-        #The headers to confine to in data smoother is a list
-        currentUserInput.dataSmootherHeadersToConfineTo = parse.listCast(currentUserInput.dataSmootherHeadersToConfineTo)        
-        #mass fragments in headers to confine to must be included in chosenMassFragments
-        parse.compareElementsBetweenLists(currentUserInput.dataSmootherHeadersToConfineTo,chosenMassFragmentsForParsing,'dataSmootherHeadersToConfineTo','chosenMolecules')
-    
-    #Raw Signal Threshold
-    parse.strCheck(currentUserInput.rawSignalThresholdMethod,'rawSignalThresholdMethod')
-    parse.strCheck(currentUserInput.rawSignalThresholdLimit,'rawSignalThresholdLimit')
-    if currentUserInput.rawSignalThresholdMethod == 'yes': #If using rawSignalThresholdMethod
-        #raw signal threshold value, sensitivity value, raw signal threshold divider, and raw signal threshold limit percent are all lists
-        currentUserInput.rawSignalThresholdValue = parse.listCast(currentUserInput.rawSignalThresholdValue)
-        currentUserInput.sensitivityThresholdValue = parse.listCast(currentUserInput.sensitivityThresholdValue)
-        currentUserInput.rawSignalThresholdDivider = parse.listCast(currentUserInput.rawSignalThresholdDivider)
-        currentUserInput.rawSignalThresholdLimitPercent = parse.listCast(currentUserInput.rawSignalThresholdLimitPercent)
-        #sensitivityThreshold parallelVectorized to length of chosenMolecules
-        #rawSignalThresholdValue, Divider, and LimitPercent all parallelVectorized to length of chosenMassFragments
-        currentUserInput.rawSignalThresholdValue = parse.parallelVectorize(currentUserInput.rawSignalThresholdValue,len(chosenMassFragmentsForParsing))
-    #   #TODO Commented out until bug in referenceThreshold is fixed    
-    #    currentUserInput.sensitivityThresholdValue = parse.parallelVectorize(currentUserInput.sensitivityThresholdValue,len(chosenMoleculesForParsing))
-        currentUserInput.rawSignalThresholdDivider = parse.parallelVectorize(currentUserInput.rawSignalThresholdDivider,len(chosenMassFragmentsForParsing))
-        currentUserInput.rawSignalThresholdLimitPercent = parse.parallelVectorize(currentUserInput.rawSignalThresholdLimitPercent,len(chosenMassFragmentsForParsing))
-    
-    #Negative Analyzer
-    parse.strCheck(currentUserInput.negativeAnalyzerYorN,'negativeAnalyzerYorN')
-    
-    #Data Analysis Methods
-    #All must be strings
-    parse.strCheck(currentUserInput.answer,'answer')
-    parse.strCheck(currentUserInput.uniqueOrCommon,'uniqueOrCommon')
-    parse.strCheck(currentUserInput.slsFinish,'slsFinish')
-    parse.strCheck(currentUserInput.bruteOption,'bruteOption')
-    parse.strCheck(currentUserInput.distinguished,'distinguished')
-    parse.strCheck(currentUserInput.fullBrute,'fullBrute')
-    parse.strCheck(currentUserInput.SLSUniqueExport,'SLSUniqueExport')
-        
-    #Concentration Finder
-    parse.strCheck(currentUserInput.concentrationFinder,'concentrationFinder')
-    if currentUserInput.concentrationFinder == 'yes':
-        #First cast the concentrationFinder variables as lists
-        currentUserInput.moleculesTSC_List = parse.listCast(currentUserInput.moleculesTSC_List)
-        currentUserInput.moleculeSignalTSC_List = parse.listCast(currentUserInput.moleculeSignalTSC_List)
-        currentUserInput.massNumberTSC_List = parse.listCast(currentUserInput.massNumberTSC_List)
-        currentUserInput.moleculeConcentrationTSC_List = parse.listCast(currentUserInput.moleculeConcentrationTSC_List)
-        #Units needs to be a string, if it is not a string, return an error
-        parse.strCheck(currentUserInput.unitsTSC,'unitsTSC')																																        
-        
-        if currentUserInput.TSC_List_Type == 'MultipleReferencePatterns': #If using multiple reference patterns then the user must input 1 value to use for each reference file or a value for each reference file
-            #Then parallelize these variables to have the same length as number of reference patterns
-            currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referenceFileNamesList))
-            #NOTE: vectorizing these lists for 'SeparateMoleculesFactors' occurs in RatioFinder
-            
-    #Output Files
-    #All must be strings
-    parse.strCheck(currentUserInput.preProcessedDataOutputName,'preProcessedDataOutputName')
-    parse.strCheck(currentUserInput.resolvedScaledConcentrationsOutputName,'resolvedScaledConcentrationsOutputName')
-    parse.strCheck(currentUserInput.scaledConcentrationsPercentages,'scaledConcentrationsPercentages')
-    parse.strCheck(currentUserInput.concentrationsOutputName,'concentrationsOutputName')
-    parse.strCheck(currentUserInput.simulatedSignalsOutputName,'simulatedSignalsOutputName')
-        
-    #Iterative Analysis
-    parse.strCheck(currentUserInput.TotalConcentrationsOutputName,'TotalConcentrationsOutputName')
-        
-
-    return None
-
-
-
+   
 ##################################################################################################################
 ###############################################Algorithm Part 3: Main Control Function ###################################
 ##################################################################################################################
 def main():
     global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
+    
+    # #The below try statement is to check the user input dictionary's existence. Older MSRESOLVE did not use a dictionary.
+    # for now, these types of lines are at the bottom of the UserInput and DefaultUserInput files. I'm considering keeping there permanently and then deleting these commented out lines.
+    #from userInputValidityFunctions import parseUserInput, userInputValidityCheck, settingsCompatibilityCheck, #settingsDependenciesCheck,populateModuleVariablesFromDictionary,populateModuleVariablesFromNestedDictionary
+    # try:
+        # len(G.UserChoices) #this will fail if the dictionary has not yet been defined.
+        # UserChoicesExists = True
+    # except:
+        # UserChoicesExists = False
+    # if UserChoicesExists == True:
+        # #if dictionary exists, then code will continue with userinput validation. It is only valid when a UserChoices dictionary exists, which does not exist in 'old' versions of MSRESOLVE (also not used in some unit tests).
+        # G.SettingsVDictionary = userInputValidityCheck(G.UserChoices)
+        # #NOTE: SettingsVDictionary is created inside userInputValidityCheck(G)
+        # populateModuleVariablesFromDictionary(G, G.SettingsVDictionary)
+
+        
     if G.iterativeAnalysis:
         #This section is to overwrite the UI if iterative analysis is in the process of being run. 
         highestIteration = int(FindHighestDirNumber("_iter_"))
@@ -4421,6 +4220,8 @@ def main():
     G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
     #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
+    
+    from userInputValidityFunctions import parseUserInput
     parseUserInput(G) #This parses the variables in the user input file
             
     #it is useful to trim whitespace from each chosenMolecules string. The same thing is done to the molecule names of each reference pattern when an MSReference object is created.
