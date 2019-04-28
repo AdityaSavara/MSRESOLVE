@@ -2811,21 +2811,21 @@ def DataRangeSpecifier(molecules,timeIndex,molecules_copy,conversionfactor,dataf
 #array of raw signals, thereby making the distance from zero the error, which is now contained in an array. These values
 #are each squared, then summed in order to get the SSR, which the scipy.optimize.brute then gets the minimum of, thereby
 # finding the percentages that are closest to the correct percentages
-def SignalSimulation(sampleparameterpoints,*list):
-    rawsignalsarrayline = list[0]#the item in the list is the raw signal arrayline
-    matching_correction_values = list[1] #the second item is the matching correction values
-    bruteOption = list[2]#the input argument contains both the bruteOption and the two arrays: raw signals array line and matching correction values
+def SignalSimulation(sampleparameterpoints,*otherArgumentsList):
+    rawsignalsarrayline = otherArgumentsList[0]#the item in the list is the raw signal arrayline
+    matching_correction_values = otherArgumentsList[1] #the second item is the matching correction values
+    objectiveFunctionOption = otherArgumentsList[2]#the input argument contains both the objectiveFunctionOption (bruteOption) and the two arrays: raw signals array line and matching correction values
     xyyData = numpy.zeros([3,len(rawsignalsarrayline)]) #a three line array is made that will be entered into the function below
     xyyData[1:2,:] = numpy.hstack(rawsignalsarrayline) #this second line is the raw signals
     xyyData[2:3,:] = numpy.hstack(numpy.array(numpy.matrix(matching_correction_values)*numpy.matrix(numpy.vstack(sampleparameterpoints)))) #the third row is the calculated signals
     objectiveFunctionDictionary = ObjectiveFunctionGenerator(xyyData,0)
-    if bruteOption == 'weightedSAR': #based on the choice given the output will be chosen from this called functions dictionary
+    if objectiveFunctionOption == 'weightedSAR': #based on the choice given the output will be chosen from this called functions dictionary
         objective_function = objectiveFunctionDictionary['weightedSAR']
-    if bruteOption == 'weightedSSR':
+    if objectiveFunctionOption == 'weightedSSR':
         objective_function = objectiveFunctionDictionary['weightedSSR']
-    if bruteOption == 'ssr':
+    if objectiveFunctionOption == 'ssr':
         objective_function = objectiveFunctionDictionary['ssr']
-    if bruteOption == 'sar':
+    if objectiveFunctionOption == 'sar':
         objective_function = objectiveFunctionDictionary['sar']
     return objective_function
 
@@ -3250,14 +3250,14 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
     # truncated as the molecules are solved and masses are removed
     remaining_molecules_SLS = copy.deepcopy(molecules)
     
-    sizedecide = 5
+    sizedecide = 1 #right now, can cause crashing when given values greater than 1. This has to do with how much depth the nesting can have in SLSCommonFragments.
     reminder3 = 0
     #molecules_unedited = remaining_molecules_SLS
-    selectedvariablesholder = []
+    selectedVariable2DArrayAsListholder = []
     selectedcorrectionsholder = []
     selectedmassfragsholder = []
     selectedrawsigsholder = []
-    reminder = 1
+    firstTimeCounter = 1
     #this for loop goes through the whole nested loop as many times as the user would like, with the default setting being 3,
     #It resets the selected variable holder, which finds each row with the same number of variables 
     for sizecounter in range(2,sizedecide+1):#array-indexed for loop
@@ -3266,10 +3266,10 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
         if remaining_correction_factors_SLS.shape[0] != 0:
             remaining_num_MassFragments = len(remaining_correction_factors_SLS[:,0])
             remaining_num_molecules = len(remaining_correction_factors_SLS[0,:])
-        else:
+        else:  #####TODO: Figure out why this else statement is here.
             remaining_num_MassFragments = len(remaining_correction_factors_SLS)
             remaining_num_molecules = len(remaining_correction_factors_SLS)
-        selectedvariables = []
+        selectedVariable2DArrayAsList = []
         selectedcorrections = []
         selectedmassfrags = []
         selectedrawsigs = []
@@ -3278,25 +3278,25 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
         useablerawsigs = []
         #this loop looks at each row for the correction value array, resets the selected variable value
         for rowcounter in range(remaining_num_MassFragments):#array-indexed for loop
-            selectedvariable = []
+            selectedvariables = []
             reminder2 = 0
             reminder4 = 0
-            #this loop looks at each molecule's correction value for each row, only if the reminder is equal to zero(will be
+            #this loop looks at each molecule's correction value for each row, only if the firstTimeCounter is equal to zero(will be
             #used later)
             for molecule_ii in range(remaining_num_molecules):#array-indexed for loop
-                if reminder == 1:#will only run if no row has been chosen already
-                    #the code below this only happens if the reminder is equal to one
+                if firstTimeCounter == 1:#will only run if no row has been chosen already
+                    #the code below this only happens if the firstTimeCounter is equal to one
                     #here a zero or a one is added to the selected variable, based on whether the correction value array has a
                     #value present or not, this way the different rows can be compared
                     if remaining_correction_factors_SLS[rowcounter,molecule_ii] != 0:#chooses all values that are non zero- inputs ones
-                        selectedvariable.append(1)  
+                        selectedvariables.append(1)  
                     else:
-                        selectedvariable.append(0) 
+                        selectedvariables.append(0) 
                     #once the selected variable has been completed, this if statement is called
-                    if molecule_ii == remaining_num_molecules-1: #at the end of the row
+                    if molecule_ii == remaining_num_molecules-1: #at the end of the row (last molecule to consider) based on array indexing
                         #this if statement gets all the rows with the needed 
-                        if sum(selectedvariable) == sizecounter: #if the row has the correct number of variables
-                            selectedvariables.append(selectedvariable)
+                        if sum(selectedvariables) == sizecounter: #if the row has the correct number of variables
+                            selectedVariable2DArrayAsList.append(selectedvariables)
                             selectedcorrections.append(remaining_correction_factors_SLS[rowcounter])
                             selectedmassfrags.append(remaining_reference_intensities_SLS[rowcounter])
                             selectedrawsigs.append(remaining_rawsignals_SLS[rowcounter])
@@ -3305,26 +3305,26 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
             if rowcounter == remaining_num_MassFragments - 1:#after all the selected variables have been put in arrays
                 #This is being called massFragmentIndex_jj to distinguish it from the outer loop.
                 for massFragmentIndex_jj in range(remaining_num_MassFragments):#array-indexed for loop
-                    selectedvariable = []
+                    currentSelectedVariablesOption = []
                     reminder2 = 0
                     for molecule_iii in range(remaining_num_molecules):#array-indexed for loop
-                        if reminder == 1:#will only run if no row has been chosen already
+                        if firstTimeCounter == 1:#will only run if no row has been chosen already
                             if remaining_correction_factors_SLS[massFragmentIndex_jj,molecule_iii] != 0:#makes the selected variable again
-                                selectedvariable.append(1)  
+                                currentSelectedVariablesOption.append(1)  
                             else:
-                                selectedvariable.append(0)
+                                currentSelectedVariablesOption.append(0)
                             if molecule_iii == remaining_num_molecules-1: #once it has been made
                             #this for loop iterates across all of the values that are the same length as the variable we're 
                             #checking for, it then makes an array using all of the rows that match (it will at least match with
                             #itself, because itself is in the selected variables)
-                                for selectedIndex in range(len(selectedvariables)):#array-indexed for loop
-                                    if selectedvariables[selectedIndex] == selectedvariable:#adds itself to the list of matching rows,checks other rows of same size
-                                        reminder2 = reminder2 + 1
-                                        if reminder2 == 1:#keeps the values that will be used in solving; if this row ends up being used
+                                for selectedIndex in range(len(selectedVariable2DArrayAsList)):#array-indexed for loop. This loops as many times as there are COMBINATIONS from the first loop.
+                                    if selectedVariable2DArrayAsList[selectedIndex] == currentSelectedVariablesOption:#adds itself to the list of matching rows,checks other rows of same size
+                                        reminder2 = reminder2 + 1   #This increments the counter named reminder2 when a match is found.
+                                        if reminder2 == 1:# If it's the first match, it keeps the values that will be used in solving; if this row ends up being used
                                             useablecorrections = numpy.array(selectedcorrections[selectedIndex])
                                             useablemassfrags = numpy.array(selectedmassfrags[selectedIndex])
                                             useablerawsigs = numpy.array(selectedrawsigs[selectedIndex])
-                                        else:
+                                        else:  #If it's not the first match, it uses a vstack to add to the existing matches. A match is "useable"
                                             useablecorrections = numpy.vstack([useablecorrections,selectedcorrections[selectedIndex]])
                                             useablemassfrags = numpy.vstack([useablemassfrags,selectedmassfrags[selectedIndex]])
                                             useablerawsigs = numpy.vstack([useablerawsigs,selectedrawsigs[selectedIndex]])
@@ -3334,10 +3334,10 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                 if reminder4 == 0 and sizecounter > 2:#checks against past sizes for matching within one (has only values where the chosen row has values),reminder4
                                                                       #says that this has already been done so that the function will not add a bunch of extra rows and therefore
                                                                       #make the rest of the array unsolvable
-                                    for rowIndex in range(len(selectedvariablesholder)):#this goes through each layer of chosen rows
-                                        for colIndex in range(len(selectedvariablesholder[rowIndex])):#this goes through the rows of each chosen layer previous to the one being looked at
+                                    for rowIndex in range(len(selectedVariable2DArrayAsListholder)):#this goes through each layer of chosen rows
+                                        for colIndex in range(len(selectedVariable2DArrayAsListholder[rowIndex])):#this goes through the rows of each chosen layer previous to the one being looked at
                                             #the discrepancy between the rows 
-                                            if (len(selectedvariable) - sum(numpy.array(selectedvariable) == numpy.array(selectedvariablesholder[rowIndex][colIndex]))) <= sizecounter - (rowIndex + 2):#if they are good, then it adds all the required fields from that row
+                                            if (len(currentSelectedVariablesOption) - sum(numpy.array(currentSelectedVariablesOption) == numpy.array(selectedVariable2DArrayAsListholder[rowIndex][colIndex]))) <= sizecounter - (rowIndex + 2):#if they are good, then it adds all the required fields from that row
                                                 reminder2 = reminder2 + 1
                                                 reminder4 = reminder4 + 1
                                                 if reminder2 == 1: #if this is the first row then everything else is just stacked on it
@@ -3366,10 +3366,10 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                                     place_holder2 = place_holder2 + 1
                                     place_holder = 0
                                     place_holder2 = 0
-                                    solvedmolecules = selectedvariable
-                                    for selectedcounter in range(len(selectedvariable)):#array-indexed for loop
-                                        if selectedvariable[selectedcounter - place_holder] == 0:#all of the zeros in the chosen rows are eliminated, because they will only make solving more difficult
-                                            selectedvariable = numpy.delete(selectedvariable,selectedcounter - place_holder)
+                                    solvedmolecules = currentSelectedVariablesOption #Is this just to get the array size? Should a copy command be used here?
+                                    for selectedcounter in range(len(currentSelectedVariablesOption)):#array-indexed for loop
+                                        if currentSelectedVariablesOption[selectedcounter - place_holder] == 0:#all of the zeros in the chosen rows are eliminated, because they will only make solving more difficult
+                                            currentSelectedVariablesOption = numpy.delete(currentSelectedVariablesOption,selectedcounter - place_holder)
                                             useablecorrections = numpy.delete(useablecorrections,selectedcounter - place_holder,axis = 1)
                                             useablemassfrags = numpy.delete(useablemassfrags,selectedcounter - place_holder,axis = 1)
                                             place_holder = place_holder + 1 #saves place when deleting
@@ -3406,9 +3406,9 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                     else:
                                         print('The Array Chosen is Singular')
                                         solutions = numpy.zeros(len(remaining_rawsignals_SLS)) # the solutions are made into all zeros if the chosen array is singular
-                                    reminder = 0
+                                    firstTimeCounter = 0
                                     reminder3 = 1
-        selectedvariablesholder.append(selectedvariables)
+        selectedVariable2DArrayAsListholder.append(selectedVariable2DArrayAsList)
         selectedcorrectionsholder.append(selectedcorrections)
         selectedmassfragsholder.append(selectedmassfrags)
         selectedrawsigsholder.append(selectedrawsigs)
