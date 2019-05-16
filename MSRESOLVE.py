@@ -534,10 +534,16 @@ def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,reference
 # TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
 def ReferenceThreshold(reference,referenceValueThreshold):
     referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
-    for rowcounter in range(len(referencedata[:,0])):#goes through all rows in references
-        for columncounter in range(len(referencedata[0,:])):#goes through all columns in all rows in reference
-            if referencedata[rowcounter,columncounter] < referenceValueThreshold[columncounter]:#user input changes
-                referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
+    for columncounter in range(len(referencedata[0,:])):#goes through all columns in all rows in reference (this loop is one molecule at a time)
+        for rowcounter in range(len(referencedata[:,0])):#goes through all rows in references (one mass fragment at a time)        
+            if len(referenceValueThreshold) == 1: #this is for if a single value was provided for referenceValueThreshold
+                if referencedata[rowcounter,columncounter] < referenceValueThreshold[0]:
+                    referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
+                # (len(referencedata[:,0])) #this is masses.
+                # (len(referencedata[0,:])) #this is molecules
+            else:  #this is for if values of referenceValueThreshold were provided for each molecule.
+                if referencedata[rowcounter,columncounter] < referenceValueThreshold[columncounter]: 
+                    referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
     reference[:,1:] = referencedata #this puts changed reference back with mass fragment numbers
     return reference
     
@@ -2680,6 +2686,11 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeL
 #this function takes the data from important abscissa identifier and 
 def InverseMethodDistinguished(monitored_reference_intensities,matching_correction_values,rawsignalsarrayline):
     monitored_reference_intensities,matching_correction_values,rawsignalsarrayline = DistinguishedArrayChooser (monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, G.moleculeLikelihoods,G.sensitivityValues)
+    #The below try and except statemnt is meant to catch cases as described in the except statement.
+    try:
+        numpy.linalg.det(matching_correction_values)
+    except:
+        print("There is an error in a matrix operation evaluation: The number of feasible mass fragments to check is probably less than the number of molecules. This can happen if referenceValueThreshold is too strict, leaving not enough feasible fargments to consider. The program is probably about to crash.")               
     if numpy.linalg.det(matching_correction_values) != 0:#only solves if determinant is not equal to zero
         solutions = numpy.linalg.solve(matching_correction_values,rawsignalsarrayline)
     else:
