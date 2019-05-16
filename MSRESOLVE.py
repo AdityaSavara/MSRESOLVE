@@ -3573,7 +3573,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                     concentrationsFromFinisher = BruteForce(remaining_molecules_SLS,specifications,remaining_correction_factors_SLS,remaining_rawsignals_SLS,bruteOption,maxPermutations)
                 else:
                     print("Warning: The number of permutations requested is too small to allow for 5 possibilities per molecule. "
-                          + "Switching to use Inverse instead of Brute for slsFinish for this datapont (at timeIndex of " +str(timeIndex)+ " where 0 is the first analyzed datapoint."
+                          + "Switching to use Inverse instead of Brute for slsFinish for this datapont (at timeIndex of " +str(timeIndex)+ " where 0 is the first analyzed datapoint)."
                           + "Additional Info: There are " + str(len(remaining_molecules_SLS)) + " molecules that SLS was unable to solve! "
                           + "There are " + str(permutationNum) + " permutations allowed, and " + str(5**len(remaining_molecules_SLS)) + " would be needed."
                           + "If you wish to use Brute, increase the size of permutations in the user input file. ")
@@ -3590,7 +3590,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                     concentrationsFromFinisher = BruteForce(remaining_molecules_SLS,specifications,remaining_correction_factors_SLS,remaining_rawsignals_SLS,bruteOption, maxPermutations)
                 else:
                     print("Warning: The number of permutations requested is too small to allow for 5 possibilities per molecule. "
-                          + "Switching to use Inverse instead of Brute for slsFinish for this datapont (at timeIndex of " +str(timeIndex)+ " where 0 is the first analyzed datapoint."
+                          + "Switching to use Inverse instead of Brute for slsFinish for this datapont (at timeIndex of " +str(timeIndex)+ " where 0 is the first analyzed datapoint)."
                           + "Additional Info: There are " + str(len(remaining_molecules_SLS)) + " molecules that SLS was unable to solve! "
                           + "There are " + str(permutationNum) + " permutations allowed, and " + str(5**len(remaining_molecules_SLS)) + " would be needed."
                           + "If you wish to use Brute, increase the size of permutations in the user input file. ")
