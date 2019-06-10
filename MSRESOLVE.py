@@ -4191,6 +4191,14 @@ def main():
         # #NOTE: SettingsVDictionary is created inside userInputValidityCheck(G)
         # populateModuleVariablesFromDictionary(G, G.SettingsVDictionary)
 
+    try:
+        len(G.AllMID_ObjectsDict)
+    except:
+    	#Create the dictionary storing the Molecular Ionization Data objects if the ionization data file exists in the main directory
+        #During normal use, this except statement will always be entered except during the iterative analysis unit test.
+        #It is actually okay if this except statement runs every time, but it saves a bit of time in the iterative analysis unit test if it does not get run each time and is retained through each iteration.
+        #while it would be desirable to put his below the iterative analysis  if statement, with the currentcode flow, it must happen before the directory switch and therefore must be before the iterative code block.
+        G.AllMID_ObjectsDict = populateAllMID_ObjectsDict(G.ionizationDataFileName)
         
     if G.iterativeAnalysis:
         #This section is to overwrite the UI if iterative analysis is in the process of being run. 
@@ -4215,12 +4223,7 @@ def main():
     if G.iterativeAnalysis and G.iterationNumber != 1:
         #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
         IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber) #This function also changes the working directory
-    if (not G.iterativeAnalysis) or (G.iterationNumber == 1): #If not using iterative analysis or running the first iteration
-    	#Create the dictionary storing the Molecular Ionization Data objects if the ionization data file exists in the main directory
-    	#If using iterative analysis, then the dictionary used in the first iteration is retained throughout each iteration
-        G.AllMID_ObjectsDict = populateAllMID_ObjectsDict(G.ionizationDataFileName)
 
-    
     #Save an MSReference object containing all molecules and an MSData object containing all mass fragments
     if G.iterativeAnalysis and G.iterationNumber != 1: #If using iterative and not on the first iteration we will need to remove _iter_x from the file names
         AllMoleculesReferenceFileNamesList = [] #Initialize AllMoleculesReferenceDataList as an empty list
