@@ -7,6 +7,7 @@ sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 import UnitTesterSG as ut
 import MSRESOLVE, imp; imp.reload(MSRESOLVE)
 import DefaultUserInput as G, imp; imp.reload(G) #This is needed because we need the __var_list__
+MSRESOLVE.G = G #This is because we need to overwrite whatever user input the user has with the default user input.
     
 #get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
