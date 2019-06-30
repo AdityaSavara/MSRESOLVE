@@ -247,7 +247,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     
     SettingsVDictionary['preProcessing'] = UserChoices['preProcessing']['on'] 
     SettingsVDictionary['dataAnalysis'] = UserChoices['dataAnalysis']['on']
-    SettingsVDictionary['dataSimulation'] = UserChoices['dataAnalysis']['on']
+    SettingsVDictionary['dataSimulation'] = UserChoices['dataSimulation']['on']
     
     SettingsVDictionary['grapher'] = UserChoices['grapher']['on']
     
