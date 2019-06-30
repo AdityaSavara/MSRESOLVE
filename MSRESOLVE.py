@@ -1254,7 +1254,7 @@ def DataInputPreProcessing(ExperimentData):
     #displays graph of raw data
     if G.grapher == 'yes':
         print("Raw Signal Graph")
-        Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'rawData', fileSuffix = G.iterationSuffix)
+        Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'rawData', fileSuffix = G.iterationSuffix, label="Raw Signal Graph")
         
     if len(G.backgroundMassFragment) != 0:
         SlopeEliminator (ExperimentData,G.backgroundMassFragment,G.backgroundSlopes,G.backgroundIntercepts)
@@ -1274,7 +1274,7 @@ def DataInputPreProcessing(ExperimentData):
     #displays mid-preprocessing graph    
     if G.grapher == 'yes':
         print("Pre-marginalChangeRestrictor Graph")
-        Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph', fileSuffix = G.iterationSuffix)
+        Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph', fileSuffix = G.iterationSuffix, label="Pre-marginalChangeRestrictor Graph")
 
     if G.interpolateYorN == 'yes':
         [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
@@ -1372,7 +1372,7 @@ def ExportUserInputFile(fileName):
 
     
 #this function is used to append any list to a file in an executable fashion
-def AppendListToFile(listVariableName, List, FileName, entriesPerLine): 
+def AppendListToFile(listVariableName, List, FileName, entriesPerLine=float('Inf')):
     #open the file in an append fashion
     with open(FileName,'a+') as f:
         #write in the variable name and open the list
@@ -1388,9 +1388,10 @@ def AppendListToFile(listVariableName, List, FileName, entriesPerLine):
                string = string[:-1]
            #write the entry into the file 
            f.write(string)
-           #if the previous entry was the last one in that line, add a newline character
-           if (listIndex + 1) % entriesPerLine == 0: 
-               f.write('\n')
+           if entriesPerLine != float('Inf'): #This is infinity in python.
+               #if the previous entry was the last one in that line, add a newline character
+               if (listIndex + 1) % entriesPerLine == 0: 
+                   f.write('\\'+'\n') #use \ character so that if any code reads this file later it will know the list is not over.
         #write in the closing bracket for the list
         f.write(']')
     return None
@@ -1459,28 +1460,23 @@ def SpecificIterationName(iterativeAnalysis, iterationNumber):
 
 def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = False):
     #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
+    global G
     if iterate:
         iterationNumber += 1
     G.iterationNumber = iterationNumber
-    
     iterationDirectoryName = SpecificIterationName(iterativeAnalysis, iterationNumber)
-       
     #confirm that the directory exists
     EnsureDirectory(iterationDirectoryName)
-    
     #Change the working directory to the new directory name. 
-    'THIS IS A HIGHLY SIGNIFICANT LINE, because it redirects all of the output for the rest of the program run'
+    #'THIS IS A HIGHLY SIGNIFICANT LINE, because it redirects all of the output for the rest of the program run'
     os.chdir(iterationDirectoryName) #this will be changed back at the end of the program
-    
     if not iterate:
         #naming for collected file
         #record the old file names 
         G.oldcollectedFileName = G.collectedFileName
-        
         #construct the file names for the current run of the program
         #TODO FIXME, This syntax with -21 will not allow iterative to be compatible with more than 9 iterations
-        collectedFileNameTemp = G.collectedFileName[:-21] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
-        
+        collectedFileNameTemp = str(G.collectedFileName)[:-21] +  str(G.iterationSuffix) + str(G.collectedFileName)[-4:]      
         #copy the experimental and reference files into new names for this iterative run
         shutil.copy(G.collectedFileName, collectedFileNameTemp)
         
@@ -1532,7 +1528,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     #copy the first UserInputFile into the first iteration directory
     ExportUserInputFile("UserInput_iter_1.py")
     #append the variable list to the user input file
-    AppendListToFile("__var_list__", G.__var_list__, "UserInput_iter_1.py", 5)
+    AppendListToFile("__var_list__", G.__var_list__, "UserInput_iter_1.py", float('Inf'))
     
     #record the old file names 
     G.oldcollectedFileName = G.collectedFileName
@@ -1634,13 +1630,13 @@ def exportSimulatedSignalsSoFar(simulatedSignalsOutputName,iterationDirectoryNam
     simulatedSignalsOutputNameIterative = simulatedSignalsOutputName[:-4] + iterationDirectoryName + simulatedSignalsOutputName[-4:] #get the filename with the iterative suffix on it
     simulatedSignalsFromIterativeAbsoluteFileName = os.path.join(os.getcwd(),iterationDirectoryName,simulatedSignalsOutputNameIterative) #get the absolute path
     
-    simulatedSignalsFromIterative = numpy.genfromtxt(simulatedSignalsFromIterativeAbsoluteFileName,delimiter=',',dtype=None).astype(str) #Get the data from the iteration's simultaed raw signals file (use astype(str) to keep b' from showing up before each entry)
+    simulatedSignalsFromIterative = numpy.genfromtxt(simulatedSignalsFromIterativeAbsoluteFileName,delimiter=',',dtype=None, encoding='latin1').astype(str) #Get the data from the iteration's simultaed raw signals file (use astype(str) to keep b' from showing up before each entry)
 
     if iterationNumber == 1: #if in the first iteration we do not have SimulatedRawSignalsSoFarIterative.csv so we create it by saving the first iteration's simulated signals to it
         #Create the array to export
-        numpy.savetxt('SimulatedRawSignalsSoFarIterative.csv',simulatedSignalsFromIterative,fmt='%s',delimiter=',')
+        numpy.savetxt('SimulatedRawSignalsSoFarIterative.csv',simulatedSignalsFromIterative,fmt='%s',delimiter=',', encoding='latin1')
     elif iterationNumber != 1: #We are at a later iteration so we need to read simulatedRawSignalsSoFarIterative.csv to see what signals are there
-        simulatedSignalsSoFar = numpy.genfromtxt('SimulatedRawSignalsSoFarIterative.csv',delimiter=',',dtype=None) #read the simulatedRawSignalsSoFarIterative.csv file
+        simulatedSignalsSoFar = numpy.genfromtxt('SimulatedRawSignalsSoFarIterative.csv',delimiter=',',dtype=None, encoding='latin1') #read the simulatedRawSignalsSoFarIterative.csv file
         #Break up the simulated signals so far data into arrays
         SS_SoFarHeader = simulatedSignalsSoFar[0,1:].astype(str) #get the header
         SS_SoFarAbscissa = simulatedSignalsSoFar[1:,0].astype(float) #Get the abscissa
@@ -1652,8 +1648,6 @@ def exportSimulatedSignalsSoFar(simulatedSignalsOutputName,iterationDirectoryNam
         SS_IterativeAbscissa = simulatedSignalsFromIterative[1:,0].astype(float) #Get the abscissa
         SS_IterativeData = simulatedSignalsFromIterative[1:,1:].astype(float) #get the data
         SS_IterativeAbscissaHeader = simulatedSignalsFromIterative[0,0] #get the abscissa header
-        
-        
         SS_SoFarAbscissa = numpy.reshape(SS_SoFarAbscissa,(len(SS_SoFarAbscissa),1)) #reshape the abscissa so it's at least in 2d with only 1 column
         
         #Loop through mass fragments in the current in this iteration and see if it is in simulatedRawSignalsSoFarIterative
@@ -1666,15 +1660,11 @@ def exportSimulatedSignalsSoFar(simulatedSignalsOutputName,iterationDirectoryNam
                 columnToAppend = numpy.atleast_2d(SS_IterativeData[:,massFragmentIndex])
                 columnToAppend = columnToAppend.transpose()
                 SS_SoFarData = numpy.hstack((SS_SoFarData,columnToAppend))
-        
         sortedData, sortedHeaders = sortArrayByHeader(SS_SoFarHeader,SS_SoFarData) #Sort the data by the mass fragment number
-        
         stackedData = numpy.vstack((sortedHeaders,sortedData)) #stack the sorted headers on the sorted data
         stackedAbscissa = numpy.vstack((SS_SoFarAbscissaHeader,SS_SoFarAbscissa)) #stack the abscissa header with the abscissa
-        
         simulatedDataToExport = numpy.hstack((stackedAbscissa,stackedData))
-        
-        numpy.savetxt('SimulatedRawSignalsSoFarIterative.csv',simulatedDataToExport,fmt='%s',delimiter=',')
+        numpy.savetxt('SimulatedRawSignalsSoFarIterative.csv',simulatedDataToExport,fmt='%s',delimiter=',', encoding='latin1')
 
 def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment_numbers,ExperimentDataFullCopy, times, concdata, molecules):
     #implied arguments: G.iterationSuffix, G.nextRefFileName, G.nextExpFileName, G.iterativeAnalysis, G.unusedMolecules, G.iterationNumber
@@ -1713,7 +1703,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     #export the user input specifications 
     ExportUserInputFile(nextUserInputFileName)
     #append the variable list to the user input file
-    AppendListToFile("__var_list__", G.__var_list__, nextUserInputFileName, 5)
+    AppendListToFile("__var_list__", G.__var_list__, nextUserInputFileName, float('Inf'))
     
     if G.iterativeAnalysis == True:
         iterationDirectoryName = '_iter_%s' %(str(G.iterationNumber - 1))
@@ -1800,7 +1790,7 @@ def readDataFile(collectedFileName):
 #readReferenceFile is a helper function that reads the reference file in a certain form and returns the
 #variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
 def readReferenceFile(referenceFileName, form):        
-     #This function converts the XYXY data to an XYYY format
+    #This function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(provided_reference_patterns):
         print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
         masslists = [] #future lists must be must empty here to append in the for loops
@@ -2635,13 +2625,13 @@ def ListLengthChecker(aList, desiredLength, defaultNum):
 #in that row and that molecules own value
 def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeLikelihoods,sensitivityValues):
     #the shape of the referenceData is found 
-    num_rows = len(refMassFrags[:,0])
-    num_columns = len(refMassFrags[0,:])
+    num_rows = len(refMassFrags[:,0])   #This is number of mass frags, if it's mass spec data.
+    num_columns = len(refMassFrags[0,:]) #This is number of molecules, if it's mass spec data.
     
     #The acceptable threshold is determined by the SensitivityValue function
     sensitivityValues = ListLengthChecker(sensitivityValues, num_columns, 1)
    
-    #the moleculesLikelihood is corrected if it wasn't entered by the use.
+    #the moleculesLikelihood is corrected if it wasn't entered by the user.
     moleculeLikelihoods = ListLengthChecker(moleculeLikelihoods, num_columns, 1)
     
     #all values below the specified relative intensity must be set the minThreshold value
@@ -2942,13 +2932,11 @@ def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, r
     moleculeIndexIncludingDeletions = 0
     for moleculeIndex in range(remaining_num_molecules):#array-indexed for loop. Ideally, we'll do SLS once for each molecule.
         referenceIntensitiesForThisMolecule = remaining_monitored_reference_intensities[:,moleculeIndex]  #Note that this must be monitored_reference_intensities, so it has same indexing as moleculeIndex even while remaining_reference_intensities_SLS gets shortened.
-        #print(referenceIntensitiesForThisMolecule, "Molecule's Ref. Intensities")
         if sum(referenceIntensitiesForThisMolecule) == 0.0:
             #Find the name of the molecule getting deleted.
             nameOfThisMolecule = remaining_molecules_SLS[moleculeIndexIncludingDeletions]
             #Find the index of where that molecule was originally, to update solvedmolecules accordingly, and also solutions accordingly.
             originalMolecularIndex = list(molecules_unedited).index(nameOfThisMolecule)
-            #print("the above one got this molecule removed, index!", moleculeIndexIncludingDeletions)
             #this is setting concentration to 0 for that molecule, in this iteration.
             solutions[originalMolecularIndex] = 0.0  #note that we use the actual moleculeIndex here.
             #No need to subtract any signals
@@ -2972,11 +2960,8 @@ def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, r
 #data compressor function and starts right after the correction values are obtained
 #TODO: make some kind of unit test that tests a good order being chosen.
 def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, timeIndex, time):
-    # print("In SLSUniqueFragments")
     #FIXME: I am using the ReferenceData.mass_fragment_numbers_monitored but it needs to be passed in from Reference or Experimental datal.
     original_list_of_mass_fragments = copy.deepcopy(currentReferenceData.mass_fragment_numbers_monitored)
-  
-    
     # This is creating a local copy of 'monitored_reference_intensities' which will become
     # truncated as the molecules are solved and masses are removed
     remaining_reference_intensities_SLS = copy.deepcopy(monitored_reference_intensities)
@@ -3028,9 +3013,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexIncludingDeletions),axis = 1)
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
             moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions - 1 
-        moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions + 1                       
-       
-           
+        moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions + 1
     num_remaining_molecules_before_loop = len(remaining_correction_factors_SLS[0,:]) #could have also used a different array or way of doing this.
     
     listFor_remaining_num_molecules_during_loop = list(range(num_remaining_molecules_before_loop))
@@ -3180,9 +3163,6 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,(moleculeIndexForThisSLS),axis = 1)
             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexForThisSLS),axis = 1)
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,moleculeIndexForThisSLS)
-            # print("before del", listFor_remaining_num_molecules_during_loop,  molNumIndex, remaining_molecules_SLS)
-            # print("after del", listFor_remaining_num_molecules_during_loop, molNumIndex, remaining_molecules_SLS)
-        
             #update this variable:
             remaining_num_molecules = remaining_num_molecules -1
             #Reset these lists to start again.
@@ -3229,8 +3209,6 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     if sum(solvedmolecules) == 0:#if none of the solutions have been found
         solutions = []
         solvedmolecules = []   
-    # print("Bottom of Function", molNumIndex, num_remaining_molecules_before_loop )
-    # print(remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules)
     return [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules]
     
 #this sls method cuts smaller, solvable arrays out of the large array and uses numpy.linalg.solve to find the signals
@@ -3984,13 +3962,14 @@ def GeneratePercentages(scaledConcentrationsarray):
 This function is the standard function used to graph 
 molecule concentrations or mass fragments signals. 
 '''
-def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '', fileSuffix = ''):
-    
+def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '', fileSuffix = '', label="000", fromGui = False):
     import matplotlib.pyplot as plt
-    
     colormap = plt.cm.gist_ncar
-    plt.gca().set_color_cycle([colormap(i) for i in numpy.linspace(0, 0.9, len(data[0,:]))])
-    ax = plt.subplot(111)
+    try:
+        plt.gca().set_color_cycle([colormap(i) for i in numpy.linspace(0, 0.9, len(data[0,:]))])
+    except:
+        plt.gca().set_prop_cycle(color=([colormap(i) for i in numpy.linspace(0, 0.9, len(data[0,:]))]))
+    ax = plt.subplot(111, label=label)
     for x in range(len(data[0,:])):
         ax.plot(times,data[:,x])
     box = ax.get_position()
@@ -4176,6 +4155,11 @@ def PopulateLogFile():
 ##################################################################################################################
 def main():
     global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
+    filesAndDirectories = os.listdir()
+    for name in filesAndDirectories:
+        if name.startswith("Exported") and name.endswith(".csv"):
+            print("Previous run Exported file detected. Deleting file", name)
+            os.remove(name)
     
     # #The below try statement is to check the user input dictionary's existence. Older MSRESOLVE did not use a dictionary.
     # for now, these types of lines are at the bottom of the UserInput and DefaultUserInput files. I'm considering keeping there permanently and then deleting these commented out lines.
@@ -4190,7 +4174,6 @@ def main():
         # G.SettingsVDictionary = userInputValidityCheck(G.UserChoices)
         # #NOTE: SettingsVDictionary is created inside userInputValidityCheck(G)
         # populateModuleVariablesFromDictionary(G, G.SettingsVDictionary)
-
     try:
         len(G.AllMID_ObjectsDict)
     except:
@@ -4199,12 +4182,11 @@ def main():
         #It is actually okay if this except statement runs every time, but it saves a bit of time in the iterative analysis unit test if it does not get run each time and is retained through each iteration.
         #while it would be desirable to put his below the iterative analysis  if statement, with the currentcode flow, it must happen before the directory switch and therefore must be before the iterative code block.
         G.AllMID_ObjectsDict = populateAllMID_ObjectsDict(G.ionizationDataFileName)
-        
     if G.iterativeAnalysis:
         #This section is to overwrite the UI if iterative analysis is in the process of being run. 
         highestIteration = int(FindHighestDirNumber("_iter_"))
         iterationDirectorySuffix = '_iter_%s' %str(highestIteration)
-        for directoryName in os.listdir():
+        for directoryName in filesAndDirectories:
             if iterationDirectorySuffix in directoryName:
                 userInputName = 'UserInput{}'.format(iterationDirectorySuffix)
                 userInputPath = '{}.{}'.format(directoryName, userInputName)
@@ -4304,11 +4286,10 @@ def main():
         # Perform the actual data preprocessing on ExperimentData
         ExperimentData = DataInputPreProcessing(ExperimentData)
         print("Data PreProcessing completed")
-        
         #This graph call is graphing fully preprocessed data.
         if G.grapher == 'yes':
             print('PreProcessed Data Graph')
-            Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'PreprocessingAfterSmoothing', fileSuffix = G.iterationSuffix)
+            Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'PreprocessingAfterSmoothing', fileSuffix = G.iterationSuffix, label="PreProcessed Data Graph")
 
         #Exports the Preprocessed Data
         ExportXYYYData(G.preProcessedDataOutputName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 
@@ -4550,7 +4531,7 @@ def main():
         
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
-            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='graphAfterAnalysis', fileSuffix = G.iterationSuffix)
+            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='graphAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph")
 
             
     if G.dataSimulation =='yes':

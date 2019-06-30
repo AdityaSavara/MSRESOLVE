@@ -58,7 +58,8 @@ ExpectedResolvedConcentrations[-1] = ResolvedConcentrations[-1] #The last concen
 ut.set_expected_result(ExpectedResolvedConcentrations,str(ExpectedResolvedConcentrations),prefix=prefix,suffix=suffix) #set the expected result to be the ExpectedResolvedConcentrations list
 
 #set output
-output = ResolvedConcentrations #the output is our resolved concentrations
+output = ResolvedConcentrations.flatten() #the output is our resolved concentrations. Before Numpy 1.16, this flatten was not necessary. But for some reason, Numpy 1.16 changed array nesting somewhere in the MSRESOLVE process, so flattening is necessary here in order to get them to match (or, the expected concentrations would need to become more nested, which was less convenient to do). Flattening here also keeps the test backwards compatible w/ numpy 1.14.
+
 #Places object in a tuple
 resultObj = output
 
