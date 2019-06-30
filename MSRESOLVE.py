@@ -16,6 +16,7 @@ from numpy import genfromtxt
 import export_import as ei
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
 import UserInput as G, imp; imp.reload(G) #import the user input and reload the module to get rid of any unwanted variables in the namespace
+G.stopAtGraphs=True #Setting this global to false initially. In future, people might override this from the command line or something like that.
 
 ############################################################################################################################################
 #########################################################Best Mass Fragment Chooser#########################################################
@@ -1254,7 +1255,8 @@ def DataInputPreProcessing(ExperimentData):
     #displays graph of raw data
     if G.grapher == 'yes':
         print("Raw Signal Graph")
-        Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'rawData', fileSuffix = G.iterationSuffix, label="Raw Signal Graph")
+        Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'rawData', fileSuffix = G.iterationSuffix, label="Raw Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber=G.lastFigureNumber+1)
+        G.lastFigureNumber = G.lastFigureNumber+1
         
     if len(G.backgroundMassFragment) != 0:
         SlopeEliminator (ExperimentData,G.backgroundMassFragment,G.backgroundSlopes,G.backgroundIntercepts)
@@ -1274,7 +1276,8 @@ def DataInputPreProcessing(ExperimentData):
     #displays mid-preprocessing graph    
     if G.grapher == 'yes':
         print("Pre-marginalChangeRestrictor Graph")
-        Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph', fileSuffix = G.iterationSuffix, label="Pre-marginalChangeRestrictor Graph")
+        Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph', fileSuffix = G.iterationSuffix, label="Pre-marginalChangeRestrictor Graph", stopAtGraphs=G.stopAtGraphs, figureNumber=G.lastFigureNumber+1)
+        G.lastFigureNumber = G.lastFigureNumber+1
 
     if G.interpolateYorN == 'yes':
         [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
@@ -3916,8 +3919,8 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
         formatedDataHeader = numpy.hstack((abscissaHeader,formatedDataHeader))
         fullArrayToExport = numpy.vstack((formatedDataHeader,data))
         
-    #if the row index isn't included in the data, then add it 
-    if rowIndex != []:    
+    #if the row index is available, then add it 
+    if len(rowIndex) > 0:    
         abscissaHeader = numpy.transpose((numpy.array([[abscissaHeader]])))
         rowIndex = numpy.transpose([rowIndex])
         abscissaArrayToExport =  numpy.vstack((abscissaHeader,rowIndex))
@@ -3962,24 +3965,25 @@ def GeneratePercentages(scaledConcentrationsarray):
 This function is the standard function used to graph 
 molecule concentrations or mass fragments signals. 
 '''
-def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '', fileSuffix = '', label="000", fromGui = False):
+def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '', fileSuffix = '', label="000", stopAtGraphs = True, figureNumber=1):
     import matplotlib.pyplot as plt
-    colormap = plt.cm.gist_ncar
-    try:
-        plt.gca().set_color_cycle([colormap(i) for i in numpy.linspace(0, 0.9, len(data[0,:]))])
-    except:
-        plt.gca().set_prop_cycle(color=([colormap(i) for i in numpy.linspace(0, 0.9, len(data[0,:]))]))
-    ax = plt.subplot(111, label=label)
-    for x in range(len(data[0,:])):
-        ax.plot(times,data[:,x])
-    box = ax.get_position()
-    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
-    ax.legend(molecules,loc='center left', bbox_to_anchor=(1, 0.5))
-    plt.xlabel(ExperimentData.abscissaHeader) #Get the x-axis title from the collected data csv file
+    plt.figure(figureNumber) #should number figure before doing more (answer with wording "when you call") https://stackoverflow.com/questions/6916978/how-do-i-tell-matplotlib-to-create-a-second-new-plot-then-later-plot-on-the-o
     if concentrationFinder == 'yes':
         plt.ylabel('Concentration (%s)'%(units))
     else:
         plt.ylabel('Concentration Relative to CO')
+    colormap = plt.cm.gist_ncar
+    colorListNumbers = numpy.linspace(0.0,0.9,len(data[0,:])) #these choices were made to be aesthetically pleasing. The len part is the number of data series. The 0.9 cuts off part of the color spectrum  (can go from 0 to 1)
+    colorList = []
+    for color in colorListNumbers:
+        colorList.append(colormap(color))
+    ax = plt.subplot(111, label=label)
+    for x in range(len(data[0,:])):
+        ax.plot(times,data[:,x], color=colorList[x]) #In 2019, needed to change how colors were implemented due to plt change.
+    box = ax.get_position()
+    ax.set_position([box.x0, box.y0, box.width * 0.8, box.height])
+    ax.legend(molecules,loc='center left', bbox_to_anchor=(1, 0.5))
+    plt.xlabel(ExperimentData.abscissaHeader) #Get the x-axis title from the collected data csv file
 
     # Now save the plot as a png
     # assuming a file name was passed for it
@@ -4001,10 +4005,24 @@ def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '',
             os.makedirs(graphDirectory)
             
         plt.savefig(os.path.join(graphDirectory, graphFileName))
-
-    plt.show()
-
-        
+    #Need to check for ipython because it affects how graphs will be displayed.
+    #based below function on https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
+    def checkForIpython():
+        try:
+            cfg = get_ipython().config 
+            return True
+        except NameError:
+            return False        
+    #Figured out "block" argument works. Got it from: https://community.esri.com/thread/185110-matplotlib-show-prevents-script-from-completing
+    if checkForIpython()==True:
+        plt.show(block=False)
+    if checkForIpython()==False:
+        if stopAtGraphs == False:
+            plt.show(block=False)
+        if stopAtGraphs == True:
+            print(stopAtGraphs)
+            plt.show(block=True)                                       
+    return figureNumber
 
 '''This function is called to create the log file and to record the time'''
 def CreateLogFile():
@@ -4155,6 +4173,7 @@ def PopulateLogFile():
 ##################################################################################################################
 def main():
     global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
+    G.lastFigureNumber = 0
     filesAndDirectories = os.listdir()
     for name in filesAndDirectories:
         if name.startswith("Exported") and name.endswith(".csv"):
@@ -4289,7 +4308,8 @@ def main():
         #This graph call is graphing fully preprocessed data.
         if G.grapher == 'yes':
             print('PreProcessed Data Graph')
-            Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'PreprocessingAfterSmoothing', fileSuffix = G.iterationSuffix, label="PreProcessed Data Graph")
+            Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName = 'PreprocessingAfterSmoothing', fileSuffix = G.iterationSuffix, label="PreProcessed Data Graph", stopAtGraphs=G.stopAtGraphs, figureNumber=G.lastFigureNumber+1 )
+            G.lastFigureNumber = G.lastFigureNumber+1
 
         #Exports the Preprocessed Data
         ExportXYYYData(G.preProcessedDataOutputName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 
@@ -4531,7 +4551,8 @@ def main():
         
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
-            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='graphAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph")
+            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='graphAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
+            G.lastFigureNumber = G.lastFigureNumber+1
 
             
     if G.dataSimulation =='yes':
