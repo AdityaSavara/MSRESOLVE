@@ -45,7 +45,12 @@ ResolvedConcentrationsData = MSRESOLVE.resultsObjects['concentrationsarray'] #ge
 ResolvedConcentrationsFirstHalf = ResolvedConcentrationsData[3][1] #Resolved concentration at time 4
 ResolvedConcentrationsSecondHalf = ResolvedConcentrationsData[4][1] #Resolved concentration at time 5
 
-ut.set_expected_result(0.5,str(0.5),prefix=prefix,suffix=suffix) #set the expected result to be 0.5
+#Need to check the numpy version, because the behaviour changed after 1.16 major release.
+from packaging import version
+if version.parse(np.__version__) < version.parse("1.16.0"):  #In general, versions have numbers like 1.16.0, and this requires a version parse to compare (can't just use ">" by itself.
+    ut.set_expected_result(0.5,str(0.5),prefix=prefix,suffix=suffix)
+else:
+    ut.set_expected_result([0.5],str([0.5]),prefix=prefix,suffix=suffix) #The string comparison may end up failing, since we're just using a list, but the expected result should not.
 
 #set output
 output = ResolvedConcentrationsFirstHalf/ResolvedConcentrationsSecondHalf #Take the ratio of the resolved concentrations from the first half to the resolved concentrations of the second half
