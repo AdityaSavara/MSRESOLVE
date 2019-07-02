@@ -1,4 +1,4 @@
-Tue Jul  2 00:36:47 2019
+Tue Jul  2 02:03:14 2019
 
 referenceFileName = ['reference_measured_EthyleneExtracted.csv'] 
 form  = ['xyyy'] 
@@ -10,7 +10,7 @@ specificMassFragments = yes
 chosenMassFragments = [2.0, 4.0, 14.0, 15.0, 16.0, 18.0, 25.0, 26.0, 27.0, 28.0, 30.0, 32.0, 40.0, 44.0] 
 minimalReferenceValue = yes 
 referenceValueThreshold = [1.0, 1.0, 1.0] 
-referenceSignificantFragmentThreshold = [3.0] 
+referenceSignificantFragmentThresholds = [3.0, 3.0, 3.0] 
 answer = sls 
 uniqueOrCommon = unique 
 slsFinish = inverse 
@@ -24,5 +24,5 @@ units = bar
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.23449 seconds 
+Run Time 0.13419 seconds 
 ###################################################################### 
