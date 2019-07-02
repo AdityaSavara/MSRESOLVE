@@ -542,7 +542,7 @@ def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThresh
             else:  #this is for if values of referenceValueThreshold were provided for each molecule.
                 if referenceDataArray[rowcounter,columncounter] < referenceValueThreshold[columncounter]: 
                     referenceDataArray[rowcounter,columncounter] = 0 #made to be equal to zero
-    referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #this puts changed referenceDataArrayWithAbscissa back with mass fragment numbers
+    referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #this puts changed referenceData back with mass fragment numbers
     return referenceDataArrayWithAbscissa
     
     
