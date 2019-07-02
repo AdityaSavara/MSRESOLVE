@@ -3088,7 +3088,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         chosenMolecule = None
         tuplesOfUniqueFragmentsList = []
         
-        if G.minimalReferenceValue == "Yes": #We only will do some filtering things if it's requested.
+        if G.minimalReferenceValue == "yes": #We only will do some filtering things if it's requested.
         #Before going forward, we're going to make a variable called remaining_referenceSignificantFragmentThresholds, using a function.       
             def get_remaining_referenceSignificantFragmentThresholds(referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS):
                 remaining_referenceSignificantFragmentThresholds = list(copy.deepcopy(referenceSignificantFragmentThresholds))
@@ -3116,12 +3116,12 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 #the below nubby function will return the relevant index in array indexing.
                 moleculeIndexOfUniqueIntensity = numpy.argmax(referenceIntensitiesAtThatMassFragment)
                 #However, now we have a few lines of code to check if we are above the referenceSignificantFragmentThresholds.
-                if G.minimalReferenceValue == "Yes": #We only check for the remaining_referenceSignificantFragmentThresholds if this option has been chosen. 
+                if G.minimalReferenceValue == "yes": #We only check for the remaining_referenceSignificantFragmentThresholds if this option has been chosen. 
                     if (max(remaining_reference_intensities_SLS[massFragmentIndex_i]) < remaining_referenceSignificantFragmentThresholds[moleculeIndexOfUniqueIntensity]): #This allows separate referenceSignificantFragmentThresholds for each molecule.
                         significantFragment = False  #Set to false if the fragment is too small.
                     else: 
                         significantFragment = True #This means the fragment is greater than or equal to the threshold for significance.
-                if G.minimalReferenceValue != "Yes": #if the option is not selected, then all fragments are considered significant.
+                if G.minimalReferenceValue != "yes": #if the option is not selected, then all fragments are considered significant.
                     significantFragment = True 
                 if significantFragment == True:
                     #now make a tuple with the unique standardized intensity in the front so we can sort by that
