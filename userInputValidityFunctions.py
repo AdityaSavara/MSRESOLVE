@@ -124,8 +124,9 @@ def parseUserInput(currentUserInput):
     parse.strCheck(currentUserInput.minimalReferenceValue,'minimalReferenceValue')
     if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
         currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
-        #The length of the reference values needs to be the same length as the number of molecules
+        #The length of the reference value thresholds needs to be the same length as the number of molecules
         currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
+        currentUserInput.referenceSignificantFragmentThresholds = parse.parallelVectorize(currentUserInput.referenceSignificantFragmentThresholds,len(chosenMoleculesForParsing))
     
     #Data Threshold Filter
     parse.strCheck(currentUserInput.lowerBoundThresholdChooser,'lowerBoundThresholdChooser')
@@ -315,7 +316,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     SettingsVDictionary['minimalReferenceValue']   = UserChoices['minimalReferenceValue']['on']
     SettingsVDictionary['referenceValueThreshold']   = UserChoices['minimalReferenceValue']['referenceValueThreshold']
-    SettingsVDictionary['referenceSignificantFragmentThreshold']   = UserChoices['minimalReferenceValue']['referenceSignificantFragmentThreshold']
+    SettingsVDictionary['referenceSignificantFragmentThresholds']   = UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds']
     
     SettingsVDictionary['lowerBoundThresholdChooser']   = UserChoices['lowerBoundThresholdChooser']['on'] 
     SettingsVDictionary['massesToLowerBoundThresholdFilter']   = UserChoices['lowerBoundThresholdChooser']['massesToLowerBoundThresholdFilter']

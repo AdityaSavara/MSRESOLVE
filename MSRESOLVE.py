@@ -515,38 +515,35 @@ def ABCDetermination(ReferencePatternMeasured, ReferencePatternLiterature):
 #this function either creates or gets the three coefficients for the polynomial correction and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-# TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
-def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceLiteratureFileName,referenceMeasuredFileName,measuredReferenceYorN):
-    
+def CorrectionValueCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients,referenceLiteratureFileName,referenceMeasuredFileName,measuredReferenceYorN):
     if measuredReferenceYorN =='yes':
         (referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C'])=ABCDetermination(referenceMeasuredFileName,referenceLiteratureFileName )
     
-    referenceabscissa = reference[:,0] #gets arrays of just data and abscissa
-    referencedata = reference[:,1:]
+    referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
+    referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
     for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
         factor = referenceCorrectionCoefficients['A']*(referenceabscissa[massfrag_counter]**2)  + referenceCorrectionCoefficients['B']*referenceabscissa[massfrag_counter]+referenceCorrectionCoefficients['C'] #obtains the factor from molecular weight of abscissa
-        referencedata[massfrag_counter,:] = referencedata[massfrag_counter,:]*factor
-    reference[:,0] = referenceabscissa
-    return reference
+        referenceDataArray[massfrag_counter,:] = referenceDataArray[massfrag_counter,:]*factor
+    referenceDataArrayWithAbscissa[:,0] = referenceabscissa
+    return referenceDataArrayWithAbscissa
     
         
 #this function eliminates (neglects) reference intensities that are below a certain threshold. Useful for solving 
 #data that is giving negatives or over emphasizing small mass fragments,by assuming no contribution from the molecule at that mass fragment.
-# TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
-def ReferenceThresholdFilter(reference,referenceValueThreshold):
-    referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
-    for columncounter in range(len(referencedata[0,:])):#goes through all columns in all rows in reference (this loop is one molecule at a time)
-        for rowcounter in range(len(referencedata[:,0])):#goes through all rows in references (one mass fragment at a time)        
+def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThreshold):
+    referenceDataArray = referenceDataArrayWithAbscissa[:,1:] #all the data except the line of abscissa- mass fragment numbers
+    for columncounter in range(len(referenceDataArray[0,:])):#goes through all columns in all rows in reference (this loop is one molecule at a time)
+        for rowcounter in range(len(referenceDataArray[:,0])):#goes through all rows in references (one mass fragment at a time)        
             if len(referenceValueThreshold) == 1: #this is for if a single value was provided for referenceValueThreshold
-                if referencedata[rowcounter,columncounter] < referenceValueThreshold[0]:
-                    referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
-                # (len(referencedata[:,0])) #this is masses.
-                # (len(referencedata[0,:])) #this is molecules
+                if referenceDataArray[rowcounter,columncounter] < referenceValueThreshold[0]:
+                    referenceDataArray[rowcounter,columncounter] = 0 #made to be equal to zero
+                # (len(referenceDataArray[:,0])) #this is masses.
+                # (len(referenceDataArray[0,:])) #this is molecules
             else:  #this is for if values of referenceValueThreshold were provided for each molecule.
-                if referencedata[rowcounter,columncounter] < referenceValueThreshold[columncounter]: 
-                    referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
-    reference[:,1:] = referencedata #this puts changed reference back with mass fragment numbers
-    return reference
+                if referenceDataArray[rowcounter,columncounter] < referenceValueThreshold[columncounter]: 
+                    referenceDataArray[rowcounter,columncounter] = 0 #made to be equal to zero
+    referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #this puts changed referenceDataArrayWithAbscissa back with mass fragment numbers
+    return referenceDataArrayWithAbscissa
     
     
 #The function just uses the input sheet to get values to change the reference sheet
@@ -554,14 +551,14 @@ def ReferenceThresholdFilter(reference,referenceValueThreshold):
 #the right time and then gets each number following the first, and finds its ratio
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
-def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
-    copyOfReferenceData = copy.deepcopy(ReferenceData)    
+def ExtractReferencePatternFromData (ExperimentData, referenceDataArray, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
+    copyOfReferenceDataArray = copy.deepcopy(referenceDataArray)    
     for chosenmoleculescounter in range(len(rpcChosenMolecules)):#array-indexed for loop
         extractedIntensities = []
         allExtractedIntensities = []
         massfragindexerRef = [] #This is for the indices of the desired mass fragments in the reference pattern.
-        for moleculecounter in range(len(copyOfReferenceData.molecules)):#array-indexed for loop
-            if copyOfReferenceData.molecules[moleculecounter] == rpcChosenMolecules[chosenmoleculescounter]:#finds index of molecule
+        for moleculecounter in range(len(copyOfReferenceDataArray.molecules)):#array-indexed for loop
+            if copyOfReferenceDataArray.molecules[moleculecounter] == rpcChosenMolecules[chosenmoleculescounter]:#finds index of molecule
                 if len(rpcChosenMoleculesMF[chosenmoleculescounter]) == 1:#if only one number is given then the function changes all the other values according to this one
                     for x in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
                         if ExperimentData.mass_fragment_numbers[x] != 0:#finds the other mass fragments and appends them
@@ -572,8 +569,8 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                                 rpcTimeRanges[chosenmoleculescounter].pop()
                 #For a given molecule, and a given mass fragment to be changed, the below for loop finds the index of the fragment to be changed, with respect to the reference pattern's mass fragments.
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
-                    for refMFCounter in range(len(copyOfReferenceData.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
-                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceData.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
+                    for refMFCounter in range(len(copyOfReferenceDataArray.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceDataArray.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
                             massfragindexerRef.append(refMFCounter)
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
                     for expMFCounter in range(len(ExperimentData.mass_fragment_numbers)):
@@ -595,12 +592,12 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                     intensitiesAverage = numpy.average(allExtractedIntensitiesArray[eachChosenMoleculesMF])
                     allExtractedIntensitiesAverage.append(intensitiesAverage)
                 #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment (that is, to make a reference pattern with a ratio matching the extracted ratio)
-                normalizationFactor = copyOfReferenceData.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1]
+                normalizationFactor = copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1]
                 if normalizationFactor == 0:
                     normalizationFactor = 1
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])): #I believe the +1 below is b/c first column is mass frag?
-                    copyOfReferenceData.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor
-    return copyOfReferenceData.provided_reference_patterns
+                    copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor
+    return copyOfReferenceDataArray.provided_reference_patterns
 
 '''
 RemoveUnreferencedMasses() is used to prune ExperimentData.workingData and ExperimentData.mass_fragment_numbers 
@@ -3090,7 +3087,24 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         ####The below block of code is just to choose the next molecule to perform SLS on.###
         chosenMolecule = None
         tuplesOfUniqueFragmentsList = []
-        #TODO: Because referenceSignificantFragmentThreshold is used in this list, if I can make the set from molecules unedited and remaining_molecules_SLS to create remaining_referenceSignificantFragmentThresholds, then I can do molecule specific referenceSignificantFragmentThresholds
+        
+        if G.minimalReferenceValue == "Yes": #We only will do some filtering things if it's requested.
+        #Before going forward, we're going to make a variable called remaining_referenceSignificantFragmentThresholds, using a function.       
+            def get_remaining_referenceSignificantFragmentThresholds(referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS):
+                remaining_referenceSignificantFragmentThresholds = list(copy.deepcopy(referenceSignificantFragmentThresholds))
+                molecules_unedited_to_reduce = list(copy.deepcopy(molecules_unedited))
+                for moleculeIndex, moleculeName in enumerate(molecules_unedited):
+                    if moleculeName in remaining_molecules_SLS:
+                        pass
+                    else:
+
+                        indexToPop = molecules_unedited_to_reduce.index(moleculeName) #The list keeps shrinking, so we have to keep searching for the new/current index to pop at.
+                        molecules_unedited_to_reduce.pop(indexToPop)
+                        remaining_referenceSignificantFragmentThresholds.pop(indexToPop)
+                return remaining_referenceSignificantFragmentThresholds
+            remaining_referenceSignificantFragmentThresholds = get_remaining_referenceSignificantFragmentThresholds(G.referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS)
+        
+          
         for massFragmentIndex_i in range(remaining_num_MassFragments):#array-indexed for loop (over all fragments)
             referenceIntensitiesAtThatMassFragment = remaining_reference_intensities_SLS[massFragmentIndex_i]
             correctionFactorsAtThatMassFragment = remaining_correction_factors_SLS[massFragmentIndex_i]
@@ -3101,7 +3115,15 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 valueOfUniqueStandardizedIntensity = max(referenceIntensitiesAtThatMassFragment)
                 #the below nubby function will return the relevant index in array indexing.
                 moleculeIndexOfUniqueIntensity = numpy.argmax(referenceIntensitiesAtThatMassFragment)
-                if (max(remaining_reference_intensities_SLS[massFragmentIndex_i]) > G.referenceSignificantFragmentThreshold[0]): #TODO: Change to G.referenceSignificantFragmentThreshold[moleculeIndexOfUniqueIntensity] but requires first making variable remaining_referenceSignificantFragmentThresholds which gets things deleted in parallel to remaining_molecules_SLS
+                #However, now we have a few lines of code to check if we are above the referenceSignificantFragmentThresholds.
+                if G.minimalReferenceValue == "Yes": #We only check for the remaining_referenceSignificantFragmentThresholds if this option has been chosen. 
+                    if (max(remaining_reference_intensities_SLS[massFragmentIndex_i]) < remaining_referenceSignificantFragmentThresholds[moleculeIndexOfUniqueIntensity]): #This allows separate referenceSignificantFragmentThresholds for each molecule.
+                        significantFragment = False  #Set to false if the fragment is too small.
+                    else: 
+                        significantFragment = True #This means the fragment is greater than or equal to the threshold for significance.
+                if G.minimalReferenceValue != "Yes": #if the option is not selected, then all fragments are considered significant.
+                    significantFragment = True 
+                if significantFragment == True:
                     #now make a tuple with the unique standardized intensity in the front so we can sort by that
                     correctionFactorOfUniqueIntensity = correctionFactorsAtThatMassFragment[moleculeIndexOfUniqueIntensity]
                     #TODO: consider changing the primary weighting to valueOfUniqueStandardizedIntensity*signalsAtThatMassFragment
@@ -4129,7 +4151,7 @@ def PopulateLogFile():
     if G.minimalReferenceValue == 'yes':
         f6.write('minimalReferenceValue = %s \n'%(G.minimalReferenceValue))
         f6.write('referenceValueThreshold = %s \n'%(G.referenceValueThreshold))
-        f6.write('referenceSignificantFragmentThreshold = %s \n'%(G.referenceSignificantFragmentThreshold))
+        f6.write('referenceSignificantFragmentThresholds = %s \n'%(G.referenceSignificantFragmentThresholds))
     if G.lowerBoundThresholdChooser == 'yes':
         f6.write('lowerBoundThresholdChooser = %s \n'%(G.lowerBoundThresholdChooser))
         f6.write('massesToLowerBoundThresholdFilter  = %s \n'%(G.massesToLowerBoundThresholdFilter ))
