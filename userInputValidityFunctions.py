@@ -250,6 +250,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['dataSimulation'] = UserChoices['dataSimulation']['on']
     
     SettingsVDictionary['grapher'] = UserChoices['grapher']['on']
+    SettingsVDictionary['stopAtGraphs'] = UserChoices['grapher']['stopAtGraphs']
     
     SettingsVDictionary['timeRangeLimit']= UserChoices['timeRangeLimit']['on']
     SettingsVDictionary['timeRangeStart'] = UserChoices['timeRangeLimit']['timeRangeStart']
@@ -314,7 +315,8 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     SettingsVDictionary['minimalReferenceValue']   = UserChoices['minimalReferenceValue']['on']
     SettingsVDictionary['referenceValueThreshold']   = UserChoices['minimalReferenceValue']['referenceValueThreshold']
-
+    SettingsVDictionary['referenceSignificantFragmentThreshold']   = UserChoices['minimalReferenceValue']['referenceSignificantFragmentThreshold']
+    
     SettingsVDictionary['lowerBoundThresholdChooser']   = UserChoices['lowerBoundThresholdChooser']['on'] 
     SettingsVDictionary['massesToLowerBoundThresholdFilter']   = UserChoices['lowerBoundThresholdChooser']['massesToLowerBoundThresholdFilter']
     SettingsVDictionary['lowerBoundThresholdPercentage']   = UserChoices['lowerBoundThresholdChooser']['lowerBoundThresholdPercentage']
