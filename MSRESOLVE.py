@@ -515,38 +515,35 @@ def ABCDetermination(ReferencePatternMeasured, ReferencePatternLiterature):
 #this function either creates or gets the three coefficients for the polynomial correction and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-# TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
-def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceLiteratureFileName,referenceMeasuredFileName,measuredReferenceYorN):
-    
+def CorrectionValueCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients,referenceLiteratureFileName,referenceMeasuredFileName,measuredReferenceYorN):
     if measuredReferenceYorN =='yes':
         (referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C'])=ABCDetermination(referenceMeasuredFileName,referenceLiteratureFileName )
     
-    referenceabscissa = reference[:,0] #gets arrays of just data and abscissa
-    referencedata = reference[:,1:]
+    referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
+    referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
     for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
         factor = referenceCorrectionCoefficients['A']*(referenceabscissa[massfrag_counter]**2)  + referenceCorrectionCoefficients['B']*referenceabscissa[massfrag_counter]+referenceCorrectionCoefficients['C'] #obtains the factor from molecular weight of abscissa
-        referencedata[massfrag_counter,:] = referencedata[massfrag_counter,:]*factor
-    reference[:,0] = referenceabscissa
-    return reference
+        referenceDataArray[massfrag_counter,:] = referenceDataArray[massfrag_counter,:]*factor
+    referenceDataArrayWithAbscissa[:,0] = referenceabscissa
+    return referenceDataArrayWithAbscissa
     
         
 #this function eliminates (neglects) reference intensities that are below a certain threshold. Useful for solving 
 #data that is giving negatives or over emphasizing small mass fragments,by assuming no contribution from the molecule at that mass fragment.
-# TODO: referencedata should be changed to referenceDataArray and reference should be changed to referenceDataArrayWithAbscissa
-def ReferenceThreshold(reference,referenceValueThreshold):
-    referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
-    for columncounter in range(len(referencedata[0,:])):#goes through all columns in all rows in reference (this loop is one molecule at a time)
-        for rowcounter in range(len(referencedata[:,0])):#goes through all rows in references (one mass fragment at a time)        
+def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThreshold):
+    referenceDataArray = referenceDataArrayWithAbscissa[:,1:] #all the data except the line of abscissa- mass fragment numbers
+    for columncounter in range(len(referenceDataArray[0,:])):#goes through all columns in all rows in reference (this loop is one molecule at a time)
+        for rowcounter in range(len(referenceDataArray[:,0])):#goes through all rows in references (one mass fragment at a time)        
             if len(referenceValueThreshold) == 1: #this is for if a single value was provided for referenceValueThreshold
-                if referencedata[rowcounter,columncounter] < referenceValueThreshold[0]:
-                    referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
-                # (len(referencedata[:,0])) #this is masses.
-                # (len(referencedata[0,:])) #this is molecules
+                if referenceDataArray[rowcounter,columncounter] < referenceValueThreshold[0]:
+                    referenceDataArray[rowcounter,columncounter] = 0 #made to be equal to zero
+                # (len(referenceDataArray[:,0])) #this is masses.
+                # (len(referenceDataArray[0,:])) #this is molecules
             else:  #this is for if values of referenceValueThreshold were provided for each molecule.
-                if referencedata[rowcounter,columncounter] < referenceValueThreshold[columncounter]: 
-                    referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
-    reference[:,1:] = referencedata #this puts changed reference back with mass fragment numbers
-    return reference
+                if referenceDataArray[rowcounter,columncounter] < referenceValueThreshold[columncounter]: 
+                    referenceDataArray[rowcounter,columncounter] = 0 #made to be equal to zero
+    referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #this puts changed referenceData back with mass fragment numbers
+    return referenceDataArrayWithAbscissa
     
     
 #The function just uses the input sheet to get values to change the reference sheet
@@ -554,14 +551,14 @@ def ReferenceThreshold(reference,referenceValueThreshold):
 #the right time and then gets each number following the first, and finds its ratio
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
-def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
-    copyOfReferenceData = copy.deepcopy(ReferenceData)    
+def ExtractReferencePatternFromData (ExperimentData, referenceDataArray, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
+    copyOfReferenceDataArray = copy.deepcopy(referenceDataArray)    
     for chosenmoleculescounter in range(len(rpcChosenMolecules)):#array-indexed for loop
         extractedIntensities = []
         allExtractedIntensities = []
         massfragindexerRef = [] #This is for the indices of the desired mass fragments in the reference pattern.
-        for moleculecounter in range(len(copyOfReferenceData.molecules)):#array-indexed for loop
-            if copyOfReferenceData.molecules[moleculecounter] == rpcChosenMolecules[chosenmoleculescounter]:#finds index of molecule
+        for moleculecounter in range(len(copyOfReferenceDataArray.molecules)):#array-indexed for loop
+            if copyOfReferenceDataArray.molecules[moleculecounter] == rpcChosenMolecules[chosenmoleculescounter]:#finds index of molecule
                 if len(rpcChosenMoleculesMF[chosenmoleculescounter]) == 1:#if only one number is given then the function changes all the other values according to this one
                     for x in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
                         if ExperimentData.mass_fragment_numbers[x] != 0:#finds the other mass fragments and appends them
@@ -572,8 +569,8 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                                 rpcTimeRanges[chosenmoleculescounter].pop()
                 #For a given molecule, and a given mass fragment to be changed, the below for loop finds the index of the fragment to be changed, with respect to the reference pattern's mass fragments.
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
-                    for refMFCounter in range(len(copyOfReferenceData.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
-                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceData.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
+                    for refMFCounter in range(len(copyOfReferenceDataArray.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceDataArray.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
                             massfragindexerRef.append(refMFCounter)
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
                     for expMFCounter in range(len(ExperimentData.mass_fragment_numbers)):
@@ -595,12 +592,12 @@ def ExtractReferencePatternFromData (ExperimentData, ReferenceData, rpcChosenMol
                     intensitiesAverage = numpy.average(allExtractedIntensitiesArray[eachChosenMoleculesMF])
                     allExtractedIntensitiesAverage.append(intensitiesAverage)
                 #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment (that is, to make a reference pattern with a ratio matching the extracted ratio)
-                normalizationFactor = copyOfReferenceData.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1]
+                normalizationFactor = copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1]
                 if normalizationFactor == 0:
                     normalizationFactor = 1
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])): #I believe the +1 below is b/c first column is mass frag?
-                    copyOfReferenceData.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor
-    return copyOfReferenceData.provided_reference_patterns
+                    copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor
+    return copyOfReferenceDataArray.provided_reference_patterns
 
 '''
 RemoveUnreferencedMasses() is used to prune ExperimentData.workingData and ExperimentData.mass_fragment_numbers 
@@ -1123,7 +1120,7 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
     #TODO: option 2: Or we can below assign to preprocessed_reference_pattern rather than standardized_reference_patterns and then use that in data analysis (Note that interpolate would continue to use standardized_reference_patterns as well as preprocess the output)
     if G.minimalReferenceValue == 'yes':
-        ReferenceData.standardized_reference_patterns = ReferenceThreshold(ReferenceData.standardized_reference_patterns,G.referenceValueThreshold)
+        ReferenceData.standardized_reference_patterns = ReferenceThresholdFilter(ReferenceData.standardized_reference_patterns,G.referenceValueThreshold)
         ReferenceData.ExportCollector('ReferenceThreshold')
     
     #As the program is currently written, this function is called to act upon already threshold filtered standardized reference patterns which could cause innaccuracy.  
@@ -3090,6 +3087,24 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         ####The below block of code is just to choose the next molecule to perform SLS on.###
         chosenMolecule = None
         tuplesOfUniqueFragmentsList = []
+        
+        if G.minimalReferenceValue == "Yes": #We only will do some filtering things if it's requested.
+        #Before going forward, we're going to make a variable called remaining_referenceSignificantFragmentThresholds, using a function.       
+            def get_remaining_referenceSignificantFragmentThresholds(referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS):
+                remaining_referenceSignificantFragmentThresholds = list(copy.deepcopy(referenceSignificantFragmentThresholds))
+                molecules_unedited_to_reduce = list(copy.deepcopy(molecules_unedited))
+                for moleculeIndex, moleculeName in enumerate(molecules_unedited):
+                    if moleculeName in remaining_molecules_SLS:
+                        pass
+                    else:
+
+                        indexToPop = molecules_unedited_to_reduce.index(moleculeName) #The list keeps shrinking, so we have to keep searching for the new/current index to pop at.
+                        molecules_unedited_to_reduce.pop(indexToPop)
+                        remaining_referenceSignificantFragmentThresholds.pop(indexToPop)
+                return remaining_referenceSignificantFragmentThresholds
+            remaining_referenceSignificantFragmentThresholds = get_remaining_referenceSignificantFragmentThresholds(G.referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS)
+        
+          
         for massFragmentIndex_i in range(remaining_num_MassFragments):#array-indexed for loop (over all fragments)
             referenceIntensitiesAtThatMassFragment = remaining_reference_intensities_SLS[massFragmentIndex_i]
             correctionFactorsAtThatMassFragment = remaining_correction_factors_SLS[massFragmentIndex_i]
@@ -3100,14 +3115,23 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 valueOfUniqueStandardizedIntensity = max(referenceIntensitiesAtThatMassFragment)
                 #the below nubby function will return the relevant index in array indexing.
                 moleculeIndexOfUniqueIntensity = numpy.argmax(referenceIntensitiesAtThatMassFragment)
-                #now make a tuple with the unique standardized intensity in the front so we can sort by that
-                correctionFactorOfUniqueIntensity = correctionFactorsAtThatMassFragment[moleculeIndexOfUniqueIntensity]
-                #TODO: consider changing the primary weighting to valueOfUniqueStandardizedIntensity*signalsAtThatMassFragment
-                #and/or to a user specified argument.
-                #Note that for now, by having signals as the second slot, if two molecules each have 100% that they will sort by intensity of signals next.
-                primaryWeightingSLS = valueOfUniqueStandardizedIntensity
-                uniqueFragmentTuple = (primaryWeightingSLS, signalsAtThatMassFragment, massFragmentIndex_i, moleculeIndexOfUniqueIntensity, correctionFactorOfUniqueIntensity)
-                tuplesOfUniqueFragmentsList.append(uniqueFragmentTuple)
+                #However, now we have a few lines of code to check if we are above the referenceSignificantFragmentThresholds.
+                if G.minimalReferenceValue == "Yes": #We only check for the remaining_referenceSignificantFragmentThresholds if this option has been chosen. 
+                    if (max(remaining_reference_intensities_SLS[massFragmentIndex_i]) < remaining_referenceSignificantFragmentThresholds[moleculeIndexOfUniqueIntensity]): #This allows separate referenceSignificantFragmentThresholds for each molecule.
+                        significantFragment = False  #Set to false if the fragment is too small.
+                    else: 
+                        significantFragment = True #This means the fragment is greater than or equal to the threshold for significance.
+                if G.minimalReferenceValue != "Yes": #if the option is not selected, then all fragments are considered significant.
+                    significantFragment = True 
+                if significantFragment == True:
+                    #now make a tuple with the unique standardized intensity in the front so we can sort by that
+                    correctionFactorOfUniqueIntensity = correctionFactorsAtThatMassFragment[moleculeIndexOfUniqueIntensity]
+                    #TODO: consider changing the primary weighting to valueOfUniqueStandardizedIntensity*signalsAtThatMassFragment
+                    #and/or to a user specified argument.
+                    #Note that for now, by having signals as the second slot, if two molecules each have 100% that they will sort by intensity of signals next.
+                    primaryWeightingSLS = valueOfUniqueStandardizedIntensity
+                    uniqueFragmentTuple = (primaryWeightingSLS, signalsAtThatMassFragment, massFragmentIndex_i, moleculeIndexOfUniqueIntensity, correctionFactorOfUniqueIntensity)
+                    tuplesOfUniqueFragmentsList.append(uniqueFragmentTuple)
         #now we sort according to the biggest standardized intensities (signals as second spot), in descending order.
         tuplesOfUniqueFragmentsList.sort(reverse=True) # there is no return by list sort, the list object is directly modified.
         
@@ -3597,17 +3621,19 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
         # the concentrations that were solved for by the Finisher are stored as a list
         # to make them easier to use and then discard in the for loop as they are added to solutions
         remainingMolecules = list(concentrationsFromFinisher.copy())
-        #print remainingMolecules
         #adds the finisher solutions with the inital analysis solutions 
         for molecule_iiii in range(len(molecules_unedited)):
             if len(solvedmolecules) == 0:
-                print("Warning: if you have chosen to use unique fragment SLS and your data has no unique fragments (not unique to any molecule), "\
-                "then the program may be about to crash. If it does, change SLS method to common.")
-            #if the molecule wasn't solved for in the inital analysis
-            if solvedmolecules[molecule_iiii] == 0:
-                # then add the appropriate Finisher concentration for that molecule  
-                solutions[molecule_iiii] = remainingMolecules.pop(0) 
-            
+                print("Warning: If you have chosen to use unique fragment SLS and your data has no unique fragments (not unique to any molecule), "\
+                "then the program may be about to crash. If necessary, program will first attempt to use SLS common and then inverse.")
+            try: 
+                #if the molecule wasn't solved for in the inital analysis, then it will have 0 for its solved molecules counter.
+                if solvedmolecules[molecule_iiii] == 0:
+                    # then add the appropriate Finisher concentration for that molecule  
+                    solutions[molecule_iiii] = remainingMolecules.pop(0) 
+            except IndexError:
+                print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the Reference Mass Fragmentation Threshold or you can try using inverse.")
+                solutions = numpy.array([None]) #This is just creating a numpy array with an element that has a None object, so that the main function can know that SLSMethod failed.
     return solutions
     
 #this function actually calls the SLS function inside of it, because the SLS function is given a smaller array
@@ -4125,6 +4151,7 @@ def PopulateLogFile():
     if G.minimalReferenceValue == 'yes':
         f6.write('minimalReferenceValue = %s \n'%(G.minimalReferenceValue))
         f6.write('referenceValueThreshold = %s \n'%(G.referenceValueThreshold))
+        f6.write('referenceSignificantFragmentThresholds = %s \n'%(G.referenceSignificantFragmentThresholds))
     if G.lowerBoundThresholdChooser == 'yes':
         f6.write('lowerBoundThresholdChooser = %s \n'%(G.lowerBoundThresholdChooser))
         f6.write('massesToLowerBoundThresholdFilter  = %s \n'%(G.massesToLowerBoundThresholdFilter ))
@@ -4503,9 +4530,17 @@ def main():
 
             elif G.answer == 'sls':#user input, the SLS method is chosen)
                 solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
-        
+                if solutions.any() == None:
+                    if SLSChoices[0] == "unique":
+                        print("SLS Unique has failed, trying SLS common.")
+                        solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,["common", G.slsFinish, G.distinguished],ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
+                        if solutions.any() == None:
+                            print("The SLS method failed to solve this problem even with SLS common. Attempting an inverse method solution. To solve without inverse, consider raising the Reference Mass Fragmentation Threshold.")
+                            if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
+                                solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
+                            else:
+                                solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
             arrayline = []
-    
             for moleculecounter in range(len(currentReferenceData.molecules)):#array-indexed for loop, this is the same data structure as the inverse method above once the line of solutions is found, see above for comments
                 if moleculecounter == 0:#only for the first loop will times be added to new collected data
                     arrayline.append(ExperimentData.times[timeIndex])
