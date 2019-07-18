@@ -3064,7 +3064,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
 
                 #Check if we should export to file what happened.
                 #TODO: Below should probably be made  a function (occurs at another place below)
-                if G.SLSUniqueExport == 'yes' and G.answer == 'sls':
+                if G.SLSUniqueExport == 'yes' and (G.answer == 'sls' or G.answer == 'autosolver'):
                     outputMoleculesOrderFileName = 'ExportedSLSUniqueMoleculesOrder.csv'
                     if G.iterativeAnalysis:
                         #then the filename will have a suffix attached
@@ -3736,7 +3736,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
                 solutions = InverseMethodDistinguished(remaining_reference_intensities_filter,remaining_correction_factors_SLS,remaining_rawsignals_SLS)
             else:#combinations method
                 solutions = InverseMethod(remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_filter,mass_fragment_numbers,remaining_molecules_SLS,'composition')
-        if answer == 'sls':#sls method
+        if answer == 'sls' or answer == 'autosolver':#sls method
             solutions = SLSMethod(remaining_molecules_SLS,remaining_reference_intensities_filter,remaining_correction_factors_SLS,remaining_rawsignals_SLS,timeIndex,conversionfactor,datafromcsv,molecules_unedited,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,bruteOption, time, maxPermutations)
         timeIndex = 0
         for moleculecounter in range(len(molecules_unedited)):#array-indexed for loop
@@ -4530,9 +4530,9 @@ def main():
                 else:
                     solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
 
-            elif G.answer == 'sls' or G.answer == "autosolver":#user input, the SLS method is chosen)
+            elif G.answer == 'sls' or G.answer == 'autosolver':#user input, the SLS method is chosen)
                 solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
-                if G.answer == "autosolver":
+                if G.answer == 'autosolver':
                     if solutions.any() == None:
                         if SLSChoices[0] == "unique":
                             print("SLS Unique has failed, trying SLS common.")
