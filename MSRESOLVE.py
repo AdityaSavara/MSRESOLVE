@@ -16,6 +16,7 @@ from numpy import genfromtxt
 import export_import as ei
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
 import UserInput as G, imp; imp.reload(G) #import the user input and reload the module to get rid of any unwanted variables in the namespace
+G.stopAtGraphs=True #Setting this global to false initially. In future, people might override this from the command line or something like that.
 
 ############################################################################################################################################
 #########################################################Best Mass Fragment Chooser#########################################################
@@ -1245,14 +1246,16 @@ def DataInputPreProcessing(ExperimentData):
     #records time of all reference data preprocessing
     #ExperimentData.ExportCollector("PreProcessing ReferenceData")
     
-    #Scaling Raw Data
-    #This if statement only applies ScaleRawData if scaling is set to automatic
-    # or if there is a manual factor that is not 1.
-    #We skip this function in manual factor was 1 because that would not change the data.
-    if (G.scaleRawDataOption == 'auto' or (G.scaleRawDataOption == 'manual' and G.scaleRawDataFactor != 1)):
-        ExperimentData.workingData, multiplier  = ScaleRawData(ExperimentData.workingData, G.scaleRawDataOption, G.scaleRawDataFactor)
-        G.scaleRawDataFactor = multiplier                                 
-        ExperimentData.ExportCollector("ScaleRawData")
+    #We do only scale the raw data if we are not doing iterative, or are in the first iteration.
+    if G.iterativeAnalysis == False or G.iterationNumber == 1:
+        #Scaling Raw Data
+        #This if statement only applies ScaleRawData if scaling is set to automatic
+        # or if there is a manual factor that is not 1.
+        #We skip this function if manual factor was 1 because that would not change the data.
+        if (G.scaleRawDataOption == 'auto' or (G.scaleRawDataOption == 'manual' and G.scaleRawDataFactor != 1)):
+            ExperimentData.workingData, multiplier  = ScaleRawData(ExperimentData.workingData, G.scaleRawDataOption, G.scaleRawDataFactor)
+            G.scaleRawDataFactor = multiplier                                 
+            ExperimentData.ExportCollector("ScaleRawData")
 
     #displays graph of raw data
     if G.grapher == 'yes':
