@@ -44,14 +44,7 @@ MSRESOLVE.G.timeRangeLimit = 'no'
 MSRESOLVE.main()
 
 ResolvedConcentrationsData = MSRESOLVE.resultsObjects['concentrationsarray'] #get the concentrations array from the global resultsObjects dictionary
-
-
-#Need to check the numpy version, because the behaviour changed after 1.16 major release.
-from packaging import version
-if version.parse(np.__version__) < version.parse("1.16.0"):  #In general, versions have numbers like 1.16.0, and this requires a version parse to compare (can't just use ">" by itself.
-    ut.set_expected_result((3.0,1.0),str((3.0,1.0)),prefix=prefix,suffix=suffix)
-else:
-    ut.set_expected_result(([3.0,1.0]),str(([3.0,1.0])),prefix=prefix,suffix=suffix) #The string comparison may end up failing, since we're just using a list, but the expected result should not.
+ut.set_expected_result(([3.0,1.0]),str(([3.0,1.0])),prefix=prefix,suffix=suffix) #The string comparison may end up failing, since we're just using a list, but the expected result should not.
 
 #as mentioned before, we expect the ratio of the resolved concentrations between acetaldehyde and acetaldehyde_easy_to_ionize to differ by a factor of 3 and acetaldehyde and acetaldehyde_copy to differ by a factor of 1
 

@@ -40,13 +40,7 @@ MSRESOLVE.G.timeRangeLimit = 'no'
 MSRESOLVE.main()
 
 ResolvedConcentrationsData = MSRESOLVE.resultsObjects['concentrationsarray'] #get the concentrations array from the global resultsObjects dictionary
-
-#Need to check the numpy version, because the behaviour changed after 1.16 major release.
-from packaging import version
-if version.parse(np.__version__) < version.parse("1.16.0"):  #In general, versions have numbers like 1.16.0, and this requires a version parse to compare (can't just use ">" by itself.
-    ut.set_expected_result(2.0,str(2.0),prefix=prefix,suffix=suffix)
-else:
-    ut.set_expected_result([2.0],str([2.0]),prefix=prefix,suffix=suffix) #The string comparison may end up failing, since we're just using a list, but the expected result should not.
+ut.set_expected_result(2.0,str(2.0),prefix=prefix,suffix=suffix)
 
 #set output
 output = ResolvedConcentrationsData[0][1]/ResolvedConcentrationsData[0][2] #find the ratio of the second column to the third column.  The time value is the first column.  Use the first value in the column since each value in a particular column is the same
