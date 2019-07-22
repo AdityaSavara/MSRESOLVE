@@ -16,7 +16,6 @@ from numpy import genfromtxt
 import export_import as ei
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
 import UserInput as G, imp; imp.reload(G) #import the user input and reload the module to get rid of any unwanted variables in the namespace
-G.stopAtGraphs=True #Setting this global to false initially. In future, people might override this from the command line or something like that.
 
 ############################################################################################################################################
 #########################################################Best Mass Fragment Chooser#########################################################
@@ -951,7 +950,7 @@ def ScaleUp(a1DArray, multiplier = None, Base = 1, ScalesOf10 = False):
     #finds the factor to adjust min to 1
     if multiplier == None:
         #finds the smallest entry
-        minNumber = float(numpy.min(a1DArray[numpy.nonzero(a1DArray)]))
+        minNumber = float(numpy.min(a1DArray[numpy.nonzero(a1DArray)]>0))  #This first gets the nonzero values, then takes the ones greater than 0, then finds the minimum.
         # Confirm that the array needs scaling
         if minNumber > Base:
             return a1DArray
@@ -970,13 +969,14 @@ def ScaleUp(a1DArray, multiplier = None, Base = 1, ScalesOf10 = False):
     return a1DArray, multiplier
 
 def ScaleRawData(data, scaleRawDataOption, scaleRawDataFactor):
+    scaledData = copy.deepcopy(data)                                
     if scaleRawDataOption == 'auto':
         #automatically scales the smallest point to 1
-        data = ScaleRawDataAuto(data)
+        scaledData, multiplier = ScaleRawDataAuto(data)
     elif scaleRawDataOption == 'manual':
         #because a multiplier is given, it doesn't matter if ScaleUp or ScaleDown is used
-        data, multiplier = ScaleUp(data, multiplier = scaleRawDataFactor)
-    return data
+        scaledData, multiplier = ScaleUp(data, multiplier = scaleRawDataFactor)
+    return scaledData, multiplier
 
 ''' ScaleRawDataAuto operates in a similar way to ScaleUp or Down, except that 
     it will always scale the smallest value to 1, regardless of the scaling direction'''
@@ -988,16 +988,16 @@ def ScaleRawDataAuto(data):
     for index in range(0, len(data)):
         a1Dholder =data[index]
         
-        minNumHolder=numpy.min(a1Dholder[numpy.nonzero(a1Dholder)])
+        minNumHolder=numpy.min(a1Dholder[numpy.nonzero(a1Dholder)]>0) #This first gets the nonzero values, then takes the ones greater than 0, then finds the minimum.
         if (minNumHolder < minNum):
             minNum = minNumHolder
             
-    ScaleFactor= 1/minNum
+    multiplier= 1/minNum
 
     for dataPointIndex in range(0, len(data)):
         for referenceIndex in range(0, len(data[0])):
-            data[dataPointIndex, referenceIndex]=data[dataPointIndex, referenceIndex]*ScaleFactor
-    return data
+            data[dataPointIndex, referenceIndex]=data[dataPointIndex, referenceIndex]*multiplier
+    return data, multiplier
 
 '''
 Standardize is a simple algorithim that reads in one numpy array
@@ -1245,13 +1245,16 @@ def DataInputPreProcessing(ExperimentData):
     #records time of all reference data preprocessing
     #ExperimentData.ExportCollector("PreProcessing ReferenceData")
     
-    #Scaling Raw Data
-    #This if statement only applies ScaleRawData if scaling is set to automatic
-    # or if there is a manual factor that is not 1.
-    #We skip this function in manual factor was 1 because that would not change the data.
-    if (G.scaleRawDataOption == 'auto' or (G.scaleRawDataOption == 'manual' and G.scaleRawDataFactor != 1)):
-        ExperimentData.workingData  = ScaleRawData(ExperimentData.workingData, G.scaleRawDataOption, G.scaleRawDataFactor)
-        ExperimentData.ExportCollector("ScaleRawData")
+    #We do only scale the raw data if we are not doing iterative, or are in the first iteration.
+    if G.iterativeAnalysis == False or G.iterationNumber == 1:
+        #Scaling Raw Data
+        #This if statement only applies ScaleRawData if scaling is set to automatic
+        # or if there is a manual factor that is not 1.
+        #We skip this function if manual factor was 1 because that would not change the data.
+        if (G.scaleRawDataOption == 'auto' or (G.scaleRawDataOption == 'manual' and G.scaleRawDataFactor != 1)):
+            ExperimentData.workingData, multiplier  = ScaleRawData(ExperimentData.workingData, G.scaleRawDataOption, G.scaleRawDataFactor)
+            G.scaleRawDataFactor = multiplier                                 
+            ExperimentData.ExportCollector("ScaleRawData")
 
     #displays graph of raw data
     if G.grapher == 'yes':
@@ -2904,10 +2907,10 @@ def ObjectiveFunctionGenerator(xyyData, minVal, args=[1.,1.], maxValOption=0):
 #This is the function that actually calls the function brute and runs it based on the function above, with ranges as specified
 #by the datarangespecifier function, it proceeds to output the answers as well as print them to the screen.
 def BruteForce(molecules,specifications,matching_correction_values,rawsignalsarrayline,bruteOption,maxPermutations=100001):
-    list = []#a list is made in order to use inside the forward problem since we are not defining anything globally
-    list.append(rawsignalsarrayline)
-    list.append(matching_correction_values)
-    list.append(bruteOption)
+    brutelist = []#a list is made in order to use inside the forward problem since we are not defining anything globally
+    brutelist.append(rawsignalsarrayline)
+    brutelist.append(matching_correction_values)
+    brutelist.append(bruteOption)
     from scipy import optimize
     summation = numpy.zeros(len(specifications))
     
@@ -2920,7 +2923,7 @@ def BruteForce(molecules,specifications,matching_correction_values,rawsignalsarr
         product = quotient[specificationnumber]*product
 
     if product < maxPermutations:
-        resbrute = optimize.brute(SignalSimulation, specifications, args = list, full_output=True, finish=None)#calls our forward function SignalSimulation
+        resbrute = optimize.brute(SignalSimulation, specifications, args = brutelist, full_output=True, finish=None)#calls our forward function SignalSimulation
 
     else:
         print('Error: Too many Permutations')
@@ -3062,7 +3065,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
 
                 #Check if we should export to file what happened.
                 #TODO: Below should probably be made  a function (occurs at another place below)
-                if G.SLSUniqueExport == 'yes' and G.answer == 'sls':
+                if G.SLSUniqueExport == 'yes' and (G.answer == 'sls' or G.answer == 'autosolver'):
                     outputMoleculesOrderFileName = 'ExportedSLSUniqueMoleculesOrder.csv'
                     if G.iterativeAnalysis:
                         #then the filename will have a suffix attached
@@ -3625,7 +3628,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
         for molecule_iiii in range(len(molecules_unedited)):
             if len(solvedmolecules) == 0:
                 print("Warning: If you have chosen to use unique fragment SLS and your data has no unique fragments (not unique to any molecule), "\
-                "then the program may be about to crash. If necessary, program will first attempt to use SLS common and then inverse.")
+                "then the program may be about to crash. If autosolver has been turned on, the program will first attempt to use SLS common and then inverse.")
             try: 
                 #if the molecule wasn't solved for in the inital analysis, then it will have 0 for its solved molecules counter.
                 if solvedmolecules[molecule_iiii] == 0:
@@ -3733,7 +3736,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
                 solutions = InverseMethodDistinguished(remaining_reference_intensities_filter,remaining_correction_factors_SLS,remaining_rawsignals_SLS)
             else:#combinations method
                 solutions = InverseMethod(remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_filter,mass_fragment_numbers,remaining_molecules_SLS,'composition')
-        if answer == 'sls':#sls method
+        if answer == 'sls' or answer == 'autosolver':#sls method
             solutions = SLSMethod(remaining_molecules_SLS,remaining_reference_intensities_filter,remaining_correction_factors_SLS,remaining_rawsignals_SLS,timeIndex,conversionfactor,datafromcsv,molecules_unedited,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,bruteOption, time, maxPermutations)
         timeIndex = 0
         for moleculecounter in range(len(molecules_unedited)):#array-indexed for loop
@@ -4521,25 +4524,25 @@ def main():
                                                          # currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
                                                          # ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
                                                          # DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption, G.maxPermutations)           
-                
             if G.answer == 'inverse':#user input, the inverse method
                 if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
                     solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
                 else:
                     solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
 
-            elif G.answer == 'sls':#user input, the SLS method is chosen)
+            elif G.answer == 'sls' or G.answer == 'autosolver':#user input, the SLS method is chosen)
                 solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
-                if solutions.any() == None:
-                    if SLSChoices[0] == "unique":
-                        print("SLS Unique has failed, trying SLS common.")
-                        solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,["common", G.slsFinish, G.distinguished],ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
-                        if solutions.any() == None:
-                            print("The SLS method failed to solve this problem even with SLS common. Attempting an inverse method solution. To solve without inverse, consider raising the Reference Mass Fragmentation Threshold.")
-                            if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                                solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
-                            else:
-                                solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
+                if G.answer == 'autosolver':
+                    if solutions.any() == None:
+                        if SLSChoices[0] == "unique":
+                            print("SLS Unique has failed, trying SLS common.")
+                            solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,["common", G.slsFinish, G.distinguished],ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
+                            if solutions.any() == None:
+                                print("The SLS method failed to solve this problem even with SLS common. Attempting an inverse method solution. To solve without inverse, consider raising the Reference Mass Fragmentation Threshold.")
+                                if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
+                                    solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
+                                else:
+                                    solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
             arrayline = []
             for moleculecounter in range(len(currentReferenceData.molecules)):#array-indexed for loop, this is the same data structure as the inverse method above once the line of solutions is found, see above for comments
                 if moleculecounter == 0:#only for the first loop will times be added to new collected data
@@ -4563,6 +4566,7 @@ def main():
                 SS_matching_correction_values_TimesList.append(currentReferenceData.SSmatching_correction_values)
         
         
+        concentrationsScaledToCOarray = concentrationsScaledToCOarray/G.scaleRawDataFactor #correct for any scaling factor that was used during analysis.                                                          
         resultsObjects['concentrationsScaledToCOarray'] = concentrationsScaledToCOarray #Store in the global resultsObjects dictionary
         if G.concentrationFinder == 'yes': #If using concentration finder
             concentrationsarray = copy.copy(concentrationsScaledToCOarray) #point concentrationsarray to a copy of concentrationsScaledToCOArray
