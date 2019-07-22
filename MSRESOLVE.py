@@ -3628,15 +3628,14 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
             if len(solvedmolecules) == 0:
                 print("Warning: If you have chosen to use unique fragment SLS and your data has no unique fragments (not unique to any molecule), "\
                 "then the program may be about to crash. If autosolver has been turned on, the program will first attempt to use SLS common and then inverse.")
-                if G.answer == "autosolver":
-                    try: 
-                        #if the molecule wasn't solved for in the inital analysis, then it will have 0 for its solved molecules counter.
-                        if solvedmolecules[molecule_iiii] == 0:
-                            # then add the appropriate Finisher concentration for that molecule  
-                            solutions[molecule_iiii] = remainingMolecules.pop(0) 
-                    except IndexError:
-                        print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the Reference Mass Fragmentation Threshold or you can try using inverse.")
-                        solutions = numpy.array([None]) #This is just creating a numpy array with an element that has a None object, so that the main function can know that SLSMethod failed.
+            try: 
+                #if the molecule wasn't solved for in the inital analysis, then it will have 0 for its solved molecules counter.
+                if solvedmolecules[molecule_iiii] == 0:
+                    # then add the appropriate Finisher concentration for that molecule  
+                    solutions[molecule_iiii] = remainingMolecules.pop(0) 
+            except IndexError:
+                print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the Reference Mass Fragmentation Threshold or you can try using inverse.")
+                solutions = numpy.array([None]) #This is just creating a numpy array with an element that has a None object, so that the main function can know that SLSMethod failed.
     return solutions
     
 #this function actually calls the SLS function inside of it, because the SLS function is given a smaller array
