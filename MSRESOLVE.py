@@ -4543,6 +4543,7 @@ def main():
                                     solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
                                 else:
                                     solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
+            solutions = solutions.flatten() #In the major numpy update before summer 2019, this line suddenly started becoming filled with nested arrays sometimes (not sure why) but flattening fixed it.
             arrayline = []
             for moleculecounter in range(len(currentReferenceData.molecules)):#array-indexed for loop, this is the same data structure as the inverse method above once the line of solutions is found, see above for comments
                 if moleculecounter == 0:#only for the first loop will times be added to new collected data
