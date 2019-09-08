@@ -1366,13 +1366,13 @@ def signalThresholdFilter(ReferenceDataObject, rawsignalsarrayline, ExperimentDa
 
     
 #exports the user input file so that it can be used in the next iteration
-def ExportUserInputFile(fileName):
+def ExportUserInputFile(fileName, userInputModule):
     
     #Creating an updated UI file
     globalsFE_saveFile = fileName 
     globalsFE_loadFile = fileName 
     #create export object
-    globalsFE_object = ei.module_export_import(globalsFE_saveFile,globalsFE_loadFile,G)
+    globalsFE_object = ei.module_export_import(globalsFE_saveFile,globalsFE_loadFile,userInputModule)
     
     #save variables to the text file 
     globalsFE_object.save_params()
@@ -1464,57 +1464,55 @@ def SpecificIterationName(iterativeAnalysis, iterationNumber):
             str(iterativeAnalysis),
              "_iter_{}".format(str(iterationNumber)))
     return iterationDirectoryName
-
-def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = False):
-    #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
-    global G
-    if iterate:
-        iterationNumber += 1
-    G.iterationNumber = iterationNumber
+    
+def IterativeDirectoryChange(iterativeAnalysis, iterationNumber):
     iterationDirectoryName = SpecificIterationName(iterativeAnalysis, iterationNumber)
     #confirm that the directory exists
     EnsureDirectory(iterationDirectoryName)
     #Change the working directory to the new directory name. 
     #'THIS IS A HIGHLY SIGNIFICANT LINE, because it redirects all of the output for the rest of the program run'
-    os.chdir(iterationDirectoryName) #this will be changed back at the end of the program
-    if not iterate:
-        #naming for collected file
+    os.chdir(iterationDirectoryName) #this will be changed back at the end of the program    
+
+def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber):
+    #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
+    IterativeDirectoryChange(iterativeAnalysis, iterationNumber)
+    
+    #naming for collected file
+    #record the old file names 
+    G.oldcollectedFileName = G.collectedFileName
+    #construct the file names for the current run of the program
+    #TODO FIXME, This syntax with -21 will not allow iterative to be compatible with more than 9 iterations
+    collectedFileNameTemp = str(G.collectedFileName)[:-21] +  str(G.iterationSuffix) + str(G.collectedFileName)[-4:]      
+    #copy the experimental and reference files into new names for this iterative run
+    shutil.copy(G.collectedFileName, collectedFileNameTemp)
+    
+    #change the globals to reflect the renaming of the ref and exp files
+    G.collectedFileName =  collectedFileNameTemp
+    
+    #construct file names for the next run of the program 
+    #TODO FIXME, This syntax with -11 will not allow iterative to be compatible with more than 9 iterations
+    G.nextExpFileName = G.collectedFileName[:-11] +  str('_remaining') + G.collectedFileName[-11:]
+    #naming for reference files
+    
+    G.oldReferenceFileName = []
+    G.nextRefFileName = []
+    for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
         #record the old file names 
-        G.oldcollectedFileName = G.collectedFileName
+        G.oldReferenceFileName.append(RefName)
+        
         #construct the file names for the current run of the program
-        #TODO FIXME, This syntax with -21 will not allow iterative to be compatible with more than 9 iterations
-        collectedFileNameTemp = str(G.collectedFileName)[:-21] +  str(G.iterationSuffix) + str(G.collectedFileName)[-4:]      
+        #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
+        referenceFileNameTemp = G.referenceFileNamesList[RefIndex][:-18] +  str(G.iterationSuffix) + G.referenceFileNamesList[RefIndex][-4:]
+        
         #copy the experimental and reference files into new names for this iterative run
-        shutil.copy(G.collectedFileName, collectedFileNameTemp)
+        shutil.copy(RefName, referenceFileNameTemp)
         
         #change the globals to reflect the renaming of the ref and exp files
-        G.collectedFileName =  collectedFileNameTemp
+        G.referenceFileNamesList[RefIndex] =  referenceFileNameTemp
         
         #construct file names for the next run of the program 
-        #TODO FIXME, This syntax with -11 will not allow iterative to be compatible with more than 9 iterations
-        G.nextExpFileName = G.collectedFileName[:-11] +  str('_remaining') + G.collectedFileName[-11:]
-        #naming for reference files
-        
-        G.oldReferenceFileName = []
-        G.nextRefFileName = []
-        for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
-            #record the old file names 
-            G.oldReferenceFileName.append(RefName)
-            
-            #construct the file names for the current run of the program
-            #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
-            referenceFileNameTemp = G.referenceFileNamesList[RefIndex][:-18] +  str(G.iterationSuffix) + G.referenceFileNamesList[RefIndex][-4:]
-            
-            #copy the experimental and reference files into new names for this iterative run
-            shutil.copy(RefName, referenceFileNameTemp)
-            
-            #change the globals to reflect the renaming of the ref and exp files
-            G.referenceFileNamesList[RefIndex] =  referenceFileNameTemp
-            
-            #construct file names for the next run of the program 
-            #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
-            G.nextRefFileName.append(RefName[:-18] + '_unused_iter_%s' %G.iterationNumber + RefName[-4:])
-    
+        #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
+        G.nextRefFileName.append(RefName[:-18] + '_unused_iter_%s' %G.iterationNumber + RefName[-4:])
     return None
     #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileNamesList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
@@ -1533,7 +1531,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     os.chdir(iterationDirectoryName) #this will be changed back at the end of the program
     
     #copy the first UserInputFile into the first iteration directory
-    ExportUserInputFile("UserInput_iter_1.py")
+    ExportUserInputFile("UserInput_iter_1.py", G)
     #append the variable list to the user input file
     AppendListToFile("__var_list__", G.__var_list__, "UserInput_iter_1.py", float('Inf'))
     
@@ -1673,6 +1671,74 @@ def exportSimulatedSignalsSoFar(simulatedSignalsOutputName,iterationDirectoryNam
         simulatedDataToExport = numpy.hstack((stackedAbscissa,stackedData))
         numpy.savetxt('SimulatedRawSignalsSoFarIterative.csv',simulatedDataToExport,fmt='%s',delimiter=',', encoding='latin1')
 
+def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
+    #Has implied argument of Globals file G.
+    
+    #update the suffix number and create the next user input file
+    G.nextIterationSuffix = '_iter_%s' %str(G.iterationNumber + 1)
+    G.nextIterationNumber = G.iterationNumber + 1
+    nextUserInputFileName = 'UserInput%s.py' %G.nextIterationSuffix 
+  
+    #create the next iteration directory and change the cwd into the next iteration directory
+    IterativeDirectoryChange(G.iterativeAnalysis, G.nextIterationNumber)
+    #export the current input specifications, *specifically* so that we can get the new userinput module ready and start populating it without overwriting the origina userinput module.
+    ExportUserInputFile(nextUserInputFileName, G)
+    G.nextUserInputModule = False #first, just this equal to boolean because we can't do a deep copy. Annoyingly, I only got this to work by making the variable nextUserInputModule inside a globals module.
+    sys.path.append(os.getcwd())  #Surprisingly, I was not able to import the module in the next line unless I added the current working directory to the system path.
+    exec('import ' + nextUserInputFileName[:-3])
+    exec('G.nextUserInputModule = '+ nextUserInputFileName[:-3])
+    #Now G.nextUserInputModule contains the next user input module (currently like a draft module), which we can populate below and then export (writing over the draft file).
+
+    G.nextUserInputModule.__var_list__ = G.__var_list__ 
+    #save the new file name for the next user input file 
+    G.nextUserInputModule.collectedFileName = G.nextExpFileName 
+    G.nextUserInputModule.referenceFileNamesList = G.nextRefFileName
+    #updating the selected molecules for the next user input file
+    G.nextUserInputModule.chosenMoleculesNames = G.unusedMolecules
+    #Updating the selected masses for the next user input file
+    chosenMasses = list(ExperimentDataFullCopy.mass_fragment_numbers)
+    G.nextUserInputModule.chosenMassFragments = [int(x) for x in chosenMasses]
+    #Turn off Data Smoothing 
+    G.nextUserInputModule.dataSmootherYorN = 'no'
+    #Turn off manual baseline correction
+    G.nextUserInputModule.backgroundMassFragment = []
+    G.nextUserInputModule.backgroundSlopes = []
+    G.nextUserInputModule.backgroundIntercepts = []
+    #Turn off semiauto baseline correction
+    G.nextUserInputModule.linearBaselineCorrectionSemiAutomatic = 'no'
+    #turnoff reference pattern extractor.
+    G.nextUserInputModule.extractReferencePatternFromDataOption = 'no'
+    
+    #Now going to overwrite parallelized variables with their original versions if they were set to length of chosen molecules.
+    delimitedStringOfVariablesToUnparallelize = 'moleculeLikelihoods, sensitivityValues, referenceValueThreshold, referenceSignificantFragmentThresholds'
+    listOfVariablesToUnparallelize = delimitedStringOfVariablesToUnparallelize.split(", ") #Note that we are using ", " as the delimeter, not just ","
+    for variable in listOfVariablesToUnparallelize:
+        G.nextUserInputModule.__dict__[variable]=G.beforeParsedGDict[variable]
+    
+    #export the user input specifications 
+    ExportUserInputFile(nextUserInputFileName, G.nextUserInputModule)
+    #append the variable list to the user input file
+    AppendListToFile("__var_list__", G.nextUserInputModule.__var_list__, nextUserInputFileName, float('Inf'))
+    
+    if G.nextUserInputModule.iterativeAnalysis == True:
+        iterationDirectoryName = '_iter_%s' %(str(G.nextUserInputModule.iterationNumber))
+    if not G.nextUserInputModule.iterativeAnalysis == True:
+        iterationDirectoryName = '%s_iter_%s' %(G.nextUserInputModule.iterativeAnalysis, str(G.nextUserInputModule.iterationNumber))
+    #copy the experimental signals to the next iteration
+    copyFromPath = os.path.join(os.curdir, os.pardir,
+            str(iterationDirectoryName),
+            str(G.nextUserInputModule.collectedFileName))
+    shutil.copy(copyFromPath, os.getcwd())
+    for RefIndex, RefName in enumerate(G.nextUserInputModule.referenceFileNamesList): #a list
+        #copy the next reference file from the previous iteration folder to the next iteration folder
+        copyFromPath = os.path.join(os.curdir,
+            os.pardir,
+            str(iterationDirectoryName),
+            str(G.nextUserInputModule.referenceFileNamesList[RefIndex]))
+        shutil.copy(copyFromPath, os.getcwd())
+    #returning to the parent directory
+    os.chdir('..')
+
 def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment_numbers,ExperimentDataFullCopy, times, concdata, molecules):
     #implied arguments: G.iterationSuffix, G.nextRefFileName, G.nextExpFileName, G.iterativeAnalysis, G.unusedMolecules, G.iterationNumber
     #remove the signals that have already been solved for from the data set
@@ -1680,64 +1746,23 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     
     #Export the remaining experimental signals
     ExportXYYYData(G.nextExpFileName, ExperimentDataFullCopy.workingData, ExperimentDataFullCopy.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, dataType = 'Experiment', rowIndex = ExperimentData.times)
-    
-    #update the suffix number and create the next user input file
-    G.iterationSuffix = '_iter_%s' %str(G.iterationNumber + 1)
-    nextUserInputFileName = 'UserInput%s.py' %G.iterationSuffix 
-    
     #revert to the parent directory
     os.chdir('..')
-    #create the next iteration directory and change the cwd into the next iteration directory
-    IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber, iterate = True)
-     
-    #save the new file name for the next user input file 
-    G.collectedFileName = G.nextExpFileName 
-    G.referenceFileNamesList = G.nextRefFileName
-    #updating the selected molecules for the next user input file
-    G.chosenMoleculesNames = G.unusedMolecules
-    #Updating the selected masses for the next user input file
-    chosenMasses = list(ExperimentDataFullCopy.mass_fragment_numbers)
-    G.chosenMassFragments = [int(x) for x in chosenMasses]
-    #Turn off Data Smoothing 
-    G.dataSmootherYorN = 'no'
-    #Turn off manual baseline correction
-    G.backgroundMassFragment = []
-    G.backgroundSlopes = []
-    G.backgroundIntercepts = []
-    #Turn off semiauto baseline correction
-    G.linearBaselineCorrectionSemiAutomatic = 'no'
-    
-    #export the user input specifications 
-    ExportUserInputFile(nextUserInputFileName)
-    #append the variable list to the user input file
-    AppendListToFile("__var_list__", G.__var_list__, nextUserInputFileName, float('Inf'))
-    
-    if G.iterativeAnalysis == True:
-        iterationDirectoryName = '_iter_%s' %(str(G.iterationNumber - 1))
-    if not G.iterativeAnalysis == True:
-        iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber - 1))
-    #copy the experimental signals to the next iteration
-    copyFromPath = os.path.join(os.curdir, os.pardir,
-            str(iterationDirectoryName),
-            str(G.collectedFileName))
-    shutil.copy(copyFromPath, os.getcwd())
-    for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
-        #copy the next reference file from the previous iteration folder to the next iteration folder
-        copyFromPath = os.path.join(os.curdir,
-            os.pardir,
-            str(iterationDirectoryName),
-            str(G.referenceFileNamesList[RefIndex]))
-        shutil.copy(copyFromPath, os.getcwd())
-    
-    #returning to the parent directory
-    os.chdir('..')
-    
+
     #Adding the Additional concentrations to the overall concentration results
     moleculeConcLabels = ['%s Concentration Relative to CO' % molecule for molecule in molecules] 
     DataFunctions.AppendColumnsToCSV(G.TotalConcentrationsOutputName, concdata, moleculeConcLabels, times, ["Time"])
     
+    if G.iterativeAnalysis == True:
+        iterationDirectoryName = '_iter_%s' %(str(G.iterationNumber))
+    if not G.iterativeAnalysis == True:
+        iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber))
+
     #This function will take in the iteration directory name, iteration number, ExperimentDataFullCopy.abscissaHeader,simulated data, mass fragment numbers, and the times array and will add or append the simulated signals to a file called SimulatedRawSignalsSoFarIterative.csv
-    exportSimulatedSignalsSoFar(G.simulatedSignalsOutputName,iterationDirectoryName,G.iterationNumber-1) #subtract 1 from the iteration number since the iteration number has already been changed
+    exportSimulatedSignalsSoFar(G.simulatedSignalsOutputName,iterationDirectoryName,G.iterationNumber) #subtract 1 from the iteration number since the iteration number has already been changed
+
+    IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy)
+
     
     return None
      #implied returns: G.referenceFileNamesList, G.collectedFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
@@ -4247,6 +4272,7 @@ def main():
                 AllMID_ObjectsDict = G.AllMID_ObjectsDict #Temporarily store the global variable as a local variable
                 G = UserInputCurrentIteration
                 G.AllMID_ObjectsDict = AllMID_ObjectsDict #Put the local variable back into the namespace after G points to the new namespace.  This retains the MID dictionary through different iterations
+                G.lastFigureNumber = 0
                 break
         if G.iterativeAnalysis:
             G.iterationNumber = highestIteration
@@ -4286,8 +4312,18 @@ def main():
     #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
     
+    #beforeParsedGDict this will be needed for iterative. This actually contains "UserChoices" when that's available, but we won't use that.
+    beforeParsedGDict = {}
+    for (key,value) in G.__dict__.items():  #This gets a tuple of all of the items in G.
+        if not key.startswith("__"): #We don't want the ones that start with "__" since those are not normal variables.
+            try: #We're going to take deep copies, but some of the items are still not normal (like modules) so can be non-copyable and thus we have an except statement below.
+                beforeParsedGDict[key] = copy.deepcopy(value)  
+            except TypeError:
+                pass
+    G.beforeParsedGDict = beforeParsedGDict # now we save it into the globals module for using later.
     from userInputValidityFunctions import parseUserInput
     parseUserInput(G) #This parses the variables in the user input file
+    
             
     #it is useful to trim whitespace from each chosenMolecules string. The same thing is done to the molecule names of each reference pattern when an MSReference object is created.
     for moleculeIndex, moleculeName in enumerate(G.chosenMoleculesNames):
