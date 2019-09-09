@@ -4,6 +4,7 @@ import copy
 parseUserInput parses the variables in the user input file
 It passes in G as an argument
 This function is designed to serve as a standard for parsing particular variables
+#### WARNING: Anything changed to parallelVectorize for chosenMolecules length, or rather chosenMoleculesForParsing, needs to be added to delimitedStringOfVariablesToUnparallelize insde MSRESOLVE in IterativePrepareNextIterationInputFiles. ####
 '''
 def parseUserInput(currentUserInput):
     #Input Files
