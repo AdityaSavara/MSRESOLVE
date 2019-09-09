@@ -1708,6 +1708,10 @@ def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
     G.nextUserInputModule.linearBaselineCorrectionSemiAutomatic = 'no'
     #turnoff reference pattern extractor.
     G.nextUserInputModule.extractReferencePatternFromDataOption = 'no'
+    #turnoff any scaling of raw data since that should not occur after first iteration.
+    G.nextUserInputModule.scaleRawDataOption = 'manual'
+    G.nextUserInputModule.scaleRawDataFactor = G.scaleRawDataFactor
+
     
     #Now going to overwrite parallelized variables with their original versions if they were set to length of chosen molecules.
     delimitedStringOfVariablesToUnparallelize = 'moleculeLikelihoods, sensitivityValues, referenceValueThreshold, referenceSignificantFragmentThresholds'
@@ -3861,13 +3865,14 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
 #this function is going to be rather simple, but it will be the forward function, that simulates raw signals from the calculated
 #signals that we acquired, which will later be printed out in the main() function. The inputs for this function are the signals 
 #array as well as the correction values, in order to simulate the raw signals
-def RawSignalsSimulation (scaledConcentrationsarray,matching_correction_values):
+def RawSignalsSimulation(scaledConcentrationsarray,matching_correction_values):
     simulateddata = numpy.zeros([len(scaledConcentrationsarray[:,0]),len(matching_correction_values[0][:,0])+1])#a simulated data array made the height of the signals array and the width equal to the correction arrays height
     times = scaledConcentrationsarray[:,0]#the first row of the signals array is the times
     scaledConcentrationsarray = scaledConcentrationsarray[:,1:] #because one of the lines here is the times, and it need to be removed
     for scaledtimeIndex in range(len(scaledConcentrationsarray[:,0])):#array-indexed for loop
         simulateddata[scaledtimeIndex:scaledtimeIndex+1,1:] = numpy.transpose(numpy.matrix(matching_correction_values[scaledtimeIndex]) * numpy.matrix(numpy.vstack(scaledConcentrationsarray[scaledtimeIndex,:])))#the data is simulated by multiplying the matrix of correction values by the raw signals for each row
     simulateddata[:,0] = times #the times are added back in so they can be printed more easily
+    print(simulateddata)
     return simulateddata
     
     
@@ -4150,6 +4155,9 @@ def PopulateLogFile():
         f6.write('referenceCorrectionCoefficientA = %s \n'%(G.referenceCorrectionCoefficients['A']))
         f6.write('referenceCorrectionCoefficientB = %s \n'%(G.referenceCorrectionCoefficients['B']))
         f6.write('referenceCorrectionCoefficientC = %s \n'%(G.referenceCorrectionCoefficients['C']))
+    if G.specificMolecules == 'yes':
+        f6.write('specificMolecules = %s \n'%(G.specificMolecules))
+        f6.write('chosenMoleculesNames = %s \n'%(G.chosenMoleculesNames))
     if G.specificMassFragments == 'yes':
         f6.write('specificMassFragments = %s \n'%(G.specificMassFragments))
         f6.write('chosenMassFragments = %s \n'%(G.chosenMassFragments))
@@ -4219,6 +4227,7 @@ def PopulateLogFile():
         f6.write('massNumber = %s \n'%(G.massNumberTSC_List))
         f6.write('moleculeConcentration = %s \n'%(G.moleculeConcentrationTSC_List))
         f6.write('units = %s \n'%(G.unitsTSC))
+    f6.write('scaleRawDataFactor  = %s \n'%(G.scaleRawDataFactor ))
     f6.write('resolvedScaledConcentrationsOutputName  = %s \n'%(G.resolvedScaledConcentrationsOutputName ))
     f6.write('concentrationsOutputName = %s \n'%(G.concentrationsOutputName))
     f6.write('simulatedSignalsOutputName = %s \n'%(G.simulatedSignalsOutputName))
@@ -4603,7 +4612,7 @@ def main():
                 SS_matching_correction_values_TimesList.append(currentReferenceData.SSmatching_correction_values)
         
         
-        concentrationsScaledToCOarray = concentrationsScaledToCOarray/G.scaleRawDataFactor #correct for any scaling factor that was used during analysis.                                                          
+        concentrationsScaledToCOarray[:,1:] = concentrationsScaledToCOarray[:,1:]/G.scaleRawDataFactor #correct for any scaling factor that was used during analysis.                                                          
         resultsObjects['concentrationsScaledToCOarray'] = concentrationsScaledToCOarray #Store in the global resultsObjects dictionary
         if G.concentrationFinder == 'yes': #If using concentration finder
             concentrationsarray = copy.copy(concentrationsScaledToCOarray) #point concentrationsarray to a copy of concentrationsScaledToCOArray
@@ -4649,11 +4658,15 @@ def main():
             #TODO when RawSignalSimulation is rewritten for multiple reference patterns, ReferenceDataSSmatching_correction_valuesList[0] should be replaced with ReferenceDataSSmatching_correction_valuesList
             SS_matching_correction_values_TimesArray = numpy.stack(SS_matching_correction_values_TimesList) #use numpy.stack to make an array of all the arrays
             #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
-            simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, SS_matching_correction_values_TimesArray)
+            if G.scaleRawDataFactor == 1.0: 
+                simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, SS_matching_correction_values_TimesArray)
+            else:
+                print("Warning: With iterative analysis, using scaleRawDataOption (also called scaleRawDataYorN) ends up scaling the simulated raw signals, also.")
+                simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, SS_matching_correction_values_TimesArray)*G.scaleRawDataFactor
         if not G.iterativeAnalysis:
             correctionFactorsAtEachTime = numpy.stack(correctionFactorArraysList) #use numpy.stack to make an array of all the arrays
             #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
-            simulateddata = RawSignalsSimulation (concentrationsScaledToCOarray, correctionFactorsAtEachTime)
+            simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, correctionFactorsAtEachTime)
         #Exporting the simulated signals data
         if G.iterativeAnalysis:
             ExportXYYYData(G.simulatedSignalsOutputName, simulateddata, ExperimentDataCopy.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'simulated')
