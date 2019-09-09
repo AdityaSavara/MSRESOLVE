@@ -3872,7 +3872,6 @@ def RawSignalsSimulation(scaledConcentrationsarray,matching_correction_values):
     for scaledtimeIndex in range(len(scaledConcentrationsarray[:,0])):#array-indexed for loop
         simulateddata[scaledtimeIndex:scaledtimeIndex+1,1:] = numpy.transpose(numpy.matrix(matching_correction_values[scaledtimeIndex]) * numpy.matrix(numpy.vstack(scaledConcentrationsarray[scaledtimeIndex,:])))#the data is simulated by multiplying the matrix of correction values by the raw signals for each row
     simulateddata[:,0] = times #the times are added back in so they can be printed more easily
-    print(simulateddata)
     return simulateddata
     
     
