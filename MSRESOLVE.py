@@ -989,7 +989,7 @@ def ScaleRawDataAuto(data):
         a1Dholder =data[index]
         
         minNumHolder=numpy.min(a1Dholder[numpy.nonzero(a1Dholder)]>0) #This first gets the nonzero values, then takes the ones greater than 0, then finds the minimum.
-        if (minNumHolder < minNum):
+        if ((minNumHolder>0) and (minNumHolder < minNum)):
             minNum = minNumHolder
             
     multiplier= 1/minNum
@@ -3664,7 +3664,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                     # then add the appropriate Finisher concentration for that molecule  
                     solutions[molecule_iiii] = remainingMolecules.pop(0) 
             except IndexError:
-                print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the Reference Mass Fragmentation Threshold or you can try using inverse.")
+                print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the referenceValueThreshold within the feature Reference Mass Fragmentation Threshold. Alternatively, you can try using inverse.")
                 solutions = numpy.array([None]) #This is just creating a numpy array with an element that has a None object, so that the main function can know that SLSMethod failed.
     return solutions
     
