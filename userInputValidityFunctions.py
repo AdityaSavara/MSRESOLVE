@@ -107,8 +107,9 @@ def parseUserInput(currentUserInput):
     
     #Reference Correction Changer
     parse.strCheck(currentUserInput.measuredReferenceYorN,'measuredReferenceYorN')
-    parse.strCheck(currentUserInput.referenceMeasuredFileName,'referenceMeasuredFileName')
-    parse.strCheck(currentUserInput.referenceLiteratureFileName,'referenceLiteratureFileName')
+    #The below two variables are no longer strings. They are now lists with two elements, each of which are strings. TODO: Change their names to referenceMeasuredFileNameAndForm and referenceLiteratureFileNameAndForm
+    #parse.strCheck(currentUserInput.referenceMeasuredFileName,'referenceMeasuredFileName')
+    #parse.strCheck(currentUserInput.referenceLiteratureFileName,'referenceLiteratureFileName')
     
     #Reference Pattern Changer
     parse.strCheck(currentUserInput.extractReferencePatternFromDataOption,'extractReferencePatternFromDataOption')

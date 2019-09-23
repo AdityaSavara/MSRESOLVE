@@ -145,18 +145,17 @@ UserChoices['scaleRawDataYorN']['scaleRawDataOption'] = 'manual' #Choices are 'm
 UserChoices['scaleRawDataYorN']['scaleRawDataFactor'] = 1
 #Note that 1 is the default and will make no alteration to the data
 
-#//Reference Correction Coefficients//
+#//Tuning Corrector - Reference Correction Coefficients//
 UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN container
 #TODO Reference Correction Coefficients feature should be upgraded to enable separate coefficients for each molecule to allow mixing and matching of reference patterns
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 UserChoices['measuredReferenceYorN']['on'] ='no'
-UserChoices['measuredReferenceYorN']['referenceMeasuredFileName'] ='AcetaldehydeMeasuredRef.csv'
-UserChoices['measuredReferenceYorN']['referenceLiteratureFileName'] ='AcetaldehydeOnlyNISTRef.csv'
+UserChoices['measuredReferenceYorN']['referenceMeasuredFileName'] =['ReferenceCollected.csv','xyyy']
+UserChoices['measuredReferenceYorN']['referenceLiteratureFileName'] =['ReferenceLiterature.csv','xyyy']
 #The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten (Ashi thinks it will generate a new reference pattern)
 UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients'] = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
-                            #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
-                            
+                            #default is 'A': 0.0, 'B': 0.0, 'C': 1.0.   Used as.... Factor = A*X^2 + B*X + C, so A=0,B=0,C=1.0 means the final factor is 1.0 and independent of molecular weight.
 #//Reference Pattern Changer // (rpc)
 UserChoices['extractReferencePatternFromDataOption'] = {} #initialize the extractReferencePatternFromDataOption container
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
