@@ -473,7 +473,7 @@ def ABCDetermination(ReferencePatternMeasuredFileNameAndForm, ReferencePatternLi
     from numpy import inf
     #Due to divide by zero errors, it is useful to get rid of any infinity type values.
         #Below 3 lines were first attempt to deal with infinte values, but were not necessary. Can skip to the fitting.
-        # meanRatioPerMassFragment[meanRatioPerMassFragment==0] = 'nan'
+    meanRatioPerMassFragment[meanRatioPerMassFragment==0] = 'nan' #zeros are not useful.
         # meanRatioPerMassFragment[meanRatioPerMassFragment==inf] = 'nan'
         # meanRatioPerMassFragment[meanRatioPerMassFragment==-inf] = 'nan'
     #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
