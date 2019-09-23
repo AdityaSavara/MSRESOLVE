@@ -370,153 +370,127 @@ def MatchingNumbers(Array1, Array2):
 
     return list(set(Array1) & set(Array2))
 '''
-THis function determines and returns the ABC correction coefficients based off 
+THis function determines and returns the ABC correction coefficients for Tuning Correction based off 
 of a literature (NIST) reference pattern and a measured (Experimental)reference pattern
 '''
-def ABCDetermination(ReferencePatternMeasured, ReferencePatternLiterature):
+def ABCDetermination(ReferencePatternMeasuredFileNameAndForm, ReferencePatternLiteratureFileNameAndForm):
+    #The two arguments are actually lists containing strings of the name and form type: (["FileNameOne.csv","xyyy"],["FileNameTwo.csv", "xyyy"])
     '''
     Step 1: Read in all neccessary information from fragment patterns
     Step 2: populate all variables and standardize signals by 100 
 
     '''
-    #first we import neccessary variables for Literature reference values: 
-    MeasuredReferencePattern=ReferencePatternMeasured
-    ReferenceFragmentationPattern=ReferencePatternLiterature
-
-    #get reference numbers
-    reference = genfromtxt( '%s' %ReferenceFragmentationPattern,delimiter=',',skip_header=1)
-
-    #get molecule names: read in all as strings
-    spamReader = csv.reader(open('%s' %ReferenceFragmentationPattern), delimiter=' ')
-    list_holder=[]
-    molecules_holder=[]
-    #find row of strings with molecules
-    for row in spamReader:#array-indexed for loop
-        list_holder.append(row)
-    molecules_holder = list_holder[1][0]
-    #seperate molecules into iteratble entities
-    for x in range(len(list_holder[1])-1):#array-indexed for loop
-        molecules_holder = molecules_holder + ' ' +list_holder[1][x+1]
-    molecules_holder = molecules_holder.split(',')
-    MoleculesReference= molecules_holder[1:]
-
-    #standardize to 100: Reference
-    NewReference = StandardizeReferencePattern(reference[3:,:], len(MoleculesReference))
-    MassFragmentsReferenceHolder=NewReference[0:,0]
-    SignalsReferenceHolder=NewReference[:,1:]
-
-    #IMPORT Experimental variables
-
-    #get reference numbers
-    referenceMeasured = genfromtxt( '%s' %MeasuredReferencePattern,delimiter=',',skip_header=1)
-     
-     #standardize to 100: Measured
-    NewReferenceMeasured=StandardizeReferencePattern(referenceMeasured[3:,:], len(MoleculesReference))
     
-    #set variables
-    MassFragmentsMeasuredHolder=NewReferenceMeasured[0:,0]
-    SignalsMeasuredHolder=NewReferenceMeasured[0:, 1:]
-    matchingMassFragmentsHolder=[]
-
-    #determine matching mass fragment numbers
-    matchingMassFragmentsHolder=(MatchingNumbers(MassFragmentsMeasuredHolder, MassFragmentsReferenceHolder))
-    matchingMassFragmentsHolder.sort(key = int)
-
+    if G.minimalReferenceValue !='yes':
+        print("Warning: The ABCDetermination will occur without threshold filtering, since that setting is off.")
+       
+    #For simplicity, we will put the items into temporary items, then into dictionaries that we can then access.
+    ReferencePatternMeasuredDict = {}
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternMeasuredFileNameAndForm)
+    ReferencePatternMeasuredDict['molecules']=molecules
+    ReferencePatternMeasuredDict['provided_reference_patterns'] = provided_reference_patterns
+    ReferencePatternMeasuredDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternMeasuredDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
+    if G.minimalReferenceValue =='yes':
+        #print("lin 394", ReferencePatternMeasuredDict['provided_reference_patterns'][2])
+        ReferencePatternMeasuredDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternMeasuredDict['provided_reference_patterns'],G.referenceValueThreshold)
+        #print("lin 396", ReferencePatternMeasuredDict['provided_reference_patterns'][2])
     
-    #set to numpy arrays
-    MassFragmentsReference=numpy.array(MassFragmentsReferenceHolder)
-    SignalsReference=numpy.array(SignalsReferenceHolder)
-    MassFragmentsMeasured=numpy.array(MassFragmentsMeasuredHolder)
-    SignalsMeasured=numpy.array(SignalsMeasuredHolder)
-
     
-
+    ReferencePatternLiteratureDict = {}
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternLiteratureFileNameAndForm)
+    ReferencePatternLiteratureDict['molecules']=molecules
+    ReferencePatternLiteratureDict['provided_reference_patterns'] = provided_reference_patterns
+    ReferencePatternLiteratureDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternLiteratureDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
+    if G.minimalReferenceValue =='yes':
+        #print("lin 404", ReferencePatternLiteratureDict['provided_reference_patterns'])
+        ReferencePatternLiteratureDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternLiteratureDict['provided_reference_patterns'],G.referenceValueThreshold)
+        #print("lin 406", ReferencePatternLiteratureDict['provided_reference_patterns'])
+    
     '''
-    Step 3: Determine Matching Mass fragments{future work will be done to do generate matching mass numbers}
-     and generate Ratio array
-
+    Step 3a: Truncate to the molecules which match.
     '''
-    #later iterations will correct this
-    MatchingMassFragments=numpy.array(matchingMassFragmentsHolder)
-
-
-    #delete all indexes not at matching mass fragments: In Measured Data
-    newMassFragmentsMeasured =[]
-    newSignalsMeasured=[]
-    MassIndex=0
-    for  MatchingMassIndex in range(0, len(MatchingMassFragments)):
-
-            if (MatchingMassFragments[MatchingMassIndex] != MassFragmentsMeasured[MassIndex]): 
-                while(MatchingMassFragments[MatchingMassIndex] != MassFragmentsMeasured[MassIndex]):
-                    MassIndex=MassIndex +1    
-            newMassFragmentsMeasured.append(MassFragmentsMeasured[MassIndex])
-            newSignalsMeasured.append(SignalsMeasured[MassIndex])
+    OverlappingMolecules = numpy.intersect1d(ReferencePatternMeasuredDict['molecules'],ReferencePatternLiteratureDict['molecules'] )
+    OverlappingFragments = numpy.intersect1d(ReferencePatternMeasuredDict['provided_reference_patterns'][:,0],ReferencePatternLiteratureDict['provided_reference_patterns'][:,0])    
+    [OverlappingMolecules,ReferencePatternMeasuredDict['OverlappingIndices'], ReferencePatternLiteratureDict['OverlappingIndices']]  = numpy.intersect1d(ReferencePatternMeasuredDict['molecules'],ReferencePatternLiteratureDict['molecules'], return_indices=True)
 
     
-
-    MassFragmentsMeasured=numpy.array(newMassFragmentsMeasured)
-    SignalsMeasured=numpy.array(newSignalsMeasured)
-
-    #delete all indexes not at matching mass fragments: In Reference Data
-
-    newMassFragmentsReference =[]
-    newSignalsReference=[]
-    MassIndex=0
-    for  MatchingMassIndex in range(0, len(MatchingMassFragments)):
-
-            if (MatchingMassFragments[MatchingMassIndex] != MassFragmentsReference[MassIndex]): 
-                while(MatchingMassFragments[MatchingMassIndex] != MassFragmentsReference[MassIndex]):
-                    
-                    MassIndex=MassIndex +1    
-            newMassFragmentsReference.append(MassFragmentsReference[MassIndex])
-            newSignalsReference.append(SignalsReference[MassIndex])
-
-
-    MassFragmentsReference=numpy.array(newMassFragmentsReference)
-    SignalsReference=numpy.array(newSignalsReference)
-
-    FactorListHolder=[]
-    FactorList=[]
-    MassFragmentsAdjustedHolder=[]
-
+    ReferencePatternMeasuredDict['OverlappingMolecules'] = OverlappingMolecules
+    ReferencePatternLiteratureDict['OverlappingMolecules'] = OverlappingMolecules
     
-
-    #create and generate a factor list; also adjust mass fragment format to [x,x], [y,y]
-    #instead of [x,y], [x,y]
-    for  moleculeIndex in range(0, len(MoleculesReference)):
-        for MassIndex in range (0, len(MatchingMassFragments)):
-            
-            if SignalsReference[MassIndex,moleculeIndex] !=0 and SignalsMeasured[MassIndex,moleculeIndex] != 0:
-                Factor =(SignalsMeasured[MassIndex,moleculeIndex]/SignalsReference[MassIndex,moleculeIndex])
-                
-                FactorListHolder.append(Factor)
-                MassFragmentsAdjustedHolder.append(MatchingMassFragments[MassIndex])
-
-
-
-
-                
-    FactorList=FactorListHolder
-    MassFragmentsAdjusted=MassFragmentsAdjustedHolder
-
+    ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'] = []
+    #Now need to get only the overlapping indices values. The numpy take function will work if we do it one row at a time:
+    for rowIndex,row in enumerate(ReferencePatternMeasuredDict['provided_reference_patterns']):
+            massFragment = row[0]
+            truncatedIntensities = numpy.take(row[1:],ReferencePatternMeasuredDict['OverlappingIndices'])    
+            rowTruncated = numpy.insert(truncatedIntensities, 0, massFragment)
+            ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
     
+    ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'] = []
+    #Now need to get only the overlapping indices values. The numpy take function will work if we do it one row at a time:
+    for rowIndex,row in enumerate(ReferencePatternLiteratureDict['provided_reference_patterns']):
+            massFragment = row[0]
+            truncatedIntensities = numpy.take(row[1:],ReferencePatternLiteratureDict['OverlappingIndices'])   
+            rowTruncated = numpy.insert(truncatedIntensities, 0, massFragment)
+            ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
+    #Note that the columns of overlapping_provided_reference_patterns are not just truncated but also rearranged. 
+    #Thus, going forward, OverlappingMolecules must be used for indices rather than using molecules.
+  
+   
+    '''
+    Step 3b: Determine Matching Mass fragments
+    '''    
+    #Only append rows that have an overlapping mass fragment.
+    matchingFragmentsOnlyPatterns = []
+    for row in ReferencePatternMeasuredDict['overlapping_provided_reference_patterns']:
+        if row[0] in OverlappingFragments:
+            matchingFragmentsOnlyPatterns.append(row)
+    #now swap in the new list.
+    ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns    
+
+    #Only append rows that have an overlapping mass fragment.
+    matchingFragmentsOnlyPatterns = []
+    for row in ReferencePatternLiteratureDict['overlapping_provided_reference_patterns']:
+        if row[0] in OverlappingFragments:
+            matchingFragmentsOnlyPatterns.append(row)
+    #now swap in the new list.
+    ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns
+
+    #Convert the two lists to numpy arrays so that they can be divided....
+    ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'])
+    ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'])
+    #Need to standardize again, because the ratios during division below will be wrong if the largest peak was not among the matching fragments.
+    ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
+    ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
+
     '''
     Find a,b,c:
     '''
+    numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.
+    RatioOfPatterns = ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'][:,1:]    
+    #For each row, excluding the Take the mean excluding nan values.
+    meanRatioPerMassFragment = numpy.nanmean(RatioOfPatterns,1) #the 1 is for over axis 1, not over axix 0.    
+    numpy.seterr(divide='warn', invalid='warn') #This is to [it tje warnings back how they normally are.
+    from numpy import inf
+    #Due to divide by zero errors, it is useful to get rid of any infinity type values.
+        #Below 3 lines were first attempt to deal with infinte values, but were not necessary. Can skip to the fitting.
+        # meanRatioPerMassFragment[meanRatioPerMassFragment==0] = 'nan'
+        # meanRatioPerMassFragment[meanRatioPerMassFragment==inf] = 'nan'
+        # meanRatioPerMassFragment[meanRatioPerMassFragment==-inf] = 'nan'
+    #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
+    FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
 
-
-    (a,b,c)=numpy.polyfit(MassFragmentsAdjusted,FactorList,2)
-
-    
+    [a,b,c]=numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2) #The two is for 2nd degree polynomial.
+    #Factor = A*X^2 + B*X + C, so C=1.0 means the factor is 1.0 and independent of molecular weight.
+    #To use this with mixed patterns (meaning, some patterns taken from Literature reference like NIST) you will need to first determine the A,B,C coefficients, then you'll have to divide the Literature reference pattern by this factor. This will compensate for when the code multiplies by the factor, thus putting the mixed patterns into the same tuning.
     return a,b,c
 
  
-#this function either creates or gets the three coefficients for the polynomial correction and calculates
+#this function either creates or gets the three coefficients for the polynomial correction (Tuning Correction) and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-def CorrectionValueCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients,referenceLiteratureFileName,referenceMeasuredFileName,measuredReferenceYorN):
+def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients,referenceMeasuredFileNameAndForm,referenceLiteratureFileNameAndForm,measuredReferenceYorN):
     if measuredReferenceYorN =='yes':
-        (referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C'])=ABCDetermination(referenceMeasuredFileName,referenceLiteratureFileName )
+        (referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C'])=ABCDetermination(referenceMeasuredFileNameAndForm,referenceLiteratureFileNameAndForm)
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
@@ -1111,17 +1085,22 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     
     #Only print if not called from interpolating reference objects
     if verbose:
-        print('beginning CorrectionValueCorrector')
-    ReferenceData.standardized_reference_patterns = CorrectionValueCorrector(ReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
+        print('beginning TuningCorrector')
+    ReferenceData.standardized_reference_patterns = TuningCorrector(ReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
                                                        G.referenceLiteratureFileName, G.referenceMeasuredFileName,
                                                        G.measuredReferenceYorN)
-    ReferenceData.ExportCollector('CorrectionValueCorrector')
+    ReferenceData.ExportCollector('TuningCorrector')
+
+    #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
+    ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.standardized_reference_patterns,len(ReferenceData.molecules))
+    ReferenceData.ExportCollector('StandardizeReferencePattern')
+    
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
     #TODO: option 2: Or we can below assign to preprocessed_reference_pattern rather than standardized_reference_patterns and then use that in data analysis (Note that interpolate would continue to use standardized_reference_patterns as well as preprocess the output)
     if G.minimalReferenceValue == 'yes':
         ReferenceData.standardized_reference_patterns = ReferenceThresholdFilter(ReferenceData.standardized_reference_patterns,G.referenceValueThreshold)
-        ReferenceData.ExportCollector('ReferenceThreshold')
+        ReferenceData.ExportCollector('ReferenceThresholdFilter')
     
     #As the program is currently written, this function is called to act upon already threshold filtered standardized reference patterns which could cause innaccuracy.  
     #One could move this function prior to threshold filtering however then correction values would not be correctly calculated for interpolated reference patterns
