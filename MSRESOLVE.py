@@ -820,13 +820,15 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
         reducedabscissa_length = len(reducedabscissa)
         data_width = len(data[0,:]) 
         data_height = len(data[:,0])
-        matching_abscissa = numpy.zeros([1,data_width])   
+        matching_abscissa = []
+        matching_abscissa_data = numpy.zeros([1,data_width])   
         for reducedabscissacounter in range(0,reducedabscissa_length): #array-indexed for loop
             for abscissacounter in range(0,data_height):#array-indexed for loop
                 if reducedabscissa[reducedabscissacounter] == abscissa[abscissacounter]: #gets index for chosen mass fragment numbers within correction values/matching mass fragemtns arrays
-                    matching_abscissa = numpy.vstack([matching_abscissa, data[abscissacounter,list(range(0,data_width))]])
-        matching_abscissa = numpy.delete(matching_abscissa,(0),axis = 0)
-        return matching_abscissa
+                    matching_abscissa.append(abscissa[abscissacounter])
+                    matching_abscissa_data = numpy.vstack([matching_abscissa_data, data[abscissacounter,list(range(0,data_width))]])
+        matching_abscissa_data = numpy.delete(matching_abscissa_data,(0),axis = 0)
+        return matching_abscissa_data, matching_abscissa
     #This small function just goes through every element of the correction array and inverses it; you can do
     #this more simply, but there are zeros here and we cannot have inf as our value, so the else statement simply
     #skips the zeros and inverse all others
@@ -837,8 +839,8 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
                     matching_correction_values[x][y] = matching_correction_values[x][y]**float(-1)
         return matching_correction_values
     #here the main function, Populate_matching_correction_values, calls all of its sub-functions 
-    ReferenceData.matching_correction_values = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
-    ReferenceData.monitored_reference_intensities = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referenceDataArray)
+    ReferenceData.matching_correction_values, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
+    ReferenceData.monitored_reference_intensities, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referenceDataArray)
     ReferenceData.matching_correction_values = ArrayElementsInverser(ReferenceData.matching_correction_values)
     return ReferenceData
     
@@ -3815,7 +3817,8 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                     if moleculesTSC_List[0] == AllMoleculesReferenceDataList[0].molecules[moleculecounter]: #gets index of first moleculeTSC in the reference data
                         if massNumberTSC_List[0] == AllMassFragmentsExperimentData.mass_fragment_numbers[masscounter]: #Gets index of first massNumberTSC in the collected data
                             #Get the concentration factor for the first molecule listed
-                            conversionFactorForFirstMoleculeTSC = (moleculeConcentrationTSC_List[0]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignalTSC_List[0]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
+                            correction_values_masscounter = AllMoleculesReferenceDataList[0].matching_abscissa.index(AllMassFragmentsExperimentData.mass_fragment_numbers[masscounter])
+                            conversionFactorForFirstMoleculeTSC = (moleculeConcentrationTSC_List[0]*AllMoleculesReferenceDataList[0].matching_correction_values[correction_values_masscounter,moleculecounter])/float(moleculeSignalTSC_List[0]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
             #Overwrite all values in conversion factor at each time with the conversion factor of the first moleculeTSC
             #This for loop is looping conversionFactorsAtEachTime array which is the same length as the trimmed molecules
             for conversionIndex in range(len(conversionFactorsAtEachTime[0])): #index of 0 is needed because array is 2-D with 1 row and rows are indexed first and we want to loop over each column
@@ -3831,7 +3834,8 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                                     ReferenceDataMoleculeIndex = numpy.where(ReferenceData[0].molecules == moleculesTSC_List[moleculeTSC_Index])[0][0] #np.where returns an array with the first element being a list of the indicies.  So using [0][0] as syntax we can pull the index out as an int assuming there are no repeats in molecule names
                                     #Solve for the new conversion factor and place it at the index of the molecule's appearance in the trimmed reference data
                                     #index of 0 is needed because array is 2-D with 1 row and rows are indexed first
-                                    conversionFactorsAtEachTime[0][ReferenceDataMoleculeIndex] = (moleculeConcentrationTSC_List[moleculeTSC_Index]*AllMoleculesReferenceDataList[0].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignalTSC_List[moleculeTSC_Index]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
+                                    correction_values_masscounter = AllMoleculesReferenceDataList[0].matching_abscissa.index(AllMassFragmentsExperimentData.mass_fragment_numbers[masscounter])
+                                    conversionFactorsAtEachTime[0][ReferenceDataMoleculeIndex] = (moleculeConcentrationTSC_List[moleculeTSC_Index]*AllMoleculesReferenceDataList[0].matching_correction_values[correction_values_masscounter,moleculecounter])/float(moleculeSignalTSC_List[moleculeTSC_Index]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
                                 else: #if the molecule is not in the trimmed data then just use the conversion factor of the first molecule listed which is what already populates conversionFactorAtEachTime
                                     pass
         else:
@@ -4611,15 +4615,20 @@ def main():
         times = concentrationsScaledToCOarray[:,0]#the times are just the first column of the array
         data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
         
+ 
+        #Graph the concentration/relative signal data
+        if G.grapher == 'yes':
+            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
+            G.lastFigureNumber = G.lastFigureNumber+1
         if G.concentrationFinder == 'yes':
             ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
             times = concentrationsarray[:,0]
             data = concentrationsarray[:,1:]
         
-        #Graph the concentration/relative signal data
-        if G.grapher == 'yes':
-            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='graphAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
-            G.lastFigureNumber = G.lastFigureNumber+1
+            #Graph the concentration/relative signal data
+            if G.grapher == 'yes':
+                Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='resolvedConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
+                G.lastFigureNumber = G.lastFigureNumber+1
 
             
     if G.dataSimulation =='yes':
