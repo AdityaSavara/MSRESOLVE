@@ -175,8 +175,8 @@ UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] =
 UserChoices['minimalReferenceValue'] = {} #initialize the minimalReferenceValue container
 # if you want to exclude tiny fragmentation peaks
 UserChoices['minimalReferenceValue']['on'] = 'no'
-UserChoices['minimalReferenceValue']['referenceValueThreshold'] = [6.0]
-UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds'] = [3.0]
+UserChoices['minimalReferenceValue']['referenceValueThreshold'] = [2.0]
+UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds'] = [6.0]
 
 #//Data Threshold Filter//
 UserChoices['lowerBoundThresholdChooser'] = {} #initialize the lowerBoundThresholdChooser container
