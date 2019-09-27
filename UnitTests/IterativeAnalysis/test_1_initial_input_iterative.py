@@ -37,7 +37,7 @@ grapher = 'no' #yes will graph function no will not
 #This function limits the data analyzed and proccessed to a certain subset of the total data
 timeRangeLimit = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
 timeRangeStart = 176  #start time (-int)
-timeRangeFinish = 900	#finish time (-int)
+timeRangeFinish = 200	#finish time (-int)
 
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
@@ -148,7 +148,7 @@ rpcMoleculesToChangeMF = [
 # if you want to exclude tiny fragmentation peaks
 minimalReferenceValue= 'yes'
 referenceValueThreshold = [1.0]
-
+referenceSignificantFragmentThresholds = [0.0]
 
 #//Data Threshold Filter//
 #To change the lower bound below which data is eliminated, change below; lowerBoundThresholdChooser ='yes' or 'no'
