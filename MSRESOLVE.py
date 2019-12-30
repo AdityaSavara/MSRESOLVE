@@ -3905,13 +3905,18 @@ def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayli
             ranges = numpy.linspace(0,maximum/float(10),50)#the negative molecule is checked for between the higher molecule's signal/10, in 100ths of the range
             userange = ranges[1]-ranges[0] #the increments are calculated here
             specifications = [(0,maximum/float(10),userange),(maximum/float(2),maximum*2,maximum*0.15)]#the specifications array is made here, with the higher molecule being checked in ten places within a factor of 2 of itself
-            if sum(specifications[0]) == 0 and sum(specifications[1] == 0):
+            if sum(specifications[0]) == 0 and sum(specifications[1]) == 0:
+                solutionsConcentrations = solutionsline[1:] #The first index is the time, so we separate the solved concentrations from that.
+                solutionsConcentrations[solutionsConcentrations < 0] = 0 #If any concentrations are still negative, we set them to zero.
+                solutionsline[1:] = solutionsConcentrations #We put the adjusted array back into solutions and return it.
                 return solutionsline # This means that all of the values were negative or zero
             answers = BruteForce(molecules,specifications,arrayamalgam,rawsignalsarraylinecopy,bruteOption,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
             solutionslinedata[indexes[negativesIndex]] = answers[0]#sets the first solution
             solutionslinedata[correction2index] = answers[1]#sets the second
     solutionsline[1:] = solutionslinedata #sets the new data, with the times
-    print((timeit.default_timer() - NGstart))
+    NGtimeSpent = (timeit.default_timer() - NGstart)
+    if NGtimeSpent > 10:
+        print("Time Spent for Negative Analyzer on this data point", NGtimeSpent, "original data was:", rawsignalsarrayline)
     return solutionsline
 
 '''This function exports all XYYY Data to the User specified document (usually a CSV)'''
@@ -4341,7 +4346,7 @@ def main():
     prototypicalReferenceData = ReferenceDataList[0]
 
     #Prints a warning if the user has more reference files than specified time ranges
-    if len(G.referenceFileNamesList) > len(G.referencePatternTimeRanges):
+    if len(G.referencePatternTimeRanges) > 0 and (len(G.referenceFileNamesList) > len(G.referencePatternTimeRanges)):
         print("WARNING: There are more reference files given than time ranges")
     #save global variable into the class objects 
     ExperimentData.ExportAtEachStep = G.ExportAtEachStep
@@ -4418,7 +4423,6 @@ def main():
             for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
                 #create a copy of the Reference Data
                 ReferenceDataListFullCopy.append(copy.deepcopy(RefObject)) 
-        
         ##Start: Preparing data for data analysis based on user input choices
         # Trim the reference data according to the selected molecules list
         #TODO: Ashi thinks this can be moved into PrepareReferenceObjectsAndCorrectionValues. But care of not messing up iterativeAnalysis would be needed.
@@ -4428,6 +4432,8 @@ def main():
         #TODO continued: If it matches (as a set, not an equal comparison of lists), then no trimming occurs. Else, trimming occurs.
         #TODO continued: but the above changes would probably also require trimDataMassesToMatchReference to occur on Experimental data, again, after prepare reference patterns, including on ExperimentDataCopy.
         if G.specificMolecules == 'yes' or G.iterativeAnalysis:
+           if G.specificMolecules == 'no': #This should really be in user input validation.
+               print("WARNING: You have chosenMolecules / specificMolecules set to no, but iterativeAnalysis is set to True and requires chosenMolecules. ChosenMolecules will be used as part of iterative. If you did not fill out the chosenMolecules list correctly, you must do so and run again (you may also need to delete the directory for the next iteration).")
            for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
                 ReferenceDataList[RefObjectIndex] = trimDataMoleculesToMatchChosenMolecules(RefObject, G.chosenMoleculesNames)
            prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMoleculesNames)
@@ -4467,7 +4473,7 @@ def main():
             ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
                               
     if (G.dataAnalysis == 'yes'):
-        
+        print("Entering Data Analysis")
         #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
         if G.iterativeAnalysis:
             ReferenceDataSSmatching_correction_valuesList, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMoleculesNames, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataListFullCopy)
@@ -4512,10 +4518,23 @@ def main():
 
         #Initialize a current reference pattern index
         currentReferencePatternIndex = 0
-        for timeIndex in range(len(ExperimentData.workingData[:,0])):#the loop that runs the program to get a set of signals/concentrations for each time  
-            #This print statement was used to track the progress of the program during long analysis runs
+        numberOfTimePoints = len(ExperimentData.workingData[:,0])
+        for timeIndex in range(numberOfTimePoints):#the loop that runs the program to get a set of signals/concentrations for each time  
+            #These print statements are used to track the progress of the program during long analysis runs
+            if (timeIndex == 0):
+                print("TimeIndex", timeIndex, "\n Estimated runtime remaining:", "unknown", "seconds.") 
+                lastPrintedIndexClockTime = timeit.default_timer() 
             if ((timeIndex % 100) == 0 and timeIndex != 0):
-                print(timeIndex)
+                averageRunTimePerPoint = (timeit.default_timer() - G.checkpoint)/timeIndex
+                estimatedRemainingRuntime = (numberOfTimePoints-timeIndex)*averageRunTimePerPoint
+                print("TimeIndex", timeIndex, "\n Estimated runtime remaining:", estimatedRemainingRuntime, "seconds.")
+                lastPrintedIndexClockTime = timeit.default_timer() 
+            if timeit.default_timer() - lastPrintedIndexClockTime > 10:
+                averageRunTimePerPoint = (timeit.default_timer() - G.checkpoint)/timeIndex
+                estimatedRemainingRuntime = (numberOfTimePoints-timeIndex)*averageRunTimePerPoint
+                print("TimeIndex", timeIndex, ": Ten seconds or more checkpoint. Actually", timeit.default_timer() - lastPrintedIndexClockTime, "seconds. \n Estimated runtime remaining:", estimatedRemainingRuntime, "seconds.")
+                lastPrintedIndexClockTime = timeit.default_timer() #reset this value.
+            
             #If referencePatternTimeRanges has anything in it, then the user has opted to use the Reference Pattern Time Chooser feature
             #FIXME interpolation portion of reference pattern time chooser does not work yet
             if len(G.referencePatternTimeRanges) != 0:
