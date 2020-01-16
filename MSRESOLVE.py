@@ -391,10 +391,7 @@ def ABCDetermination(ReferencePatternMeasuredFileNameAndForm, ReferencePatternLi
     ReferencePatternMeasuredDict['provided_reference_patterns'] = provided_reference_patterns
     ReferencePatternMeasuredDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternMeasuredDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
     if G.minimalReferenceValue =='yes':
-        #print("lin 394", ReferencePatternMeasuredDict['provided_reference_patterns'][2])
         ReferencePatternMeasuredDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternMeasuredDict['provided_reference_patterns'],G.referenceValueThreshold)
-        #print("lin 396", ReferencePatternMeasuredDict['provided_reference_patterns'][2])
-    
     
     ReferencePatternLiteratureDict = {}
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternLiteratureFileNameAndForm)
@@ -402,9 +399,7 @@ def ABCDetermination(ReferencePatternMeasuredFileNameAndForm, ReferencePatternLi
     ReferencePatternLiteratureDict['provided_reference_patterns'] = provided_reference_patterns
     ReferencePatternLiteratureDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternLiteratureDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
     if G.minimalReferenceValue =='yes':
-        #print("lin 404", ReferencePatternLiteratureDict['provided_reference_patterns'])
         ReferencePatternLiteratureDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternLiteratureDict['provided_reference_patterns'],G.referenceValueThreshold)
-        #print("lin 406", ReferencePatternLiteratureDict['provided_reference_patterns'])
     
     '''
     Step 3a: Truncate to the molecules which match.
@@ -2829,13 +2824,13 @@ def DataRangeSpecifier(molecules,timeIndex,molecules_copy,conversionfactor,dataf
 #array of raw signals, thereby making the distance from zero the error, which is now contained in an array. These values
 #are each squared, then summed in order to get the SSR, which the scipy.optimize.brute then gets the minimum of, thereby
 # finding the percentages that are closest to the correct percentages
-def SignalSimulation(sampleparameterpoints,*otherArgumentsList):
+def SimulateSignalAndReturnObjFunc(concentrations,*otherArgumentsList):
     rawsignalsarrayline = otherArgumentsList[0]#the item in the list is the raw signal arrayline
     matching_correction_values = otherArgumentsList[1] #the second item is the matching correction values
-    objectiveFunctionOption = otherArgumentsList[2]#the input argument contains both the objectiveFunctionOption (bruteOption) and the two arrays: raw signals array line and matching correction values
+    objectiveFunctionOption = otherArgumentsList[2]#the input argument contains both the objectiveFunctionOption (objectiveFunctionType) and the two arrays: raw signals array line and matching correction values
     xyyData = numpy.zeros([3,len(rawsignalsarrayline)]) #a three line array is made that will be entered into the function below
     xyyData[1:2,:] = numpy.hstack(rawsignalsarrayline) #this second line is the raw signals
-    xyyData[2:3,:] = numpy.hstack(numpy.array(numpy.matrix(matching_correction_values)*numpy.matrix(numpy.vstack(sampleparameterpoints)))) #the third row is the calculated signals
+    xyyData[2:3,:] = numpy.hstack(numpy.array(numpy.matrix(matching_correction_values)*numpy.matrix(numpy.vstack(concentrations)))) #the third row is the calculated signals
     objectiveFunctionDictionary = ObjectiveFunctionGenerator(xyyData,0)
     if objectiveFunctionOption == 'weightedSAR': #based on the choice given the output will be chosen from this called functions dictionary
         objective_function = objectiveFunctionDictionary['weightedSAR']
@@ -2916,36 +2911,49 @@ def ObjectiveFunctionGenerator(xyyData, minVal, args=[1.,1.], maxValOption=0):
 
 #This is the function that actually calls the function brute and runs it based on the function above, with ranges as specified
 #by the datarangespecifier function, it proceeds to output the answers as well as print them to the screen.
-def BruteForce(molecules,specifications,matching_correction_values,rawsignalsarrayline,bruteOption,maxPermutations=100001):
-    brutelist = []#a list is made in order to use inside the forward problem since we are not defining anything globally
-    brutelist.append(rawsignalsarrayline)
-    brutelist.append(matching_correction_values)
-    brutelist.append(bruteOption)
+def OptimizingFinisher(molecules,specifications,matching_correction_values,rawsignalsarrayline,objectiveFunctionType,maxPermutations=100001, optimizer="BruteForce"):
+    #The optimizer can be BruteForce (grid based) or can come from scipy.optimize.minimize
+    #specifications is normally a list. If the optimizer is BruteForce, then the specifications variable contains information about the grid. Index 1 and 0 are max and min along an axis, index 2 is increment/spacing along that axis.
+    #If the optimizer is not BruteForce, then specifications includes the initial guess in its first index.
+    SimulateSignalAndReturnObjFuncArgs = []#a list is made in order to use inside the forward problem since we are not defining anything globally
+    SimulateSignalAndReturnObjFuncArgs.append(rawsignalsarrayline)
+    SimulateSignalAndReturnObjFuncArgs.append(matching_correction_values)
+    SimulateSignalAndReturnObjFuncArgs.append(objectiveFunctionType)
+    def SimulateSignalAndReturnObjFuncWrapper(concentrationGuess):
+        objFuncValue = SimulateSignalAndReturnObjFunc(concentrationGuess,*SimulateSignalAndReturnObjFuncArgs)        
+        return objFuncValue
+    
     from scipy import optimize
-    summation = numpy.zeros(len(specifications))
-    
-    quotient = numpy.zeros(len(specifications))
-    
-    product = 1
-    for specificationnumber in range(len(specifications)):
-        summation[specificationnumber] = specifications[specificationnumber][1]-specifications[specificationnumber][0]
-        quotient[specificationnumber] = summation[specificationnumber]/float(specifications[specificationnumber][2])
-        product = quotient[specificationnumber]*product
+    if optimizer=="BruteForce":
+        range_by_subtraction = numpy.zeros(len(specifications))
+        quotient = numpy.zeros(len(specifications))
+        
+        product = 1 #Here, product is initialized.
+        for specificationnumber in range(len(specifications)):
+            range_by_subtraction[specificationnumber] = specifications[specificationnumber][1]-specifications[specificationnumber][0] #subtraction between max and min along axis.
+            quotient[specificationnumber] = range_by_subtraction[specificationnumber]/float(specifications[specificationnumber][2])  #range_by_subtraction is divided by increment/spacing desired along that axis.
+            product = quotient[specificationnumber]*product #Here, product is multiplied by itself and gets bigger and bigger.
 
-    if product < maxPermutations:
-        resbrute = optimize.brute(SignalSimulation, specifications, args = brutelist, full_output=True, finish=None)#calls our forward function SignalSimulation
+        if product < maxPermutations:
+            resbrute = optimize.brute(SimulateSignalAndReturnObjFunc, specifications, args = SimulateSignalAndReturnObjFuncArgs, full_output=True, finish=None)#calls our forward function SignalSimulation
 
-    else:
-        print('Error: Too many Permutations')
-        sys.exit()
-    answers = resbrute[0]
-
+        else:
+            print('Error: Too many Permutations')
+            sys.exit()
+        answers = resbrute[0]
+    if optimizer!="BruteForce":
+        initialGuess = specifications[0]
+        answers=initialGuess*1.0 #The default value is what we were provided as an initial guess.
+        SimulateSignalAndReturnObjFuncWrapper(initialGuess)
+        optimizedResultObject = optimize.minimize(SimulateSignalAndReturnObjFuncWrapper, initialGuess, method=optimizer)
+        optimizedAnswers = optimizedResultObject.x #This "x" is how to pull the results out from scipy optimize minimize  results object.
+        print(optimizedAnswers)
+        answers = optimizedAnswers
+        #answers = initialGuess
     return answers
 
 def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited):   
     #initialize a variable for moleculeIndex before the loop across all molecules.
-    # print("in the function start", remaining_num_molecules)
-
     moleculeIndexIncludingDeletions = 0
     for moleculeIndex in range(remaining_num_molecules):#array-indexed for loop. Ideally, we'll do SLS once for each molecule.
         referenceIntensitiesForThisMolecule = remaining_monitored_reference_intensities[:,moleculeIndex]  #Note that this must be monitored_reference_intensities, so it has same indexing as moleculeIndex even while remaining_reference_intensities_SLS gets shortened.
@@ -3261,7 +3269,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
 #three (ultimately, any size array can be solved via this method (if the method went to infinity rather than stopping at
 #3) provided that the array were square- for, in fact, none of these method (save for the brute method) can solve for the 
 #signals if the first array is not square
-def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,scaledConcentrationsarray,molecules_unedited,conversionfactor,datafromcsv,DataRangeSpecifierlist,bruteOption,counterforspecifications,maxPermutations = 100001):
+def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,scaledConcentrationsarray,molecules_unedited,conversionfactor,datafromcsv,DataRangeSpecifierlist,objectiveFunctionType,counterforspecifications,maxPermutations = 100001):
 
     #TODO: #FIXME: It seems 
     # like this function forces Brute towards the end, rather than checking 
@@ -3435,7 +3443,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                         if counterforspecifications == 0:
                                             scaledConcentrationsarray = numpy.linalg.solve(useablecorrections,useablerawsigs)
                                         specifications = DataRangeSpecifier(useablemolecules,counterforspecifications,molecules_unedited,conversionfactor,datafromcsv,DataRangeSpecifierlist,scaledConcentrationsarray)
-                                        solutions = BruteForce(useablemolecules,specifications,useablecorrections,useablerawsigs,bruteOption,maxPermutations)
+                                        solutions = OptimizingFinisher(useablemolecules,specifications,useablecorrections,useablerawsigs,objectiveFunctionType,maxPermutations)
                                     else:
                                         print('The Array Chosen is Singular')
                                         solutions = numpy.zeros(len(remaining_rawsignals_SLS)) # the solutions are made into all zeros if the chosen array is singular
@@ -3464,7 +3472,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
 #this function simply calls the other functions to be used, based on the user input pathway, that means that this
 #function can send the sls to unique or common fragments, to inverse or brute method after, and sends the data back 
 #and forth between the unique and common fragments for the common fragments method
-def SLSMethod(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline,timeIndex,conversionfactor,datafromcsv,molecules_copy,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,bruteOption,time,maxPermutations=100001, bestMassFragChooser=False):
+def SLSMethod(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline,timeIndex,conversionfactor,datafromcsv,molecules_copy,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,objectiveFunctionType,time,maxPermutations=100001, bestMassFragChooser=False):
     # This is creating a local copy of the monitored_reference_intensities which will become
     # truncated as the molecules are solved and masses are removed
     remaining_reference_intensities_SLS = copy.deepcopy(monitored_reference_intensities)
@@ -3519,7 +3527,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                                 place_holder = place_holder - 1 #while loop can stop- so it does not get stuck
                         else: #common fragments method 
                             
-                            [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,solvedmolecules] = SLSCommonFragments (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,remaining_molecules_SLS,scaledConcentrationsarray,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,bruteOption,timeIndex, maxPermutations)
+                            [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,solvedmolecules] = SLSCommonFragments (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,remaining_molecules_SLS,scaledConcentrationsarray,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,objectiveFunctionType,timeIndex, maxPermutations)
                             if len(solvedmolecules) != 0:
                                 common.append([solutions,molecules_unedited,solvedmolecules])
                                 order.append('common')
@@ -3603,7 +3611,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                 if math.log(permutationNum,5) >= len(remaining_molecules_SLS):
                     #Ashi believes the above comparision is to ensure each molecule has at least 5 concentrations checked
                     specifications = DataRangeSpecifier(remaining_molecules_SLS,timeIndex,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,concentrationsFromFinisher)
-                    concentrationsFromFinisher = BruteForce(remaining_molecules_SLS,specifications,remaining_correction_factors_SLS,remaining_rawsignals_SLS,bruteOption,maxPermutations)
+                    concentrationsFromFinisher = OptimizingFinisher(remaining_molecules_SLS,specifications,remaining_correction_factors_SLS,remaining_rawsignals_SLS,objectiveFunctionType,maxPermutations)
                 else:
                     print("Warning: The number of permutations requested is too small to allow for 5 possibilities per molecule. "
                           + "Switching to use Inverse instead of Brute for slsFinish for this datapont (at timeIndex of " +str(timeIndex)+ " where 0 is the first analyzed datapoint)."
@@ -3613,14 +3621,14 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                     if distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
                         concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS)
                     else:
-                        concentrationsFromFinisher = InverseMethod (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')               
+                        concentrationsFromFinisher = InverseMethod(remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')               
 
             else: #after the first time these functions are called
                 if math.log(permutationNum,5) >= len(remaining_molecules_SLS):
                     #Ashi believes the above comparision is to ensure each molecule has at least 5 concentrations checked
                     specifications = DataRangeSpecifier(remaining_molecules_SLS,timeIndex,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,
                                                         scaledConcentrationsarray)
-                    concentrationsFromFinisher = BruteForce(remaining_molecules_SLS,specifications,remaining_correction_factors_SLS,remaining_rawsignals_SLS,bruteOption, maxPermutations)
+                    concentrationsFromFinisher = OptimizingFinisher(remaining_molecules_SLS,specifications,remaining_correction_factors_SLS,remaining_rawsignals_SLS,objectiveFunctionType, maxPermutations)
                 else:
                     print("Warning: The number of permutations requested is too small to allow for 5 possibilities per molecule. "
                           + "Switching to use Inverse instead of Brute for slsFinish for this datapont (at timeIndex of " +str(timeIndex)+ " where 0 is the first analyzed datapoint)."
@@ -3659,7 +3667,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
 def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,timeIndex,
                               mass_fragment_numbers,ThresholdList,answer,time,
                               conversionfactor = [],datafromcsv = [],DataRangeSpecifierlist = [],
-                              SLSChoices = [],permutationNum = [],scaledConcentrationsarray = [],bruteOption = [],
+                              SLSChoices = [],permutationNum = [],scaledConcentrationsarray = [],objectiveFunctionType = [],
                               maxPermutations = 100001):
 
     # This is creating a local copy of the monitored_reference_intensities which will become
@@ -3747,7 +3755,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
             else:#combinations method
                 solutions = InverseMethod(remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_filter,mass_fragment_numbers,remaining_molecules_SLS,'composition')
         if answer == 'sls' or answer == 'autosolver':#sls method
-            solutions = SLSMethod(remaining_molecules_SLS,remaining_reference_intensities_filter,remaining_correction_factors_SLS,remaining_rawsignals_SLS,timeIndex,conversionfactor,datafromcsv,molecules_unedited,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,bruteOption, time, maxPermutations)
+            solutions = SLSMethod(remaining_molecules_SLS,remaining_reference_intensities_filter,remaining_correction_factors_SLS,remaining_rawsignals_SLS,timeIndex,conversionfactor,datafromcsv,molecules_unedited,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,objectiveFunctionType, time, maxPermutations)
         timeIndex = 0
         for moleculecounter in range(len(molecules_unedited)):#array-indexed for loop
             if absentmolecules[moleculecounter] == 1:#gets index for present molecule
@@ -3862,20 +3870,25 @@ def RawSignalsSimulation(scaledConcentrationsarray,matching_correction_values):
 #with the molecule that affects them the most and sends them both to the brute method so that they can both be solved again
 # the molecule with a larger amount is checked for signals near its original signal, while the other molecule is checked for
 #data from zero, up to the bigger molecule's signal
-def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayline,molecules,bruteOption,maxPermutations=100001):
-    solutionslinedata = solutionsline[1:]# gets rid of the times for our data array
+#FIXME: NegativeAnalyzer is not well programmed right now. It is not clear it even does what it is supposed to.
+def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayline,molecules,objectiveFunctionType,maxPermutations=100001):
+    solutionslinedata = solutionsline[1:]*1.0# gets rid of the times for our data array
     negatives = []
-    indexes = []
+    negative_indexes = []
     for solutionsIndex in range(len(solutionslinedata)): #looks through the line
         if solutionslinedata[solutionsIndex] < 0: #if there is a value below zero it keeps the value and the index
             negatives.append(solutionslinedata[solutionsIndex])
-            indexes.append(solutionsIndex)
+            negative_indexes.append(solutionsIndex)
     NGstart = timeit.default_timer()
     if len(negatives) > 0:#if there are negatives then the function runs
-        for negativesIndex in range(len(negatives)):#does this for each negative
+        for negativesIndex in range(len(negatives)):#does this for each negative value concentration.
+            #First, find the biggest correction value (i.e., mass fragment) associated with that negative concentration molecule.
             for matchCorrIndexCol in range(len(matching_correction_values[:,0])):#looks through the correction values
-                if matching_correction_values[matchCorrIndexCol,indexes[negativesIndex]] == max(matching_correction_values[:,indexes[negativesIndex]]):#finds the index of the negative molecule's largest correction value 
+                if matching_correction_values[matchCorrIndexCol,negative_indexes[negativesIndex]] == max(matching_correction_values[:,negative_indexes[negativesIndex]]):#finds the index of the negative molecule's largest correction value 
                     correction1index = matchCorrIndexCol
+            
+            #Now, we're going to find out which molecule could have caused that "false" negative concentration. We'll focus on the biggest possible contributer.
+            #FIXME: Below is using biggest concentration value. That's not the actual biggest contributor. Should be by simulated signal. So should simulate each molecule's contribution separately to this mass, and then find the one which has the maximum contribution. That will give the right choice for correction2index
             presentmoleculeslist = []
             for matchCorrIndexRow in range(len(matching_correction_values[0,:])):#goes through the correction values
                 if matching_correction_values[correction1index,matchCorrIndexRow] != 0:#if the molecule has a relative intensity (other than zero) at the mass fragment chosen (by the last loop)
@@ -3886,33 +3899,36 @@ def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayli
             solutionslinepresentarray = solutionslinedata*presentmoleculesarray #the ones and zeros list is multiplied by the solutions, allowing only molecules with the mass fragment desired to be selected later
             for solutionsIndex2 in range(len(solutionslinedata)):#goes through the solution line
                 if max(solutionslinepresentarray) != 0:#if there are any above zero
-                    if solutionslinepresentarray[solutionsIndex2] == max(solutionslinepresentarray):#the highest value is used
+                    if solutionslinepresentarray[solutionsIndex2] == max(solutionslinepresentarray):#the molecule with the highest concentration at the same mass fragment being investigated is kept for consideration.
                         correction2index = solutionsIndex2
                 else:
-                    if solutionslinedata[solutionsIndex2] == max(solutionslinedata):#if there are none with that mass fragment, the highest solution is chosen
+                    if solutionslinedata[solutionsIndex2] == max(solutionslinedata):#if there are none with that mass fragment, the highest solution (concentration) is chosen
                         correction2index = solutionsIndex2
-            arrayamalgam = matching_correction_values[:,indexes[negativesIndex]],matching_correction_values[:,correction2index]#an array amalgam is made with  two columns for the two chosen molecules
+            dominant_concentration = solutionslinedata[correction2index] #the higher (positive) concentration molecule is chosen to set a dominant concentration that could overwhelm the negative one, and will be used to set bounds as well.
+            #now we will make an array of these correction values of the two molecules chosen.
+            arrayamalgam = matching_correction_values[:,negative_indexes[negativesIndex]],matching_correction_values[:,correction2index]#an array amalgam is made with  two columns for the two chosen molecules
             arrayamalgam = numpy.array(arrayamalgam)
             arrayamalgam = numpy.transpose(arrayamalgam) #the array is transposed so it can be used in matrix multiplication
-            solutionslinedata[indexes[negativesIndex]] = 0#the index of the molecule chosen is made it a zero
-            maximum = solutionslinedata[correction2index] #the second molecule chosen
-            solutionslinedata[correction2index] = 0#the second value is made zero too
-            matching_correction_values_copy = numpy.array(matching_correction_values)
-            matching_correction_values_copy[:,indexes[negativesIndex]] = 0#the two columns in the correction values array are made into zeros
+            
+            #Now, a 'clever' algorithm is used in which we assume that the positive concentration molecule has caused the negative concentration molecule's negative concentration.
+            #In order to find a 'nice' solution, we will subtract the contributions of all other molecules, so we can analyze the signals that would be associated with these two molecules.
+            solutionslinedata_without_considered_molecules = solutionslinedata*1.0
+            solutionslinedata_without_considered_molecules[negative_indexes[negativesIndex]] = 0#the concentration of the molecule chosen to "fix" from a negative is set to zero.            
+            solutionslinedata_without_considered_molecules[correction2index] = 0#the second value is made zero too 
+            matching_correction_values_copy = numpy.array(matching_correction_values) #making a copy of correction values to get the contribution of all the other molecules.
+            matching_correction_values_copy[:,negative_indexes[negativesIndex]] = 0#the two columns in the correction values array are made into zeros
             matching_correction_values_copy[:,correction2index] = 0
-            rawsignalsubtractionvalue = numpy.matrix(matching_correction_values_copy)*numpy.matrix(numpy.vstack(solutionslinedata))#The raw signals are simulated from the correction values and raw signals containing all molecules except those not chosen
-            rawsignalsarraylinecopy = rawsignalsarrayline - numpy.array(rawsignalsubtractionvalue)#The simulated raw signals are subtracted from the actuals and the left over raw signals are due to only the molecules left
-            ranges = numpy.linspace(0,maximum/float(10),50)#the negative molecule is checked for between the higher molecule's signal/10, in 100ths of the range
-            userange = ranges[1]-ranges[0] #the increments are calculated here
-            specifications = [(0,maximum/float(10),userange),(maximum/float(2),maximum*2,maximum*0.15)]#the specifications array is made here, with the higher molecule being checked in ten places within a factor of 2 of itself
-            if sum(specifications[0]) == 0 and sum(specifications[1]) == 0:
-                solutionsConcentrations = solutionsline[1:] #The first index is the time, so we separate the solved concentrations from that.
-                solutionsConcentrations[solutionsConcentrations < 0] = 0 #If any concentrations are still negative, we set them to zero.
-                solutionsline[1:] = solutionsConcentrations #We put the adjusted array back into solutions and return it.
-                return solutionsline # This means that all of the values were negative or zero
-            answers = BruteForce(molecules,specifications,arrayamalgam,rawsignalsarraylinecopy,bruteOption,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
-            solutionslinedata[indexes[negativesIndex]] = answers[0]#sets the first solution
-            solutionslinedata[correction2index] = answers[1]#sets the second
+            rawsignalstosubtract = numpy.matrix(matching_correction_values_copy)*numpy.matrix(numpy.vstack(solutionslinedata_without_considered_molecules))#The raw signals are simulated from the correction values and raw signals containing all molecules we don't want to consider.
+            rawsignals_of_considered_molecules = rawsignalsarrayline - numpy.array(rawsignalstosubtract)#The simulated raw signals from the "other" molecules are subtracted from the actual raw signals, so the left over raw signals are essentially due to only the 'considered' molecules, since their signals would remain.
+            #For brute optimization, the 'specifications; are the min and max along an axis followed by the size of increments/spacing along the axis. The negative molecule is checked for between the higher molecule's signal/10, in 10ths of the range.
+            max_concentration_for_negative_molecule = dominant_concentration/float(10)
+            specifications = [(0,max_concentration_for_negative_molecule,max_concentration_for_negative_molecule/float(10)),(dominant_concentration/float(2),dominant_concentration*2,dominant_concentration*0.10)]#the specifications array is made here, with the higher molecule being checked in ten places within a factor of 2 of itself
+            if sum(specifications[0]) == 0 and sum(specifications[1]) == 0: #This can only happen if the higher of the two concentrations being considered is already 0.
+                solutionslinedata[correction1index] = 0 #So we just set the concentration of our molecule in question to 0 and we skip the brute.
+            else:
+                answers = OptimizingFinisher(molecules,specifications,arrayamalgam,rawsignals_of_considered_molecules,objectiveFunctionType,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
+                solutionslinedata[negative_indexes[negativesIndex]] = answers[0]#sets the first solution
+                solutionslinedata[correction2index] = answers[1]#sets the second
     solutionsline[1:] = solutionslinedata #sets the new data, with the times
     NGtimeSpent = (timeit.default_timer() - NGstart)
     if NGtimeSpent > 10:
@@ -4070,7 +4086,6 @@ def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '',
         if stopAtGraphs == False:
             plt.show(block=False)
         if stopAtGraphs == True:
-            print(stopAtGraphs)
             plt.show(block=True)                                       
     return figureNumber
 
@@ -4599,7 +4614,16 @@ def main():
             
 #            if G.fullBrute == 'yes':
 #                specifications = 
-#                arrayline = BruteForce(ReferenceData.molecules,  G.bruteOption)
+#                arrayline = OptimizingFinisher(ReferenceData.molecules,  G.bruteOption)
+            try:
+                if G.UserChoices['dataAnalysisMethods']['finalOptimization'] != 'None':
+                    optimizer = G.UserChoices['dataAnalysisMethods']['finalOptimization']
+                    specifications=[solutions]
+                    concentrationsFromFinisher = OptimizingFinisher(currentReferenceData.molecules,specifications,currentReferenceData.matching_correction_values,rawsignalsarrayline,G.UserChoices['dataAnalysisMethods']['bruteOption'],G.maxPermutations, optimizer=optimizer)
+                    solutions = concentrationsFromFinisher
+            except:
+                pass
+                    
             
             if G.negativeAnalyzerYorN == 'yes':
                 arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption)

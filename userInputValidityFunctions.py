@@ -184,6 +184,7 @@ def parseUserInput(currentUserInput):
     parse.strCheck(currentUserInput.distinguished,'distinguished')
     parse.strCheck(currentUserInput.fullBrute,'fullBrute')
     parse.strCheck(currentUserInput.SLSUniqueExport,'SLSUniqueExport')
+    parse.strCheck(currentUserInput.finalOptimization,'finalOptimization')
         
     #Concentration Finder
     parse.strCheck(currentUserInput.concentrationFinder,'concentrationFinder')
@@ -348,6 +349,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['distinguished']   = UserChoices['dataAnalysisMethods']['distinguished']
     SettingsVDictionary['fullBrute']   = UserChoices['dataAnalysisMethods']['fullBrute']
     SettingsVDictionary['SLSUniqueExport']   = UserChoices['dataAnalysisMethods']['SLSUniqueExport']
+    SettingsVDictionary['finalOptimization']   = UserChoices['dataAnalysisMethods']['finalOptimization']
 
     SettingsVDictionary['concentrationFinder']   = UserChoices['concentrationFinder']['on']
     SettingsVDictionary['TSC_List_Type']   = UserChoices['concentrationFinder']['TSC_List_Type']
