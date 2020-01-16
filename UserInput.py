@@ -3,7 +3,13 @@ import sys
 sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 if os.path.basename(__file__) != "DefaultUserInput.py":
     from DefaultUserInput import *
+thisModuleObject = sys.modules[__name__]
+if str(__name__) == "DefaultUserInput":
+    print("***This is in DefaultUserInput.py. DefaultUserInput gets loaded before UserInput to make sure all variables are initially populated with defaults.***")
+if str(__name__) != "DefaultUserInput":
+    print("***This is in the actual UserInput.py.***")
 
+    
 #Everything below this point is the variables' new dictionary format
 UserChoices = {} #initialize a dictionary to store all user choices
 
@@ -232,6 +238,7 @@ UserChoices['dataAnalysisMethods']['bruteOption'] = 'ssr'	#bruteOption = 'ssr', 
 UserChoices['dataAnalysisMethods']['distinguished'] = 'yes'
 UserChoices['dataAnalysisMethods']['fullBrute'] = 'yes'
 UserChoices['dataAnalysisMethods']['SLSUniqueExport'] = 'yes'
+UserChoices['dataAnalysisMethods']['finalOptimization'] = 'None' #options are 'None' or... 'Nelder-Mead','Powell','CG','BFGS','Newton-CG','L-BFGS-B','TNC','COBYLA','SLSQP','dogleg','trust-ncg','trust-xact','trust-krylov' from scipy.optimize.minimze
 
 #//Concentration Finder//
 UserChoices['concentrationFinder'] = {} #initialize the concentrationFinder container
@@ -267,17 +274,10 @@ UserChoices['checkpoint']['start'] = '' #just initializing, not really necessary
 UserChoices['checkpoint']['timeSinceLastCheckpoint'] = '' #just initializing, not really necessary to have here.
 
 
-####Below is temporary code intended for keeping the unit tests compatible with the new dictionaries until they are changed.#####
-#I am now thinking this code might become permanent, as of March 13 2019
-#Below two lines are just to get access to this module. 
-import sys
-thisModuleObject = sys.modules[__name__]
-
-print("This is in DefaultUserInput.py. DefaultUserInput gets loaded before UserInput to make sure all variables are populated with defaults.")
 
 from userInputValidityFunctions import userInputValidityCheck
 from userInputValidityFunctions import populateModuleVariablesFromDictionary
 SettingsVDictionary = userInputValidityCheck(UserChoices)
 populateModuleVariablesFromDictionary(thisModuleObject, SettingsVDictionary)
 ####End of temporary code####
-__var_list__ = ['referenceFileNamesList','referenceFormsList','collectedFileName','referencePatternTimeRanges','ionizationDataFileName','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','stopAtGraphs','timeRangeLimit','timeRangeStart','timeRangeFinish','specificMolecules','chosenMoleculesNames','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes','backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound','dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','bruteIncrements','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor','measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF','rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','referenceSignificantFragmentThresholds','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute','dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod','rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer','uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniqueExport','concentrationFinder','moleculesTSC_List','TSC_List_Type','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List','unitsTSC','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName','ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint', 'iterationNumber']
+__var_list__ = ['referenceFileNamesList','referenceFormsList','collectedFileName','referencePatternTimeRanges','ionizationDataFileName','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','stopAtGraphs','timeRangeLimit','timeRangeStart','timeRangeFinish','specificMolecules','chosenMoleculesNames','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes','backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound','dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','bruteIncrements','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor','measuredReferenceYorN','referenceMeasuredFileName','referenceLiteratureFileName','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF','rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','referenceSignificantFragmentThresholds','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute','dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod','rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer','uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniqueExport',  'finalOptimization', 'concentrationFinder','moleculesTSC_List','TSC_List_Type','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List','unitsTSC','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName','ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint', 'iterationNumber']
