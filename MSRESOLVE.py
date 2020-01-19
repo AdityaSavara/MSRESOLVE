@@ -2428,9 +2428,9 @@ def RawSignalsArrayMaker(mass_fragment_numbers_monitored,mass_fragment_numbers,c
 #itertools uses a combination function (below) and the function uses those to index drawing out of all the rows in an array
 def CombinationMaker(matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers):
     num_molecules = len(matching_correction_values[0,:])
-    num_MassFragmentsber = len(matching_correction_values[:,0])
+    num_MassFragments = len(matching_correction_values[:,0])
     import itertools 
-    combinations = list(itertools.combinations(list(range(num_MassFragmentsber)),num_molecules)) 
+    combinations = list(itertools.combinations(list(range(num_MassFragments)),num_molecules)) 
     if combinations == []:#This function will not work without enough mass fragments, so the user must know the problem
         print('****************************************')
         print('Not enough matching mass fragments input')
@@ -3170,9 +3170,13 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             #TODO: make (or better yet, take in) a list called "moleculeSolvingOrder", append chosenMolecule to that, and return that from this function. Then we can export a file from main called moleculeSolvingOrder for each time point.
             #TODO continued: The reason to take in a list (default value blank list) is because SLSCommon may call SLSunique multiple times, so we need to append rather than just making a blank list each time.
 	
-            #now need ot use the chosen mass to calculate concentration.
+            #now need to use the chosen mass to calculate concentration.
             concentrationOfMoleculeForThisSLS = ((float(signalsAtThatMassFragmentForThisSLS))/float(correctionFactorOfUniqueIntensityForThisSLS))
-        
+            
+            if G.slsUniquePositiveConcentrationsOnly == True:
+                if concentrationOfMoleculeForThisSLS <= 0:
+                    concentrationOfMoleculeForThisSLS = 0  #We can't just skip the below lines, because the molecule gets removed from arrays and info gets exported etc.
+            
             ## These print statements will be preserved for debugging purposes.
             #print("Debugging","current moleculeChosen is", remaining_molecules_SLS[moleculeIndexForThisSLS], concentrationOfMoleculeForThisSLS)
             #print("Debugging","which is also", molecules[chosenMolecule_original_molecular_index], chosenMolecule_original_molecular_index)
@@ -3184,7 +3188,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             #print("Debugging","predicted this_round signal:", concentrationOfMoleculeForThisSLS*correctionFactorOfUniqueIntensityForThisSLS)
             #print("Debugging",original_list_of_mass_fragments)
             #print("Debugging",used_mass_fragments)
-
+            
             #now we need to collect the list of masses/signals and correction factors that correspond to that molecule, i.e. moleculeIndexForThisSLS, which are nonzero.
             for massFragmentIndex_jjj in range(remaining_num_MassFragments):
                 if remaining_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS] != 0:#If the value in the correction_values is not zero, it is kept
@@ -3864,71 +3868,207 @@ def RawSignalsSimulation(scaledConcentrationsarray,matching_correction_values):
         simulateddata[scaledtimeIndex:scaledtimeIndex+1,1:] = numpy.transpose(numpy.matrix(matching_correction_values[scaledtimeIndex]) * numpy.matrix(numpy.vstack(scaledConcentrationsarray[scaledtimeIndex,:])))#the data is simulated by multiplying the matrix of correction values by the raw signals for each row
     simulateddata[:,0] = times #the times are added back in so they can be printed more easily
     return simulateddata
+
+#This was written as a support function for NegativeAnalyzer in Jan 2020, but was put outside since it could be useful for other applications.
+def littleSimulationFunction(concentrations_without_time, matching_correction_values_to_simulate):
+    simulatedRawSignal = numpy.matrix(matching_correction_values_to_simulate)*numpy.matrix(numpy.vstack(concentrations_without_time))
+    return simulatedRawSignal
+
+#a function to subtract the signals of the certain molecules, so that we can isolate the raw signals of  the non-subtracted molecules.
+#This was written as a support function for NegativeAnalyzer in Jan 2020, but was put outside since it could be useful for other applications.
+def subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtract, allConcentrationsVector, all_matching_correction_values, rawsignalsarrayline):
+    #allConcentrationsVector is a concetration vector for all molecules, and we will set to zeros for any molecule that should not be subtracted.
+    #matching_correction_values_to_subtract is a concetration vector for all molecules and has zeros for any molecule that should not be subtracted.
+    #First make a version of allConcentrationsVector and of matching_correction_values that has only the molecules to subtract, so we can simulate only those signals.
+    concentrationsToSubtract = allConcentrationsVector*1.0
+    matching_correction_values_to_subtract = all_matching_correction_values*1.0
+    for moleculeIndex in range(len(allConcentrationsVector)):
+        if moleculeIndex not in moleculeIndicesToSubtract:
+            concentrationsToSubtract[moleculeIndex] = 0
+            matching_correction_values_to_subtract[:, moleculeIndex] = 0 #matching correction values has indices of [massFragment, moleculeIndex]
+        # else: #This else is implied, given how the vectors were created.
+            # concentrationsToSubtract[moleculeIndex] = allConcentrationsVector[moleculeIndex]
+            # matching_correction_values_to_subtract[:, moleculeIndex] = all_matching_correction_values[moleculeIndex]                    
+    rawsignalstosubtract = littleSimulationFunction(concentrationsToSubtract, matching_correction_values_to_subtract)#The raw signals are simulated from the correction values and raw signals containing all molecules we don't want to consider.
+    rawsignals_remaining = rawsignalsarrayline - rawsignalstosubtract
+    return rawsignals_remaining
     
-    
-#this function is a necessity if there are negatives in your answer, it finds those negatives and sends those negatives along
-#with the molecule that affects them the most and sends them both to the brute method so that they can both be solved again
-# the molecule with a larger amount is checked for signals near its original signal, while the other molecule is checked for
-#data from zero, up to the bigger molecule's signal
-#FIXME: NegativeAnalyzer is not well programmed right now. It is not clear it even does what it is supposed to.
-def NegativeAnalyzer (solutionsline,matching_correction_values,rawsignalsarrayline,molecules,objectiveFunctionType,maxPermutations=100001):
+#this function can be useful for preventing negative concentrations. If it finds negatives it uses an optimizing finisher (grid based brute method) to search in the observed concentration range.
+#The function finds other molecules that contribute to the signals that were relevant for that molecule, and then solves only those molecules.
+#The baseNumberOfGridIntervals is per direction (so 5 actually means 2*5 = 10).
+def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarrayline,molecules,objectiveFunctionType,maxPermutations=100001, topNcontributors=5, baseNumberOfGridIntervals = 5):
+    NGstart = timeit.default_timer()
     solutionslinedata = solutionsline[1:]*1.0# gets rid of the times for our data array
     negatives = []
-    negative_indexes = []
+    negative_molecule_indexes = []
+    num_MassFragments = len(matching_correction_values[:,0])  #The indices in matching_correction_values are [massfragment, moleculenumber]
+    num_Molecules = len(solutionslinedata) #This is the same length as len(matching_correction_values[0,:])
     for solutionsIndex in range(len(solutionslinedata)): #looks through the line
         if solutionslinedata[solutionsIndex] < 0: #if there is a value below zero it keeps the value and the index
             negatives.append(solutionslinedata[solutionsIndex])
-            negative_indexes.append(solutionsIndex)
-    NGstart = timeit.default_timer()
+            negative_molecule_indexes.append(solutionsIndex)
+    
     if len(negatives) > 0:#if there are negatives then the function runs
-        for negativesIndex in range(len(negatives)):#does this for each negative value concentration.
+        for negativeXofN in range(len(negatives)):#does this for each negative value concentration. 
+            #TODO: probably need to find the biggest significant mass fragment, since the biggest one may not have been the one used in solving.
             #First, find the biggest correction value (i.e., mass fragment) associated with that negative concentration molecule.
-            for matchCorrIndexCol in range(len(matching_correction_values[:,0])):#looks through the correction values
-                if matching_correction_values[matchCorrIndexCol,negative_indexes[negativesIndex]] == max(matching_correction_values[:,negative_indexes[negativesIndex]]):#finds the index of the negative molecule's largest correction value 
-                    correction1index = matchCorrIndexCol
+            #NOTE: the solutions line data *changes* within this loop. So it is actually a kind of iterative process. The first negative molecule solution will affect the later ones. The order of solution is not presently prioritized in any way.
+            for massFragmentIndex in range(num_MassFragments):#looks through the correction values
+                if matching_correction_values[massFragmentIndex,negative_molecule_indexes[negativeXofN]] == max(matching_correction_values[:,negative_molecule_indexes[negativeXofN]]):#finds the index of the negative molecule's largest correction value 
+                    indexOfBiggestMFofNegMolecule = massFragmentIndex
             
-            #Now, we're going to find out which molecule could have caused that "false" negative concentration. We'll focus on the biggest possible contributer.
+            #Now, we're going to find out which molecule(s) could have caused that "false" negative concentration. We'll focus on the biggest possible contributer(s)
             #FIXME: Below is using biggest concentration value. That's not the actual biggest contributor. Should be by simulated signal. So should simulate each molecule's contribution separately to this mass, and then find the one which has the maximum contribution. That will give the right choice for correction2index
-            presentmoleculeslist = []
-            for matchCorrIndexRow in range(len(matching_correction_values[0,:])):#goes through the correction values
-                if matching_correction_values[correction1index,matchCorrIndexRow] != 0:#if the molecule has a relative intensity (other than zero) at the mass fragment chosen (by the last loop)
-                    presentmoleculeslist.append(1)
+            moleculesWithMassFragmentList = []
+            for matchCorrIndexRow in range(num_Molecules):#goes through the correction values.  #num_Molecules is the same length as len(matching_correction_values[0,:])
+                if matching_correction_values[indexOfBiggestMFofNegMolecule,matchCorrIndexRow] != 0:#if the molecule has a relative intensity (other than zero) at the mass fragment chosen (by the last loop)
+                    moleculesWithMassFragmentList.append(1)
                 else: #if there is no molecule a zero is appended to the list
-                    presentmoleculeslist.append(0)
-            presentmoleculesarray = numpy.array(presentmoleculeslist)
-            solutionslinepresentarray = solutionslinedata*presentmoleculesarray #the ones and zeros list is multiplied by the solutions, allowing only molecules with the mass fragment desired to be selected later
-            for solutionsIndex2 in range(len(solutionslinedata)):#goes through the solution line
-                if max(solutionslinepresentarray) != 0:#if there are any above zero
-                    if solutionslinepresentarray[solutionsIndex2] == max(solutionslinepresentarray):#the molecule with the highest concentration at the same mass fragment being investigated is kept for consideration.
-                        correction2index = solutionsIndex2
-                else:
-                    if solutionslinedata[solutionsIndex2] == max(solutionslinedata):#if there are none with that mass fragment, the highest solution (concentration) is chosen
-                        correction2index = solutionsIndex2
-            dominant_concentration = solutionslinedata[correction2index] #the higher (positive) concentration molecule is chosen to set a dominant concentration that could overwhelm the negative one, and will be used to set bounds as well.
-            #now we will make an array of these correction values of the two molecules chosen.
-            arrayamalgam = matching_correction_values[:,negative_indexes[negativesIndex]],matching_correction_values[:,correction2index]#an array amalgam is made with  two columns for the two chosen molecules
-            arrayamalgam = numpy.array(arrayamalgam)
-            arrayamalgam = numpy.transpose(arrayamalgam) #the array is transposed so it can be used in matrix multiplication
-            
-            #Now, a 'clever' algorithm is used in which we assume that the positive concentration molecule has caused the negative concentration molecule's negative concentration.
-            #In order to find a 'nice' solution, we will subtract the contributions of all other molecules, so we can analyze the signals that would be associated with these two molecules.
-            solutionslinedata_without_considered_molecules = solutionslinedata*1.0
-            solutionslinedata_without_considered_molecules[negative_indexes[negativesIndex]] = 0#the concentration of the molecule chosen to "fix" from a negative is set to zero.            
-            solutionslinedata_without_considered_molecules[correction2index] = 0#the second value is made zero too 
-            matching_correction_values_copy = numpy.array(matching_correction_values) #making a copy of correction values to get the contribution of all the other molecules.
-            matching_correction_values_copy[:,negative_indexes[negativesIndex]] = 0#the two columns in the correction values array are made into zeros
-            matching_correction_values_copy[:,correction2index] = 0
-            rawsignalstosubtract = numpy.matrix(matching_correction_values_copy)*numpy.matrix(numpy.vstack(solutionslinedata_without_considered_molecules))#The raw signals are simulated from the correction values and raw signals containing all molecules we don't want to consider.
-            rawsignals_of_considered_molecules = rawsignalsarrayline - numpy.array(rawsignalstosubtract)#The simulated raw signals from the "other" molecules are subtracted from the actual raw signals, so the left over raw signals are essentially due to only the 'considered' molecules, since their signals would remain.
-            #For brute optimization, the 'specifications; are the min and max along an axis followed by the size of increments/spacing along the axis. The negative molecule is checked for between the higher molecule's signal/10, in 10ths of the range.
-            max_concentration_for_negative_molecule = dominant_concentration/float(10)
-            specifications = [(0,max_concentration_for_negative_molecule,max_concentration_for_negative_molecule/float(10)),(dominant_concentration/float(2),dominant_concentration*2,dominant_concentration*0.10)]#the specifications array is made here, with the higher molecule being checked in ten places within a factor of 2 of itself
-            if sum(specifications[0]) == 0 and sum(specifications[1]) == 0: #This can only happen if the higher of the two concentrations being considered is already 0.
-                solutionslinedata[correction1index] = 0 #So we just set the concentration of our molecule in question to 0 and we skip the brute.
-            else:
-                answers = OptimizingFinisher(molecules,specifications,arrayamalgam,rawsignals_of_considered_molecules,objectiveFunctionType,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
-                solutionslinedata[negative_indexes[negativesIndex]] = answers[0]#sets the first solution
-                solutionslinedata[correction2index] = answers[1]#sets the second
+                    moleculesWithMassFragmentList.append(0)
+            moleculesWithMassFragmentArrayKey = numpy.array(moleculesWithMassFragmentList)
+            solutionsline_MassFragmentPresentKey = solutionslinedata*moleculesWithMassFragmentArrayKey #the ones and zeros list is multiplied by the solutions, allowing only molecules with the mass fragment desired to be selected later
+             
+            #THIS CODE BLOCK IS NOW DEPRECATED AS OF JAN 2020, SKIP TO BELOW.
+            # dominant_concentration_way = True
+            # if dominant_concentration_way == True:
+                # #HERE IS THE EXISTING CODE FOR DOMINANT CONCENTRATION
+                # for moleculeConcentrationIndex in range(len(solutionslinedata)):#goes through the solution line, which means it's looking at each molecule/concentration.
+                    # if max(solutionsline_MassFragmentPresentKey) != 0:#if there are any concentrations that are above zero
+                        # if solutionsline_MassFragmentPresentKey[moleculeConcentrationIndex] == max(solutionsline_MassFragmentPresentKey):#the molecule with the highest concentration at the same mass fragment being investigated is kept for consideration.
+                            # dominant_concentration_index = moleculeConcentrationIndex
+                    # else:
+                        # if solutionslinedata[moleculeConcentrationIndex] == max(solutionslinedata):#if there are none with that mass fragment, the highest solution (concentration) is chosen
+                            # dominant_concentration_index = moleculeConcentrationIndex
+                # dominant_concentration = solutionslinedata[dominant_concentration_index] #the higher (positive) concentration molecule is chosen to set a dominant concentration that could overwhelm the negative one, and will be used to set bounds as well.
+                # #now we will make an array of these correction values of the two molecules chosen.
+                # matching_correction_values_dominant_concentration_only = matching_correction_values[:,negative_molecule_indexes[negativeXofN]],matching_correction_values[:,dominant_concentration_index]#an array amalgam is made with  two columns for the two chosen molecules
+                # matching_correction_values_dominant_concentration_only = numpy.array(matching_correction_values_dominant_concentration_only)
+                # matching_correction_values_dominant_concentration_only = numpy.transpose(matching_correction_values_dominant_concentration_only) #the array is transposed so it can be used in matrix multiplication
+
+                # #Now, a 'clever' algorithm is used in which we assume that the positive concentration molecule has caused the negative concentration molecule's negative concentration.
+                # #In order to find a 'nice' solution, we will subtract the contributions of all other molecules, so we can analyze the signals that would be associated with these two molecules.
+                # #To simulate the contribution of the other molecules (for subtraction) we'll set the concentrations of 'these' molecules to zero, and their correction values to zero also.
+                # allMoleculeIndices = numpy.arange(num_Molecules)
+                # indicesOfMoleculesToKeep = [negative_molecule_indexes[negativeXofN], dominant_concentration_index]
+                # indicesOfMoleculesToKeep = list( dict.fromkeys(indicesOfMoleculesToKeep) ) #This removes duplicates, in case the negative_molecule is among the top matching ones.                
+                
+                # moleculeIndicesToSubtractList = list(allMoleculeIndices) #we start with a list of all molecules and then start removing some from the list.
+                # for moleculeIndex in indicesOfMoleculesToKeep:
+                    # moleculeIndicesToSubtractList.remove(moleculeIndex)
+                # #Now we call a function to subtract the signals of the other molecules, so that we can isolate the raw signals of these molecules.
+                # rawsignals_of_considered_molecules = subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtractList, solutionslinedata, matching_correction_values,rawsignalsarrayline)
+                
+                # #For brute optimization, the 'specifications; are the min and max along an axis followed by the size of increments/spacing along the axis. The negative molecule is checked for between the higher molecule's signal/10, in 10ths of the range.
+                # max_concentration_for_negative_molecule = dominant_concentration/float(10)
+                # specifications = [(0,max_concentration_for_negative_molecule,max_concentration_for_negative_molecule/float(10)),(dominant_concentration/float(2),dominant_concentration*2,dominant_concentration*0.10)]#the specifications array is made here, with the higher molecule being checked in ten places within a factor of 2 of itself
+                # if sum(specifications[0]) == 0 and sum(specifications[1]) == 0: #This can only happen if the higher of the two concentrations being considered is already 0.
+                    # solutionslinedata[negativeXofN] = 0 #So we just set the concentration of our molecule in question to 0 and we skip the brute.
+                # else: #The normal case is a brute optimization. Below, we pass the argument of molecules but that argument is not actually used within the optimizer.
+                    # answers = OptimizingFinisher(molecules,specifications,matching_correction_values_dominant_concentration_only,rawsignals_of_considered_molecules,objectiveFunctionType,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
+                    # solutionslinedata[negative_molecule_indexes[negativeXofN]] = answers[0]#sets the first solution
+                    # solutionslinedata[dominant_concentration_index] = answers[1]#sets the second
+
+            dominant_contributor_way = True
+            if dominant_contributor_way == True:
+                #HERE IS THE NEW CODE FOR DOMINANT SIGNAL CONTRIBUTOR
+                contributors_with_mass_fragment_rawsignals_list = []
+                dominant_contributors_concentrations_list = []
+                matching_correction_values_dominant_contributors_only = []
+                solutionslinedata_dominant_contributors_only = []
+                molecules_having_mass_fragment_indices = []
+                key_for_negativeXofN_in_dominant_contributors_only = []
+                for moleculeIndex in range(num_Molecules): #We will check each molecule.
+                    if solutionsline_MassFragmentPresentKey[moleculeIndex] == 0:  #A zero in this array means that the molecule does not have that mass fragment, so cannot be a contributor.
+                        contributors_with_mass_fragment_rawsignals_list.append(0)
+                        dominant_contributors_concentrations_list.append(0)
+                    if solutionsline_MassFragmentPresentKey[moleculeIndex] != 0: # #A non zero in this array means that the molecule does  have that mass fragment, so can be a contributor.
+                        molecules_having_mass_fragment_indices.append(moleculeIndex) #There is probably a better way to do this than putting it in the loop, but for now it's convenient.
+                        #we're going to make a solutionslinedata version that has *only* this molecule present. First make a version with all zeros, then put this molecule's concentration in.
+                        solutionslinedata_this_molecule_only = solutionslinedata*0.0
+                        solutionslinedata_this_molecule_only[moleculeIndex] = solutionslinedata[moleculeIndex]
+                        all_simulated_raw_signals_this_molecule_only = littleSimulationFunction(solutionslinedata_this_molecule_only, matching_correction_values)
+                        relevant_simulated_raw_signal_this_molecule_only = float(all_simulated_raw_signals_this_molecule_only[indexOfBiggestMFofNegMolecule]) #The "float" casting is to go from 1 value numpy matrices to floats.
+                        contributors_with_mass_fragment_rawsignals_list.append(relevant_simulated_raw_signal_this_molecule_only) #note that this does already include the molecule chosen. 
+                        dominant_contributors_concentrations_list.append(solutionsline_MassFragmentPresentKey[moleculeIndex])
+                        matching_correction_values_dominant_contributors_only.append(matching_correction_values[:,moleculeIndex])
+                        solutionslinedata_dominant_contributors_only.append(solutionslinedata[moleculeIndex])
+                        if moleculeIndex != negativeXofN: #We append to find the useful information of where the "negative" concentration we're looking is within the list of dominant contributors (really all contributors).
+                            key_for_negativeXofN_in_dominant_contributors_only.append(0)
+                        if moleculeIndex == negative_molecule_indexes[negativeXofN]:
+                            key_for_negativeXofN_in_dominant_contributors_only.append(1)
+                #now we are going to find the indicdes that we want, in a descending manner (that is, by descending level of contribution)
+                sorted_contributors_with_mass_fragment_molecular_indices_ascending = numpy.argsort(contributors_with_mass_fragment_rawsignals_list) #unfortunately, this has no reverse option, so we will flip it.
+                sorted_contributors_with_mass_fragment_molecular_indices_descending = numpy.flipud(sorted_contributors_with_mass_fragment_molecular_indices_ascending) #Ideally we could use fliplr, but numpy treats 1D arrays weirdly, this time we don't want to use the trick of making it 2D.
+                #Now, we will only keep the concentrations of the topNcontributors or less.
+                molecularIndicesOfTopNorLessContributors = []
+                concentrations_topNorLess_contributors_only = []
+                for majorContributorNumber in range(0,topNcontributors): #this loop works correctly for array indexing.
+                    currentContributorMolecularIndex = sorted_contributors_with_mass_fragment_molecular_indices_descending[majorContributorNumber] #Get the molecule index
+                    if currentContributorMolecularIndex in molecules_having_mass_fragment_indices: #Molecules can get into the top N even with a value of 0 raw signal contribution, so we will only even consider it for optimizing if it has the mass fragment index. 
+                        molecularIndicesOfTopNorLessContributors.append(currentContributorMolecularIndex)
+                        concentrations_topNorLess_contributors_only.append(solutionslinedata[currentContributorMolecularIndex]) #Keep the data from that particular index.
+
+                #Now, a 'clever' algorithm is used in which we assume that dominant contributing molecules have caused the negative concentration molecule's negative concentration.
+                #In order to find a 'nice' solution, we will subtract the contributions of all other molecules from the raw signals, so we can analyze the signals that would be associated with these relevant molecules.
+                #we are going to subtract the contributions from everything except the molecularIndicesOfTopNorLessContributors and the negative molecule.
+                allMoleculeIndices = numpy.arange(num_Molecules)
+                indicesOfMoleculesToKeep = copy.deepcopy(molecularIndicesOfTopNorLessContributors)
+                indicesOfMoleculesToKeep.append(negative_molecule_indexes[negativeXofN]) #we take the topNorLess and add the negative molecules.
+                indicesOfMoleculesToKeep = list( dict.fromkeys(indicesOfMoleculesToKeep) ) #This removes duplicates, in case the negative_molecule is among the top matching ones.                
+
+                moleculeIndicesToSubtractList = list(allMoleculeIndices) #we start with a list of all molecules and then start removing some from the list.
+                for moleculeIndex in indicesOfMoleculesToKeep:
+                    moleculeIndicesToSubtractList.remove(moleculeIndex)
+                #Now we call a function to subtract the signals of the other molecules, so that we can isolate the raw signals of these molecules.
+                rawsignals_of_considered_molecules_topNorLess_contributors = subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtractList, solutionslinedata, matching_correction_values,rawsignalsarrayline)
+                #Now we have the raw signals that we need to go into brute optimization.
+                
+                #Now we need the concentrations of *only* the dominant contributors and the negative molecule. To make sure we don't double count, we'll check if the negative molecule ended up in the topNorLess and work with it separately if it ended up there.
+                if negative_molecule_indexes[negativeXofN] not in molecularIndicesOfTopNorLessContributors:
+                    concentrations_topNorLess_contributors_only_without_negativeXofN = concentrations_topNorLess_contributors_only #No removal needed.
+                    molecularIndicesOfTopNorLessContributors_without_negativeXofN = molecularIndicesOfTopNorLessContributors
+                if negative_molecule_indexes[negativeXofN] in molecularIndicesOfTopNorLessContributors:
+                    index_of_negativeXofN_in_molecularIndicesOfTopNorLessContributors = molecularIndicesOfTopNorLessContributors.index(negative_molecule_indexes[negativeXofN])
+                    concentrations_topNorLess_contributors_only_without_negativeXofN = list(copy.deepcopy(concentrations_topNorLess_contributors_only)) # First make a copy, then remove on next line
+                    concentrations_topNorLess_contributors_only_without_negativeXofN.pop(index_of_negativeXofN_in_molecularIndicesOfTopNorLessContributors)
+                    concentrations_topNorLess_contributors_only_without_negativeXofN = numpy.array(concentrations_topNorLess_contributors_only_without_negativeXofN)
+                    molecularIndicesOfTopNorLessContributors_without_negativeXofN = copy.deepcopy(molecularIndicesOfTopNorLessContributors)
+                    molecularIndicesOfTopNorLessContributors_without_negativeXofN.pop(index_of_negativeXofN_in_molecularIndicesOfTopNorLessContributors)
+
+                if sum(concentrations_topNorLess_contributors_only_without_negativeXofN) == 0: #This is for exceptions and can only happen if all of the contributing concentrations being considered are already 0.
+                     solutionslinedata[negativeXofN] = 0 #In this case we just set the concentration of our molecule in question to 0 and we skip the brute.
+                else: #This is for the normal cases, including when some fo the contributors are negative already.                    
+                    #Now to set the grid limits for brute optimization. We'll take the maximum of the contributing concentrations divided by 10 for the possible positive size increments of the negative molecule.
+                    #Will make the  specifications into a list, because I need to separate them. Each is supposed to be a tuple of min, max, spacing/increment.
+                    specifications_topNorLess_contributors = [] #This will include the negative molecule.
+                    max_concentration_for_negative_molecule = max(solutionslinedata_dominant_contributors_only)/float(baseNumberOfGridIntervals)
+                    specifications_topNorLess_contributors.append(  (0, max_concentration_for_negative_molecule,max_concentration_for_negative_molecule/float(10)) )
+                    #Now a loop with decreasing numbers of intervals as we go down in "rank".
+                    currentNumberOfGridIntervals = baseNumberOfGridIntervals
+                    for topNorLessConcentration in concentrations_topNorLess_contributors_only_without_negativeXofN: #now loop across the topNorLessContributors indices and make 5 points per grid side.
+                        currentNumberOfGridIntervals = currentNumberOfGridIntervals - 1 #decreases by one for each loop.
+                        if currentNumberOfGridIntervals > 10: #can't go above 10, because that can cause negative values with current algorithm of checking by 10% intervals.
+                            currentNumberOfGridIntervals = 10
+                        if currentNumberOfGridIntervals < 1: #can't go below 1.
+                            currentNumberOfGridIntervals = 1
+                        currentIntervalSize = topNorLessConcentration*0.10
+                        specifications_topNorLess_contributors.append(  (topNorLessConcentration-(currentNumberOfGridIntervals*currentIntervalSize), topNorLessConcentration+(currentNumberOfGridIntervals*currentIntervalSize), currentIntervalSize)  ) #(min, max, spacing/increment) in tuple.
+
+                    #now need to make a new correction values array. 
+                    matching_correction_values_topNorLess_contributors_and_negative_molecule = []
+                    matching_correction_values_topNorLess_contributors_and_negative_molecule.append(matching_correction_values[:,negative_molecule_indexes[negativeXofN]])#first add the negative molecule because it's simple.
+                    for topNorLessIndex in molecularIndicesOfTopNorLessContributors_without_negativeXofN: #now loop across the topNorLessContributors indices and add their correction values too.
+                        matching_correction_values_topNorLess_contributors_and_negative_molecule.append(matching_correction_values[:,topNorLessIndex])
+                    matching_correction_values_topNorLess_contributors_and_negative_molecule = numpy.array(matching_correction_values_topNorLess_contributors_and_negative_molecule)
+                    matching_correction_values_topNorLess_contributors_and_negative_molecule = numpy.transpose(matching_correction_values_topNorLess_contributors_and_negative_molecule) #the array is transposed to from list of 1D rows to 1D columns (or vice versa)
+
+                    answers_topNorLessContributors = OptimizingFinisher(molecules,specifications_topNorLess_contributors,matching_correction_values_topNorLess_contributors_and_negative_molecule,rawsignals_of_considered_molecules_topNorLess_contributors,objectiveFunctionType,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
+                    #now put things into the solutions line data.
+                    solutionslinedata[negative_molecule_indexes[negativeXofN]] = answers_topNorLessContributors[0] #The negative molecule's information is here.
+                    for topNorLessIndex, topNorLessConcentration in enumerate(answers_topNorLessContributors[1:]):  #we start from 1 because we've already got the negative molecule's information. Now topNorLessIndex of 0 is the first of these concentrations.
+                        moleculeIndex = molecularIndicesOfTopNorLessContributors_without_negativeXofN[topNorLessIndex]
+                        solutionslinedata[moleculeIndex] = topNorLessConcentration
+
     solutionsline[1:] = solutionslinedata #sets the new data, with the times
     NGtimeSpent = (timeit.default_timer() - NGstart)
     if NGtimeSpent > 10:
@@ -4626,7 +4766,7 @@ def main():
                     
             
             if G.negativeAnalyzerYorN == 'yes':
-                arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption)
+                arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption, G.maxPermutations, G.NegativeAnalyzerTopNContributors, G.NegativeAnalyzerBaseNumberOfGridIntervals)
                 
             if timeIndex == 0: #Can't vstack with an array of zeros or else the first time is 0 with all data points at 0 so make first row the first arrayline provided
                 concentrationsScaledToCOarray = arrayline
