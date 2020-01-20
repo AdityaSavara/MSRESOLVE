@@ -2401,6 +2401,10 @@ class MolecularIonizationData (object):
 ############################################################################################################################################
 ###############################################Algorithm Part 2: Analysing the Processed Data###############################################
 ############################################################################################################################################
+#During trying to debug, the following variables are particularly useful:
+#G.massesUsedInSolvingMoleculesForThisPoint keeps track of anything solved by SLSUnique.
+#original_list_of_mass_fragments (array of mass fragments) vs. used_mass_fragments (array of 0 and 1 for which ones have been used)
+#molecules_unedited (list of strings) vs.   solvedmolecules (array of 0 and 1 for which ones have been solved)
     
 #this function compares the list of chosen mass fragments and those monitored and makes a raw signal
 #array out of this data, which will be used with the inverse method to find percent signal and composition
@@ -2986,6 +2990,10 @@ def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, r
 #TODO: make some kind of unit test that tests a good order being chosen.
 def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, timeIndex, time):
     #FIXME: I am using the ReferenceData.mass_fragment_numbers_monitored but it needs to be passed in from Reference or Experimental datal.
+    try:
+        type(G.massesUsedInSolvingMoleculesForThisPoint)
+    except: #This means somebody is trying to call the function directly and does not need G.massesUsedInSolvingMoleculesForThisPoint.  Probably due to using a unit test or best mass frag chooser.
+        G.massesUsedInSolvingMoleculesForThisPoint = numpy.zeros(len(molecules))
     original_list_of_mass_fragments = copy.deepcopy(currentReferenceData.mass_fragment_numbers_monitored)
     # This is creating a local copy of 'monitored_reference_intensities' which will become
     # truncated as the molecules are solved and masses are removed
@@ -3017,7 +3025,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     solvedmolecules = numpy.zeros(len(remaining_molecules_SLS))
     #To keep track of the mass fragments used. (just an array of zeros to start, then fill with ones)
     used_mass_fragments= numpy.array(copy.deepcopy(original_list_of_mass_fragments))*0.0
-
+    last_solvedmolecules = solvedmolecules*1.0  # This is just initializing for use later.
+    last_used_mass_fragments = used_mass_fragments*1.0 #This is just initailizing for use later.
      
     #Not quite sure why things were done the below way, but it must work.
     solutions1 = numpy.zeros([1,len(remaining_correction_factors_SLS[0,:])])
@@ -3083,7 +3092,28 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
 
                 #Check if we should export to file what happened.
                 #TODO: Below should probably be made  a function (occurs at another place below)
+                specific_mass_fragment_used = 0 #Can't calculate from used_mass_fragments and last_used_mass_fragments(like in other part of code) because no specific unique fragments were actually used.
+                #finding which molecules were solved by this method of excluding molecules without significant fragments.
+                difference_solvedmolecules = list(solvedmolecules - last_solvedmolecules)
+                #There may be more than one molecule solved, so need to make a list of them.
+                specific_molecules_solved = [] #make the list blank and then will append to it.
+                if 1 in difference_solvedmolecules:
+                    #There could be more than 1 solved molecule, so we need to look through them one at a time to make a string.
+                    for x in range(len(difference_solvedmolecules)):
+                        if difference_solvedmolecules[x] == 1:
+                            specific_molecules_solved.append(molecules_unedited[x])
+                            G.massesUsedInSolvingMoleculesForThisPoint[x] = 0 #It is actually already initialized as zero, but this line is put here for clarity.
+                
                 if G.SLSUniqueExport == 'yes' and (G.answer == 'sls' or G.answer == 'autosolver'):
+                    outputMoleculesAndChosenMassFragmentsFilename = 'ExportedSLSUniqueMoleculesAndChosenMassFragments.csv'
+                    if G.iterativeAnalysis:
+                        #then the filename will have a suffix attached
+                        outputMoleculesOrderFileName = outputMoleculesAndChosenMassFragmentsFilename[:-4] + '_iter_%s' %G.iterationNumber + outputMoleculesAndChosenMassFragmentsFilename[-4:] 
+                    with open(outputMoleculesAndChosenMassFragmentsFilename, 'a') as f:
+                        f.write('%s,' %timeIndex)
+                        f.write('%s,' %time)                    
+                        f.write(str(specific_mass_fragment_used) + "," + str(list(specific_molecules_solved))[1:-1] + "\n")
+                
                     outputMoleculesOrderFileName = 'ExportedSLSUniqueMoleculesOrder.csv'
                     if G.iterativeAnalysis:
                         #then the filename will have a suffix attached
@@ -3103,6 +3133,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                         f.write('%s,' %timeIndex)
                         f.write('%s,' %time)                        
                         f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
+                last_solvedmolecules = solvedmolecules #some changes have occurred.
+                last_used_mass_fragments = used_mass_fragments #no change has occurred.
             
             
         ####The below block of code is just to choose the next molecule to perform SLS on.###
@@ -3228,7 +3260,34 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             # This block of code is a printing statement to show the user what order the molecules are being solved in
             # This is a csv file so should be delimited with commas
             #TODO: Below should probably be made  a function (occurs at another place above)
+            
+            
+            #Find the most recently used mass fragment and solved molecule.
+            difference_used_mass_fragments = list((used_mass_fragments - last_used_mass_fragments)) #We subtract the two arrays looking for a "1" for which mass fragment was used. But there are special cases with no mass fragment used.
+            if 1 in difference_used_mass_fragments:
+                index_of_mass_fragment = difference_used_mass_fragments.index(1) 
+                specific_mass_fragment_used = original_list_of_mass_fragments[index_of_mass_fragment] #Find subtract the arrays, make them a list, use index function to find the position of the new "1", call the mass fragment.
+            else:
+                specific_mass_fragment_used = 0 
+                
+            difference_solvedmolecules = list((solvedmolecules - last_solvedmolecules))
+            if 1 in difference_used_mass_fragments:
+                index_of_molecule = difference_solvedmolecules.index(1)
+                specific_molecule_solved = molecules_unedited[ index_of_molecule ] #Find subtract the arrays, make them a list, use index function to find the position of the new "1", call the molecule.
+                G.massesUsedInSolvingMoleculesForThisPoint[index_of_molecule] = specific_mass_fragment_used
+            else:
+                specific_molecule_solved = 'None'
+            
             if G.SLSUniqueExport == 'yes':
+                outputMoleculesAndChosenMassFragmentsFilename = 'ExportedSLSUniqueMoleculesAndChosenMassFragments.csv'
+                if G.iterativeAnalysis:
+                    #then the filename will have a suffix attached
+                    outputMoleculesOrderFileName = outputMoleculesAndChosenMassFragmentsFilename[:-4] + '_iter_%s' %G.iterationNumber + outputMoleculesAndChosenMassFragmentsFilename[-4:] 
+                with open(outputMoleculesAndChosenMassFragmentsFilename, 'a') as f:
+                    f.write('%s,' %timeIndex)
+                    f.write('%s,' %time)                    
+                    f.write(str(specific_mass_fragment_used) + "," + specific_molecule_solved + "\n")
+                
                 outputMoleculesOrderFileName = 'ExportedSLSUniqueMoleculesOrder.csv'
                 if G.iterativeAnalysis:
                     #then the filename will have a suffix attached
@@ -3248,7 +3307,10 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                     f.write('%s,' %timeIndex)
                     f.write('%s,' %time)                    
                     f.write(str(list(used_mass_fragments))[1:-1] + "\n") #the [1:-1] is to remove the list symbols during printing to file.
+            last_solvedmolecules = solvedmolecules*1.0 #Be careful not to simply make a pointer!
+            last_used_mass_fragments = used_mass_fragments*1.0 #Be careful not to simply make a pointer!
         if remaining_num_molecules == 0:
+            #TODO: Add in an if G.SLSUniqueExport == 'yes' here that exports the full line of solved molecules and masses at one time.
             break
         
     if remaining_correction_factors_SLS.size > 0:#if there are correction values left (i.e. not all the solutions have been found)
@@ -4690,6 +4752,8 @@ def main():
                 print("TimeIndex", timeIndex, ": Ten seconds or more checkpoint. Actually", timeit.default_timer() - lastPrintedIndexClockTime, "seconds. \n Estimated runtime remaining:", estimatedRemainingRuntime, "seconds.")
                 lastPrintedIndexClockTime = timeit.default_timer() #reset this value.
             
+            G.massesUsedInSolvingMoleculesForThisPoint = numpy.zeros(len(currentReferenceData.molecules)) #initializing this for use inside SlSUnique and possibly elsewhere.
+            
             #If referencePatternTimeRanges has anything in it, then the user has opted to use the Reference Pattern Time Chooser feature
             #FIXME interpolation portion of reference pattern time chooser does not work yet
             if len(G.referencePatternTimeRanges) != 0:
@@ -4775,8 +4839,17 @@ def main():
             correctionFactorArraysList.append(currentReferenceData.matching_correction_values) #populate the list with the proper correction values
             if G.iterativeAnalysis: #If using iterative analysis, append the subtracted signals' matching correction values that were used to SS_matching_correction_values_TimesList
                 SS_matching_correction_values_TimesList.append(currentReferenceData.SSmatching_correction_values)
-        
-        
+            
+            if G.SLSUniqueExport == 'yes':
+                outputMassesUsedInSolvingMoleculesFilename = 'ExportedSLSUniqueMassesUsedInSolvingMolecules.csv'
+                if G.iterativeAnalysis:
+                    #then the filename will have a suffix attached
+                    outputMoleculesOrderFileName = outputMassesUsedInSolvingMoleculesFilename[:-4] + '_iter_%s' %G.iterationNumber + outputMassesUsedInSolvingMoleculesFilename[-4:] 
+                with open(outputMassesUsedInSolvingMoleculesFilename, 'a') as f:
+                    f.write('%s,' %timeIndex)
+                    f.write('%s,' %ExperimentData.times[timeIndex]) 
+                    f.write( str(list(G.massesUsedInSolvingMoleculesForThisPoint))[1:-1] + "\n" )
+                        
         concentrationsScaledToCOarray[:,1:] = concentrationsScaledToCOarray[:,1:]/G.scaleRawDataFactor #correct for any scaling factor that was used during analysis.                                                          
         resultsObjects['concentrationsScaledToCOarray'] = concentrationsScaledToCOarray #Store in the global resultsObjects dictionary
         if G.concentrationFinder == 'yes': #If using concentration finder
