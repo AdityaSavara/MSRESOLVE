@@ -1,0 +1,23 @@
+Steps For Adding New UserInput Variables
+
+1. Add default settings to UserInput.py and DefaultuserInput.py within the variables being defined.
+2. Add to the __var_list__ at the bottom of UserInput.py
+3. Updated userInputValidityFunctions.py function parseUserInput   
+4. Updated userInputValidityFunctions.py function userInputValidityCheck
+5. Run the Unit Tests: two or three of the unit tests have a full user input file in them. So those will need to have the new variable and its default added.
+
+For the GUI Files we need to do some more steps:
+6. 
+
+Steps in making a checklist that is new:
+  * Make the checklist in the GUI with a blank dictionary (see below) 
+  * Optional: Make a "selectAll" or "deselectAll" type function which then calls the checkUncheckAll function.
+    Search for app.addProperties('chosenMassFragmentsChecklist',{}) for example. Looks like this:
+            with app.labelFrame("Chosen Mass Fragments"):
+            app.startToggleFrame("chosenMassFragments")
+            app.addProperties('chosenMassFragmentsChecklist',{})
+            app.addButtons(['Select All Mass Fragments','Deselect All Mass Fragments'],[selectAllMassFragments,deselectAllMassFragments])
+            app.stopToggleFrame()
+  * in changeReferenceFileName or setCollectedFile initially populate the molecule and mass fragment checklists.
+  * Near line 900, need to extract the information to the desired userinput variable using getListFromDictionary.
+

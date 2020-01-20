@@ -20,7 +20,7 @@ def parseUserInput(currentUserInput):
     parse.strCheck(currentUserInput.dataAnalysis,'dataAnalysis')
     parse.strCheck(currentUserInput.dataSimulation,'dataSimulation')
     parse.strCheck(currentUserInput.grapher,'grapher')
-        
+            
     #Time Range
     parse.strCheck(currentUserInput.timeRangeLimit,'timeRangeLimit')
     #Time Ranges are both floats
@@ -174,7 +174,9 @@ def parseUserInput(currentUserInput):
     
     #Negative Analyzer
     parse.strCheck(currentUserInput.negativeAnalyzerYorN,'negativeAnalyzerYorN')
-    
+    currentUserInput.NegativeAnalyzerTopNContributors = int(currentUserInput.NegativeAnalyzerTopNContributors)
+    currentUserInput.NegativeAnalyzerBaseNumberOfGridIntervals = int(currentUserInput.NegativeAnalyzerBaseNumberOfGridIntervals)
+
     #Data Analysis Methods
     #All must be strings
     parse.strCheck(currentUserInput.answer,'answer')
@@ -341,10 +343,15 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['rawSignalThresholdLimitPercent']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent']
  
     SettingsVDictionary['negativeAnalyzerYorN']   =UserChoices['negativeAnalyzerYorN']['on']
+    if 'NegativeAnalyzerTopNContributors' in UserChoices['negativeAnalyzerYorN']:
+        SettingsVDictionary['NegativeAnalyzerTopNContributors']   = UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerTopNContributors']
+    if 'NegativeAnalyzerBaseNumberOfGridIntervals' in UserChoices['negativeAnalyzerYorN']:
+        SettingsVDictionary['NegativeAnalyzerBaseNumberOfGridIntervals']   = UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerBaseNumberOfGridIntervals']
     
     SettingsVDictionary['answer']   = UserChoices['dataAnalysisMethods']['answer']
     SettingsVDictionary['uniqueOrCommon']   = UserChoices['dataAnalysisMethods']['uniqueOrCommon']
     SettingsVDictionary['slsFinish']   = UserChoices['dataAnalysisMethods']['slsFinish']
+    SettingsVDictionary['slsUniquePositiveConcentrationsOnly']   = UserChoices['dataAnalysisMethods']['slsUniquePositiveConcentrationsOnly']
     SettingsVDictionary['bruteOption']   = UserChoices['dataAnalysisMethods']['bruteOption']
     SettingsVDictionary['distinguished']   = UserChoices['dataAnalysisMethods']['distinguished']
     SettingsVDictionary['fullBrute']   = UserChoices['dataAnalysisMethods']['fullBrute']

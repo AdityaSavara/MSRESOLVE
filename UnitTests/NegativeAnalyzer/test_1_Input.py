@@ -222,6 +222,9 @@ UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent'] = []
 UserChoices['negativeAnalyzerYorN'] = {} #initialize the negativeAnalyzerYorN container
 #if enabled ('yes') Negative Analyzer will prevernt negative valued concentrations from being compututed.  
 UserChoices['negativeAnalyzerYorN']['on'] = 'yes'
+UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerTopNContributors'] = 3
+UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerBaseNumberOfGridIntervals'] = 5
+
 
 #//Data Analysis Methods
 UserChoices['dataAnalysisMethods'] = {} #initialize the dataAnalysisMethods container
@@ -229,6 +232,7 @@ UserChoices['dataAnalysisMethods'] = {} #initialize the dataAnalysisMethods cont
 UserChoices['dataAnalysisMethods']['answer'] = 'sls'	#'inverse' or 'sls'; sls is suggested
 UserChoices['dataAnalysisMethods']['uniqueOrCommon'] = 'unique'	#'unique' or 'common'; common is suggested
 UserChoices['dataAnalysisMethods']['slsFinish'] = 'brute'	#'brute' or 'inverse'; brute is suggested
+UserChoices['dataAnalysisMethods']['slsUniquePositiveConcentrationsOnly'] = False #Can be true or false. This is faster but less accurate than NegativeAnalyzer
 UserChoices['dataAnalysisMethods']['bruteOption'] = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 UserChoices['dataAnalysisMethods']['distinguished'] = 'yes'
 UserChoices['dataAnalysisMethods']['fullBrute'] = 'yes'
