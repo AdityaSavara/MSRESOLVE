@@ -34,7 +34,7 @@ grapher = 'no' #yes will graph function no will not
 #This function limits the data analyzed and proccessed to a certain subset of the total data
 timeRangeLimit = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
 timeRangeStart = 176  #start time (-int)
-timeRangeFinish = 200	#finish time (-int)
+timeRangeFinish = 178	#finish time (-int)
 
 #//Chosen Molecules
 #To choose only specific molecules to solve, input in a list of strings  below
@@ -200,7 +200,7 @@ bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR'
 distinguished = 'yes'
 fullBrute = 'yes'
 SLSUniquePrint = 'yes'
-SLSUniqueExport = 'no'
+SLSUniqueExport = 'yes'
 
 
 #//Concentration Finder//
