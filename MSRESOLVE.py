@@ -3972,18 +3972,24 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
     
     if len(negatives) > 0:#if there are negatives then the function runs
         for negativeXofN in range(len(negatives)):#does this for each negative value concentration. 
-            #TODO: probably need to find the biggest significant mass fragment, since the biggest one may not have been the one used in solving.
-            #First, find the biggest correction value (i.e., mass fragment) associated with that negative concentration molecule.
             #NOTE: the solutions line data *changes* within this loop. So it is actually a kind of iterative process. The first negative molecule solution will affect the later ones. The order of solution is not presently prioritized in any way.
-            for massFragmentIndex in range(num_MassFragments):#looks through the correction values
-                if matching_correction_values[massFragmentIndex,negative_molecule_indexes[negativeXofN]] == max(matching_correction_values[:,negative_molecule_indexes[negativeXofN]]):#finds the index of the negative molecule's largest correction value 
-                    indexOfBiggestMFofNegMolecule = massFragmentIndex
+            
+            #We're going to pick a single mass fragment of the negative molecule to figure out which other molecules may have caused it to become negative.
+            #First check if this molecule has been solved by a unique mass fragment, which means it was solved by SLS and tells us we should use that fragment.
+            if G.massesUsedInSolvingMoleculesForThisPoint[ negative_molecule_indexes[negativeXofN] ] != 0: #the array being checked is not "0s and 1s", it has a mass fragment if one was used and the value of 0 otherwise.
+                relevantMFofNegMolecule  = G.massesUsedInSolvingMoleculesForThisPoint[ negative_molecule_indexes[negativeXofN] ] 
+                indexOfRelevantMFofNegMolecule = list(G.massFragmentsArrayForThisPoint).index(relevantMFofNegMolecule)
+            else: #When the molecule does not have a unique mass fragment that it was solved by, then we get the biggest mass fragment. #TODO: probably should find the biggest significant mass fragment, since the biggest one may not have been the one used in solving.
+                for massFragmentIndex in range(num_MassFragments):#looks through the correction values
+                    if matching_correction_values[massFragmentIndex,negative_molecule_indexes[negativeXofN]] == max(matching_correction_values[:,negative_molecule_indexes[negativeXofN]]):#finds the index of the negative molecule's largest correction value 
+                        indexOfBiggestMFofNegMolecule = massFragmentIndex
+                        indexOfRelevantMFofNegMolecule = indexOfRelevantMFofNegMolecule
             
             #Now, we're going to find out which molecule(s) could have caused that "false" negative concentration. We'll focus on the biggest possible contributer(s)
             #FIXME: Below is using biggest concentration value. That's not the actual biggest contributor. Should be by simulated signal. So should simulate each molecule's contribution separately to this mass, and then find the one which has the maximum contribution. That will give the right choice for correction2index
             moleculesWithMassFragmentList = []
             for matchCorrIndexRow in range(num_Molecules):#goes through the correction values.  #num_Molecules is the same length as len(matching_correction_values[0,:])
-                if matching_correction_values[indexOfBiggestMFofNegMolecule,matchCorrIndexRow] != 0:#if the molecule has a relative intensity (other than zero) at the mass fragment chosen (by the last loop)
+                if matching_correction_values[indexOfRelevantMFofNegMolecule,matchCorrIndexRow] != 0:#if the molecule has a relative intensity (other than zero) at the mass fragment chosen (by the last loop)
                     moleculesWithMassFragmentList.append(1)
                 else: #if there is no molecule a zero is appended to the list
                     moleculesWithMassFragmentList.append(0)
@@ -4049,7 +4055,7 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
                         solutionslinedata_this_molecule_only = solutionslinedata*0.0
                         solutionslinedata_this_molecule_only[moleculeIndex] = solutionslinedata[moleculeIndex]
                         all_simulated_raw_signals_this_molecule_only = littleSimulationFunction(solutionslinedata_this_molecule_only, matching_correction_values)
-                        relevant_simulated_raw_signal_this_molecule_only = float(all_simulated_raw_signals_this_molecule_only[indexOfBiggestMFofNegMolecule]) #The "float" casting is to go from 1 value numpy matrices to floats.
+                        relevant_simulated_raw_signal_this_molecule_only = float(all_simulated_raw_signals_this_molecule_only[indexOfRelevantMFofNegMolecule]) #The "float" casting is to go from 1 value numpy matrices to floats.
                         contributors_with_mass_fragment_rawsignals_list.append(relevant_simulated_raw_signal_this_molecule_only) #note that this does already include the molecule chosen. 
                         dominant_contributors_concentrations_list.append(solutionsline_MassFragmentPresentKey[moleculeIndex])
                         matching_correction_values_dominant_contributors_only.append(matching_correction_values[:,moleculeIndex])
@@ -4752,8 +4758,6 @@ def main():
                 print("TimeIndex", timeIndex, ": Ten seconds or more checkpoint. Actually", timeit.default_timer() - lastPrintedIndexClockTime, "seconds. \n Estimated runtime remaining:", estimatedRemainingRuntime, "seconds.")
                 lastPrintedIndexClockTime = timeit.default_timer() #reset this value.
             
-            G.massesUsedInSolvingMoleculesForThisPoint = numpy.zeros(len(currentReferenceData.molecules)) #initializing this for use inside SlSUnique and possibly elsewhere.
-            
             #If referencePatternTimeRanges has anything in it, then the user has opted to use the Reference Pattern Time Chooser feature
             #FIXME interpolation portion of reference pattern time chooser does not work yet
             if len(G.referencePatternTimeRanges) != 0:
@@ -4766,6 +4770,10 @@ def main():
             
             #populate the mass fragments monitored subobject for the current reference pattern
             currentReferenceData.mass_fragment_numbers_monitored = ExperimentData.mass_fragment_numbers
+            
+            G.massesUsedInSolvingMoleculesForThisPoint = numpy.zeros(len(currentReferenceData.molecules)) #initializing this for use inside SlSUnique and possibly elsewhere.
+            G.massFragmentsArrayForThisPoint = currentReferenceData.mass_fragment_numbers_monitored*1.0
+            
             
             ## TODO: Find out why RawSignalsArrayMaker() takes longer to run when preprocessed data is
             # computed directly rather than loaded. It doesn't seem to effect rawsignalsarrayline in
@@ -4827,7 +4835,16 @@ def main():
                     solutions = concentrationsFromFinisher
             except:
                 pass
-                    
+
+            if G.SLSUniqueExport == 'yes':
+                outputMassesUsedInSolvingMoleculesFilename = 'ExportedSLSUniqueMassesUsedInSolvingMolecules.csv'
+                if G.iterativeAnalysis:
+                    #then the filename will have a suffix attached
+                    outputMoleculesOrderFileName = outputMassesUsedInSolvingMoleculesFilename[:-4] + '_iter_%s' %G.iterationNumber + outputMassesUsedInSolvingMoleculesFilename[-4:] 
+                with open(outputMassesUsedInSolvingMoleculesFilename, 'a') as f:
+                    f.write('%s,' %timeIndex)
+                    f.write('%s,' %ExperimentData.times[timeIndex]) 
+                    f.write( str(list(G.massesUsedInSolvingMoleculesForThisPoint))[1:-1] + "\n" )                    
             
             if G.negativeAnalyzerYorN == 'yes':
                 arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption, G.maxPermutations, G.NegativeAnalyzerTopNContributors, G.NegativeAnalyzerBaseNumberOfGridIntervals)
@@ -4840,15 +4857,7 @@ def main():
             if G.iterativeAnalysis: #If using iterative analysis, append the subtracted signals' matching correction values that were used to SS_matching_correction_values_TimesList
                 SS_matching_correction_values_TimesList.append(currentReferenceData.SSmatching_correction_values)
             
-            if G.SLSUniqueExport == 'yes':
-                outputMassesUsedInSolvingMoleculesFilename = 'ExportedSLSUniqueMassesUsedInSolvingMolecules.csv'
-                if G.iterativeAnalysis:
-                    #then the filename will have a suffix attached
-                    outputMoleculesOrderFileName = outputMassesUsedInSolvingMoleculesFilename[:-4] + '_iter_%s' %G.iterationNumber + outputMassesUsedInSolvingMoleculesFilename[-4:] 
-                with open(outputMassesUsedInSolvingMoleculesFilename, 'a') as f:
-                    f.write('%s,' %timeIndex)
-                    f.write('%s,' %ExperimentData.times[timeIndex]) 
-                    f.write( str(list(G.massesUsedInSolvingMoleculesForThisPoint))[1:-1] + "\n" )
+
                         
         concentrationsScaledToCOarray[:,1:] = concentrationsScaledToCOarray[:,1:]/G.scaleRawDataFactor #correct for any scaling factor that was used during analysis.                                                          
         resultsObjects['concentrationsScaledToCOarray'] = concentrationsScaledToCOarray #Store in the global resultsObjects dictionary
