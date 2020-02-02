@@ -755,49 +755,89 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
 #Then it gets the sum of each molecules frag pattern and uses all these values to get each moleule's correction value via the
 #system created by Madix and Ko and puts this in an answers array
 def CorrectionValuesObtain(ReferenceData):
-    reference_width = len(ReferenceData.standardized_reference_patterns[0,:]) 
-    reference_height = len(ReferenceData.standardized_reference_patterns[:,0]) 
-    correction_values = numpy.zeros([1,reference_height])
+    reference_width = len(ReferenceData.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
+    reference_height = len(ReferenceData.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
+    correction_values_direct = ReferenceData.standardized_reference_patterns*1.0 #just initializing as same size, but note that this has the mass fragments column.
+    correction_values_direct_relative_uncertainty = correction_values_direct*1.0
+    if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)):  #This means we'll need uncertainties on each correction value.
+        ReferenceData.relative_correction_uncertainties = ReferenceData.relative_standard_uncertainties[:,1:]*0.0 #make an array with the same shape, without the mass fragments.
+    else: 
+        correction_values_relative_uncertainties = None #If uncertainties are not going to be calculated, we'll use none here and just return that.
+    
     #the first for loop here gets all of the values for e- and mw and uses them to get the
     #respective values that can find the correction factor for each mass fragment of each molecule
-    for column_counter in range(1,reference_width): #array-indexed for loop, skips column one b/c that is the mass fragment numbers, not relative intensities
+    for column_counter in range(1,reference_width): #array-indexed for loop, skips column one b/c that is the mass fragment numbers, not relative intensities. This loops across each molecule.
         ionization_efficiency = ReferenceData.ionizationEfficienciesList[column_counter-1]
-        answer_array_row = []
-        quotients = numpy.zeros(len(ReferenceData.standardized_reference_patterns[:,0]))
+        current_molecule_correction_factors_list = []
+        quotients = numpy.zeros(len(ReferenceData.standardized_reference_patterns[:,0])) #This means the same length as the mass fragments.
+        quotients_relative_uncertainties = quotients*1.0 #we make this variable but only populate it if we're going to calculate uncertainties.
+        
         #This first loop goes through the row and gets all of the mass fragment's Tms and Gms
         #and then uses those along with the relative intensity of the mass fragment itself to
         #calculate the sum of each column's Fm/(Gm*Tm)
         for row_counter in range(0,reference_height):  #array-indexed for loop
-            fragmentmass = ReferenceData.standardized_reference_patterns[row_counter,column_counter] 
-            if fragmentmass != 0: #only gets the Gm and Tm if relative intensity is not equal to zero
+            fragment_intensity = ReferenceData.standardized_reference_patterns[row_counter,column_counter] #This is actually the fragment's intensity in the standardized reference pattern.
+            if fragment_intensity != 0: #only gets the Gm and Tm if relative intensity is not equal to zero
                 electron_multiplier_gain = (28/ReferenceData.standardized_reference_patterns[row_counter,0])**0.5 
                 if (ReferenceData.standardized_reference_patterns[row_counter,0] < 30): #transmission gain depends on the mass fragment mass
                     transmission_gain = 1
                 else:
                     transmission_gain = 10**((30-ReferenceData.standardized_reference_patterns[row_counter,0])/155)
-                quotient = fragmentmass/(transmission_gain*electron_multiplier_gain)
+                quotient = fragment_intensity/(transmission_gain*electron_multiplier_gain)
                 quotients[row_counter] = quotient
-                a = sum(quotients)
+
+            #calculation of uncertainties is being separated from above if statement to avoid making the code harder to read.
+            if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)):    
+                if fragment_intensity != 0: #We only get the Gm and Tm if relative intensity is not equal to zero, so we only need uncertainties for those values.
+                    fragment_intensity_relative_uncertainty = ReferenceData.relative_standard_uncertainties[row_counter,column_counter] #row_counter and column_counter already skip the mass fragments.
+                    quotient_relative_uncertainty = abs(fragment_intensity_relative_uncertainty*1.0) #there is no change since this is relative uncertainty divided by some constants (the two gains are dependent on molecular weight, but not on intensity).
+                    quotients_relative_uncertainties[row_counter] = quotient_relative_uncertainty
+                    
+        a = sum(quotients)
+        if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)): #if uncertainties are going to be calculated.
+            quotients_absolute_uncertainties = quotients*quotients_relative_uncertainties #We will need the absolute uncertainties because now there is a summation.
+            #now to calculate the a_uncertainty, we we will use a_uncertainty = sqrt( uncertainty_1^2 + uncertainty_2^2 + uncertainty_3^2)
+            #TODO: there is actually correlation in the errors, so the real number should be smaller than this.
+            sum_in_sqrt = 0 #just initailizing this to add to it.
+            for uncertainty_term in quotients_absolute_uncertainties:
+                sum_in_sqrt =  sum_in_sqrt + uncertainty_term**2
+            a_absolute_uncertainty = (sum_in_sqrt)**(0.5) 
+            
         # This second part of the loop must be separate only because the sums of each column's 
         #Fm/(Gm*Tm) has to be found first, but then the loop gets each mass fragment's correction
         #value by dividing the sum by that relative intensity and ionization efficiency for the 
         #molecule, then creating an correction_values of correction values
         for row_counter in range(0,reference_height):#array-indexed for loop, there is a second loop for each column, because the first only gets the sum of (Fm)/(Gm*Tm)
-            fragmentmass = ReferenceData.standardized_reference_patterns[row_counter,column_counter] 
-            if fragmentmass != 0: #once again, if the relative intensity is zero, then the correction value will be zero as well, this is done by the else statement
-                fragmentmass = ReferenceData.standardized_reference_patterns[row_counter,column_counter]
-                correction = a/(ionization_efficiency*fragmentmass)
-                answer_array_row.append(correction)
+            fragment_intensity = ReferenceData.standardized_reference_patterns[row_counter,column_counter] 
+            if fragment_intensity != 0: #once again, if the relative intensity is zero, then the correction value will be zero as well, this is done by the else statement
+                correction = a/(ionization_efficiency*fragment_intensity)
+                current_molecule_correction_factors_list.append(correction)
+                correction_values_direct[row_counter,column_counter] = correction
             else: 
                 correction = 0
-                answer_array_row.append(correction)
-            if row_counter == (reference_height-1):#if the loop is on the last index
-                if column_counter == 1: #the first column can be the beginning of the array
-                    answer_array_row = numpy.array(answer_array_row)
-                    correction_values = correction_values + answer_array_row
-                else: #afterwards, all the rows are stacked
-                    correction_values = numpy.vstack([correction_values,answer_array_row]) 
-    return correction_values
+                current_molecule_correction_factors_list.append(correction)
+                correction_values_direct[row_counter,column_counter] = 0
+            ##Here we calculate the correction factor uncertainties if desired.
+            #To calculate the uncertainty associated with this operation: correction = a/(ionization_efficiency*fragment_intensity)
+            #we use the following formula:  if Q = (a*b)/(c*d), Q_relative_uncertainty = sqrt( a_relative_uncertainty^2 + b_relative_uncertainty^2 + c_relative_uncertainty^2 + d_relative_uncertainty^2)
+            #Note that there is no difference between how we propagate for multiplication and division in this formula: they can be done in the same propagation step.
+            if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)): #if uncertainties are going to be calculated.
+                if fragment_intensity != 0:
+                    #For uncertainty associatesd with correction = a/(ionization_efficiency*fragment_intensity) we first gather the three uncertainties.
+                    #We already have a_absolute_uncertainty but we need a_relative_uncertainty
+                    a_relative_uncertainty = a_absolute_uncertainty/a                    
+                    ionization_efficiency_relative_uncertainty = 0 #For now we make it 0. #TODO add in effects of ionization_efficiency_relative_uncertainty
+                    fragment_intensity_relative_uncertainty = ReferenceData.relative_standard_uncertainties[row_counter,column_counter] #this is just reproduced from above.
+                    correction_relative_uncertainty = (a_relative_uncertainty**2 + ionization_efficiency_relative_uncertainty**2 + fragment_intensity_relative_uncertainty**2)**0.5
+                    correction_values_direct_relative_uncertainty[row_counter,column_counter] = correction_relative_uncertainty
+                else:
+                    correction_relative_uncertainty = 0 #There is no correction factor so we use a relative uncertainty is 0.
+                    correction_values_direct_relative_uncertainty[row_counter,column_counter] = correction_relative_uncertainty
+    #correction_values_direct[:,0] This is the mass fragments.
+    correction_values = numpy.transpose(correction_values_direct[:,1:]) #skipping one column because it has mass fragments.
+    correction_values_relative_uncertainties = numpy.transpose(correction_values_direct_relative_uncertainty[:,1:])
+    #G.correction_values_relative_uncertainties = correction_values_relative_uncertainties
+    return correction_values, correction_values_relative_uncertainties
 
 
 #Populate_matching_correction_values-> for loops that build the matching_correction_values and raw signals into multiple arrays, inside of lists
@@ -808,6 +848,9 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
     ReferenceData.referenceabscissa = ReferenceData.standardized_reference_patterns[:,0]
     referenceDataArray = ReferenceData.standardized_reference_patterns[:,1:]
     correction_values = numpy.array(list(zip(*ReferenceData.correction_values)))
+    if G.calculateUncertaintiesInConcentrations == True:
+        if type(G.referenceFileUncertainties) != type(None): #Just mimicing the above lines. 
+            correction_values_relative_uncertainties = numpy.array(list(zip(*ReferenceData.correction_values_relative_uncertainties)))
     #This function has inputs that are very general so that it could be easily understood and used in various 
     #circumstances, the function first gets the size of the data array and then uses that to index the loops
     #that find matching numbers in the abscissas and then keep those respective rows
@@ -827,7 +870,7 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
     #This small function just goes through every element of the correction array and inverses it; you can do
     #this more simply, but there are zeros here and we cannot have inf as our value, so the else statement simply
     #skips the zeros and inverse all others
-    def ArrayElementsInverser(matching_correction_values): 
+    def ArrayElementsInverser(matching_correction_values):  #TODO: use numpy.divide for this (it is used for a similar task elsewhere in the program already, just search in program for example)
         for x in range(len(matching_correction_values[:,0])): #array-indexed for loop, these two loops go through all the values in the array
             for y in range(len(matching_correction_values[0,:])):#array-indexed for loop
                 if matching_correction_values[x][y] != 0: #when a number is zero using **-1 gives a divide by zero error- so all these are skipped
@@ -836,6 +879,9 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
     #here the main function, Populate_matching_correction_values, calls all of its sub-functions 
     ReferenceData.matching_correction_values, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
     ReferenceData.monitored_reference_intensities, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referenceDataArray)
+    if G.calculateUncertaintiesInConcentrations == True:
+        if type(G.referenceFileUncertainties) != type(None): #Just mimicing the above lines.
+            ReferenceData.matching_correction_values_relative_uncertainties, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values_relative_uncertainties)
     ReferenceData.matching_correction_values = ArrayElementsInverser(ReferenceData.matching_correction_values)
     return ReferenceData
     
@@ -857,6 +903,9 @@ def  UnnecessaryMoleculesDeleter(ReferenceData):
                     ReferenceData.monitored_reference_intensities = numpy.delete(ReferenceData.monitored_reference_intensities,(columncounter-place_holder),axis = 1)
                     ReferenceData.matching_correction_values = numpy.delete(ReferenceData.matching_correction_values,(columncounter-place_holder),axis = 1)
                     ReferenceData.molecules = numpy.delete(ReferenceData.molecules,(columncounter-place_holder))
+                    if G.calculateUncertaintiesInConcentrations == True:
+                        if type(G.referenceFileUncertainties) != type(None): #Just mimicing the above lines.
+                            ReferenceData.matching_correction_values_relative_uncertainties = numpy.delete(ReferenceData.matching_correction_values_relative_uncertainties,(columncounter-place_holder),axis = 1)
                     place_holder = place_holder + 1
     return ReferenceData
 
@@ -996,9 +1045,8 @@ num_of_molecues-  an integer describing the number of  molecues that contributed
 def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules):
     # preallocate new array for standardized values
     standardizedReference = copy.deepcopy(referenceUnstandardized)
-
     # standardize
-    for moleculeIndex in range(1,num_of_molecules+1):
+    for moleculeIndex in range(1,num_of_molecules+1): #Note that we start at an index of 1 in order to skip the mass fragments (so they don't get 'standardized')
         standardizedReference[0:,moleculeIndex]=StandardizeTo100(referenceUnstandardized[0:,moleculeIndex],1)
 
     return standardizedReference
@@ -1079,7 +1127,15 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     # linearly scaled according that the maximum value scaling
     ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizeReferencePattern')
-    
+    if G.calculateUncertaintiesInConcentrations == True: 
+        if type(G.referenceFileUncertainties) != type(None):
+            ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
+            #now populate the non-mass fragment parts by dividing.
+            #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
+            a_array = ReferenceData.relative_standard_uncertainties[:,1:]
+            b_array = ReferenceData.standardized_reference_patterns[:,1:] 
+            ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+
     #Only print if not called from interpolating reference objects
     if verbose:
         print('beginning TuningCorrector')
@@ -1087,10 +1143,14 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
                                                        G.referenceLiteratureFileName, G.referenceMeasuredFileName,
                                                        G.measuredReferenceYorN)
     ReferenceData.ExportCollector('TuningCorrector')
-
+    if G.calculateUncertaintiesInConcentrations == True: 
+        if type(G.referenceFileUncertainties) != type(None):                                                      
+            pass #TODO: propagate TuningCorrector uncertainties into the ReferenceData.relative_standard_uncertainties
+    
     #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
     ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.standardized_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizeReferencePattern')
+    #Note: it is assumed that the relative_standard_uncertainties correspond to original reference, so before tuning corrector, thus we do not recalculate that factor.
     
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
@@ -1101,8 +1161,8 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     
     #As the program is currently written, this function is called to act upon already threshold filtered standardized reference patterns which could cause innaccuracy.  
     #One could move this function prior to threshold filtering however then correction values would not be correctly calculated for interpolated reference patterns
-    #We are not sure there are any other reasons we can't move this function call
-    ReferenceData.correction_values = CorrectionValuesObtain(ReferenceData)
+    #We are not sure there are any other reasons we can't move this function call. However, there may be some care needed when using uncertainties.
+    ReferenceData.correction_values, ReferenceData.correction_values_relative_uncertainties = CorrectionValuesObtain(ReferenceData)
     #Only print if not called from interpolating reference objects
     if verbose:
         print('CorrectionValuesObtain')
@@ -1127,9 +1187,29 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
     if len(referenceFormsList) == 1 and len(referenceFileNamesList) == 1:
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[0],referenceFormsList[0])
         ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
-        #save each global variable into the class objects 
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[0].iterationSuffix = G.iterationSuffix
+        if G.calculateUncertaintiesInConcentrations == True:
+            if type(G.referenceFileUncertainties) != type(None):
+                if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
+                    #TODO: The below results in "nan" values. It would be better to change it to make zeros using a numpy "where" statement.
+                    G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Maks sure we have a float.
+                    #Get what we need.
+                    provided_reference_patterns = ReferenceDataList[0].provided_reference_patterns
+                    provided_reference_patterns_without_masses = ReferenceDataList[0].provided_reference_patterns[:,1:] #[:,0] is mass fragments, so we slice to remove those. 
+                    #Make our variables ready.
+                    absolute_standard_uncertainties = provided_reference_patterns*1.0 #First we make a copy.
+                    absolute_standard_uncertainties_without_masses = (provided_reference_patterns_without_masses/provided_reference_patterns_without_masses)*G.referenceFileUncertainties #We do the division to get an array of ones. Then we multiply to get an array of the same size.
+                    #now we populate our copy's non-mass area.
+                    absolute_standard_uncertainties[:,1:] = absolute_standard_uncertainties_without_masses                                        
+                    ReferenceDataList[0].absolute_standard_uncertainties = absolute_standard_uncertainties
+                    #We can't convert to relative uncertainties yet because the file may not be standardized yet.
+                if type(G.referenceFileUncertainties) == type('string'):
+                    pass
+                    #Then need to open the file... need to also do the division since the file should already have either standard or relative uncertainties.
+                    #TODO: add more lines of code here later.
+        #save each global variable into the class objects 
+
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNamesList
@@ -1143,16 +1223,35 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
     elif len(referenceFormsList) == len(referenceFileNamesList):
         #So just set listOfForms equal to forms
         listOfForms = referenceFormsList
-    #Initialize ReferenceDataAndFormsList so it can be appended to
-    ReferenceDataAndFormsList = []
+    #Initialize ReferenceDataList so it can be appended to
+    ReferenceDataList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNamesList)):
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[i],listOfForms[i])
-        ReferenceDataAndFormsList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
+        ReferenceDataList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
         #save each global variable into the class objects 
-        ReferenceDataAndFormsList[i].ExportAtEachStep = G.ExportAtEachStep
-        ReferenceDataAndFormsList[i].iterationSuffix = G.iterationSuffix
-    return ReferenceDataAndFormsList
+        ReferenceDataList[i].ExportAtEachStep = G.ExportAtEachStep
+        ReferenceDataList[i].iterationSuffix = G.iterationSuffix
+        if G.calculateUncertaintiesInConcentrations == True:
+            if type(G.referenceFileUncertainties) != type(None):
+                if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
+                    #TODO: The below results in "nan" values. It would be better to change it to make zeros using a numpy "where" statement.
+                    G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Maks sure we have a float.
+                    #Get what we need.
+                    provided_reference_patterns = ReferenceDataList[i].provided_reference_patterns
+                    provided_reference_patterns_without_masses = ReferenceDataList[i].provided_reference_patterns[:,1:] #[:,0] is mass fragments, so we slice to remove those. 
+                    #Make our variables ready.
+                    absolute_standard_uncertainties = provided_reference_patterns*1.0 #First we make a copy.
+                    absolute_standard_uncertainties_without_masses = (provided_reference_patterns_without_masses/provided_reference_patterns_without_masses)*G.referenceFileUncertainties #We do the division to get an array of ones. Then we multiply to get an array of the same size.
+                    #now we populate our copy's non-mass area.
+                    absolute_standard_uncertainties[:,1:] = absolute_standard_uncertainties_without_masses                                        
+                    ReferenceDataList[i].absolute_standard_uncertainties = absolute_standard_uncertainties
+                    #We can't convert to relative uncertainties yet because the file may not be standardized yet.
+                if type(G.referenceFileUncertainties) == type('string'):
+                    pass
+                    #Then need to open the file... need to also do the division since the file should already have either standard or relative uncertainties.
+                    #TODO: add more lines of code here later.
+    return ReferenceDataList
 
 '''
 InterpolateReferencePatterns is a function used in the reference pattern time chooser feature when a gap occurs between two time ranges
@@ -2344,7 +2443,7 @@ class MSReference (object):
                     self.ionizationEfficienciesList[moleculeIndex] = MatchingMID_RS_Values[0]
                     self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownIonizationFactorFromProvidedCSV' #A molecule in the reference data is also in the ionization data
                 elif matchingMolecule == False: #Otherwise matchingMolecule is False which means its not in the data from literature.  So we will approximate the ionization factor based on a linear fit of the data from literature that share the molecule's type or use the Madix and Ko equation
-                    if self.knownMoleculesIonizationTypes[moleculeIndex] != None and self.knownMoleculesIonizationTypes[moleculeIndex] != 'unknown': #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
+                    if type(self.knownMoleculesIonizationTypes[moleculeIndex]) != type(None) and self.knownMoleculesIonizationTypes[moleculeIndex] != 'unknown': #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
                         #Then get an estimate by performing a linear fit on the data in the MID Dictionary
 			#TODO:The program currently only takes in one type but it is a desired feature to allow users to put in multiple types such as type1+type2 which would make a linear fit of the combined data between the two types
 			#TODO continued:The user should also be able to put in type1;type2 and the program would find the ionization factor using a linear fit of data from type1 and using a linear fit of data from type2.  The largest of the two ionization factors would be used.
@@ -2405,6 +2504,8 @@ class MolecularIonizationData (object):
 #G.massesUsedInSolvingMoleculesForThisPoint keeps track of anything solved by SLSUnique.
 #original_list_of_mass_fragments (array of mass fragments) vs. used_mass_fragments (array of 0 and 1 for which ones have been used)
 #molecules_unedited (list of strings) vs.   solvedmolecules (array of 0 and 1 for which ones have been solved)
+#matching_correction_values is not only a trimmed down version of correction_values, it is also transposed.
+#uncertainties_dict contains all of the uncertainties including the dynamic variable versions that get changed during SLSUniqueFragments
     
 #this function compares the list of chosen mass fragments and those monitored and makes a raw signal
 #array out of this data, which will be used with the inverse method to find percent signal and composition
@@ -2526,23 +2627,23 @@ def IndElemSignificanceCalculator(rowDataArray, specifiedColumnIndex, moleculesL
     #for each value in the array
 
     if minThreshold == 0: minThreshold=None #the code is written to have minThreshold as None or not None, but 0 counts as None  for this purpose.
-    if minThreshold != None: #assume the minThreshold is some kind of number, and use it to calculate and cap the indSummationTerm.
+    if type(minThreshold) != type(None): #assume the minThreshold is some kind of number, and use it to calculate and cap the indSummationTerm.
         indSummationTermCap = maxIntensityPossible/minThreshold - 1 #note that the 100 is the default maxIntensityPossible, with the assumption that standardized intensities  are capped at 100.
     
     for moleculecounter in range(length):
         if rowDataArray[moleculecounter] != 0: #if the value is not zero, calculate 
-            if minThreshold == None: #just calculate the indSummationTerm as normal.
+            if type(minThreshold) == type(None): #just calculate the indSummationTerm as normal.
                 #calculates the unweighted ratio of each value, scaled by the likelihood of that molecule 
                 indSummationTerm = abs((moleculesLikelihood[moleculecounter]*rowDataArray[moleculecounter])**float(-1)*(moleculesLikelihood[specifiedColumnIndex]*rowDataArray[specifiedColumnIndex]-1))
                 allSummationTerms.append(indSummationTerm)       
-            if minThreshold != None: #assume the minThreshold is some kind of number, and use it to calculate and cap the indSummationTerm.
+            if type(minThreshold) != type(None): #assume the minThreshold is some kind of number, and use it to calculate and cap the indSummationTerm.
                 indSummationTerm = abs((moleculesLikelihood[moleculecounter]*rowDataArray[moleculecounter])**float(-1)*(moleculesLikelihood[specifiedColumnIndex]*rowDataArray[specifiedColumnIndex]-1))
                 if indSummationTerm > indSummationTermCap: indSummationTerm = indSummationTermCap
                 allSummationTerms.append(indSummationTerm)
         if rowDataArray[moleculecounter] == 0: 
-            if minThreshold == None: 
+            if type(minThreshold) == type(None): 
                 pass #the pass is like allSummationTerms.append(0) #if the intensity/value is zero, and we don't have a minThreshold to use, then the final value will be zero as well.
-            if minThreshold != None: #else assume the minThreshold is some kind of number.
+            if type(minThreshold) != type(None): #else assume the minThreshold is some kind of number.
                 indSummationTerm = indSummationTermCap #use the cap directly if the term for rowDataArray[moleculecounter] == 0, because that means a denominator of 0 which is like infinity. 
                 allSummationTerms.append(indSummationTerm)            
     #the following line can be replace with code such as "significance = (sum(allSummationTerms)**SumCoeffient)*(array[specifiedColumnIndex]**ValueCoefficent)"
@@ -2956,7 +3057,7 @@ def OptimizingFinisher(molecules,specifications,matching_correction_values,rawsi
         #answers = initialGuess
     return answers
 
-def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited):   
+def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited, uncertainties_dict={}):   
     #initialize a variable for moleculeIndex before the loop across all molecules.
     moleculeIndexIncludingDeletions = 0
     for moleculeIndex in range(remaining_num_molecules):#array-indexed for loop. Ideally, we'll do SLS once for each molecule.
@@ -2976,20 +3077,23 @@ def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, r
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
             remaining_num_molecules = remaining_num_molecules -1
             moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions - 1 
+            if len(uncertainties_dict) > 0:
+                if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                    uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],(moleculeIndexIncludingDeletions),axis = 1)
         #increase the index no matter what, to go to next part of loop.
         moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions + 1
     #connect to return variables after the loop:
     remaining_correction_factors_SLS_after_exclusion = remaining_correction_factors_SLS
     remaining_reference_intensities_SLS_after_exclusion = remaining_reference_intensities_SLS
     remaining_molecules_SLS_after_exclusion = remaining_molecules_SLS
-    return remaining_num_molecules, solutions, solvedmolecules, remaining_correction_factors_SLS_after_exclusion, remaining_reference_intensities_SLS_after_exclusion, remaining_molecules_SLS_after_exclusion
+    return remaining_num_molecules, solutions, solvedmolecules, remaining_correction_factors_SLS_after_exclusion, remaining_reference_intensities_SLS_after_exclusion, remaining_molecules_SLS_after_exclusion, uncertainties_dict
     
 #this function is a path is sequential linear subtraction, which can be used alongside the inverse
 #method or as opposed to it. Either way, it only produces one set of values, so it has no need for the 
 #data compressor function and starts right after the correction values are obtained
 #TODO: make some kind of unit test that tests a good order being chosen.
-def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, timeIndex, time):
-    #FIXME: I am using the ReferenceData.mass_fragment_numbers_monitored but it needs to be passed in from Reference or Experimental datal.
+def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, timeIndex, time, uncertainties_dict={}):
+    #FIXME: I am using the currentReferenceData.mass_fragment_numbers_monitored but it needs to be passed in from Reference or Experimental datal.
     try:
         type(G.massesUsedInSolvingMoleculesForThisPoint)
     except: #This means somebody is trying to call the function directly and does not need G.massesUsedInSolvingMoleculesForThisPoint.  Probably due to using a unit test or best mass frag chooser.
@@ -2998,6 +3102,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     # This is creating a local copy of 'monitored_reference_intensities' which will become
     # truncated as the molecules are solved and masses are removed
     remaining_reference_intensities_SLS = copy.deepcopy(monitored_reference_intensities)
+    
 
     # This is creating a local copy of 'matching_correction_values' which will become
     # truncated as the molecules are solved and masses are removed
@@ -3018,6 +3123,16 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     remaining_molecules_SLS = copy.deepcopy(molecules)
     molecules_unedited = copy.deepcopy(molecules) #old variable, but being kept to prevent need to change things.
     
+    if len(uncertainties_dict) > 0: #This means that the uncertainties_dict argument has been passed in with values to use.
+        uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['matching_correction_values_relative_uncertainties'])
+        if type(uncertainties_dict['rawsignals_absolute_uncertainties']) != type(None):
+            uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['rawsignals_absolute_uncertainties'])
+        elif type(uncertainties_dict['rawsignals_absolute_uncertainties']) == type(None): #if it's a None type, we need to make a zeros array because we *will* need to populate it.
+            uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = remaining_rawsignals_SLS*0.0 #This will give the correct size and shape.
+        if not 'concentrations_relative_uncertainties_one_time' in uncertainties_dict:
+            uncertainties_dict['concentrations_relative_uncertainties_one_time'] = numpy.zeros(len(molecules))
+        if not 'concentrations_absolute_uncertainties_one_time' in uncertainties_dict:
+            uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = numpy.zeros(len(molecules))
 
     #initiailzing some lists for population (and truncation).
     nonZeroCorrectionValuesList = []
@@ -3047,6 +3162,9 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,(moleculeIndexIncludingDeletions),axis = 1)
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,(moleculeIndexIncludingDeletions))      
             moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions - 1 
+            if len(uncertainties_dict) > 0:
+                if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                    uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],(moleculeIndexIncludingDeletions),axis = 1)
         moleculeIndexIncludingDeletions = moleculeIndexIncludingDeletions + 1
     num_remaining_molecules_before_loop = len(remaining_correction_factors_SLS[0,:]) #could have also used a different array or way of doing this.
     
@@ -3080,9 +3198,9 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             
             #Now we need to actually delete the molecules that have 0's thanks to the signalThreshold filter. The delting is what excludeEmptyMolecules does.
             remaining_num_molecules, solutions, solvedmolecules, remaining_correction_factors_SLS, remaining_reference_intensities_SLS, \
-                                            remaining_molecules_SLS = excludeEmptyMolecules(remaining_num_molecules, solutions,  \
+                                            remaining_molecules_SLS, uncertainties_dict = excludeEmptyMolecules(remaining_num_molecules, solutions,  \
                                             solvedmolecules, remaining_monitored_reference_intensities, remaining_correction_factors_SLS, \
-                                            remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited)  
+                                            remaining_reference_intensities_SLS, remaining_molecules_SLS, molecules_unedited, uncertainties_dict)  
             numMoleculesExcluded = remaining_num_molecules_before_excluding - remaining_num_molecules #note that here remaining_num_molecules is after excluding.
 
             if numMoleculesExcluded > 0:#reset this variable.            
@@ -3161,7 +3279,17 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         for massFragmentIndex_i in range(remaining_num_MassFragments):#array-indexed for loop (over all fragments)
             referenceIntensitiesAtThatMassFragment = remaining_reference_intensities_SLS[massFragmentIndex_i]
             correctionFactorsAtThatMassFragment = remaining_correction_factors_SLS[massFragmentIndex_i]
+            if len(uncertainties_dict) > 0: #Just mimicing the above line to pass on the uncertainties.
+                if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                    correctionFactorsUncertaintiesAtThatMassFragment = uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'][massFragmentIndex_i]
             signalsAtThatMassFragment = remaining_rawsignals_SLS[massFragmentIndex_i]
+            if len(uncertainties_dict) > 0: #Just mimicing the above line to pass on the uncertainties.
+                if type(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) != type(None):
+                    signalsAtThatMassFragmentForThisSLS_absolute_uncertainty = uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'][massFragmentIndex_i]
+                else:
+                    signalsAtThatMassFragmentForThisSLS_absolute_uncertainty = 0 #We will set it to zero here if there is no uncertainty provided.
+            else:
+                signalsAtThatMassFragmentForThisSLS_absolute_uncertainty = 0 #We will set it to zero here if there is no uncertainty provided.
             #this line checks if that mass fragment is unique to a particular molecule.
             if numpy.count_nonzero(referenceIntensitiesAtThatMassFragment) == 1:
                 #the nonzero value will be the one at the maximum intensity for the reference pattern.
@@ -3179,11 +3307,33 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 if significantFragment == True:
                     #now make a tuple with the unique standardized intensity in the front so we can sort by that
                     correctionFactorOfUniqueIntensity = correctionFactorsAtThatMassFragment[moleculeIndexOfUniqueIntensity]
+                    if len(uncertainties_dict) > 0: #Just mimicing the above line to pass on the uncertainties.
+                        if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                            correctionFactorOfUniqueIntensity_relative_uncertainty = correctionFactorsUncertaintiesAtThatMassFragment[moleculeIndexOfUniqueIntensity]
+                        else: 
+                            correctionFactorOfUniqueIntensity_relative_uncertainty = 0
+                    else: 
+                        correctionFactorOfUniqueIntensity_relative_uncertainty = 0
                     #TODO: consider changing the primary weighting to valueOfUniqueStandardizedIntensity*signalsAtThatMassFragment
                     #and/or to a user specified argument.
                     #Note that for now, by having signals as the second slot, if two molecules each have 100% that they will sort by intensity of signals next.
-                    primaryWeightingSLS = valueOfUniqueStandardizedIntensity
-                    uniqueFragmentTuple = (primaryWeightingSLS, signalsAtThatMassFragment, massFragmentIndex_i, moleculeIndexOfUniqueIntensity, correctionFactorOfUniqueIntensity)
+                    
+                    #This is for using error for primary WeightingSLS (and also prevents need to calculate it again later).
+                    #now need to use the chosen mass to calculate concentration.
+                    concentrationOfConsideredMolecule_relative_uncertainty = 1 #This is a default value in case the length is zero below such that it can't be calculated.
+                    concentrationOfConsideredMolecule = ((float(signalsAtThatMassFragment))/float(correctionFactorOfUniqueIntensity))
+                    if len(uncertainties_dict) > 0:
+                            #We do not put a second "if" statement in here like for the other places, because this uncertainty will be calculated from either type (reference or collected), and if a type isn't present it is already set to 0 above.
+                            #To calculate the Uncertainty:
+                            #we use the following formula:  if Q = (a*b)/(c*d), Q_relative_uncertainty = sqrt( a_relative_uncertainty^2 + b_relative_uncertainty^2 + c_relative_uncertainty^2 + d_relative_uncertainty^2)
+                            #Note that there is no difference between how we propagate for multiplication and division in this formula: they can be done in the same propagation step.
+                            signalsAtThatMassFragmentForThisSLS_relative_uncertainty = signalsAtThatMassFragmentForThisSLS_absolute_uncertainty/signalsAtThatMassFragment #We are putting this as zero for now. TODO: Figure out if it should be non-zero instead of later step.
+                            #We already have correctionFactorOfUniqueIntensity_relative_uncertaintyForThisSLS
+                            concentrationOfConsideredMolecule_relative_uncertainty = (correctionFactorOfUniqueIntensity_relative_uncertainty**2 + signalsAtThatMassFragmentForThisSLS_relative_uncertainty**2)**0.5
+                    #G.slsWeighting is a list-like object: [1,1,1,1] An slsWeighting value of 0 makes any of the three below factors into a coefficent of 1. A value of 1 turns it on, higher values make it even more strongly weighted.
+                    #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
+                    moleculeWeightingSLS = (concentrationOfConsideredMolecule_relative_uncertainty**(-1*G.slsWeighting[0]))*(concentrationOfConsideredMolecule**G.slsWeighting[1])*(valueOfUniqueStandardizedIntensity**G.slsWeighting[2])*(signalsAtThatMassFragment**G.slsWeighting[3])
+                    uniqueFragmentTuple = (moleculeWeightingSLS, signalsAtThatMassFragment, massFragmentIndex_i, moleculeIndexOfUniqueIntensity, correctionFactorOfUniqueIntensity, correctionFactorOfUniqueIntensity_relative_uncertainty, signalsAtThatMassFragmentForThisSLS_absolute_uncertainty, concentrationOfConsideredMolecule, concentrationOfConsideredMolecule_relative_uncertainty)
                     tuplesOfUniqueFragmentsList.append(uniqueFragmentTuple)
         #now we sort according to the biggest standardized intensities (signals as second spot), in descending order.
         tuplesOfUniqueFragmentsList.sort(reverse=True) # there is no return by list sort, the list object is directly modified.
@@ -3197,14 +3347,27 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             used_mass_fragments[massFragmentIndexForThisSLS]=1 #TODO: This should be returned so that the SLSUniqueOrder.csv can have an accompanying file of SLSUniqueOrderMassFragments
             moleculeIndexForThisSLS = tupleForThisSLS[3]
             correctionFactorOfUniqueIntensityForThisSLS = tupleForThisSLS[4]
+            correctionFactorOfUniqueIntensity_relative_uncertaintyForThisSLS = tupleForThisSLS[5]
+            signalsAtThatMassFragmentForThisSLS_absolute_uncertainty = tupleForThisSLS[6]
             chosenMolecule = remaining_molecules_SLS[moleculeIndexForThisSLS] #This line is for debugging etc.
             chosenMolecule_original_molecular_index = list(molecules_unedited).index(chosenMolecule) #we take the chosenMolecule string, and search for it in the original list of molecules to get the original index.
             #TODO: make (or better yet, take in) a list called "moleculeSolvingOrder", append chosenMolecule to that, and return that from this function. Then we can export a file from main called moleculeSolvingOrder for each time point.
             #TODO continued: The reason to take in a list (default value blank list) is because SLSCommon may call SLSunique multiple times, so we need to append rather than just making a blank list each time.
 	
+            
             #now need to use the chosen mass to calculate concentration.
             concentrationOfMoleculeForThisSLS = ((float(signalsAtThatMassFragmentForThisSLS))/float(correctionFactorOfUniqueIntensityForThisSLS))
-            
+            if len(uncertainties_dict) > 0:
+                    #We do not put a second "if" statement in here like for the other places, because this uncertainty will be calculated from either type (reference or collected), and if a type isn't present it is already set to 0 above.
+                    #To calculate the Uncertainty:
+                    #we use the following formula:  if Q = (a*b)/(c*d), Q_relative_uncertainty = sqrt( a_relative_uncertainty^2 + b_relative_uncertainty^2 + c_relative_uncertainty^2 + d_relative_uncertainty^2)
+                    #Note that there is no difference between how we propagate for multiplication and division in this formula: they can be done in the same propagation step.
+                    signalsAtThatMassFragmentForThisSLS_relative_uncertainty = signalsAtThatMassFragmentForThisSLS_absolute_uncertainty/signalsAtThatMassFragmentForThisSLS #We are putting this as zero for now. TODO: Figure out if it should be non-zero instead of later step.
+                    #We already have correctionFactorOfUniqueIntensity_relative_uncertaintyForThisSLS
+                    concentrationOfMoleculeForThisSLS_relative_uncertainty = (correctionFactorOfUniqueIntensity_relative_uncertaintyForThisSLS**2 + signalsAtThatMassFragmentForThisSLS_relative_uncertainty**2)**0.5
+                    uncertainties_dict['concentrations_relative_uncertainties_one_time'][chosenMolecule_original_molecular_index]=concentrationOfMoleculeForThisSLS_relative_uncertainty
+                    uncertainties_dict['concentrations_absolute_uncertainties_one_time'][chosenMolecule_original_molecular_index]=abs(concentrationOfMoleculeForThisSLS_relative_uncertainty*concentrationOfMoleculeForThisSLS)
+                      
             if G.slsUniquePositiveConcentrationsOnly == True:
                 if concentrationOfMoleculeForThisSLS <= 0:
                     concentrationOfMoleculeForThisSLS = 0  #We can't just skip the below lines, because the molecule gets removed from arrays and info gets exported etc.
@@ -3221,12 +3384,16 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             #print("Debugging",original_list_of_mass_fragments)
             #print("Debugging",used_mass_fragments)
             
-            #now we need to collect the list of masses/signals and correction factors that correspond to that molecule, i.e. moleculeIndexForThisSLS, which are nonzero.
-            for massFragmentIndex_jjj in range(remaining_num_MassFragments):
-                if remaining_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS] != 0:#If the value in the correction_values is not zero, it is kept
-                    nonZeroCorrectionValuesList.append(remaining_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS]) 
-                    signalsCorrespondingToNonZeroCorrectionValuesList.append(remaining_rawsignals_SLS[massFragmentIndex_jjj])  #This only appends signals where a correction value exists for *this* molecule, molecule_ii.
-                    
+            
+            ## These below lines will be preserved for debugging purposes.
+            # #now we need to collect the list of masses/signals and correction factors that correspond to that molecule, i.e. moleculeIndexForThisSLS, which are nonzero.
+            # for massFragmentIndex_jjj in range(remaining_num_MassFragments):
+                # if remaining_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS] != 0:#If the value in the correction_values is not zero, it is kept
+                    # nonZeroCorrectionValuesList.append(remaining_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS]) 
+                    # signalsCorrespondingToNonZeroCorrectionValuesList.append(remaining_rawsignals_SLS[massFragmentIndex_jjj])  #This only appends signals where a correction value exists for *this* molecule, molecule_ii.
+            #We need to propagate the error that is in the concentration into the simulated raw signals.
+            
+            
             ## These print statements will be preserved for debugging purposes.
             #print("Debugging", nonZeroCorrectionValuesList)
             #print("Debugging","here are the signals to subtract from", signalsCorrespondingToNonZeroCorrectionValuesList)
@@ -3238,14 +3405,27 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             #molecules relative amounts could be solved for
             #initializing an array to be populated with the amount to subtract.       
             solvedSignalsForSubtractionArray = numpy.zeros([remaining_num_MassFragments,1])                           
+            solvedSignalsForSubtractionArray_relative_uncertainties = numpy.zeros([remaining_num_MassFragments,1])                           
             for massFragmentIndex_jj in range(remaining_num_MassFragments):#array-indexed for loop. #This is being called massFragmentIndex_jj to distinguish it from the outer loop.
                 if remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
                     solvedSignalsForSubtractionArray[massFragmentIndex_jj] = remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
+                    if len(uncertainties_dict) > 0: #Just propagating the error to make the concentration uncertainties, including the signal associated with massFragmentIndexForThisSLS.
+                        solvedSignalsForSubtractionArray_relative_uncertainties[massFragmentIndex_jj] = (concentrationOfMoleculeForThisSLS_relative_uncertainty**2+(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'][massFragmentIndex_jj,moleculeIndexForThisSLS])**2)**0.5
+
+            #The below line is the key line where the subtraction is done. 
+            remaining_rawsignals_SLS = remaining_rawsignals_SLS - solvedSignalsForSubtractionArray        
+            if len(uncertainties_dict) > 0: #Now need to propagating the error to make the concentration uncertainties. First need to multiply times signal to get absolute uncertainties.
+                solvedSignalsForSubtractionArray_absolute_uncertainties = abs(solvedSignalsForSubtractionArray_relative_uncertainties * solvedSignalsForSubtractionArray)
+                #now need to take the remaining_rawsignals_SLS uncertainties, and combine them after zeroing out the signal associated with massFragmentIndexForThisSLS.
+                uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'][massFragmentIndexForThisSLS] = 0.0
+                #To combine the uncertainties we do the   c_absolute_uncertainty = sqrt(a_absolute_uncertainty^2 + a_absolute_uncertainty^2).  For arrays, need to use numpy.square to square each element in the array. For arbitrary powers, we use numpy.power, which is slower and less accurate.
+                sqrt_term = numpy.square(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) + numpy.square(solvedSignalsForSubtractionArray_absolute_uncertainties)
+                uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = numpy.power(sqrt_term,0.5)
+                
+            #Since it's done, we'll update the solved molecules array etc.
             solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
             solvedmolecules[chosenMolecule_original_molecular_index] = 1 #This updates a list that keeps track of which molecules have been used up.
 
-            #The below line is the key line where the subtraction is done.
-            remaining_rawsignals_SLS = remaining_rawsignals_SLS - solvedSignalsForSubtractionArray        
        
             #now delete that molecule from the correction values array, etc.
             remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,(moleculeIndexForThisSLS),axis = 1)
@@ -3253,6 +3433,9 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,moleculeIndexForThisSLS)
             #update this variable:
             remaining_num_molecules = remaining_num_molecules -1
+            if len(uncertainties_dict) > 0:
+                if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                    uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],(moleculeIndexForThisSLS),axis = 1)
             #Reset these lists to start again.
             nonZeroCorrectionValuesList = []
             signalsCorrespondingToNonZeroCorrectionValuesList = []
@@ -3323,11 +3506,16 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,correctionIndex-place_holder,axis = 0)
                 remaining_rawsignals_SLS = numpy.delete(remaining_rawsignals_SLS,correctionIndex-place_holder,axis = 0)
                 remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,correctionIndex-place_holder,axis = 0)
+                if len(uncertainties_dict) > 0: #Will just mimic the deletions done for the above lines in the uncertainties.
+                    if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                        uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],correctionIndex-place_holder,axis = 0)
+                    if type(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) != type(None):
+                        uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'],correctionIndex-place_holder,axis = 0)
                 place_holder = place_holder + 1#since the arrays are being deleted, this keeps the indexing correct
     if sum(solvedmolecules) == 0:#if none of the solutions have been found
         solutions = []
         solvedmolecules = []   
-    return [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules]
+    return [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules, uncertainties_dict]
     
 #this sls method cuts smaller, solvable arrays out of the large array and uses numpy.linalg.solve to find the signals
 #relative to Co for those molecules, then via the SLSMethod function below the function works in conjunction with the 
@@ -3335,7 +3523,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
 #three (ultimately, any size array can be solved via this method (if the method went to infinity rather than stopping at
 #3) provided that the array were square- for, in fact, none of these method (save for the brute method) can solve for the 
 #signals if the first array is not square
-def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,scaledConcentrationsarray,molecules_unedited,conversionfactor,datafromcsv,DataRangeSpecifierlist,objectiveFunctionType,counterforspecifications,maxPermutations = 100001):
+def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,scaledConcentrationsarray,molecules_unedited,conversionfactor,datafromcsv,DataRangeSpecifierlist,objectiveFunctionType,counterforspecifications,maxPermutations = 100001, uncertainties_dict={}):
 
     #TODO: #FIXME: It seems 
     # like this function forces Brute towards the end, rather than checking 
@@ -3469,6 +3657,11 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                                                     remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,deleter-place_holder,axis = 0)
                                                     remaining_rawsignals_SLS = numpy.delete(remaining_rawsignals_SLS,deleter-place_holder,axis = 0)
                                                     remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,deleter-place_holder,axis = 0)
+                                                    if len(uncertainties_dict) > 0: #will just mimic the above lines for the uncertainties.
+                                                        if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                                                            uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],deleter-place_holder,axis = 0)
+                                                        if type(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) != type(None):
+                                                            uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'],deleter-place_holder,axis = 0)
                                                     place_holder = place_holder + 1
                                                     place_holder2 = place_holder2 + 1
                                     place_holder = 0
@@ -3538,7 +3731,10 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
 #this function simply calls the other functions to be used, based on the user input pathway, that means that this
 #function can send the sls to unique or common fragments, to inverse or brute method after, and sends the data back 
 #and forth between the unique and common fragments for the common fragments method
-def SLSMethod(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline,timeIndex,conversionfactor,datafromcsv,molecules_copy,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,objectiveFunctionType,time,maxPermutations=100001, bestMassFragChooser=False):
+def SLSMethod(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline,timeIndex,conversionfactor,datafromcsv,molecules_copy,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,objectiveFunctionType,time,maxPermutations=100001, bestMassFragChooser=False, uncertainties_dict={}):
+    #FIXME: uncertainties_dict is supposed to be passed in as an argument, but for now I am taking it from othe globals because I had some strange empty list error for the solutions concentrations when I tried passing it in.
+    uncertainties_dict = G.uncertainties_dict
+
     # This is creating a local copy of the monitored_reference_intensities which will become
     # truncated as the molecules are solved and masses are removed
     remaining_reference_intensities_SLS = copy.deepcopy(monitored_reference_intensities)
@@ -3559,7 +3755,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
     [uniqueOrCommon,slsFinish,distinguished] = SLSChoices
                    
     if uniqueOrCommon == 'unique': #user input
-        [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules] = SLSUniqueFragments(remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time)
+        [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules, uncertainties_dict] = SLSUniqueFragments(remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time, uncertainties_dict)
     #should the user choose the common fragments method, it must be realized that once you solve a two by two or three
     #by three array using the common fragments method you can then possibly solve using the unique fragments method once 
     #again. This while loop makes sure that as long as there are possibilities after either method is used, it will keep
@@ -3584,7 +3780,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                                     zerosrows = zerosrows + 1
                     if zerosrows >= desirednum: #if the number of matching rows is equal to or greater than the size being looked for
                         if desirednum == 1: #unique method used if there are rows with only one correction value
-                            [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules] = SLSUniqueFragments (remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time)
+                            [remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,molecules_unedited,solvedmolecules, uncertainties_dict] = SLSUniqueFragments (remaining_molecules_SLS,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, timeIndex, time, uncertainties_dict)
                             if len(solvedmolecules) != 0:
                                 unique.append([solutions,molecules_unedited,solvedmolecules])
                                 order.append('unique')
@@ -3593,7 +3789,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                                 place_holder = place_holder - 1 #while loop can stop- so it does not get stuck
                         else: #common fragments method 
                             
-                            [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,solvedmolecules] = SLSCommonFragments (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,remaining_molecules_SLS,scaledConcentrationsarray,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,objectiveFunctionType,timeIndex, maxPermutations)
+                            [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,solvedmolecules, uncertainties_dict] = SLSCommonFragments (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,remaining_molecules_SLS,scaledConcentrationsarray,molecules_copy,conversionfactor,datafromcsv,DataRangeSpecifierlist,objectiveFunctionType,timeIndex, maxPermutations, uncertainties_dict)
                             if len(solvedmolecules) != 0:
                                 common.append([solutions,molecules_unedited,solvedmolecules])
                                 order.append('common')
@@ -3734,7 +3930,7 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
                               mass_fragment_numbers,ThresholdList,answer,time,
                               conversionfactor = [],datafromcsv = [],DataRangeSpecifierlist = [],
                               SLSChoices = [],permutationNum = [],scaledConcentrationsarray = [],objectiveFunctionType = [],
-                              maxPermutations = 100001):
+                              maxPermutations = 100001, uncertainties_dict={}):
 
     # This is creating a local copy of the monitored_reference_intensities which will become
     # truncated as the molecules are solved and masses are removed
@@ -3797,6 +3993,12 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
             remaining_rawsignals_SLS = numpy.delete(remaining_rawsignals_SLS,rawcounter-place_holder,axis = 0)
             remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,rawcounter-place_holder,axis = 0)
             remaining_reference_intensities_filter = numpy.delete(remaining_reference_intensities_filter,rawcounter-place_holder,axis = 0)
+            if len(uncertainties_dict) > 0: #will mimic the above lines for uncertainties.          
+                if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                    uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],rawcounter-place_holder,axis = 0)
+                if type(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) != type(None):
+                    uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'],rawcounter-place_holder,axis = 0)
+
             place_holder = place_holder + 1
             for monitored_reference_intensitiescounter in range(len(monitored_reference_intensities_copy[0,:])):#array-indexed for loop
                 if monitored_reference_intensities_copy[rawcounter,monitored_reference_intensitiescounter] > sensitivityThresholdValue:#if the sensitivity is above the default/input then that mass fragment is not deleted.
@@ -3808,6 +4010,9 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
             remaining_molecules_SLS = numpy.delete(remaining_molecules_SLS,absentmoleculescounter-place_holder2)
             remaining_reference_intensities_filter = numpy.delete(remaining_reference_intensities_filter,absentmoleculescounter-place_holder2,axis = 1)
             remaining_correction_factors_SLS = numpy.delete(remaining_correction_factors_SLS,absentmoleculescounter-place_holder2,axis = 1)
+            if len(uncertainties_dict) > 0: #will mimic the above lines for uncertainties.          
+                if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                    uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],absentmoleculescounter-place_holder2,axis = 1)
             place_holder2 = place_holder2 + 1    
     #this last section of code just adds the absent molecules together with the solutions to get all of the molecules needed, and
     #prints off the results using a copy of the molecules array made earlier; this part of the function is very similar to what the
@@ -4158,8 +4363,12 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
     if dataType == 'scaled':
         formatedDataHeader = ['%s Concentration Relative to CO' % molecule for molecule in dataHeader]
     if dataType == 'concentration':
-        label = ' Concentration(%s)' % units
+        label = 'Concentration(%s)' % units
         formatedDataHeader = [molecule + label for molecule in dataHeader]
+    if dataType == 'percent_concentration':
+        label = 'Percent' 
+        formatedDataHeader = [molecule + label for molecule in dataHeader]
+
     #extraLine is used to create CSV files that conform to MSRESOLVE's import requirements i.e. having a row for comments at the top
     extraLine = False
     if dataType == 'Experiment':
@@ -4498,6 +4707,11 @@ def main():
             G.iterationSuffix = iterationDirectorySuffix
         elif not G.iterativeAnalysis:
             G.iterationSuffix = ''
+    
+    try:
+        type(G.calculateUncertaintiesInConcentrations) #Need to check if this variable exists. If it does not, then fill it with None.
+    except:
+        G.calculateUncertaintiesInConcentrations = None
 
     #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
     if G.iterativeAnalysis and G.iterationNumber != 1:
@@ -4706,8 +4920,6 @@ def main():
         #check to make sure that there are enough mass fragments to solve for each variable. 
         if len(ExperimentData.mass_fragment_numbers) < len(ReferenceDataList[0].molecules):
             raise SystemError("There are too few mass fragments to solve for the number of molecules provided. \nData Analysis has been ended.")
-            
-
         
         # Since SlSUniqueFragments is potentially used in a number of the analysis options
         # set up the 'SLSUniqueOrder.csv' file headers here
@@ -4771,6 +4983,25 @@ def main():
             #populate the mass fragments monitored subobject for the current reference pattern
             currentReferenceData.mass_fragment_numbers_monitored = ExperimentData.mass_fragment_numbers
             
+            #populate the uncertainties_dict now that the reference pattern has been chosen. First make it empty, then add more if warranted.
+            uncertainties_dict = {}
+            if (G.calculateUncertaintiesInConcentrations == True):
+                if type(G.referenceFileUncertainties) != type(None):  #This means we should have uncertainties in the reference file.
+                    uncertainties_dict['correction_values_relative_uncertainties'] = currentReferenceData.correction_values_relative_uncertainties
+                    uncertainties_dict['matching_correction_values_relative_uncertainties'] = currentReferenceData.matching_correction_values_relative_uncertainties
+                elif type(G.referenceFileUncertainties) == type(None):
+                    uncertainties_dict['correction_values_relative_uncertainties'] = None
+                G.collectedFileUncertainties = None
+                if type(G.collectedFileUncertainties) != type(None):
+                    uncertainties_dict['rawsignals_absolute_uncertainties'] = ExperimentData.rawsignals_absolute_uncertainties*1.0
+                elif type(G.collectedFileUncertainties) == type(None):
+                    uncertainties_dict['rawsignals_absolute_uncertainties'] = None
+                uncertainties_dict['concentrations_relative_uncertainties_one_time'] = numpy.zeros(len(currentReferenceData.molecules))
+                uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = numpy.zeros(len(currentReferenceData.molecules))
+                    
+                # referenceCorrectionCoefficientsUncertainties does not matter because it is used to get correction_values_relative_uncertainties.
+                #referenceCorrectionCoefficientsIonizationUncertainties does not matter because it is used to get correction_values_relative_uncertainties.
+                
             G.massesUsedInSolvingMoleculesForThisPoint = numpy.zeros(len(currentReferenceData.molecules)) #initializing this for use inside SlSUnique and possibly elsewhere.
             G.massFragmentsArrayForThisPoint = currentReferenceData.mass_fragment_numbers_monitored*1.0
             
@@ -4804,6 +5035,8 @@ def main():
                     solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
 
             elif G.answer == 'sls' or G.answer == 'autosolver':#user input, the SLS method is chosen)
+                #FIXME: should be passing uncertainties_dict into SLSMethod, but when I try I get some kind of solutions error. Comes out as []. Since I am having trouble, I am just passing it through globals.
+                G.uncertainties_dict = uncertainties_dict
                 solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
                 if G.answer == 'autosolver':
                     if solutions.any() == None:
@@ -4823,7 +5056,6 @@ def main():
                     arrayline.append(ExperimentData.times[timeIndex])
                 arrayline.append(solutions[moleculecounter])
             arrayline = numpy.array(arrayline)
-            
 #            if G.fullBrute == 'yes':
 #                specifications = 
 #                arrayline = OptimizingFinisher(ReferenceData.molecules,  G.bruteOption)
@@ -4850,21 +5082,35 @@ def main():
                 arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption, G.maxPermutations, G.NegativeAnalyzerTopNContributors, G.NegativeAnalyzerBaseNumberOfGridIntervals)
                 
             if timeIndex == 0: #Can't vstack with an array of zeros or else the first time is 0 with all data points at 0 so make first row the first arrayline provided
-                concentrationsScaledToCOarray = arrayline
+                concentrationsScaledToCOarray = arrayline*1.0
             elif timeIndex > 0: #Everything else is appended via numpy.vstack
                 concentrationsScaledToCOarray = numpy.vstack((concentrationsScaledToCOarray,arrayline))
             correctionFactorArraysList.append(currentReferenceData.matching_correction_values) #populate the list with the proper correction values
+            if (G.calculateUncertaintiesInConcentrations == True):  #Keep track of uncertainties same way as concentrationsScaledToCOarray 
+                if timeIndex == 0: #NOTE: In the below lines we use a variable outside the dictionary because the dictionary gets reset with each iteration.
+                    concentrations_relative_uncertainties_all_times = uncertainties_dict['concentrations_relative_uncertainties_one_time'] *1.0
+                    concentrations_absolute_uncertainties_all_times = uncertainties_dict['concentrations_absolute_uncertainties_one_time']*1.0
+                elif timeIndex > 0: #Everything else is appended via numpy.vstack
+                    concentrations_absolute_uncertainties_all_times = numpy.vstack((concentrations_absolute_uncertainties_all_times,uncertainties_dict['concentrations_absolute_uncertainties_one_time']))
+                    concentrations_relative_uncertainties_all_times = numpy.vstack((concentrations_relative_uncertainties_all_times,uncertainties_dict['concentrations_relative_uncertainties_one_time']))
             if G.iterativeAnalysis: #If using iterative analysis, append the subtracted signals' matching correction values that were used to SS_matching_correction_values_TimesList
                 SS_matching_correction_values_TimesList.append(currentReferenceData.SSmatching_correction_values)
-            
-
                         
-        concentrationsScaledToCOarray[:,1:] = concentrationsScaledToCOarray[:,1:]/G.scaleRawDataFactor #correct for any scaling factor that was used during analysis.                                                          
+        concentrationsScaledToCOarray[:,1:] = concentrationsScaledToCOarray[:,1:]/G.scaleRawDataFactor #correct for any scaling factor that was used during analysis.
+        if (G.calculateUncertaintiesInConcentrations == True):#correct for any scaling factor that was used during analysis.
+            concentrations_absolute_uncertainties_all_times/G.scaleRawDataFactor
+            #The relative absolute uncertainties should not be divided.
+        
         resultsObjects['concentrationsScaledToCOarray'] = concentrationsScaledToCOarray #Store in the global resultsObjects dictionary
+        if (G.calculateUncertaintiesInConcentrations == True):
+            resultsObjects['concentrations_absolute_uncertainties_all_times'] = concentrations_absolute_uncertainties_all_times*1.0
+            resultsObjects['concentrations_relative_uncertainties_all_times'] = concentrations_relative_uncertainties_all_times*1.0
         if G.concentrationFinder == 'yes': #If using concentration finder
             concentrationsarray = copy.copy(concentrationsScaledToCOarray) #point concentrationsarray to a copy of concentrationsScaledToCOArray
             concentrationsarray[:,1:] = concentrationsarray[:,1:]*conversionFactorsAtEachTime #Multiply the data points by the appropriate conversion factor
             resultsObjects['concentrationsarray'] = concentrationsarray
+            if (G.calculateUncertaintiesInConcentrations == True): #If there is aconversion factor that also gets applies to absolute_uncertainties
+                resultsObjects['concentrations_absolute_uncertainties_all_times_scaled_to_unit'] = concentrations_absolute_uncertainties_all_times*conversionFactorsAtEachTime
         print('Data Analysis Finished.')
         #show net time for Data Analysis
         G.timeSinceLastCheckpoint = timeit.default_timer() - G.checkpoint
@@ -4879,6 +5125,13 @@ def main():
         ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = str('scaled'))
         times = concentrationsScaledToCOarray[:,0]#the times are just the first column of the array
         data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
+        if (G.calculateUncertaintiesInConcentrations == True): #This is scaled to CO, not scaled to unit (which is concentration finder case).
+            times_array_2D = numpy.transpose(numpy.atleast_2d(times)) #need to make it a 2D array with right direction to stack.
+            concentrations_absolute_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_absolute_uncertainties_all_times']))
+            concentrations_relative_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_relative_uncertainties_all_times']))
+            ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'scaled', units = None)
+            ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'percent_concentration', units = None)
+
         
  
         #Graph the concentration/relative signal data
@@ -4889,6 +5142,12 @@ def main():
             ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
             times = concentrationsarray[:,0]
             data = concentrationsarray[:,1:]
+            if (G.calculateUncertaintiesInConcentrations == True):
+                concentrations_absolute_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_absolute_uncertainties_all_times_scaled_to_unit']))
+                concentrations_relative_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_relative_uncertainties_all_times']))
+                ExportXYYYData(G.concentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
+                ExportXYYYData(G.concentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'percent_concentration', units = None)
+
         
             #Graph the concentration/relative signal data
             if G.grapher == 'yes':

@@ -171,6 +171,9 @@ def parseUserInput(currentUserInput):
     #    currentUserInput.sensitivityThresholdValue = parse.parallelVectorize(currentUserInput.sensitivityThresholdValue,len(chosenMoleculesForParsing))
         currentUserInput.rawSignalThresholdDivider = parse.parallelVectorize(currentUserInput.rawSignalThresholdDivider,len(chosenMassFragmentsForParsing))
         currentUserInput.rawSignalThresholdLimitPercent = parse.parallelVectorize(currentUserInput.rawSignalThresholdLimitPercent,len(chosenMassFragmentsForParsing))
+
+    #Uncertainties
+    
     
     #Negative Analyzer
     parse.strCheck(currentUserInput.negativeAnalyzerYorN,'negativeAnalyzerYorN')
@@ -342,6 +345,13 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['rawSignalThresholdLimit']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimit']
     SettingsVDictionary['rawSignalThresholdLimitPercent']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent']
  
+    SettingsVDictionary['calculateUncertaintiesInConcentrations'] 	=	    UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] 
+    SettingsVDictionary['referenceFileUncertainties'] 	=	    UserChoices['uncertainties']['referenceFileUncertainties'] 
+    SettingsVDictionary['collectedFileUncertainties']	=	    UserChoices['uncertainties']['collectedFileUncertainties']
+    SettingsVDictionary['referenceCorrectionCoefficientsUncertainties'] 	=	    UserChoices['uncertainties']['referenceCorrectionCoefficientsUncertainties'] 
+    SettingsVDictionary['referenceCorrectionCoefficientsIonizationUncertainties'] 	=	    UserChoices['uncertainties']['referenceCorrectionCoefficientsIonizationUncertainties'] 
+
+ 
     SettingsVDictionary['negativeAnalyzerYorN']   =UserChoices['negativeAnalyzerYorN']['on']
     if 'NegativeAnalyzerTopNContributors' in UserChoices['negativeAnalyzerYorN']:
         SettingsVDictionary['NegativeAnalyzerTopNContributors']   = UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerTopNContributors']
@@ -350,6 +360,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     
     SettingsVDictionary['answer']   = UserChoices['dataAnalysisMethods']['answer']
     SettingsVDictionary['uniqueOrCommon']   = UserChoices['dataAnalysisMethods']['uniqueOrCommon']
+    SettingsVDictionary['slsWeighting']= UserChoices['dataAnalysisMethods']['slsWeighting']
     SettingsVDictionary['slsFinish']   = UserChoices['dataAnalysisMethods']['slsFinish']
     SettingsVDictionary['slsUniquePositiveConcentrationsOnly']   = UserChoices['dataAnalysisMethods']['slsUniquePositiveConcentrationsOnly']
     SettingsVDictionary['bruteOption']   = UserChoices['dataAnalysisMethods']['bruteOption']
