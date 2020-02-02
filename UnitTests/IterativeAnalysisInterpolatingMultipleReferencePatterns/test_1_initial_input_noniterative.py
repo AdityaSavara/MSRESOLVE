@@ -8,7 +8,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 #//Input Files//
 referenceFileNamesList = ['AcetaldehydeNISTRefMixed2.csv','AcetaldehydeNISTRefMixed2Edit.csv'] #enter the file name of the file containing reference information
 referenceFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy'
-referencePatternTimeRanges = [[176,200],[250,400]] #Leave empty if not using reference pattern time chooser []
+referencePatternTimeRanges = [[176,250],[250,400]] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
 
 ionizationDataFileName = '_ProvidedIonizationData.csv'
@@ -197,6 +197,7 @@ negativeAnalyzerYorN = 'no'
 #Below the path for the analysis of the data; sls or inverse
 answer = 'sls'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
+slsWeighting = [0,0,1,0]
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
