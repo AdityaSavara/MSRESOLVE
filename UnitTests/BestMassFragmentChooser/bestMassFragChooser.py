@@ -60,6 +60,7 @@ def bestMassFragChooser(chosenMolecules,
     #The below options are only relevant if SLS is going to be used.  So they do not matter if the person is using useExtentOfSLSUniqueSolvable.
     if useExtentOfSLSUniqueSolvable == False:
         import UserInput as G
+        G.uncertainties_dict = {} #FIXME: This is only a temporary solution.
         #The 4th "theoretical" case of having no limits post-loop SLS does not make sense, because there is a risk of too many combinations (which is why we make limits).
         #So if someone tries to choose that, we force it into on the fly SLS (without limits).
         if (keep_N_ValuesInRoughUniquenessCheck == False and keep_N_ValuesInSignificanceFactorCheck == False) and onTheFlySLS == False:
@@ -144,9 +145,8 @@ def bestMassFragChooser(chosenMolecules,
     
     #The below options are only relevant if SLS is going to be used.  So they do not matter if the person is using useExtentOfSLSUniqueSolvable.
     if minimizeDependencies == False:
-        truncatedReferenceData.correction_values = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData) 
         #Create the correction values to be used in the SLS method
-        truncatedReferenceData.correction_values = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData)
+        truncatedReferenceData.correction_values, truncatedReferenceData.correction_values_relative_uncertainty = MSRESOLVE.CorrectionValuesObtain(truncatedReferenceData)
 
     
     #Need to reorder the list of molecular likelihoods so they match the class
