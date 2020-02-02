@@ -80,6 +80,7 @@ NegativeAnalyzerTopNContributors = 5
 NegativeAnalyzerBaseNumberOfGridIntervals = 5
 answer = 'sls'
 uniqueOrCommon = 'unique'
+slsWeighting = [0,0,1,0]
 slsFinish = 'inverse'
 bruteOption = 'ssr'
 distinguished = 'yes'
