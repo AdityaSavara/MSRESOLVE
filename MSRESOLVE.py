@@ -702,7 +702,13 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.knownIonizationFactorsRelativeToN2, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownIonizationFactorsRelativeToN2, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfFragmentationPatterns, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfFragmentationPatterns, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
-    
+    if G.calculateUncertaintiesInConcentrations == True: 
+        if type(G.referenceFileUncertainties) != type(None): #The [:,1:] is related to the mass fragements.  Just copying the two lines syntax from above.
+            trimmedAbsoluteUncertainties, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.absolute_standard_uncertainties[:,1:], 
+                                                                                                                    allMoleculesList, chosenMolecules, header_dtype_casting=str)  
+        #add a second dimension as above.
+        trimmedRefererenceData.absolute_standard_uncertainties = numpy.hstack((trimmedReferenceMF,trimmedAbsoluteUncertainties))
+
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
     #remove any zero rows that may have been created
@@ -729,10 +735,17 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments
     # remove the irrelevant mass data series from ExperimentData.mass_fragment_numbers
     # and the corresponding colums from ExperimentData.workingData
     trimmedExperimentData = copy.deepcopy(ExperimentData)
+    trimmedExperimentData2 = copy.deepcopy(ExperimentData) 
+    
     #print("MassFragChooser")
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
                                                                                                             chosenMassFragments, header_dtype_casting=float)
+    if type(G.collectedFileUncertainties) != type(None): #TODO: As of Feb 5th 2020, this if statement has been added but not tested. It simply mimics the above code.   The below function   trimDataMassesToMatchReference is similar and has been tested.
+            (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
+                                                                                                            trimmedExperimentData2.mass_fragment_numbers,
+                                                                                                            chosenMassFragments, header_dtype_casting=float)
+            trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
     trimmedExperimentData.ExportCollector("MassFragChooser")
     
     return trimmedExperimentData
@@ -740,13 +753,19 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments
 def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
     
     trimmedExperimentData = copy.deepcopy(ExperimentData)
+    trimmedExperimentData2 = copy.deepcopy(ExperimentData) #needed to make a separate temporary data structure because it gets modified during DataFunctions.
     
     # Remove elements of ExperimentData.mass_fragment_numbers for which there is no matching mass in the reference data.
     # Also remove the corresponding mass data column from Experiment.workingData.
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                         trimmedExperimentData.mass_fragment_numbers,
                                                                                                         ReferenceData.provided_mass_fragments, header_dtype_casting=float)
-
+    if type(G.collectedFileUncertainties) != type(None): #Note: As of Feb 5th 2020, this code has been added and tested.
+        (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
+                                                                                                            trimmedExperimentData2.mass_fragment_numbers,
+                                                                                                            ReferenceData.provided_mass_fragments, header_dtype_casting=float)
+        trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
+                                                                                                            
     return trimmedExperimentData
 
     
@@ -1316,7 +1335,6 @@ def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRan
 #unctions to use, this includes being able to analyze excel sheets of the form xyyy 
 #and xyxy. (Mass fragments and then data) This is all in the function DataInput ()
 def DataInputPreProcessing(ExperimentData): 
-
     #records time of all reference data preprocessing
     #ExperimentData.ExportCollector("PreProcessing ReferenceData")
     
@@ -1357,6 +1375,16 @@ def DataInputPreProcessing(ExperimentData):
         print("Pre-marginalChangeRestrictor Graph")
         Draw(ExperimentData.times, ExperimentData.workingData, ExperimentData.mass_fragment_numbers, 'no', 'Amp', graphFileName ='midProcessingGraph', fileSuffix = G.iterationSuffix, label="Pre-marginalChangeRestrictor Graph", stopAtGraphs=G.stopAtGraphs, figureNumber=G.lastFigureNumber+1)
         G.lastFigureNumber = G.lastFigureNumber+1
+
+    #Need to add uncertainties somewhere before interpolation and before datasmoother for the case that it is going to be provided as an input file.
+    if type(G.collectedFileUncertainties) == type("String"):
+        if G.collectedFileUncertainties.lower() == 'auto' :
+            UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
+        ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
+        ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
+    if type(G.collectedFileUncertainties) == type(None):
+        ExperimentData.rawsignals_absolute_uncertainties = None
+        ExperimentData.rawsignals_average_residuals = None
 
     if G.interpolateYorN == 'yes':
         [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
@@ -2364,6 +2392,10 @@ class MSReference (object):
                 #If there are only zeros. we delete a row and adjust the row index to account for that deletion.
                 self.provided_reference_patterns = numpy.delete(self.provided_reference_patterns, currentRowIndexAccountingForDeletions, axis=0 ) #axis = 0 specifies to delete rows (i.e. entire abscissa values at the integer of currentRowIndexAccountingForDeletions).
                 self.provided_mass_fragments = numpy.delete(self.provided_mass_fragments, currentRowIndexAccountingForDeletions, axis=0 )
+                try: #Under normal situations, this try is a bit like an implied if G.calculateuncertaintiesInConcentrations != None:
+                    self.absolute_standard_uncertainties = numpy.delete(self.absolute_standard_uncertainties, currentRowIndexAccountingForDeletions, axis=0 )
+                except:
+                    pass                                                                                                                                     
                 currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
             #whether we deleted rows or not, we increase the counter of the rows.
             currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
@@ -2506,6 +2538,7 @@ class MolecularIonizationData (object):
 #molecules_unedited (list of strings) vs.   solvedmolecules (array of 0 and 1 for which ones have been solved)
 #matching_correction_values is not only a trimmed down version of correction_values, it is also transposed.
 #uncertainties_dict contains all of the uncertainties including the dynamic variable versions that get changed during SLSUniqueFragments
+#G.currentTimeIndex = timeIndex and there is also G.currentTimePoint #This is useful for debugging when in the for loop of data analysis.                                                                                                                                         
     
 #this function compares the list of chosen mass fragments and those monitored and makes a raw signal
 #array out of this data, which will be used with the inverse method to find percent signal and composition
@@ -2514,17 +2547,12 @@ def RawSignalsArrayMaker(mass_fragment_numbers_monitored,mass_fragment_numbers,c
     mass_fragment_length = len(mass_fragment_numbers)
     rawsignalsarrayline = numpy.zeros([1,1]) #zero used to stack onto the array
     for collectedcounter in range(len(mass_fragment_numbers_monitored)): #array-indexed for loop
-        
         for massfragcounter in range(mass_fragment_length):#array-indexed for loop
-            
             if mass_fragment_numbers[massfragcounter] == mass_fragment_numbers_monitored[collectedcounter]:#if there is a mass fragment number not contained in the mass fragment numbers (made by array builder) then it will not be added
-
                 for referenceabscissacounter in range(len(referenceabscissa)):#array-indexed for loop
                     if referenceabscissa[referenceabscissacounter] == mass_fragment_numbers[massfragcounter]:#checks the reference for this mass fragment as well, before collected data is added
                         rawsignalsarrayline = numpy.vstack([rawsignalsarrayline,collected[counter,massfragcounter]])
-
     rawsignalsarrayline = numpy.delete(rawsignalsarrayline,(0),axis=0)#deletes zero used to start array building in the loops
-
     return rawsignalsarrayline
 
 
@@ -2739,8 +2767,9 @@ def ListLengthChecker(aList, desiredLength, defaultNum):
     
 #this function is going to be used by multiple sections of the code, including the updated sls method and a secondary inverse method
 #this is a new way of selecting the most important rows, for each molecule, based on that molecules ratios with the other molecules 
-#in that row and that molecules own value
-def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeLikelihoods,sensitivityValues):
+#in that row and that molecules own value.
+#uncertainties_dict should be an empty dictionary when uncertainties will not be used.
+def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeLikelihoods,sensitivityValues, uncertainties_dict={}):
     #the shape of the referenceData is found 
     num_rows = len(refMassFrags[:,0])   #This is number of mass frags, if it's mass spec data.
     num_columns = len(refMassFrags[0,:]) #This is number of molecules, if it's mass spec data.
@@ -2764,14 +2793,18 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeL
     #empty lists to store results i.e. shortened arrays
     shortRefMassFrags = []
     shortCorrectionValues = []
+    shortCorrectionValues_relative_uncertainties = []
     shortRawSignals = []
+    shortRawSignals_absolute_uncertainties = []
     
-    #add the correct row to each list
+    #add the correct row to each list. I believe the row_num here is the mass fragment index..
     for row_num in order:
         shortRefMassFrags.append(refMassFrags[row_num])
         shortCorrectionValues.append(correctionValues[row_num])
         shortRawSignals.append(rawSignals[row_num])
-              
+        if len(uncertainties_dict) > 0:
+            shortCorrectionValues_relative_uncertainties.append(uncertainties_dict['matching_correction_values_relative_uncertainties_one_time'][row_num])
+            shortRawSignals_absolute_uncertainties.append(uncertainties_dict['rawsignals_absolute_uncertainties_one_time'][row_num])
     #This section stacks the chosen rows from lists into arrays
     shortRefMassFrags = numpy.asarray(shortRefMassFrags)
     shortCorrectionValues = numpy.asarray(shortCorrectionValues)
@@ -2787,22 +2820,90 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeL
                 shortRefMassFrags[rowcounter,columncounter] = 0
                 
     #The shortened arrays are finally returned to the Inverse Method solver                
-    return shortRefMassFrags,shortCorrectionValues,shortRawSignals
+    return shortRefMassFrags,shortCorrectionValues,shortRawSignals, shortCorrectionValues_relative_uncertainties, shortRawSignals_absolute_uncertainties
     
     
 #this function takes the data from important abscissa identifier and 
-def InverseMethodDistinguished(monitored_reference_intensities,matching_correction_values,rawsignalsarrayline):
-    monitored_reference_intensities,matching_correction_values,rawsignalsarrayline = DistinguishedArrayChooser (monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, G.moleculeLikelihoods,G.sensitivityValues)
+def InverseMethodDistinguished(monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, uncertainties_dict={}):
+    monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, matching_correction_values_relative_uncertainties, rawsignals_absolute_uncertainties = DistinguishedArrayChooser(monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, G.moleculeLikelihoods,G.sensitivityValues, uncertainties_dict)
     #The below try and except statemnt is meant to catch cases as described in the except statement.
     try:
         numpy.linalg.det(matching_correction_values)
     except:
         print("There is an error in a matrix operation evaluation: The number of feasible mass fragments to check is probably less than the number of molecules. This can happen if referenceValueThreshold is too strict, leaving not enough feasible fargments to consider. The program is probably about to crash.")               
-    if numpy.linalg.det(matching_correction_values) != 0:#only solves if determinant is not equal to zero
+    if numpy.linalg.det(matching_correction_values) != 0:#only solves if determinant is not equal to zero     
+        #Now we will solve with the inverse way, and also for uncertainties if that module is present.
+        #The uncertainties module works well for matrix inverse, but not for dot product. So we make a custom function.                                                                                                   
+        if len(uncertainties_dict) > 0:
+            try:
+                import uncertainties
+                from uncertainties import unumpy
+                uncertaintiesModulePresent = True
+                # Below function works but does not work correctly with uncertainties module. It gives the wrong answer when you use it, as of Feb 2nd 2020
+                # def loopBasedDotProductComma(matrix_a, matrix_b, verbose = False):# explicit for loops 
+                    # #the result will have the same number of rows as the 1st matrix, and the same number of columns as the 2nd matrix.
+                    # #The number of columns of the 1st matrix must equal the number of rows of the 2nd matrix.    
+                    # #print("here 10", matrix_a)
+                    # num_a_rows = len(matrix_a)
+                    # num_a_columns = len(matrix_a[0])
+                    # num_b_rows = len(matrix_b)
+                    # num_b_columns = len(matrix_b[0]) 
+                    # numFinalRows = num_a_rows
+                    # numFinalColumns = num_b_columns
+                    # dotProductArray = numpy.zeros((numFinalRows,numFinalColumns), dtype="object") #Make it an object array so it can hold anything.
+                    # #row_a and row_b below are actually indices, not rows. The wrod index is omitted for brevity.
+                    # #We are going to fill the final matrix top row first, then second row next, etc.
+                    # print(num_a_rows, num_a_columns, num_b_rows, num_b_columns,  numFinalRows, numFinalColumns, numpy.shape(dotProductArray))
+                    # for finalColumn in range((numFinalColumns)):
+                        # #We're going to loop down each column as well.
+                        # for finalRow in range((numFinalRows)):        
+                            # #Within the first row (each row) of the product matrix... 
+                            # #    The first item gets filled from the first row of matrix_a and the corresponding column of matrix_b.
+                            # #    The second item gets filled from the second row of matrix_a and the corresponding column of matrix_b. 
+                            # #We're going to loop across a_columns (which is same number as b_rows) to make the temporary sum.
+                            # temporarySum = 0
+                            # for additionIndex in range((num_a_columns)):
+                                # if verbose:
+                                    # print("line 2839",  matrix_a[finalRow,additionIndex])
+                                    # print(finalColumn, finalRow, matrix_a[finalRow,additionIndex], matrix_b[additionIndex,finalColumn])
+                                # #NEEDED TO USE COMMAS. THAT WAS CAUSING PROBLEMS FOR MATRICES.
+                                # temporarySum = temporarySum + matrix_a[finalRow,additionIndex]*matrix_b[additionIndex,finalColumn]
+                            # if verbose:
+                                # print(temporarySum)
+                                # print(temporarySum.n)
+                                # print(temporarySum.s)
+                            # temporarySum =uncertainties.ufloat(temporarySum.n, temporarySum.s) #Was not working properly, so had to pull n and s out and cast. (nominal value and std_dev value)
+                            # dotProductArray[finalRow,finalColumn]= temporarySum
+                    # return dotProductArray 
+            except:
+                uncertaintiesModulePresent = False
+                solutions = numpy.linalg.solve(matching_correction_values,rawsignalsarrayline) 
+                uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = np.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
+                uncertainties_dict['concentrations_relative_uncertainties_one_time'] = np.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
+                print("WARNING: InverseMethodDistinguished could not return uncertainties and is returning uncertainties of zero. This is for the datapoint with intensities of", rawsignalsarrayline, "and concentrations of", solutions)
+            if uncertaintiesModulePresent == True:              
+                matching_correction_values_relative_uncertainties = matching_correction_values_relative_uncertainties#Note that we cannot use uncertainties_dict['matching_correction_values_relative_uncertainties'], because we have truncated the array already based on distinguished.
+                matching_correction_values_absolute_uncertainties = matching_correction_values*matching_correction_values_relative_uncertainties                                                        
+                unumpy_matching_correction_values = unumpy.umatrix(numpy.array(matching_correction_values), numpy.array(matching_correction_values_absolute_uncertainties)) #inverse doesn't work if they're not numpy arrays already. They were lists before this line.
+                #Needs to be a umatrix, not uarray, if want to invert and do dot product.          
+                #following https://pythonhosted.org/uncertainties/numpy_guide.html?highlight=inverse then adding dot product.
+                uInverseInBetween = unumpy.ulinalg.inv(unumpy_matching_correction_values)                                  
+                #Up until this line, rawsignals_absolute_uncertainties has been 1D. We need to make it 2D and the same direction as rawsignalsarrayline which is already 2D.
+                rawsignals_absolute_uncertainties_2D = numpy.atleast_2d(rawsignals_absolute_uncertainties).transpose()
+                unumpy_rawsignalsarrayline = unumpy.umatrix(numpy.array(rawsignalsarrayline), numpy.array(rawsignals_absolute_uncertainties_2D)) #When this has 0.0 we get a very small final uncertainties listed as 0.        
+                uSolutions = uInverseInBetween*unumpy_rawsignalsarrayline
+                solutions= unumpy.nominal_values(uSolutions)
+                solutions_uncertainties =unumpy.std_devs(uSolutions)
+                uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = abs(numpy.array(solutions_uncertainties).transpose()) #The uncertainties dictionary does have these the other way, so have to transpose back.
+                uncertainties_dict['concentrations_relative_uncertainties_one_time'] = abs(numpy.array(solutions_uncertainties/solutions).transpose()) #The uncertainties dictionary does have these the other way, so have to transpose back.
         solutions = numpy.linalg.solve(matching_correction_values,rawsignalsarrayline)
     else:
         print('The Array Chosen is Singular')
-        solutions = numpy.zeros(len(rawsignalsarrayline)) # the solutions are made into all zeros if the chosen array is singular
+        solutions = numpy.zeros(len(rawsignalsarrayline)) # the solutions are         if len(uncertainties_dict) > 0:
+        if len(uncertainties_dict) > 0:
+            print('The Array Chosen is Singular. Using a 0 for all uncertainties. In future, may try to use pseudo inverse uncertainties propagation, but it would likely underestimate the uncertainties.')
+            uncertainties_dict['concentrations_absolute_uncertainties_one_time']=solutions*0.0
+            uncertainties_dict['concentrations_relative_uncertainties_one_time']=solutions*0.0        
     return solutions
 
     
@@ -3052,7 +3153,6 @@ def OptimizingFinisher(molecules,specifications,matching_correction_values,rawsi
         SimulateSignalAndReturnObjFuncWrapper(initialGuess)
         optimizedResultObject = optimize.minimize(SimulateSignalAndReturnObjFuncWrapper, initialGuess, method=optimizer)
         optimizedAnswers = optimizedResultObject.x #This "x" is how to pull the results out from scipy optimize minimize  results object.
-        print(optimizedAnswers)
         answers = optimizedAnswers
         #answers = initialGuess
     return answers
@@ -3124,9 +3224,11 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     molecules_unedited = copy.deepcopy(molecules) #old variable, but being kept to prevent need to change things.
     
     if len(uncertainties_dict) > 0: #This means that the uncertainties_dict argument has been passed in with values to use.
-        uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['matching_correction_values_relative_uncertainties'])
+        uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['matching_correction_values_relative_uncertainties_one_time'])
         if type(uncertainties_dict['rawsignals_absolute_uncertainties']) != type(None):
-            uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['rawsignals_absolute_uncertainties'])
+            uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['rawsignals_absolute_uncertainties_one_time'])
+            #need to also make it 2D and then transpose.
+            uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = numpy.atleast_2d(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']).transpose()
         elif type(uncertainties_dict['rawsignals_absolute_uncertainties']) == type(None): #if it's a None type, we need to make a zeros array because we *will* need to populate it.
             uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = remaining_rawsignals_SLS*0.0 #This will give the correct size and shape.
         if not 'concentrations_relative_uncertainties_one_time' in uncertainties_dict:
@@ -3275,7 +3377,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 return remaining_referenceSignificantFragmentThresholds
             remaining_referenceSignificantFragmentThresholds = get_remaining_referenceSignificantFragmentThresholds(G.referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS)
         
-          
+                              
         for massFragmentIndex_i in range(remaining_num_MassFragments):#array-indexed for loop (over all fragments)
             referenceIntensitiesAtThatMassFragment = remaining_reference_intensities_SLS[massFragmentIndex_i]
             correctionFactorsAtThatMassFragment = remaining_correction_factors_SLS[massFragmentIndex_i]
@@ -3436,6 +3538,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             if len(uncertainties_dict) > 0:
                 if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
                     uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],(moleculeIndexForThisSLS),axis = 1)
+                    uncertainties_dict['correction_values_relative_uncertainties_one_time'] = uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']*1.0
+                    uncertainties_dict['matching_correction_values_relative_uncertainties_one_time'] = uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']*1.0
             #Reset these lists to start again.
             nonZeroCorrectionValuesList = []
             signalsCorrespondingToNonZeroCorrectionValuesList = []
@@ -3858,16 +3962,20 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
     #if the sls method does not solve for all the molecules, then the rest are sent to the inverse method 
     #where the remaining matrix is solved
     if remaining_correction_factors_SLS.size != 0:#if everything hasn't already been solved
+        #If there are uncertainties, we need to make a copy of the existing uncertainties and then add in the remaining solved molecules at the end.
+        if (G.calculateUncertaintiesInConcentrations == True):
+                uncertainties_dict['concentrations_relative_uncertainties_one_time_before_finisher'] = uncertainties_dict['concentrations_relative_uncertainties_one_time']*1.0
+                uncertainties_dict['concentrations_absolute_uncertainties_one_time_before_finisher'] = uncertainties_dict['concentrations_absolute_uncertainties_one_time']*1.0
         if slsFinish == 'inverse':#if inverse finish is chosen
              if distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                 concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS)
+                 concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, uncertainties_dict)
              else:
                  concentrationsFromFinisher = InverseMethod (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
            
         if slsFinish == 'brute':#if brute method is chosen
             if timeIndex == 0:#the first time is always run through the inverse method, where the ranges can use this information the loops afterwards
                 if distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                    concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS)
+                    concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, uncertainties_dict)
                 else:
                      concentrationsFromFinisher = InverseMethod (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')
                 if math.log(permutationNum,5) >= len(remaining_molecules_SLS):
@@ -3881,7 +3989,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                           + "There are " + str(permutationNum) + " permutations allowed, and " + str(5**len(remaining_molecules_SLS)) + " would be needed."
                           + "If you wish to use Brute, increase the size of permutations in the user input file. ")
                     if distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                        concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS)
+                        concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, uncertainties_dict)
                     else:
                         concentrationsFromFinisher = InverseMethod(remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')               
 
@@ -3898,12 +4006,17 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                           + "There are " + str(permutationNum) + " permutations allowed, and " + str(5**len(remaining_molecules_SLS)) + " would be needed."
                           + "If you wish to use Brute, increase the size of permutations in the user input file. ")
                     if distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                        concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS)
+                        concentrationsFromFinisher = InverseMethodDistinguished (remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS, uncertainties_dict)
                     else:
                         concentrationsFromFinisher = InverseMethod (remaining_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_SLS,mass_fragment_numbers,remaining_molecules_SLS,'composition')               
         # the concentrations that were solved for by the Finisher are stored as a list
         # to make them easier to use and then discard in the for loop as they are added to solutions
         remainingMolecules = list(concentrationsFromFinisher.copy())
+        if len(uncertainties_dict) > 0:
+            remainingMolecules_concentrations_relative_uncertainties = list(uncertainties_dict['concentrations_relative_uncertainties_one_time'].transpose())
+            remainingMolecules_concentrations_absolute_uncertainties = list(uncertainties_dict['concentrations_relative_uncertainties_one_time'].transpose())
+            uncertainties_dict['concentrations_relative_uncertainties_one_time_after_finisher'] = uncertainties_dict['concentrations_relative_uncertainties_one_time_before_finisher'].transpose()*1.0 #initializing
+            uncertainties_dict['concentrations_absolute_uncertainties_one_time_after_finisher'] = uncertainties_dict['concentrations_absolute_uncertainties_one_time_before_finisher'].transpose()*1.0  #initializing
         #adds the finisher solutions with the inital analysis solutions 
         for molecule_iiii in range(len(molecules_unedited)):
             if len(solvedmolecules) == 0:
@@ -3914,9 +4027,18 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
                 if solvedmolecules[molecule_iiii] == 0:
                     # then add the appropriate Finisher concentration for that molecule  
                     solutions[molecule_iiii] = remainingMolecules.pop(0) 
+                    try:
+                        if len(uncertainties_dict) > 0: #Note: the indexing in the solutions must match the original indexing, or errors will occur.                       
+                            uncertainties_dict['concentrations_relative_uncertainties_one_time_after_finisher'][molecule_iiii] = remainingMolecules_concentrations_relative_uncertainties.pop(0)
+                            uncertainties_dict['concentrations_absolute_uncertainties_one_time_after_finisher'][molecule_iiii] = remainingMolecules_concentrations_absolute_uncertainties.pop(0)
+                    except:
+                        pass
             except IndexError:
                 print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the referenceValueThreshold within the feature Reference Mass Fragmentation Threshold. Alternatively, you can try using inverse.")
                 solutions = numpy.array([None]) #This is just creating a numpy array with an element that has a None object, so that the main function can know that SLSMethod failed.
+        if len(uncertainties_dict) > 0: #Note: the indexing in the solutions must match the original indexing, or errors will occur.  Now we take the "filled up" solutions and put everything together.                      
+                uncertainties_dict['concentrations_relative_uncertainties_one_time'] = uncertainties_dict['concentrations_relative_uncertainties_one_time_after_finisher'].transpose()*1.0
+                uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = uncertainties_dict['concentrations_absolute_uncertainties_one_time_after_finisher'].transpose()*1.0
     return solutions
     
 #this function actually calls the SLS function inside of it, because the SLS function is given a smaller array
@@ -4132,13 +4254,13 @@ def RawSignalsSimulation(scaledConcentrationsarray,matching_correction_values):
     times = scaledConcentrationsarray[:,0]#the first row of the signals array is the times
     scaledConcentrationsarray = scaledConcentrationsarray[:,1:] #because one of the lines here is the times, and it need to be removed
     for scaledtimeIndex in range(len(scaledConcentrationsarray[:,0])):#array-indexed for loop
-        simulateddata[scaledtimeIndex:scaledtimeIndex+1,1:] = numpy.transpose(numpy.matrix(matching_correction_values[scaledtimeIndex]) * numpy.matrix(numpy.vstack(scaledConcentrationsarray[scaledtimeIndex,:])))#the data is simulated by multiplying the matrix of correction values by the raw signals for each row
+        simulateddata[scaledtimeIndex:scaledtimeIndex+1,1:] = numpy.transpose(numpy.array(matching_correction_values[scaledtimeIndex]) @ numpy.array(numpy.vstack(scaledConcentrationsarray[scaledtimeIndex,:])))#the data is simulated by multiplying the matrix of correction values by the raw signals for each row. the "@" allows 'matrix multiplication' with numpy.
     simulateddata[:,0] = times #the times are added back in so they can be printed more easily
     return simulateddata
 
 #This was written as a support function for NegativeAnalyzer in Jan 2020, but was put outside since it could be useful for other applications.
 def littleSimulationFunction(concentrations_without_time, matching_correction_values_to_simulate):
-    simulatedRawSignal = numpy.matrix(matching_correction_values_to_simulate)*numpy.matrix(numpy.vstack(concentrations_without_time))
+    simulatedRawSignal = numpy.array(matching_correction_values_to_simulate)@numpy.array(numpy.vstack(concentrations_without_time))  #the "@" allows 'matrix multiplication' with numpy.
     return simulatedRawSignal
 
 #a function to subtract the signals of the certain molecules, so that we can isolate the raw signals of  the non-subtracted molecules.
@@ -4747,12 +4869,14 @@ def main():
     
     #beforeParsedGDict this will be needed for iterative. This actually contains "UserChoices" when that's available, but we won't use that.
     beforeParsedGDict = {}
-    for (key,value) in G.__dict__.items():  #This gets a tuple of all of the items in G.
-        if not key.startswith("__"): #We don't want the ones that start with "__" since those are not normal variables.
-            try: #We're going to take deep copies, but some of the items are still not normal (like modules) so can be non-copyable and thus we have an except statement below.
-                beforeParsedGDict[key] = copy.deepcopy(value)  
-            except TypeError:
-                pass
+    if len(G.__dict__.items())>0:       
+        for (key,value) in G.__dict__.items():  #This gets a tuple of all of the items in G.
+            if type(value) != type(copy): #don't want to do this with use modules.
+                if not key.startswith("__"): #We don't want the ones that start with "__" since those are not normal variables.
+                    try: #We're going to take deep copies, but some of the items are still not normal (like modules) so can be non-copyable and thus we have an except statement below.
+                        beforeParsedGDict[key] = copy.deepcopy(value)  
+                    except TypeError:
+                        pass
     G.beforeParsedGDict = beforeParsedGDict # now we save it into the globals module for using later.
     from userInputValidityFunctions import parseUserInput
     parseUserInput(G) #This parses the variables in the user input file
@@ -4779,6 +4903,11 @@ def main():
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
+    #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
+    if type(G.collectedFileUncertainties) != type(None):
+        if type(G.collectedFileUncertainties) != type("str"): # if it's not a string, then it's assumed to be an integer for which local region to use during/like datasmoother.
+            G.collectedFileUncertainties = int(G.collectedFileUncertainties)
+
 
     prototypicalReferenceData = ReferenceDataList[0]
 
@@ -4894,7 +5023,7 @@ def main():
             ExperimentData.ExportCollector("MassFragChooser")
         #Trim the experimental data according to the mass fragments in referenceData
         ExperimentData = trimDataMassesToMatchReference(ExperimentData, prototypicalReferenceData) 
-        
+
     ## Here perform the ReferenceData preprocessing that is required regardless of the selection for 'G.preProcessing'
     # and needed if G.dataAnalysis == 'load' or 'yes'  
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
@@ -4969,7 +5098,6 @@ def main():
                 estimatedRemainingRuntime = (numberOfTimePoints-timeIndex)*averageRunTimePerPoint
                 print("TimeIndex", timeIndex, ": Ten seconds or more checkpoint. Actually", timeit.default_timer() - lastPrintedIndexClockTime, "seconds. \n Estimated runtime remaining:", estimatedRemainingRuntime, "seconds.")
                 lastPrintedIndexClockTime = timeit.default_timer() #reset this value.
-            
             #If referencePatternTimeRanges has anything in it, then the user has opted to use the Reference Pattern Time Chooser feature
             #FIXME interpolation portion of reference pattern time chooser does not work yet
             if len(G.referencePatternTimeRanges) != 0:
@@ -4987,15 +5115,17 @@ def main():
             uncertainties_dict = {}
             if (G.calculateUncertaintiesInConcentrations == True):
                 if type(G.referenceFileUncertainties) != type(None):  #This means we should have uncertainties in the reference file.
-                    uncertainties_dict['correction_values_relative_uncertainties'] = currentReferenceData.correction_values_relative_uncertainties
-                    uncertainties_dict['matching_correction_values_relative_uncertainties'] = currentReferenceData.matching_correction_values_relative_uncertainties
+                    uncertainties_dict['correction_values_relative_uncertainties_one_time'] = currentReferenceData.correction_values_relative_uncertainties*1.0
+                    uncertainties_dict['matching_correction_values_relative_uncertainties_one_time'] = currentReferenceData.matching_correction_values_relative_uncertainties*1.0
                 elif type(G.referenceFileUncertainties) == type(None):
                     uncertainties_dict['correction_values_relative_uncertainties'] = None
-                G.collectedFileUncertainties = None
+                #G.collectedFileUncertainties = None
                 if type(G.collectedFileUncertainties) != type(None):
-                    uncertainties_dict['rawsignals_absolute_uncertainties'] = ExperimentData.rawsignals_absolute_uncertainties*1.0
+                    uncertainties_dict['rawsignals_absolute_uncertainties'] = ExperimentData.rawsignals_absolute_uncertainties #This is for *all* times.
+                    uncertainties_dict['rawsignals_absolute_uncertainties_one_time']=uncertainties_dict['rawsignals_absolute_uncertainties'][timeIndex] #This is for one time.                                                                                                                                         
                 elif type(G.collectedFileUncertainties) == type(None):
                     uncertainties_dict['rawsignals_absolute_uncertainties'] = None
+                    uncertainties_dict['rawsignals_absolute_uncertainties_one_time']= ExperimentData.workingData[timeIndex]*0.0                                                                                                             
                 uncertainties_dict['concentrations_relative_uncertainties_one_time'] = numpy.zeros(len(currentReferenceData.molecules))
                 uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = numpy.zeros(len(currentReferenceData.molecules))
                     
@@ -5005,11 +5135,10 @@ def main():
             G.massesUsedInSolvingMoleculesForThisPoint = numpy.zeros(len(currentReferenceData.molecules)) #initializing this for use inside SlSUnique and possibly elsewhere.
             G.massFragmentsArrayForThisPoint = currentReferenceData.mass_fragment_numbers_monitored*1.0
             
-            
             ## TODO: Find out why RawSignalsArrayMaker() takes longer to run when preprocessed data is
             # computed directly rather than loaded. It doesn't seem to effect rawsignalsarrayline in
             # either case so not a priority. 
-            #TODO : these are not actually raw signals, they are preprocessed so the variable names should change.
+            #TODO : these are not actually raw signals, they are preprocessed to be relevant masses from those which mass.
             rawsignalsarrayline = RawSignalsArrayMaker(currentReferenceData.mass_fragment_numbers_monitored,
                                                        ExperimentData.mass_fragment_numbers,ExperimentData.workingData,
                                                        timeIndex,currentReferenceData.referenceabscissa)#gets the collected values that will be solved
@@ -5022,6 +5151,7 @@ def main():
             G.minimumSignalRequired = G.rawSignalThresholdValue 
             G.minimumStandardizedReferenceHeightToBeSignificant = G.sensitivityThresholdValue
             if G.excludeMoleculesIfSignificantFragmentNotObserved == 'yes':
+                #FIXME: Check if this is compatible with uncertainties. I don't think it is, as of Feb 2nd 2020.                                                                                                
                 currentReferenceData = signalThresholdFilter(currentReferenceData, rawsignalsarrayline, ExperimentData, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
                     
                     #solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.matching_correction_values,rawsignalsarrayline,
@@ -5030,9 +5160,9 @@ def main():
                                                          # DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption, G.maxPermutations)           
             if G.answer == 'inverse':#user input, the inverse method
                 if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                    solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
+                    solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, uncertainties_dict)
                 else:
-                    solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
+                    solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition', uncertainties_dict)
 
             elif G.answer == 'sls' or G.answer == 'autosolver':#user input, the SLS method is chosen)
                 #FIXME: should be passing uncertainties_dict into SLSMethod, but when I try I get some kind of solutions error. Comes out as []. Since I am having trouble, I am just passing it through globals.
