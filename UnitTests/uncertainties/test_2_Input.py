@@ -229,7 +229,7 @@ UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent'] = []
 UserChoices['uncertainties'] = {}
 UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = True
 UserChoices['uncertainties']['referenceFileUncertainties'] = 2 #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _uncertainties after that) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
-UserChoices['uncertainties']['collectedFileUncertainties'] = 'Auto' # or 'File' or 'None'. Will expect same file name as collected file with _uncertainties after that).
+UserChoices['uncertainties']['collectedFileUncertainties'] = None # or 'File' or 'None'. Will expect same file name as collected file with _uncertainties after that).
 UserChoices['uncertainties']['referenceCorrectionCoefficientsUncertainties'] = None #Else a dictionary of uncertainties for 'A', 'B', 'C'. Not yet implemented.
 UserChoices['uncertainties']['referenceCorrectionCoefficientsIonizationUncertainties'] = None #Not yet implemented.
 
