@@ -67,17 +67,21 @@ resultObj = (output)
 resultStr = str(resultObj)
 
 
+relativeTolerance = 1.0E-2
+absoluteTolerance = 1.0E-9
+
+
 
 #run the Unit Tester
 def test_Run(allowOverwrite = False):
     #if the user wants to be able to change what the saved outputs are
     if allowOverwrite:
         #This function call is used when this test is run solo as well as by UnitTesterSG
-        ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix)
+        ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance)
     #this option allows pytest to call the function
     if not allowOverwrite: 
         #this assert statement is required for the pytest module 
-        assert ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False) == True
+        assert ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False, relativeTolerance=relativeTolerance, absoluteTolerance=absoluteTolerance) == True
     
 if __name__ == "__main__":
    test_Run(allowOverwrite = True)
