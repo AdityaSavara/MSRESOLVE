@@ -87,17 +87,13 @@ def MSDataWriterXYYY(filename, data, abscissa, dataHeader, abscissaHeader):
 The DataSmootherPolynomialSmoothing function takes the currentWindow 
 (2-d numpy array) and timelist (1-d list) that are generated with 1 of the 4 options
 in DataSmoother (using ExtractWindow...Radius() function) and centered about 'currentTime'. 
-Then for a single currentTime or for every element of 'timeslist' it
+Then for each inner time (i.e. element of 'timeslist') it 
 takes the relevant data and  performs the smoothing and then returns the smoothedData.
 '''
-def DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray,  currentTime, polynomialOrder=1, returnAllTimes = False):
-    polyFitObject = numpy.polyfit(timeslist,currentWindowAsArray,polynomialOrder)
-    if returnAllTimes == False:
-        smoothedPoints = numpy.polyval(polyFitObject, currentTime)
-    if returnAllTimes == True:
-        smoothedPoints = currentWindowAsArray*0.0 #just getting the same size as the data window.
-        for timePointIndex in range(len(timeslist)):
-            smoothedPoints[timePointIndex] = numpy.polyval(polyFitObject, timeslist[timePointIndex])                
+def DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray,  currentTime, polynomialOrder=1):
+
+    # vectorized polyfit/polyval for all Y columns at this timecounter
+    smoothedPoints = numpy.polyval(numpy.polyfit(timeslist,currentWindowAsArray,polynomialOrder), currentTime)
     return  smoothedPoints
 
 
@@ -172,7 +168,7 @@ def GetDataWindows(data, abscissa, radius, dataSmootherChoice):
     dataWindowsYYYYvaluesInArrays = []
     
     # for every time/element in abscissa populate 'dataWindowsAsTuples'
-    for timecounter,timeValue in enumerate(abscissa):
+    for timecounter,_ in enumerate(abscissa):
         # if we use a timeradius we need to find the appropriate indices
         # from abscissa that relate to the time window
         if dataSmootherChoice == 'timerange':
@@ -325,46 +321,7 @@ def KeepOnlySelectedYYYYColumns(YYYYData, DataHeaders, HeaderValuesToKeep, Array
     
 
 '''
-UncertaintiesFromLocalWindows uses a particular timeRadius to determine the uncertainties around that datapoint.
-This Function borrows code flow and sub-functions that are used in the DataSmoother method.
-headersToConfineTo is not intended to be used, but is kept to have a parallel arguments list to the DataSmoother function.
-At present it is assumed that polynomialOrder will always be kept at 1, but it's conceivable somebody might want to do differently.
-We keep this function separate from DataSmoother for several reasons: a) this can run when that doesn't, b) this one will always do all masses, c) this one runs before interpolator on purpose.
-'''
-def UncertaintiesFromLocalWindows(data,abscissa,headers,UncertaintiesWindowsChoice='pointrange',UncertaintiesWindowsTimeRadius=0,UncertaintiesWindowsPointRadius=5,headersToConfineTo=[],polynomialOrder = 1):    
-    UncertaintiesFromData = copy.deepcopy(data) #First make a copy of the data to have the right shape. THis does not have the times, just the intensities.  
-    AverageResidualsFromData = UncertaintiesFromData*0.0 #just making an array of the same size.
-    if UncertaintiesWindowsChoice == 'timerange':
-        UncertaintiesWindowsRadius = UncertaintiesWindowsTimeRadius
-    if UncertaintiesWindowsChoice == 'pointrange':    
-        UncertaintiesWindowsRadius = UncertaintiesWindowsPointRadius
-    
-    dataSmootherChoice = UncertaintiesWindowsChoice
-    smoothedData = copy.deepcopy(data) #Still need to do smoothing in order to accomplish this.
-    if UncertaintiesWindowsChoice == 'timerange':
-        dataSmootherRadius = UncertaintiesWindowsTimeRadius
-    if UncertaintiesWindowsChoice == 'pointrange':    
-        dataSmootherRadius = UncertaintiesWindowsPointRadius
-
-    if headersToConfineTo == []:
-        # Get a list of time and data windows for each time in the abscissa
-        # these windows are used to perform the smoothing
-        (dataWindowsXvaluesInArrays, dataWindowsYYYYvaluesInArrays) = GetDataWindows(data,abscissa, dataSmootherRadius, dataSmootherChoice)
-        # replace data points with their smoothed counterparts creating 'smoothedData'
-        for timecounter, timeslist in enumerate(dataWindowsXvaluesInArrays):            
-            currentWindowAsArray = dataWindowsYYYYvaluesInArrays[timecounter]
-            # Smooth the data
-            smoothedData[timecounter,:] = DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray, abscissa[timecounter], polynomialOrder)
-            smoothedDataFromWindowOfTimes = DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray, abscissa[timecounter], polynomialOrder, returnAllTimes = True)
-            subtractedDataForTimeCounter =  dataWindowsYYYYvaluesInArrays[timecounter] - smoothedDataFromWindowOfTimes #The first index (rows) are time, second are masses. We want to find the standard deviation across masses.
-            averageResidualForTimeCounter = numpy.mean(abs(subtractedDataForTimeCounter), axis=0) #averaging across all times for each mass.
-            standardDeviationForTimeCounter = numpy.std((subtractedDataForTimeCounter), axis=0) #standard deviation across all times in the window for each mass.
-            AverageResidualsFromData[timecounter] = averageResidualForTimeCounter
-            UncertaintiesFromData[timecounter] = standardDeviationForTimeCounter
-    return UncertaintiesFromData, AverageResidualsFromData    
-
-'''
-The DataSmoothing function 'smooths' data over a certain time or datapoint ranges:
+The DataSmoothing function 'smoothes' data over a certain time or datapoint ranges:
 it goes through each mass fragment at a certain time and determines a polynomial that modeles the datapoints around
 that mass fragment (within point or time radius). Then applies this determined polynomial to recalculate the value of the datapoint.
 after all datapoint of a certain time are analyze the function then resets on the next datapoint. 
@@ -372,10 +329,6 @@ NOTE: The comments in this function were written in context with mass spectromet
 '''
 def DataSmoother(data,abscissa,headers,dataSmootherChoice,dataSmootherTimeRadius,dataSmootherPointRadius,headersToConfineTo,polynomialOrder = 1):
     smoothedData = copy.deepcopy(data)
-    if dataSmootherChoice == 'timerange':
-        dataSmootherRadius = dataSmootherTimeRadius
-    if dataSmootherChoice == 'pointrange':    
-        dataSmootherRadius = dataSmootherPointRadius
 
     ## Option # 1
     #This if statement is for the first two possibilities- if the user does not only want a specific point
@@ -384,8 +337,7 @@ def DataSmoother(data,abscissa,headers,dataSmootherChoice,dataSmootherTimeRadius
 
         # Get a list of time and data windows for each time in the abscissa
         # these windows are used to perform the smoothing
-
-        (dataWindowsXvaluesInArrays, dataWindowsYYYYvaluesInArrays) = GetDataWindows(data,abscissa, dataSmootherRadius, dataSmootherChoice)
+        (dataWindowsXvaluesInArrays, dataWindowsYYYYvaluesInArrays) = GetDataWindows(data,abscissa, dataSmootherTimeRadius, dataSmootherChoice)
 
 
         # replace data points with their smoothed counterparts creating 'smoothedData'
@@ -393,7 +345,8 @@ def DataSmoother(data,abscissa,headers,dataSmootherChoice,dataSmootherTimeRadius
             
             currentWindowAsArray = dataWindowsYYYYvaluesInArrays[timecounter]
             # Smooth the data
-            smoothedData[timecounter,:] = DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray, abscissa[timecounter], polynomialOrder)   
+            smoothedData[timecounter,:] = DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray, abscissa[timecounter], polynomialOrder)
+   
 
     ## Option #2
     # if only specific masses in the data should be smoothed
@@ -411,7 +364,7 @@ def DataSmoother(data,abscissa,headers,dataSmootherChoice,dataSmootherTimeRadius
 
         # Get a list of time and data windows for each time in the abscissa
         # these windows are used to perform the smoothing
-        (dataWindowsXvaluesInArrays, dataWindowsYYYYvaluesInArrays) = GetDataWindows(extractedData,abscissa, dataSmootherRadius, dataSmootherChoice)
+        (dataWindowsXvaluesInArrays, dataWindowsYYYYvaluesInArrays) = GetDataWindows(extractedData,abscissa, dataSmootherTimeRadius, dataSmootherChoice)
 
 
         # replace extractedData points with their smoothed counterparts creating 'smoothedData'
