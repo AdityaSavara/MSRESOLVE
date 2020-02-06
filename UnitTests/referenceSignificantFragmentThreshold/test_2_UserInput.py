@@ -87,6 +87,7 @@ distinguished = 'yes'
 fullBrute = 'no'
 SLSUniqueExport = 'yes'
 slsUniquePositiveConcentrationsOnly = False
+collectedFileUncertainties = None
 finalOptimization = 'None'
 concentrationFinder = 'yes'
 moleculesTSC_List = ['Acetylene', 'Ethane', 'Ethylene']
