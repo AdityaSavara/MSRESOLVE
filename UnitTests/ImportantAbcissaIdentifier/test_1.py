@@ -40,7 +40,7 @@ moleculesLikelihood = []
 sensitivityValues = []    
 
 #4) get the output of the function, which is what will typically be checked. 
-output = DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals, moleculesLikelihood, sensitivityValues)
+output = DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals, moleculesLikelihood, sensitivityValues)[:-2]
 #print(output)
 resultObj= output #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.
