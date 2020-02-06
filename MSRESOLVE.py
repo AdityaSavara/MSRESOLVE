@@ -3036,7 +3036,7 @@ def SimulateSignalAndReturnObjFunc(concentrations,*otherArgumentsList):
     objectiveFunctionOption = otherArgumentsList[2]#the input argument contains both the objectiveFunctionOption (objectiveFunctionType) and the two arrays: raw signals array line and matching correction values
     xyyData = numpy.zeros([3,len(rawsignalsarrayline)]) #a three line array is made that will be entered into the function below
     xyyData[1:2,:] = numpy.hstack(rawsignalsarrayline) #this second line is the raw signals
-    xyyData[2:3,:] = numpy.hstack(numpy.array(numpy.matrix(matching_correction_values)*numpy.matrix(numpy.vstack(concentrations)))) #the third row is the calculated signals
+    xyyData[2:3,:] = numpy.hstack(numpy.array(numpy.array(matching_correction_values)@numpy.array(numpy.vstack(concentrations)))) #the third row is the calculated signals
     objectiveFunctionDictionary = ObjectiveFunctionGenerator(xyyData,0)
     if objectiveFunctionOption == 'weightedSAR': #based on the choice given the output will be chosen from this called functions dictionary
         objective_function = objectiveFunctionDictionary['weightedSAR']
