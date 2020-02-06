@@ -198,6 +198,7 @@ negativeAnalyzerYorN = 'no'
 #Below the path for the analysis of the data; sls or inverse
 answer = 'sls'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
+slsWeighting = [0,0,1,0]
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
 bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
