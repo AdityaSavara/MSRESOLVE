@@ -15,7 +15,7 @@ import importlib
 from numpy import genfromtxt
 import export_import as ei
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
-import UserInput as G, imp; imp.reload(G) #import the user input and reload the module to get rid of any unwanted variables in the namespace
+import UserInput as G; importlib.reload(G) #import the user input and reload the module to get rid of any unwanted variables in the namespace
 
 ############################################################################################################################################
 #########################################################Best Mass Fragment Chooser#########################################################
