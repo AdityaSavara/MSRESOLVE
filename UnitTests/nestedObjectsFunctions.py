@@ -144,8 +144,8 @@ def stringCompare(firstString,secondString):
     standardizedFirstString = standardizedFirstString.lower()
     standardizedSecondString = standardizedSecondString.lower()
     #Using regex, find any style of whitespace on the inside and replace it with a standardized space
-    standardizedFirstString = re.sub('\s+',' ',standardizedFirstString)
-    standardizedSecondString = re.sub('\s+',' ',standardizedSecondString)
+    standardizedFirstString = re.sub(r'\s+',' ',standardizedFirstString) #the "r" is for raw string and needed to be added.
+    standardizedSecondString = re.sub(r'\s+',' ',standardizedSecondString) #the "r" is for raw string and needed to be added.
     
     #If the standardized strings match return True
     if standardizedFirstString == standardizedSecondString:
