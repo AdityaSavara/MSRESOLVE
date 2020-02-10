@@ -41,7 +41,7 @@ def bestMassFragChooser(chosenMolecules,
     #The below code is to allow replacing MSRESOLVE with the "standalone" dependencies file.
     global MSRESOLVE
     if minimizeDependencies == False:
-        import MSRESOLVE, imp; imp.reload(MSRESOLVE)
+        import MSRESOLVE, importlib; importlib.reload(MSRESOLVE)
     elif minimizeDependencies == True:
         import MSResolveDependenciesForExtentOfSLSsolvable
         MSRESOLVE = MSResolveDependenciesForExtentOfSLSsolvable
