@@ -737,7 +737,7 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments
     trimmedExperimentData = copy.deepcopy(ExperimentData)
     trimmedExperimentData2 = copy.deepcopy(ExperimentData) 
     
-    #print("MassFragChooser")
+    print("MassFragChooser")
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
                                                                                                             chosenMassFragments, header_dtype_casting=float)
@@ -1814,7 +1814,6 @@ def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
     #turnoff any scaling of raw data since that should not occur after first iteration.
     G.nextUserInputModule.scaleRawDataOption = 'manual'
     G.nextUserInputModule.scaleRawDataFactor = G.scaleRawDataFactor
-
     
     #Now going to overwrite parallelized variables with their original versions if they were set to length of chosen molecules.
     delimitedStringOfVariablesToUnparallelize = 'moleculeLikelihoods, sensitivityValues, referenceValueThreshold, referenceSignificantFragmentThresholds'
@@ -1867,10 +1866,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
 
     #This function will take in the iteration directory name, iteration number, ExperimentDataFullCopy.abscissaHeader,simulated data, mass fragment numbers, and the times array and will add or append the simulated signals to a file called SimulatedRawSignalsSoFarIterative.csv
     exportSimulatedSignalsSoFar(G.simulatedSignalsOutputName,iterationDirectoryName,G.iterationNumber) #subtract 1 from the iteration number since the iteration number has already been changed
-
     IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy)
-
-    
     return None
      #implied returns: G.referenceFileNamesList, G.collectedFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
 ###############################################################################
@@ -2902,6 +2898,7 @@ def InverseMethodDistinguished(monitored_reference_intensities,matching_correcti
         solutions = numpy.zeros(len(rawsignalsarrayline)) # the solutions are         if len(uncertainties_dict) > 0:
         if len(uncertainties_dict) > 0:
             print('The Array Chosen is Singular. Using a 0 for all uncertainties. In future, may try to use pseudo inverse uncertainties propagation, but it would likely underestimate the uncertainties.')
+            #In future can probably use uInverseInBetween = unumpy.ulinalg.pinv(unumpy_matching_correction_values), assuming that function exists.
             uncertainties_dict['concentrations_absolute_uncertainties_one_time']=solutions*0.0
             uncertainties_dict['concentrations_relative_uncertainties_one_time']=solutions*0.0        
     return solutions
@@ -3398,6 +3395,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 valueOfUniqueStandardizedIntensity = max(referenceIntensitiesAtThatMassFragment)
                 #the below nubby function will return the relevant index in array indexing.
                 moleculeIndexOfUniqueIntensity = numpy.argmax(referenceIntensitiesAtThatMassFragment)
+                #consideredMolecule = remaining_molecules_SLS[moleculeIndexOfUniqueIntensity] #This is for debugging purposes, this can be printed.
+                #For debugging, also print remaining_reference_intensities_SLS and massFragmentIndex_i.
                 #However, now we have a few lines of code to check if we are above the referenceSignificantFragmentThresholds.
                 if G.minimalReferenceValue == "yes": #We only check for the remaining_referenceSignificantFragmentThresholds if this option has been chosen. 
                     if (max(remaining_reference_intensities_SLS[massFragmentIndex_i]) < remaining_referenceSignificantFragmentThresholds[moleculeIndexOfUniqueIntensity]): #This allows separate referenceSignificantFragmentThresholds for each molecule.
@@ -3434,7 +3433,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                             concentrationOfConsideredMolecule_relative_uncertainty = (correctionFactorOfUniqueIntensity_relative_uncertainty**2 + signalsAtThatMassFragmentForThisSLS_relative_uncertainty**2)**0.5
                     #G.slsWeighting is a list-like object: [1,1,1,1] An slsWeighting value of 0 makes any of the three below factors into a coefficent of 1. A value of 1 turns it on, higher values make it even more strongly weighted.
                     #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
-                    moleculeWeightingSLS = (concentrationOfConsideredMolecule_relative_uncertainty**(-1*G.slsWeighting[0]))*(concentrationOfConsideredMolecule**G.slsWeighting[1])*(valueOfUniqueStandardizedIntensity**G.slsWeighting[2])*(signalsAtThatMassFragment**G.slsWeighting[3])
+                    moleculeWeightingSLS = (concentrationOfConsideredMolecule_relative_uncertainty**(-2*G.slsWeighting[0]))*(concentrationOfConsideredMolecule**G.slsWeighting[1])*(valueOfUniqueStandardizedIntensity**G.slsWeighting[2])*(signalsAtThatMassFragment**G.slsWeighting[3])
                     uniqueFragmentTuple = (moleculeWeightingSLS, signalsAtThatMassFragment, massFragmentIndex_i, moleculeIndexOfUniqueIntensity, correctionFactorOfUniqueIntensity, correctionFactorOfUniqueIntensity_relative_uncertainty, signalsAtThatMassFragmentForThisSLS_absolute_uncertainty, concentrationOfConsideredMolecule, concentrationOfConsideredMolecule_relative_uncertainty)
                     tuplesOfUniqueFragmentsList.append(uniqueFragmentTuple)
         #now we sort according to the biggest standardized intensities (signals as second spot), in descending order.
@@ -4569,6 +4568,7 @@ def GeneratePercentages(scaledConcentrationsarray):
 '''
 This function is the standard function used to graph 
 molecule concentrations or mass fragments signals. 
+#TODO: Update Draw to use the figure objects and set functions like in DrawUncertainties (that is the newer way of doing things).
 '''
 def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '', fileSuffix = '', label="000", stopAtGraphs = True, figureNumber=1):
     import matplotlib.pyplot as plt
@@ -4627,6 +4627,79 @@ def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '',
         if stopAtGraphs == True:
             plt.show(block=True)                                       
     return figureNumber
+
+
+'''
+This function is the standard function used to graph 
+molecule concentrations or mass fragments signals with uncertanties.
+'''
+def DrawUncertaintiesConcentrations(times, data, data_uncertainties, molecules, concentrationFinder, units, graphFileName = '', fileSuffix = '', label="000", stopAtGraphs = True, figureNumber=1):
+    import matplotlib.pyplot as plt
+    numConcentrations = len(molecules)
+    colormap = plt.cm.gist_ncar
+    colorListNumbers = numpy.linspace(0.0,0.9,len(data[0,:])) #these choices were made to be aesthetically pleasing. The len part is the number of data series. The 0.9 cuts off part of the color spectrum  (can go from 0 to 1)
+    colorList = []
+    for color in colorListNumbers:
+        colorList.append(colormap(color))
+    
+    figureNumber = figureNumber
+    for concentrationIndex in range(numConcentrations):
+        thisFigure = plt.figure(figureNumber) #should number figure before doing more (answer with wording "when you call") https://stackoverflow.com/questions/6916978/how-do-i-tell-matplotlib-to-create-a-second-new-plot-then-later-plot-on-the-o
+        thisFigure.ax = thisFigure.add_subplot(111, label=label)
+        moleculeName = str(molecules[concentrationIndex])
+        
+        if concentrationFinder == 'yes':
+            thisFigure.ax.set(  ylabel = str(molecules[concentrationIndex])+'\n Concentration (%s)'%(units))
+        else:
+            thisFigure.ax.set(  ylabel = str(molecules[concentrationIndex])+'\n Concentration Relative to CO')
+
+        thisFigure.ax.set(xlabel = ExperimentData.abscissaHeader) #Get the x-axis title from the collected data csv file
+        thisFigure.ax.errorbar(times, data[:,concentrationIndex], yerr=data_uncertainties[:,concentrationIndex], color=colorList[concentrationIndex], ecolor="lightgray")
+        box = thisFigure.ax.get_position()
+        thisFigure.ax.set_position([box.x0 +0.1, box.y0, box.width * 0.8, box.height])
+        thisFigure.ax.legend(moleculeName)# ,loc='center left', bbox_to_anchor=(1, 0.5)) # Could not get text in legend to work correctly.
+
+        # Now save the plot as a png
+        # assuming a file name was passed for it
+        if graphFileName != '':
+            #if a file suffix has been provided, append it to the file name
+        
+            graphFileNameFinal =  graphFileName + "_" + str(moleculeName) + fileSuffix 
+                
+            # need to save to plot directory
+            # directory containing MSRESOLVE.py
+            currentDirectory = os.path.dirname(os.path.realpath(__file__))
+            
+            # subdirectory for plots
+            graphDirectory = os.path.join(currentDirectory, 'Graphs')
+            
+            # make sure it exists and create it if not
+            if not os.path.exists(graphDirectory):
+                os.makedirs(graphDirectory)
+                
+            plt.savefig(os.path.join(graphDirectory, graphFileNameFinal))
+        #Need to check for ipython because it affects how graphs will be displayed.
+        #based below function on https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
+        def checkForIpython():
+            try:
+                cfg = get_ipython().config 
+                return True
+            except NameError:
+                return False        
+        #Figured out "block" argument works. Got it from: https://community.esri.com/thread/185110-matplotlib-show-prevents-script-from-completing
+        if checkForIpython()==True:
+            plt.show(block=False)
+        if checkForIpython()==False:
+            if stopAtGraphs == False:
+                plt.show(block=False)
+            if stopAtGraphs == True:
+                plt.show(block=True)                                       
+        #In the end, need to increment the figure number after each cycle.
+        figureNumber = figureNumber+1
+    
+    return figureNumber
+
+
 
 '''This function is called to create the log file and to record the time'''
 def CreateLogFile():
@@ -5268,6 +5341,10 @@ def main():
         if G.grapher == 'yes':
             Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
             G.lastFigureNumber = G.lastFigureNumber+1
+            if (G.calculateUncertaintiesInConcentrations == True):
+                G.lastFigureNumber = DrawUncertaintiesConcentrations(times, data, resultsObjects['concentrations_absolute_uncertainties_all_times'], currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis_uncertainties', fileSuffix = G.iterationSuffix, label="Concentrations With Uncertainties", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
+
+            
         if G.concentrationFinder == 'yes':
             ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
             times = concentrationsarray[:,0]
@@ -5283,6 +5360,8 @@ def main():
             if G.grapher == 'yes':
                 Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='resolvedConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
                 G.lastFigureNumber = G.lastFigureNumber+1
+                if (G.calculateUncertaintiesInConcentrations == True):
+                    G.lastFigureNumber = DrawUncertaintiesConcentrations(times, data, resultsObjects['concentrations_absolute_uncertainties_all_times_scaled_to_unit'], currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='resolvedConcentrationsAfterAnalysis_uncertainties', fileSuffix = G.iterationSuffix, label="Concentrations With Uncertainties", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
 
             
     if G.dataSimulation =='yes':
