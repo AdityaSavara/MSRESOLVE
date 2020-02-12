@@ -1066,7 +1066,7 @@ def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules):
     standardizedReference = copy.deepcopy(referenceUnstandardized)
     # standardize
     for moleculeIndex in range(1,num_of_molecules+1): #Note that we start at an index of 1 in order to skip the mass fragments (so they don't get 'standardized')
-        standardizedReference[0:,moleculeIndex]=StandardizeTo100(referenceUnstandardized[0:,moleculeIndex],1)
+        standardizedReference[0:,moleculeIndex]=StandardizeTo100(referenceUnstandardized[0:,moleculeIndex],1) #TODO: Low priority. Change this to use amax so the loop isn't executed.
 
     return standardizedReference
 
@@ -1211,7 +1211,7 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
         if G.calculateUncertaintiesInConcentrations == True:
             if type(G.referenceFileUncertainties) != type(None):
                 if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
-                    #TODO: The below results in "nan" values. It would be better to change it to make zeros using a numpy "where" statement.
+                    #TODO: Low priority. The below results in "nan" values. It could be better to change it to make zeros using a numpy "where" statement.
                     G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Maks sure we have a float.
                     #Get what we need.
                     provided_reference_patterns = ReferenceDataList[0].provided_reference_patterns
@@ -1224,11 +1224,11 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[0].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    pass
-                    #Then need to open the file... need to also do the division since the file should already have either standard or relative uncertainties.
-                    #TODO: add more lines of code here later.
-        #save each global variable into the class objects 
-
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[0])
+                    ReferenceDataList[0].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
+                    maximum_absolute_intensities = numpy.amax(ReferenceDataList[0].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
+                    ReferenceDataList[0].absolute_standard_uncertainties[:,1:] = 100*ReferenceDataList[0].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
+                    #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNamesList
@@ -1267,9 +1267,11 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[i].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    pass
-                    #Then need to open the file... need to also do the division since the file should already have either standard or relative uncertainties.
-                    #TODO: add more lines of code here later.
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[i])
+                    ReferenceDataList[i].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
+                    maximum_absolute_intensities = numpy.amax(ReferenceDataList[i].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
+                    ReferenceDataList[i].absolute_standard_uncertainties[:,1:] = ReferenceDataList[i].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
+                    #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
     return ReferenceDataList
 
 '''
