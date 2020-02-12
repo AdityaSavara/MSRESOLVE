@@ -315,7 +315,8 @@ def KeepOnlySelectedYYYYColumns(YYYYData, DataHeaders, HeaderValuesToKeep, Array
     if Array1D:
         axis = 0 #This is the appropriate value for a 1D array of YData
     #remove the data columns
-    YYYYData = numpy.delete(YYYYData,deletion_indices, axis)
+    if type(YYYYData)!= type(None): #if somehow a Nonetype got in, we will do nothing. (Though callling function is still useful to trim headers.)
+        YYYYData = numpy.delete(YYYYData,deletion_indices, axis)
 
     return (YYYYData, DataHeaders)
 
