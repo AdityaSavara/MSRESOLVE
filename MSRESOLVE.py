@@ -519,8 +519,12 @@ def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThresh
 #the right time and then gets each number following the first, and finds its ratio
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
-def ExtractReferencePatternFromData (ExperimentData, referenceDataArray, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
+def ExtractReferencePatternFromData(ExperimentData, referenceDataArray, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
     copyOfReferenceDataArray = copy.deepcopy(referenceDataArray)    
+    try:
+        type(copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties) #this checks if the variable exists.
+    except: #create the variable if it does not exist.
+        copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties = copyOfReferenceDataArray.provided_reference_patterns*0.0
     for chosenmoleculescounter in range(len(rpcChosenMolecules)):#array-indexed for loop
         extractedIntensities = []
         allExtractedIntensities = []
@@ -554,18 +558,25 @@ def ExtractReferencePatternFromData (ExperimentData, referenceDataArray, rpcChos
                 allExtractedIntensitiesArray = numpy.array(allExtractedIntensities)
                 #Initialize empty list to store average values
                 allExtractedIntensitiesAverage = []
+                allExtractedIntensitiesStandardDeviation = []
                 #For loop to find the average intensity values
                 #Then store the average value in the allExtractedIntensityAverage list
                 for eachChosenMoleculesMF in range(len(allExtractedIntensitiesArray)):
                     intensitiesAverage = numpy.average(allExtractedIntensitiesArray[eachChosenMoleculesMF])
+                    intensitiesStandardDeviation = numpy.std(allExtractedIntensitiesArray[eachChosenMoleculesMF])
                     allExtractedIntensitiesAverage.append(intensitiesAverage)
+                    allExtractedIntensitiesStandardDeviation.append(intensitiesStandardDeviation)
+                    print("line 569", eachChosenMoleculesMF, intensitiesAverage, intensitiesStandardDeviation)
                 #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment (that is, to make a reference pattern with a ratio matching the extracted ratio)
                 normalizationFactor = copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1]
-                if normalizationFactor == 0:
+                print("line 572", normalizationFactor)
+                if normalizationFactor == 0: #This is just for the case that there's an 'exception' with no reasonable value provided by the line above.
                     normalizationFactor = 1
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])): #I believe the +1 below is b/c first column is mass frag?
                     copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor
-    return copyOfReferenceDataArray.provided_reference_patterns
+                    copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesStandardDeviation[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor #Need to divide by the same thing and multiply by the same thing as previous line to get right scaling.
+    print("line 578", copyOfReferenceDataArray.provided_reference_patterns[44], copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties[44])
+    return copyOfReferenceDataArray.provided_reference_patterns, copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties
 
 '''
 RemoveUnreferencedMasses() is used to prune ExperimentData.workingData and ExperimentData.mass_fragment_numbers 
@@ -1419,8 +1430,9 @@ PrepareReferenceOjbectsAndCorrectionValues takes in ReferenceData to be prepared
 def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
     # Reference Pattern Changer
     if extractReferencePatternFromDataOption == 'yes':
-        ReferenceData.provided_reference_patterns = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
+        ReferenceData.provided_reference_patterns, ReferenceData.provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
         ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
+        ReferenceData.ExportCollector('ExtractReferencePatternFromData_absolute_uncertainties', export_uncertainties= True)
         #Only print if not called from interpolating reference objects
         if verbose:
             print('ReferencePatternChanger complete')    
@@ -2334,7 +2346,8 @@ class MSReference (object):
         self.exportIonizationInfo()
     #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
-    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False):
+    #Basically, the logic in here is pretty bad!
+    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_uncertainties = False):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
@@ -2347,8 +2360,10 @@ class MSReference (object):
         if self.ExportAtEachStep == 'yes':
             ##record molecules of experiment
             self.moleculesToExport.append(self.molecules.copy())
-            #record data of experiment
-            if use_provided_reference_patterns:
+            #record data 
+            if export_uncertainties:
+                self.dataToExport.append(self.provided_reference_patterns_absolute_uncertainties.copy())
+            elif use_provided_reference_patterns:
                 self.dataToExport.append(self.provided_reference_patterns.copy())
             elif callingFunction == 'UnnecessaryMoleculesDeleter':
                 self.dataToExport.append(self.monitored_reference_intensities.copy())
@@ -5341,7 +5356,7 @@ def main():
  
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
-            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
+            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Relative Concentrations Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
             G.lastFigureNumber = G.lastFigureNumber+1
             if (G.calculateUncertaintiesInConcentrations == True):
                 G.lastFigureNumber = DrawUncertaintiesConcentrations(times, data, resultsObjects['concentrations_absolute_uncertainties_all_times'], currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis_uncertainties', fileSuffix = G.iterationSuffix, label="Concentrations With Uncertainties", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
@@ -5360,7 +5375,7 @@ def main():
         
             #Graph the concentration/relative signal data
             if G.grapher == 'yes':
-                Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='resolvedConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
+                Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='resolvedConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
                 G.lastFigureNumber = G.lastFigureNumber+1
                 if (G.calculateUncertaintiesInConcentrations == True):
                     G.lastFigureNumber = DrawUncertaintiesConcentrations(times, data, resultsObjects['concentrations_absolute_uncertainties_all_times_scaled_to_unit'], currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='resolvedConcentrationsAfterAnalysis_uncertainties', fileSuffix = G.iterationSuffix, label="Concentrations With Uncertainties", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
