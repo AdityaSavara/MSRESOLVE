@@ -6,7 +6,7 @@ sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 import MSRESOLVE, importlib; importlib.reload(MSRESOLVE)
-import test_11_Input as G, importlib; importlib.reload(G) #This is needed because we need the __var_list__
+import test_10_Input as G, importlib; importlib.reload(G) #This is needed because we need the __var_list__
 MSRESOLVE.G = G #This is because we need to overwrite whatever user input the user has with the default user input.
     
 #get the suffix argument for check_results
@@ -24,20 +24,20 @@ suffix = ut.returnDigitFromFilename(__file__)
 MSRESOLVE.main()
 
 #Now we will extract the concentrations and also set the expected ones.
-output1 = np.genfromtxt("ScaledConcentrations.csv", skip_header = 1, delimiter =",")
-output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties.csv", skip_header = 1, delimiter =",")
+output1 = np.genfromtxt("ScaledConcentrations.csv", skip_header = 1, delimiter =",", dtype = 'f8')
+output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties.csv", skip_header = 1, delimiter =",", dtype = 'f8')
 
 #Expected output:
 try:
     import uncertainties
     from uncertainties import unumpy
-    expected_output1 = np.genfromtxt("ScaledConcentrationsExpected_test_11.csv", skip_header = 1, delimiter =",", dtype = 'f8')
-    expected_output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties_test_11.csv", skip_header = 1, delimiter =",", dtype = 'f8')
+    expected_output1 = np.genfromtxt("ScaledConcentrationsExpected_test_10.csv", skip_header = 1, delimiter =",", dtype = 'f8')
+    expected_output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties_test_10.csv", skip_header = 1, delimiter =",", dtype = 'f8')
     print("THE UNCERTAINTIES MODULE ***IS*** PRESENT, RUNNING THE UNIT TEST ACCORDINGLY.")
 except:
     print("THE UNCERTAINTIES MODULE ***IS NOT*** PRESENT, RUNNING THE UNIT TEST ACCORDINGLY.")
-    expected_output1 = np.genfromtxt("ScaledConcentrationsExpected_test_11.csv", skip_header = 1, delimiter =",")
-    expected_output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties_test_11_noUncertaintiesModule.csv", skip_header = 1, delimiter =",")
+    expected_output1 = np.genfromtxt("ScaledConcentrationsExpected_test_10.csv", skip_header = 1, delimiter =",")
+    expected_output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties_test_10_noUncertaintiesModule.csv", skip_header = 1, delimiter =",")
 
 ut.set_expected_result((expected_output1,expected_output2) ,str((expected_output1,expected_output2)),prefix=prefix,suffix=suffix)
 
@@ -47,7 +47,7 @@ resultObj = (output1, output2)
 resultStr = str(resultObj)
 
 relativeTolerance = 1.0E-2
-absoluteTolerance = 1.0E-9
+absoluteTolerance = 1.0E-6
 
 
 #this is so that pytest can do UnitTesterSG tests.

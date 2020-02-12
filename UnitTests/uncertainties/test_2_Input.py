@@ -253,7 +253,7 @@ UserChoices['dataAnalysisMethods']['slsUniquePositiveConcentrationsOnly'] = Fals
 UserChoices['dataAnalysisMethods']['bruteOption'] = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 UserChoices['dataAnalysisMethods']['distinguished'] = 'yes'
 UserChoices['dataAnalysisMethods']['fullBrute'] = 'yes'
-UserChoices['dataAnalysisMethods']['SLSUniqueExport'] = 'yes'
+UserChoices['dataAnalysisMethods']['SLSUniqueExport'] = 'no'
 UserChoices['dataAnalysisMethods']['finalOptimization'] = 'None' #options are 'None' or... 'Nelder-Mead','Powell','CG','BFGS','Newton-CG','L-BFGS-B','TNC','COBYLA','SLSQP','dogleg','trust-ncg','trust-xact','trust-krylov' from scipy.optimize.minimze
 
 #//Concentration Finder//
@@ -280,7 +280,7 @@ UserChoices['outputFiles']['concentrationsOutputName'] = 'ResolvedConcentrations
 UserChoices['outputFiles']['simulatedSignalsOutputName'] = 'SimulatedRawSignals.csv'
 
 UserChoices['ExportAtEachStep'] = {} #initialize the ExportAtEachStep container
-UserChoices['ExportAtEachStep']['on'] = 'yes'
+UserChoices['ExportAtEachStep']['on'] = 'no'
 UserChoices['generatePercentages'] = {} #initialize the generatePercentages container
 UserChoices['generatePercentages']['on'] = 'no'
 

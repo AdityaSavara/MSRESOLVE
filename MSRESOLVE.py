@@ -15,7 +15,7 @@ import importlib
 from numpy import genfromtxt
 import export_import as ei
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
-import UserInput as G, imp; imp.reload(G) #import the user input and reload the module to get rid of any unwanted variables in the namespace
+import UserInput as G; importlib.reload(G) #import the user input and reload the module to get rid of any unwanted variables in the namespace
 
 ############################################################################################################################################
 #########################################################Best Mass Fragment Chooser#########################################################
@@ -737,7 +737,7 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments
     trimmedExperimentData = copy.deepcopy(ExperimentData)
     trimmedExperimentData2 = copy.deepcopy(ExperimentData) 
     
-    #print("MassFragChooser")
+    print("MassFragChooser")
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
                                                                                                             chosenMassFragments, header_dtype_casting=float)
@@ -1066,7 +1066,7 @@ def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules):
     standardizedReference = copy.deepcopy(referenceUnstandardized)
     # standardize
     for moleculeIndex in range(1,num_of_molecules+1): #Note that we start at an index of 1 in order to skip the mass fragments (so they don't get 'standardized')
-        standardizedReference[0:,moleculeIndex]=StandardizeTo100(referenceUnstandardized[0:,moleculeIndex],1)
+        standardizedReference[0:,moleculeIndex]=StandardizeTo100(referenceUnstandardized[0:,moleculeIndex],1) #TODO: Low priority. Change this to use amax so the loop isn't executed.
 
     return standardizedReference
 
@@ -1211,7 +1211,7 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
         if G.calculateUncertaintiesInConcentrations == True:
             if type(G.referenceFileUncertainties) != type(None):
                 if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
-                    #TODO: The below results in "nan" values. It would be better to change it to make zeros using a numpy "where" statement.
+                    #TODO: Low priority. The below results in "nan" values. It could be better to change it to make zeros using a numpy "where" statement.
                     G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Maks sure we have a float.
                     #Get what we need.
                     provided_reference_patterns = ReferenceDataList[0].provided_reference_patterns
@@ -1224,11 +1224,11 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[0].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    pass
-                    #Then need to open the file... need to also do the division since the file should already have either standard or relative uncertainties.
-                    #TODO: add more lines of code here later.
-        #save each global variable into the class objects 
-
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[0])
+                    ReferenceDataList[0].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
+                    maximum_absolute_intensities = numpy.amax(ReferenceDataList[0].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
+                    ReferenceDataList[0].absolute_standard_uncertainties[:,1:] = 100*ReferenceDataList[0].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
+                    #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNamesList
@@ -1267,9 +1267,11 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[i].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    pass
-                    #Then need to open the file... need to also do the division since the file should already have either standard or relative uncertainties.
-                    #TODO: add more lines of code here later.
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[i])
+                    ReferenceDataList[i].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
+                    maximum_absolute_intensities = numpy.amax(ReferenceDataList[i].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
+                    ReferenceDataList[i].absolute_standard_uncertainties[:,1:] = ReferenceDataList[i].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
+                    #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
     return ReferenceDataList
 
 '''
@@ -1814,7 +1816,6 @@ def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
     #turnoff any scaling of raw data since that should not occur after first iteration.
     G.nextUserInputModule.scaleRawDataOption = 'manual'
     G.nextUserInputModule.scaleRawDataFactor = G.scaleRawDataFactor
-
     
     #Now going to overwrite parallelized variables with their original versions if they were set to length of chosen molecules.
     delimitedStringOfVariablesToUnparallelize = 'moleculeLikelihoods, sensitivityValues, referenceValueThreshold, referenceSignificantFragmentThresholds'
@@ -1867,10 +1868,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
 
     #This function will take in the iteration directory name, iteration number, ExperimentDataFullCopy.abscissaHeader,simulated data, mass fragment numbers, and the times array and will add or append the simulated signals to a file called SimulatedRawSignalsSoFarIterative.csv
     exportSimulatedSignalsSoFar(G.simulatedSignalsOutputName,iterationDirectoryName,G.iterationNumber) #subtract 1 from the iteration number since the iteration number has already been changed
-
     IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy)
-
-    
     return None
      #implied returns: G.referenceFileNamesList, G.collectedFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
 ###############################################################################
@@ -2884,14 +2882,14 @@ def InverseMethodDistinguished(monitored_reference_intensities,matching_correcti
             if uncertaintiesModulePresent == True:              
                 matching_correction_values_relative_uncertainties = matching_correction_values_relative_uncertainties#Note that we cannot use uncertainties_dict['matching_correction_values_relative_uncertainties'], because we have truncated the array already based on distinguished.
                 matching_correction_values_absolute_uncertainties = matching_correction_values*matching_correction_values_relative_uncertainties                                                        
-                unumpy_matching_correction_values = unumpy.umatrix(numpy.array(matching_correction_values), numpy.array(matching_correction_values_absolute_uncertainties)) #inverse doesn't work if they're not numpy arrays already. They were lists before this line.
+                unumpy_matching_correction_values = unumpy.uarray(numpy.array(matching_correction_values), numpy.array(matching_correction_values_absolute_uncertainties)) #inverse doesn't work if they're not numpy arrays already. They were lists before this line.
                 #Needs to be a umatrix, not uarray, if want to invert and do dot product.          
                 #following https://pythonhosted.org/uncertainties/numpy_guide.html?highlight=inverse then adding dot product.
-                uInverseInBetween = unumpy.ulinalg.inv(unumpy_matching_correction_values)                                  
+                uInverseInBetween = unumpy.ulinalg.pinv(unumpy_matching_correction_values)                                  
                 #Up until this line, rawsignals_absolute_uncertainties has been 1D. We need to make it 2D and the same direction as rawsignalsarrayline which is already 2D.
                 rawsignals_absolute_uncertainties_2D = numpy.atleast_2d(rawsignals_absolute_uncertainties).transpose()
-                unumpy_rawsignalsarrayline = unumpy.umatrix(numpy.array(rawsignalsarrayline), numpy.array(rawsignals_absolute_uncertainties_2D)) #When this has 0.0 we get a very small final uncertainties listed as 0.        
-                uSolutions = uInverseInBetween*unumpy_rawsignalsarrayline
+                unumpy_rawsignalsarrayline = unumpy.uarray(numpy.array(rawsignalsarrayline), numpy.array(rawsignals_absolute_uncertainties_2D)) #When this has 0.0 we get a very small final uncertainties listed as 0.        
+                uSolutions = uInverseInBetween@unumpy_rawsignalsarrayline #the @ forces matrix multiplication.
                 solutions= unumpy.nominal_values(uSolutions)
                 solutions_uncertainties =unumpy.std_devs(uSolutions)
                 uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = abs(numpy.array(solutions_uncertainties).transpose()) #The uncertainties dictionary does have these the other way, so have to transpose back.
@@ -2902,6 +2900,7 @@ def InverseMethodDistinguished(monitored_reference_intensities,matching_correcti
         solutions = numpy.zeros(len(rawsignalsarrayline)) # the solutions are         if len(uncertainties_dict) > 0:
         if len(uncertainties_dict) > 0:
             print('The Array Chosen is Singular. Using a 0 for all uncertainties. In future, may try to use pseudo inverse uncertainties propagation, but it would likely underestimate the uncertainties.')
+            #In future can probably use uInverseInBetween = unumpy.ulinalg.pinv(unumpy_matching_correction_values), assuming that function exists.
             uncertainties_dict['concentrations_absolute_uncertainties_one_time']=solutions*0.0
             uncertainties_dict['concentrations_relative_uncertainties_one_time']=solutions*0.0        
     return solutions
@@ -3398,6 +3397,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 valueOfUniqueStandardizedIntensity = max(referenceIntensitiesAtThatMassFragment)
                 #the below nubby function will return the relevant index in array indexing.
                 moleculeIndexOfUniqueIntensity = numpy.argmax(referenceIntensitiesAtThatMassFragment)
+                #consideredMolecule = remaining_molecules_SLS[moleculeIndexOfUniqueIntensity] #This is for debugging purposes, this can be printed.
+                #For debugging, also print remaining_reference_intensities_SLS and massFragmentIndex_i.
                 #However, now we have a few lines of code to check if we are above the referenceSignificantFragmentThresholds.
                 if G.minimalReferenceValue == "yes": #We only check for the remaining_referenceSignificantFragmentThresholds if this option has been chosen. 
                     if (max(remaining_reference_intensities_SLS[massFragmentIndex_i]) < remaining_referenceSignificantFragmentThresholds[moleculeIndexOfUniqueIntensity]): #This allows separate referenceSignificantFragmentThresholds for each molecule.
@@ -3434,7 +3435,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                             concentrationOfConsideredMolecule_relative_uncertainty = (correctionFactorOfUniqueIntensity_relative_uncertainty**2 + signalsAtThatMassFragmentForThisSLS_relative_uncertainty**2)**0.5
                     #G.slsWeighting is a list-like object: [1,1,1,1] An slsWeighting value of 0 makes any of the three below factors into a coefficent of 1. A value of 1 turns it on, higher values make it even more strongly weighted.
                     #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
-                    moleculeWeightingSLS = (concentrationOfConsideredMolecule_relative_uncertainty**(-1*G.slsWeighting[0]))*(concentrationOfConsideredMolecule**G.slsWeighting[1])*(valueOfUniqueStandardizedIntensity**G.slsWeighting[2])*(signalsAtThatMassFragment**G.slsWeighting[3])
+                    moleculeWeightingSLS = (concentrationOfConsideredMolecule_relative_uncertainty**(-2*G.slsWeighting[0]))*(concentrationOfConsideredMolecule**G.slsWeighting[1])*(valueOfUniqueStandardizedIntensity**G.slsWeighting[2])*(signalsAtThatMassFragment**G.slsWeighting[3])
                     uniqueFragmentTuple = (moleculeWeightingSLS, signalsAtThatMassFragment, massFragmentIndex_i, moleculeIndexOfUniqueIntensity, correctionFactorOfUniqueIntensity, correctionFactorOfUniqueIntensity_relative_uncertainty, signalsAtThatMassFragmentForThisSLS_absolute_uncertainty, concentrationOfConsideredMolecule, concentrationOfConsideredMolecule_relative_uncertainty)
                     tuplesOfUniqueFragmentsList.append(uniqueFragmentTuple)
         #now we sort according to the biggest standardized intensities (signals as second spot), in descending order.
@@ -4569,6 +4570,7 @@ def GeneratePercentages(scaledConcentrationsarray):
 '''
 This function is the standard function used to graph 
 molecule concentrations or mass fragments signals. 
+#TODO: Update Draw to use the figure objects and set functions like in DrawUncertainties (that is the newer way of doing things).
 '''
 def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '', fileSuffix = '', label="000", stopAtGraphs = True, figureNumber=1):
     import matplotlib.pyplot as plt
@@ -4627,6 +4629,79 @@ def Draw(times, data, molecules, concentrationFinder, units, graphFileName = '',
         if stopAtGraphs == True:
             plt.show(block=True)                                       
     return figureNumber
+
+
+'''
+This function is the standard function used to graph 
+molecule concentrations or mass fragments signals with uncertanties.
+'''
+def DrawUncertaintiesConcentrations(times, data, data_uncertainties, molecules, concentrationFinder, units, graphFileName = '', fileSuffix = '', label="000", stopAtGraphs = True, figureNumber=1):
+    import matplotlib.pyplot as plt
+    numConcentrations = len(molecules)
+    colormap = plt.cm.gist_ncar
+    colorListNumbers = numpy.linspace(0.0,0.9,len(data[0,:])) #these choices were made to be aesthetically pleasing. The len part is the number of data series. The 0.9 cuts off part of the color spectrum  (can go from 0 to 1)
+    colorList = []
+    for color in colorListNumbers:
+        colorList.append(colormap(color))
+    
+    figureNumber = figureNumber
+    for concentrationIndex in range(numConcentrations):
+        thisFigure = plt.figure(figureNumber) #should number figure before doing more (answer with wording "when you call") https://stackoverflow.com/questions/6916978/how-do-i-tell-matplotlib-to-create-a-second-new-plot-then-later-plot-on-the-o
+        thisFigure.ax = thisFigure.add_subplot(111, label=label)
+        moleculeName = str(molecules[concentrationIndex])
+        
+        if concentrationFinder == 'yes':
+            thisFigure.ax.set(  ylabel = str(molecules[concentrationIndex])+'\n Concentration (%s)'%(units))
+        else:
+            thisFigure.ax.set(  ylabel = str(molecules[concentrationIndex])+'\n Concentration Relative to CO')
+
+        thisFigure.ax.set(xlabel = ExperimentData.abscissaHeader) #Get the x-axis title from the collected data csv file
+        thisFigure.ax.errorbar(times, data[:,concentrationIndex], yerr=data_uncertainties[:,concentrationIndex], color=colorList[concentrationIndex], ecolor="lightgray")
+        box = thisFigure.ax.get_position()
+        thisFigure.ax.set_position([box.x0 +0.1, box.y0, box.width * 0.8, box.height])
+        thisFigure.ax.legend(moleculeName)# ,loc='center left', bbox_to_anchor=(1, 0.5)) # Could not get text in legend to work correctly.
+
+        # Now save the plot as a png
+        # assuming a file name was passed for it
+        if graphFileName != '':
+            #if a file suffix has been provided, append it to the file name
+        
+            graphFileNameFinal =  graphFileName + "_" + str(moleculeName) + fileSuffix 
+                
+            # need to save to plot directory
+            # directory containing MSRESOLVE.py
+            currentDirectory = os.path.dirname(os.path.realpath(__file__))
+            
+            # subdirectory for plots
+            graphDirectory = os.path.join(currentDirectory, 'Graphs')
+            
+            # make sure it exists and create it if not
+            if not os.path.exists(graphDirectory):
+                os.makedirs(graphDirectory)
+                
+            plt.savefig(os.path.join(graphDirectory, graphFileNameFinal))
+        #Need to check for ipython because it affects how graphs will be displayed.
+        #based below function on https://stackoverflow.com/questions/15411967/how-can-i-check-if-code-is-executed-in-the-ipython-notebook
+        def checkForIpython():
+            try:
+                cfg = get_ipython().config 
+                return True
+            except NameError:
+                return False        
+        #Figured out "block" argument works. Got it from: https://community.esri.com/thread/185110-matplotlib-show-prevents-script-from-completing
+        if checkForIpython()==True:
+            plt.show(block=False)
+        if checkForIpython()==False:
+            if stopAtGraphs == False:
+                plt.show(block=False)
+            if stopAtGraphs == True:
+                plt.show(block=True)                                       
+        #In the end, need to increment the figure number after each cycle.
+        figureNumber = figureNumber+1
+    
+    return figureNumber
+
+
 
 '''This function is called to create the log file and to record the time'''
 def CreateLogFile():
@@ -5268,6 +5343,10 @@ def main():
         if G.grapher == 'yes':
             Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
             G.lastFigureNumber = G.lastFigureNumber+1
+            if (G.calculateUncertaintiesInConcentrations == True):
+                G.lastFigureNumber = DrawUncertaintiesConcentrations(times, data, resultsObjects['concentrations_absolute_uncertainties_all_times'], currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis_uncertainties', fileSuffix = G.iterationSuffix, label="Concentrations With Uncertainties", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
+
+            
         if G.concentrationFinder == 'yes':
             ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
             times = concentrationsarray[:,0]
@@ -5283,6 +5362,8 @@ def main():
             if G.grapher == 'yes':
                 Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='resolvedConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Concentrations/Relative Signal Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
                 G.lastFigureNumber = G.lastFigureNumber+1
+                if (G.calculateUncertaintiesInConcentrations == True):
+                    G.lastFigureNumber = DrawUncertaintiesConcentrations(times, data, resultsObjects['concentrations_absolute_uncertainties_all_times_scaled_to_unit'], currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='resolvedConcentrationsAfterAnalysis_uncertainties', fileSuffix = G.iterationSuffix, label="Concentrations With Uncertainties", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
 
             
     if G.dataSimulation =='yes':

@@ -73,8 +73,8 @@ UserChoices['specificMolecules']['chosenMoleculesNames'] = ['2buten1ol(crotyl al
 #//Chosen Mass Fragments//
 UserChoices['specificMassFragments'] = {} #initialize the specificMassFragments container
 #To choose only specific mass fragments from collected data, input below:
-UserChoices['specificMassFragments']['on'] = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
-UserChoices['specificMassFragments']['chosenMassFragments'] = [44,	46,	54,	56,	58,	59,	70,	71] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
+UserChoices['specificMassFragments']['on'] = 'no'	#if you wish to enable this function enter 'yes' otherwise 'no'
+UserChoices['specificMassFragments']['chosenMassFragments'] = [57] #enter the mass fragments you wish to include in calculations in the format [x,y,z...]
 
 #//Molecule Likelihoods//
 UserChoices['moleculeLikelihoods'] = {} #initialize the moleculeLikelihoods container
@@ -228,8 +228,8 @@ UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent'] = []
 #//Uncertainties for Calculating Uncertainties in Concentrations//
 UserChoices['uncertainties'] = {}
 UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = True
-UserChoices['uncertainties']['referenceFileUncertainties'] = 2 #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _uncertainties after that) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
-UserChoices['uncertainties']['collectedFileUncertainties'] = 'Auto' # or 'File' or 'None'. Will expect same file name as collected file with _uncertainties after that).
+UserChoices['uncertainties']['referenceFileUncertainties'] = "File" #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with absolute_uncertainties.csv after that) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
+UserChoices['uncertainties']['collectedFileUncertainties'] = None # or 'File' or 'None'. Will expect same file name as collected file with _uncertainties after that).
 UserChoices['uncertainties']['referenceCorrectionCoefficientsUncertainties'] = None #Else a dictionary of uncertainties for 'A', 'B', 'C'. Not yet implemented.
 UserChoices['uncertainties']['referenceCorrectionCoefficientsIonizationUncertainties'] = None #Not yet implemented.
 
