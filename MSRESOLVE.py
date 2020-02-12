@@ -2880,14 +2880,14 @@ def InverseMethodDistinguished(monitored_reference_intensities,matching_correcti
             if uncertaintiesModulePresent == True:              
                 matching_correction_values_relative_uncertainties = matching_correction_values_relative_uncertainties#Note that we cannot use uncertainties_dict['matching_correction_values_relative_uncertainties'], because we have truncated the array already based on distinguished.
                 matching_correction_values_absolute_uncertainties = matching_correction_values*matching_correction_values_relative_uncertainties                                                        
-                unumpy_matching_correction_values = unumpy.umatrix(numpy.array(matching_correction_values), numpy.array(matching_correction_values_absolute_uncertainties)) #inverse doesn't work if they're not numpy arrays already. They were lists before this line.
+                unumpy_matching_correction_values = unumpy.uarray(numpy.array(matching_correction_values), numpy.array(matching_correction_values_absolute_uncertainties)) #inverse doesn't work if they're not numpy arrays already. They were lists before this line.
                 #Needs to be a umatrix, not uarray, if want to invert and do dot product.          
                 #following https://pythonhosted.org/uncertainties/numpy_guide.html?highlight=inverse then adding dot product.
-                uInverseInBetween = unumpy.ulinalg.inv(unumpy_matching_correction_values)                                  
+                uInverseInBetween = unumpy.ulinalg.pinv(unumpy_matching_correction_values)                                  
                 #Up until this line, rawsignals_absolute_uncertainties has been 1D. We need to make it 2D and the same direction as rawsignalsarrayline which is already 2D.
                 rawsignals_absolute_uncertainties_2D = numpy.atleast_2d(rawsignals_absolute_uncertainties).transpose()
-                unumpy_rawsignalsarrayline = unumpy.umatrix(numpy.array(rawsignalsarrayline), numpy.array(rawsignals_absolute_uncertainties_2D)) #When this has 0.0 we get a very small final uncertainties listed as 0.        
-                uSolutions = uInverseInBetween*unumpy_rawsignalsarrayline
+                unumpy_rawsignalsarrayline = unumpy.uarray(numpy.array(rawsignalsarrayline), numpy.array(rawsignals_absolute_uncertainties_2D)) #When this has 0.0 we get a very small final uncertainties listed as 0.        
+                uSolutions = uInverseInBetween@unumpy_rawsignalsarrayline #the @ forces matrix multiplication.
                 solutions= unumpy.nominal_values(uSolutions)
                 solutions_uncertainties =unumpy.std_devs(uSolutions)
                 uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = abs(numpy.array(solutions_uncertainties).transpose()) #The uncertainties dictionary does have these the other way, so have to transpose back.
