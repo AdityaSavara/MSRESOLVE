@@ -473,27 +473,42 @@ def ABCDetermination(ReferencePatternMeasuredFileNameAndForm, ReferencePatternLi
         # meanRatioPerMassFragment[meanRatioPerMassFragment==-inf] = 'nan'
     #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
-
-    [a,b,c]=numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2) #The two is for 2nd degree polynomial.
+    abcCoefficients, abcCoefficients_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
     #Factor = A*X^2 + B*X + C, so C=1.0 means the factor is 1.0 and independent of molecular weight.
     #To use this with mixed patterns (meaning, some patterns taken from Literature reference like NIST) you will need to first determine the A,B,C coefficients, then you'll have to divide the Literature reference pattern by this factor. This will compensate for when the code multiplies by the factor, thus putting the mixed patterns into the same tuning.
-    return a,b,c
+    return abcCoefficients, abcCoefficients_cov
 
  
 #this function either creates or gets the three coefficients for the polynomial correction (Tuning Correction) and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients,referenceMeasuredFileNameAndForm,referenceLiteratureFileNameAndForm,measuredReferenceYorN):
+def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceMeasuredFileNameAndForm,referenceLiteratureFileNameAndForm,measuredReferenceYorN):
     if measuredReferenceYorN =='yes':
-        (referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C'])=ABCDetermination(referenceMeasuredFileNameAndForm,referenceLiteratureFileNameAndForm)
+        abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceMeasuredFileNameAndForm,referenceLiteratureFileNameAndForm)
+        referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
+        referenceCorrectionCoefficients_cov = abcCoefficients_cov
+        G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
-    for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
-        factor = referenceCorrectionCoefficients['A']*(referenceabscissa[massfrag_counter]**2)  + referenceCorrectionCoefficients['B']*referenceabscissa[massfrag_counter]+referenceCorrectionCoefficients['C'] #obtains the factor from molecular weight of abscissa
-        referenceDataArray[massfrag_counter,:] = referenceDataArray[massfrag_counter,:]*factor
-    referenceDataArrayWithAbscissa[:,0] = referenceabscissa
-    return referenceDataArrayWithAbscissa
+    referenceDataArray_tuning_uncertainties = referenceDataArray*0.0 #just initializing.
+    if list(referenceCorrectionCoefficients) != [0,0,1]:                                                                                    
+        for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
+            factor = referenceCorrectionCoefficients[0]*(referenceabscissa[massfrag_counter]**2)  + referenceCorrectionCoefficients[1]*referenceabscissa[massfrag_counter]+referenceCorrectionCoefficients[2] #obtains the factor from molecular weight of abscissa
+            referenceDataArray[massfrag_counter,:] = referenceDataArray[massfrag_counter,:]*factor
+            if type(referenceCorrectionCoefficients_cov) != None:
+                if sum(numpy.array(referenceCorrectionCoefficients_cov)).all()!=0:
+                    if len(numpy.shape(referenceCorrectionCoefficients_cov)) == 1 and (len(referenceCorrectionCoefficients_cov) > 0): #If it's a 1D array/list that is filled, we'll diagonalize it.
+                        referenceCorrectionCoefficients_cov = np.diagflat(referenceCorrectionCoefficients_cov) 
+                    #Now we need to use a function from XYYYDataFunctionsSG
+                    factor_uncertainty = DataFunctions.returnPolyvalEstimatedUncertainties(referenceabscissa[massfrag_counter], referenceCorrectionCoefficients_cov, referenceCorrectionCoefficients_cov)
+                    referenceDataArray_tuning_uncertainties[massfrag_counter,:]=referenceDataArray[massfrag_counter,:]*factor_uncertainty                                                                                                                  
+    # referenceDataArrayWithAbscissa[:,0] = referenceabscissa
+    # referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #This is actually already occuring above because it's a pointer, but this line is just to make more clear what has happened.
+    referenceDataArrayWithAbscissa_tuning_uncertainties = referenceDataArrayWithAbscissa*1.0 #creating copy with abscissa, then will fill.
+    referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
+    print(referenceDataArray - referenceDataArray_tuning_uncertainties)
+    return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
     
         
 #this function eliminates (neglects) reference intensities that are below a certain threshold. Useful for solving 
@@ -566,16 +581,13 @@ def ExtractReferencePatternFromData(ExperimentData, referenceDataArray, rpcChose
                     intensitiesStandardDeviation = numpy.std(allExtractedIntensitiesArray[eachChosenMoleculesMF])
                     allExtractedIntensitiesAverage.append(intensitiesAverage)
                     allExtractedIntensitiesStandardDeviation.append(intensitiesStandardDeviation)
-                    print("line 569", eachChosenMoleculesMF, intensitiesAverage, intensitiesStandardDeviation)
                 #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment (that is, to make a reference pattern with a ratio matching the extracted ratio)
                 normalizationFactor = copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1]
-                print("line 572", normalizationFactor)
                 if normalizationFactor == 0: #This is just for the case that there's an 'exception' with no reasonable value provided by the line above.
                     normalizationFactor = 1
                 for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])): #I believe the +1 below is b/c first column is mass frag?
                     copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor
                     copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesStandardDeviation[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor #Need to divide by the same thing and multiply by the same thing as previous line to get right scaling.
-    print("line 578", copyOfReferenceDataArray.provided_reference_patterns[44], copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties[44])
     return copyOfReferenceDataArray.provided_reference_patterns, copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties
 
 '''
@@ -1164,23 +1176,55 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
             #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
             a_array = ReferenceData.relative_standard_uncertainties[:,1:]
             b_array = ReferenceData.standardized_reference_patterns[:,1:] 
+            print(numpy.shape(a_array))
+            print(numpy.shape(b_array))
             ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+            ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
 
     #Only print if not called from interpolating reference objects
     if verbose:
         print('beginning TuningCorrector')
-    ReferenceData.standardized_reference_patterns = TuningCorrector(ReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
-                                                       G.referenceLiteratureFileName, G.referenceMeasuredFileName,
-                                                       G.measuredReferenceYorN)
+    if type(G.referenceCorrectionCoefficients) == type({}):#check if it's a dictionary.
+        G.referenceCorrectionCoefficients = [G.referenceCorrectionCoefficients['A'],G.referenceCorrectionCoefficients['B'],G.referenceCorrectionCoefficients['C']]
+    #only apply the tuning correction if the list is not 0 0 1.
+    try:
+        type(G.referenceCorrectionCoefficients_cov)#If it doesn't exist, we'll make it a None type.
+    except:    
+        G.referenceCorrectionCoefficients_cov = None
+    #Wanted to do something like "if list(G.referenceCorrectionCoefficients) != [0,0,1]:" but can't do it out here. Can do it inside function.                                                                                                                  
+    ReferenceData.standardized_reference_patterns, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
+                                                           G.referenceCorrectionCoefficients,G.referenceCorrectionCoefficients_cov,
+                                                           G.referenceLiteratureFileName, G.referenceMeasuredFileName,
+                                                           G.measuredReferenceYorN)
+    #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
+    try:
+        ReferenceData.absolute_standard_uncertainties = (ReferenceData.absolute_standard_uncertainties**2 + ReferenceData.standardized_reference_patterns_tuning_uncertainties**2)**0.5
+    except:
+        ReferenceData.absolute_standard_uncertainties = ReferenceData.standardized_reference_patterns_tuning_uncertainties
+    
     ReferenceData.ExportCollector('TuningCorrector')
+    ReferenceData.ExportCollector('TuningCorrector_absolute_standard_uncertainties', export_tuning_uncertainties= True) #These are not yet actually standardized. Happens below.
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None):                                                      
-            pass #TODO: propagate TuningCorrector uncertainties into the ReferenceData.relative_standard_uncertainties
+            pass #TODO: consider to propagate TuningCorrector uncertainties into the ReferenceData.relative_standard_uncertainties
     
     #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
     ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.standardized_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizeReferencePattern')
     #Note: it is assumed that the relative_standard_uncertainties correspond to original reference, so before tuning corrector, thus we do not recalculate that factor.
+    ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+    
+    #Now need to update the relative uncertainties again. #TODO: This should become a function.
+    ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
+    #now populate the non-mass fragment parts by dividing.
+    #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
+    a_array = ReferenceData.relative_standard_uncertainties[:,1:]
+    b_array = ReferenceData.standardized_reference_patterns[:,1:] 
+    print(numpy.shape(a_array))
+    print(numpy.shape(b_array))
+    ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+    ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+    
     
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
@@ -1435,7 +1479,7 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
         ReferenceData.ExportCollector('ExtractReferencePatternFromData_absolute_uncertainties', export_uncertainties= True)
         #Only print if not called from interpolating reference objects
         if verbose:
-            print('ReferencePatternChanger complete')    
+            print('ReferencePatternChanger complete')
     # Some initial preprocessing on the reference data
     ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose)
     # Set the ReferenceData.monitored_reference_intensities and
@@ -2347,7 +2391,7 @@ class MSReference (object):
     #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
-    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_uncertainties = False):
+    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_uncertainties = False, export_standard_uncertainties=False, export_tuning_uncertainties=False):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
@@ -2363,6 +2407,10 @@ class MSReference (object):
             #record data 
             if export_uncertainties:
                 self.dataToExport.append(self.provided_reference_patterns_absolute_uncertainties.copy())
+            elif export_tuning_uncertainties:
+                self.dataToExport.append(self.standardized_reference_patterns_tuning_uncertainties.copy())
+            elif export_standard_uncertainties:
+                self.dataToExport.append(self.absolute_standard_uncertainties.copy())
             elif use_provided_reference_patterns:
                 self.dataToExport.append(self.provided_reference_patterns.copy())
             elif callingFunction == 'UnnecessaryMoleculesDeleter':
@@ -3538,7 +3586,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'][massFragmentIndexForThisSLS] = 0.0
                 #To combine the uncertainties we do the   c_absolute_uncertainty = sqrt(a_absolute_uncertainty^2 + a_absolute_uncertainty^2).  For arrays, need to use numpy.square to square each element in the array. For arbitrary powers, we use numpy.power, which is slower and less accurate.
                 sqrt_term = numpy.square(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) + numpy.square(solvedSignalsForSubtractionArray_absolute_uncertainties)
-                uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = numpy.power(sqrt_term,0.5)
+                #uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = numpy.power(sqrt_term,0.5) #apparently numpy.power is slow, so should use **.
+                uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = sqrt_term**0.5
                 
             #Since it's done, we'll update the solved molecules array etc.
             solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
@@ -4783,9 +4832,19 @@ def PopulateLogFile():
         f6.write('backgroundIntercepts = %s \n'%(G.backgroundIntercepts))
     if G.measuredReferenceYorN == 'yes':
         f6.write('measuredReferenceYorN = %s \n'%G.measuredReferenceYorN)
-        f6.write('referenceCorrectionCoefficientA = %s \n'%(G.referenceCorrectionCoefficients['A']))
-        f6.write('referenceCorrectionCoefficientB = %s \n'%(G.referenceCorrectionCoefficients['B']))
-        f6.write('referenceCorrectionCoefficientC = %s \n'%(G.referenceCorrectionCoefficients['C']))
+        f6.write('referenceCorrectionCoefficientA = %s \n'%(G.referenceCorrectionCoefficients[0]))
+        f6.write('referenceCorrectionCoefficientB = %s \n'%(G.referenceCorrectionCoefficients[1]))
+        f6.write('referenceCorrectionCoefficientC = %s \n'%(G.referenceCorrectionCoefficients[2]))
+        f6.write('referenceCorrection_abcCoefficients = %s \n'%(list(G.referenceCorrectionCoefficients)))
+        if type(G.referenceCorrectionCoefficients_cov) == type(None):
+            strVersionOf_abcCoefficients_cov = str(G.referenceCorrectionCoefficients_cov)
+        if type(G.referenceCorrectionCoefficients_cov) != type(None):
+            listVersionOf_abcCoefficients_cov = list(G.referenceCorrectionCoefficients_cov) #make the outer structure a list.
+            print(listVersionOf_abcCoefficients_cov)
+            for elementIndex in range(len(listVersionOf_abcCoefficients_cov)): #make the inner structures lists, also.
+                listVersionOf_abcCoefficients_cov[elementIndex] = list(listVersionOf_abcCoefficients_cov[elementIndex])
+            strVersionOf_abcCoefficients_cov = str(listVersionOf_abcCoefficients_cov)
+        f6.write('referenceCorrection_abcCoefficients_cov = %s \n'%(strVersionOf_abcCoefficients_cov))
     if G.specificMolecules == 'yes':
         f6.write('specificMolecules = %s \n'%(G.specificMolecules))
         f6.write('chosenMoleculesNames = %s \n'%(G.chosenMoleculesNames))

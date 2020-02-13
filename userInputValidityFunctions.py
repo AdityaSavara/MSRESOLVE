@@ -316,7 +316,10 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['referenceMeasuredFileName']    = UserChoices['measuredReferenceYorN']['referenceMeasuredFileName']
     SettingsVDictionary['referenceLiteratureFileName']    = UserChoices['measuredReferenceYorN']['referenceLiteratureFileName']
     SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients']
-
+    try:
+        SettingsVDictionary['referenceCorrectionCoefficients_cov']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients_cov']
+    except:
+        SettingsVDictionary['referenceCorrectionCoefficients_cov']    = [0,0,0] #TODO: This is to keep some old unit tests running. Ideally they should be fixed.
     SettingsVDictionary['extractReferencePatternFromDataOption']   = UserChoices['extractReferencePatternFromDataOption']['on']
     SettingsVDictionary['rpcMoleculesToChange']   = UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChange']
     SettingsVDictionary['rpcTimeRanges']   = UserChoices['extractReferencePatternFromDataOption']['rpcTimeRanges']
