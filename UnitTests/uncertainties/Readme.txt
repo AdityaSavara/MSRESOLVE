@@ -3,3 +3,13 @@ Test 3 uses inverse and has no "collected data" uncertainties.
 Note: Test 3 has two possible outcomes: one if the uncertainties modules is present, and one if it is not. no "collected data" uncertainties.
 Test 4 uses inverse and has collected data uncertainties as well as the absolute uncertainties feature for the reference file, based on the 'auto' uncertainties feature. This data is particularly not noisy, so the error is not that much increased.
 Test 5 uses the collected data uncertainties and the reference data uncertainties for the SLS.
+test 6 inverse
+test 7
+test 8 sls chosen molecules, chosen fragments
+test 9
+test 10 inverse which is a copy of test 3 except that it uses a file for the uncertainties as input
+test 11 inverse chosen molecules
+test 12 sls
+test 13 sls, chosen molecules, chosen fragments
+test 14 inverse with  tuning corrector and tuning corrector uncertainties that are propagated
+test 15 inverse with same tuning corrector as 14 but no tuning correctors to be propagated.  Comparing the relative uncertainties in the concentrations of of 14 and 15 shows that 14 does in fact have higher uncertainties.

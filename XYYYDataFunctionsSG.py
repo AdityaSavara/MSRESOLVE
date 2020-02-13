@@ -10,6 +10,16 @@ import math
 import copy
 import pandas 
 
+#Basically, give x values, A, B, C coefficients (from 
+def returnPolyvalEstimatedUncertainties(arrayOfAbscissaValues, listOfParameters, covMatrixOfParameters):
+    n = len(listOfParameters) - 1
+    TT = numpy.vstack([arrayOfAbscissaValues**(n-i) for i in range(n+1)]).T
+    yi = numpy.dot(TT, listOfParameters)  # matrix multiplication calculates the polynomial values
+    Cov_y = numpy.dot(TT, numpy.dot(covMatrixOfParameters, TT.T)) # Cov_y = TT*C_z*TT.T
+    uncertaintiesArray = numpy.sqrt(numpy.diag(Cov_y))  # Standard deviations are sqrt of diagonal
+    return uncertaintiesArray
+
+
 def AppendColumnsToCSV(CSVName, YYYYData, columnheaders, rowIndex = [], rowIndexHeader = []):
     #rowIndex and rowIndexHeader are only used if there is not already a file with the specified name. 
    

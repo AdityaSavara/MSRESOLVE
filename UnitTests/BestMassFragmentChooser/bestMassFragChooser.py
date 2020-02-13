@@ -113,8 +113,10 @@ def bestMassFragChooser(chosenMolecules,
     #if using the TuningCorrector, then there is another external dependency
     if minimizeDependencies == False:
         import UserInput as G
-        truncatedReferenceData.standardized_reference_patterns = MSRESOLVE.TuningCorrector(
-            truncatedReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients,
+        if type(G.referenceCorrectionCoefficients) == type({}):# if it's a dictionary we need to make it into a list.
+            G.referenceCorrectionCoefficients = [G.referenceCorrectionCoefficients['A'],G.referenceCorrectionCoefficients['B'],G.referenceCorrectionCoefficients['C']]
+        truncatedReferenceData.standardized_reference_patterns, ReferenceData.standardized_reference_patterns_tuning_uncertainties = MSRESOLVE.TuningCorrector(
+            truncatedReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov,
             G.referenceLiteratureFileName, G.referenceMeasuredFileName, G.measuredReferenceYorN)  
     
     #Removing entire rows of data for mass fragments with all reference
