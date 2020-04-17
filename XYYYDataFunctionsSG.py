@@ -222,7 +222,7 @@ def GetRelevantData(data,abscissa, headers, headersToConfineTo):
     extractedColumnTracker = numpy.zeros(len(headers))
     for relevantHeaderIndex,relevantHeader in enumerate(headersToConfineTo):
         if relevantHeader in headers: # just make sure it exists
-            extractedColumnTracker[headers.index(relevantHeader)] = 1.0 # this assumes no
+            extractedColumnTracker[list(headers).index(relevantHeader)] = 1.0 # this assumes no
                                                                         # duplicates in 'headers' !!
         else:
             print("You choose to smooth mass data which doesnt exist in "+
