@@ -507,7 +507,6 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     # referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #This is actually already occuring above because it's a pointer, but this line is just to make more clear what has happened.
     referenceDataArrayWithAbscissa_tuning_uncertainties = referenceDataArrayWithAbscissa*1.0 #creating copy with abscissa, then will fill.
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
-    print(referenceDataArray - referenceDataArray_tuning_uncertainties)
     return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
     
         
@@ -1176,8 +1175,6 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
             #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
             a_array = ReferenceData.relative_standard_uncertainties[:,1:]
             b_array = ReferenceData.standardized_reference_patterns[:,1:] 
-            print(numpy.shape(a_array))
-            print(numpy.shape(b_array))
             ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
             ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
 
@@ -1220,8 +1217,6 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
     a_array = ReferenceData.relative_standard_uncertainties[:,1:]
     b_array = ReferenceData.standardized_reference_patterns[:,1:] 
-    print(numpy.shape(a_array))
-    print(numpy.shape(b_array))
     ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
     ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
     
@@ -1261,6 +1256,7 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
     if len(referenceFormsList) == 1 and len(referenceFileNamesList) == 1:
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[0],referenceFormsList[0])
         ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
+        #save each global variable into the class objects
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[0].iterationSuffix = G.iterationSuffix
         if G.calculateUncertaintiesInConcentrations == True:
@@ -1437,8 +1433,15 @@ def DataInputPreProcessing(ExperimentData):
     if type(G.collectedFileUncertainties) == type("String"):
         if G.collectedFileUncertainties.lower() == 'auto' :
             UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
-        ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
-        ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
+            ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
+            ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
+#            print(ExperimentData.rawsignals_absolute_uncertainties)
+#            print(numpy.shape(ExperimentData.rawsignals_absolute_uncertainties), numpy.shape(ExperimentData.workingData))
+#            sys.exit()
+        if G.collectedFileUncertainties.lower() == 'none' :
+            ExperimentData.rawsignals_absolute_uncertainties = None
+            ExperimentData.rawsignals_average_residuals = None
+            G.collectedFileUncertainties = None
     if type(G.collectedFileUncertainties) == type(None):
         ExperimentData.rawsignals_absolute_uncertainties = None
         ExperimentData.rawsignals_average_residuals = None
@@ -2939,8 +2942,8 @@ def InverseMethodDistinguished(monitored_reference_intensities,matching_correcti
             except:
                 uncertaintiesModulePresent = False
                 solutions = numpy.linalg.solve(matching_correction_values,rawsignalsarrayline) 
-                uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = np.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
-                uncertainties_dict['concentrations_relative_uncertainties_one_time'] = np.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
+                uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = numpy.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
+                uncertainties_dict['concentrations_relative_uncertainties_one_time'] = numpy.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
                 print("WARNING: InverseMethodDistinguished could not return uncertainties and is returning uncertainties of zero. This is for the datapoint with intensities of", rawsignalsarrayline, "and concentrations of", solutions)
             if uncertaintiesModulePresent == True:              
                 matching_correction_values_relative_uncertainties = matching_correction_values_relative_uncertainties#Note that we cannot use uncertainties_dict['matching_correction_values_relative_uncertainties'], because we have truncated the array already based on distinguished.
@@ -5412,7 +5415,33 @@ def main():
             ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'percent_concentration', units = None)
 
         
- 
+        G.generateMeans = True #FIXME: This variable needs to be added to user Input somehow.
+        if G.generateMeans == True:
+            import numpy as np
+            ScaledConcentrations = numpy.genfromtxt( "ScaledConcentrations.csv", delimiter=',',skip_header=1)
+            x_axis = ScaledConcentrations[:,0]
+            ScaledConcentrations_data = ScaledConcentrations[:,1:]
+            ScaledConcentrations_Means = numpy.atleast_2d(numpy.mean(ScaledConcentrations_data, axis=0)) #atleast_2D is just making it 2D
+            ScaledConcentrations_StdDevs = numpy.atleast_2d(numpy.std(ScaledConcentrations_data, axis=0))
+            numpy.savetxt("ScaledConcentrations_TimeRange_Means.csv", ScaledConcentrations_Means, delimiter = ',', fmt ="%s")
+            numpy.savetxt("ScaledConcentrations_TimeRange_StdDevs.csv", ScaledConcentrations_StdDevs, delimiter = ',', fmt ="%s")
+            numpy.savetxt("ScaledConcentrations_TimeRange_StdErrs.csv", ScaledConcentrations_StdDevs/(len(x_axis)**0.5), delimiter = ',', fmt ="%s")
+            
+            #We don't want things to crash if the uncertainties have a problem, so will use try and except.
+            try:
+                ScaledConcentrations_absolute_uncertainties = numpy.genfromtxt( "ScaledConcentrations_absolute_uncertainties.csv", delimiter=',',skip_header=1)
+                x_axis = ScaledConcentrations_absolute_uncertainties[:,0]
+                #The "A" below is for absolute uncertainties, the "R" is for relative uncertainties.
+                ScaledConcentrations_absolute_uncertainties_data = ScaledConcentrations_absolute_uncertainties[:,1:]
+                ScaledConcentrations_absolute_uncertainties_Means = numpy.atleast_2d(numpy.mean(ScaledConcentrations_absolute_uncertainties_data, axis=0)) #atleast_2D is just making it 2D
+                ScaledConcentrations_absolute_uncertainties_StdDevs = numpy.atleast_2d(numpy.std(ScaledConcentrations_absolute_uncertainties_data, axis=0))
+                ScaledConcentrations_relative_uncertainties_Means = ScaledConcentrations_absolute_uncertainties_Means/ScaledConcentrations_Means
+                numpy.savetxt("ScaledConcentrations_TimeRange_Absolute_Uncertainties_Means.csv", ScaledConcentrations_absolute_uncertainties_Means, delimiter = ',', fmt ="%s")
+                numpy.savetxt("ScaledConcentrations_TimeRange_Absolute_Uncertainties_StdDevs.csv", ScaledConcentrations_absolute_uncertainties_StdDevs, delimiter = ',', fmt ="%s")
+                numpy.savetxt("ScaledConcentrations_TimeRange_Relative_Uncertainties_Means.csv", ScaledConcentrations_relative_uncertainties_Means, delimiter = ',', fmt ="%s")
+            except:
+                pass
+            
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
             Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Relative Concentrations Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
