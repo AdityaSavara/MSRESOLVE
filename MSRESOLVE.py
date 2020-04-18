@@ -1435,14 +1435,15 @@ def DataInputPreProcessing(ExperimentData):
             UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
             ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
             ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
-#            print(ExperimentData.rawsignals_absolute_uncertainties)
-#            print(numpy.shape(ExperimentData.rawsignals_absolute_uncertainties), numpy.shape(ExperimentData.workingData))
-#            sys.exit()
         if G.collectedFileUncertainties.lower() == 'none' :
             ExperimentData.rawsignals_absolute_uncertainties = None
             ExperimentData.rawsignals_average_residuals = None
             G.collectedFileUncertainties = None
-    if type(G.collectedFileUncertainties) == type(None):
+    elif type(G.collectedFileUncertainties) == type([1]) or type(G.collectedFileUncertainties) == type(numpy.array([1])): #if it's a list or a numpy array, it should be the same length as the number of mass fragments and will be populated for all times.
+            ExperimentData.rawsignals_absolute_uncertainties = numpy.ones(numpy.shape(ExperimentData.workingData)) #just initializing as an array of ones.
+            uncertaintiesPerTime = numpy.array(G.collectedFileUncertainties)
+            ExperimentData.rawsignals_absolute_uncertainties = ExperimentData.rawsignals_absolute_uncertainties*uncertaintiesPerTime        
+    elif type(G.collectedFileUncertainties) == type(None):
         ExperimentData.rawsignals_absolute_uncertainties = None
         ExperimentData.rawsignals_average_residuals = None
 
@@ -5057,7 +5058,7 @@ def main():
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
     if type(G.collectedFileUncertainties) != type(None):
-        if type(G.collectedFileUncertainties) != type("str"): # if it's not a string, then it's assumed to be an integer for which local region to use during/like datasmoother.
+        if type(G.collectedFileUncertainties) != type("str") and type(G.collectedFileUncertainties) != type(['list']) : # if it's not a string or a list, then it's assumed to be an integer for which local region to use during/like datasmoother.
             G.collectedFileUncertainties = int(G.collectedFileUncertainties)
 
 
