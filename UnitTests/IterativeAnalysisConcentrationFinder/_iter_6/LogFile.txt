@@ -1,0 +1,28 @@
+Sat May 16 14:03:39 2020
+
+referenceFileName = ['AcetaldehydeNISTRefMixed2_iter_6.csv'] 
+form  = ['xyyy'] 
+collectedFileName = 2-CrotAcetExp#2Truncated_iter_6.csv 
+timeRangeLimit = yes 
+timeRangeStart = 176.0 
+timeRangeFinish = 200.0 
+specificMolecules = yes 
+chosenMoleculesNames = ['Ethylene (Ethene)'] 
+specificMassFragments = yes 
+chosenMassFragments = [27] 
+answer = sls 
+uniqueOrCommon = common 
+slsFinish = brute 
+bruteOption = ssr 
+concentrationFinder = yes 
+molecule = ['Acetaldehyde', 'CO', 'Ethanol'] 
+moleculeSignal = [1.66945, 1.2, 1.1] 
+massNumber = [29, 28, 44] 
+moleculeConcentration = [0.05, 0.01, 0.03] 
+units = bar 
+scaleRawDataFactor  = 1.0 
+resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
+concentrationsOutputName = ResolvedConcentrations.csv 
+simulatedSignalsOutputName = SimulatedRawSignals.csv 
+Run Time 0.33444 seconds 
+###################################################################### 

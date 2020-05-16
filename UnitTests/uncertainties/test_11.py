@@ -42,7 +42,9 @@ except:
 ut.set_expected_result((expected_output1,expected_output2) ,str((expected_output1,expected_output2)),prefix=prefix,suffix=suffix)
 
 resultObj = (output1, output2)
-
+print("line 45")
+print(str(expected_output1-output1))
+print(np.shape(expected_output2), np.shape(output2))
 #String is provided
 resultStr = str(resultObj)
 

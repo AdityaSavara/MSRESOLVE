@@ -10,6 +10,6 @@ test 9
 test 10 inverse which is a copy of test 3 except that it uses a file for the uncertainties as input
 test 11 inverse chosen molecules
 test 12 sls
-test 13 sls, chosen molecules, chosen fragments
+test 13 sls, chosen molecules, chosen fragments. --> ends up using inverse after solving one molecule.
 test 14 inverse with  tuning corrector and tuning corrector uncertainties that are propagated
 test 15 inverse with same tuning corrector as 14 but no tuning correctors to be propagated.  Comparing the relative uncertainties in the concentrations of of 14 and 15 shows that 14 does in fact have higher uncertainties.
