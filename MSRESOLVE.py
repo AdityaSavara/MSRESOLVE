@@ -5419,11 +5419,11 @@ def main():
             ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'percent_concentration', units = None)
 
         
-        G.generateStatistics = True #FIXME: This variable needs to be added to user Input somehow.
-        if G.generateStatistics == True:
+        G.generateStatistics = True #FIXME: This variable needs to be added to user Input somehow. Also does not work with iterative.
+        if G.generateStatistics == True and G.iterativeAnalysis == False:
             ScaledConcentrations_Statistics = []
             import numpy as np
-            ScaledConcentrations = numpy.genfromtxt( "ScaledConcentrations.csv", delimiter=',',skip_header=1)
+            ScaledConcentrations = numpy.genfromtxt("ScaledConcentrations.csv", delimiter=',',skip_header=1)
             x_axis = ScaledConcentrations[:,0]
             ScaledConcentrations_data = ScaledConcentrations[:,1:]
             ScaledConcentrations_Means = numpy.atleast_2d(numpy.mean(ScaledConcentrations_data, axis=0)) #atleast_2D is just making it 2D

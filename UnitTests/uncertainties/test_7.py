@@ -34,14 +34,15 @@ try:
     expected_output1 = np.genfromtxt("ScaledConcentrationsExpected_test_7.csv", skip_header = 1, delimiter =",", dtype = 'f8')
     expected_output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties_test_7.csv", skip_header = 1, delimiter =",", dtype = 'f8')
     print("THE UNCERTAINTIES MODULE ***IS*** PRESENT, RUNNING THE UNIT TEST ACCORDINGLY.")
+    resultObj = (output1, output2)
 except:
     print("THE UNCERTAINTIES MODULE ***IS NOT*** PRESENT, RUNNING THE UNIT TEST ACCORDINGLY.")
     expected_output1 = np.genfromtxt("ScaledConcentrationsExpected_test_7.csv", skip_header = 1, delimiter =",")
     expected_output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties_test_7_noUncertaintiesModule.csv", skip_header = 1, delimiter =",")
+    resultObj = (expected_output1, expected_output2)
 
 ut.set_expected_result((expected_output1,expected_output2) ,str((expected_output1,expected_output2)),prefix=prefix,suffix=suffix)
 
-resultObj = (output1, output2)
 
 #String is provided
 resultStr = str(resultObj)

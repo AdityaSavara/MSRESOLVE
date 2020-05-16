@@ -1,0 +1,27 @@
+Sat May 16 14:03:44 2020
+
+referenceFileName = ['AcetaldehydeNISTRefMixed2_iter_1.csv', 'AcetaldehydeNISTRefMixed2Edit_iter_1.csv'] 
+form  = ['xyyy', 'xyyy'] 
+collectedFileName = 2-CrotAcetExp#2Truncated_iter_1.csv 
+timeRangeLimit = yes 
+timeRangeStart = 176.0 
+timeRangeFinish = 200.0 
+specificMolecules = yes 
+chosenMoleculesNames = ['Crotyl Alcohol'] 
+specificMassFragments = yes 
+chosenMassFragments = [57] 
+dataSmootherYorN = yes 
+dataSmootherChoice = timerange 
+dataSmootherTimeRadius = 7 
+dataSmootherPointRadius = 5 
+dataSmootherHeadersToConfineTo = [] 
+answer = sls 
+uniqueOrCommon = common 
+slsFinish = brute 
+bruteOption = ssr 
+scaleRawDataFactor  = 1.0 
+resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
+concentrationsOutputName = ResolvedConcentrations.csv 
+simulatedSignalsOutputName = SimulatedRawSignals.csv 
+Run Time 0.41701 seconds 
+###################################################################### 
