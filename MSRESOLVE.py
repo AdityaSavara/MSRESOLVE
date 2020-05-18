@@ -1225,6 +1225,8 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
     #TODO: option 2: Or we can below assign to preprocessed_reference_pattern rather than standardized_reference_patterns and then use that in data analysis (Note that interpolate would continue to use standardized_reference_patterns as well as preprocess the output)
     if G.minimalReferenceValue == 'yes':
+        if G.implicitSLScorrection == True: #This feature requires us to have unfiltered reference patterns to do an implicit/recursive correction at the end.
+            G.currentReferenceDataUnfiltered = copy.deepcopy(ReferenceData) #Make a copy before any filtering occurs. There is an implied return in global variable.
         ReferenceData.standardized_reference_patterns = ReferenceThresholdFilter(ReferenceData.standardized_reference_patterns,G.referenceValueThreshold)
         ReferenceData.ExportCollector('ReferenceThresholdFilter')
     
@@ -1232,6 +1234,9 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #One could move this function prior to threshold filtering however then correction values would not be correctly calculated for interpolated reference patterns
     #We are not sure there are any other reasons we can't move this function call. However, there may be some care needed when using uncertainties.
     ReferenceData.correction_values, ReferenceData.correction_values_relative_uncertainties = CorrectionValuesObtain(ReferenceData)
+    if G.implicitSLScorrection == True: #This feature requires us to have unfiltered reference patterns to do an implicit/recursive correction at the end. There is an implied return in global variable.
+            G.currentReferenceDataUnfiltered.correction_values, G.currentReferenceDataUnfiltered.correction_values_relative_uncertainties = CorrectionValuesObtain(G.currentReferenceDataUnfiltered)
+    
     #Only print if not called from interpolating reference objects
     if verbose:
         print('CorrectionValuesObtain')
@@ -1485,11 +1490,14 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
         if verbose:
             print('ReferencePatternChanger complete')
     # Some initial preprocessing on the reference data
-    ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose)
+    ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose) #Note: if implicitSLScorrection is being used, G.currentReferenceDataUnfiltered gets created inside ReferenceInputPreProcessing
     # Set the ReferenceData.monitored_reference_intensities and
     # ReferenceData.matching_correction_values fields
     # based on the masses in ExperimentData.mass_fragment_numbers
     ReferenceData = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceData)
+    if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also.
+        G.currentReferenceDataUnfiltered = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,G.currentReferenceDataUnfiltered)
+        
     #Only print if not called from interpolating reference objects
     if verbose:
         print("Matching Correction Values complete")
@@ -1499,6 +1507,9 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
     ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
     ## like ReferenceData.standardized_reference_patterns
     ReferenceData = UnnecessaryMoleculesDeleter(ReferenceData)
+    if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also.
+        G.currentReferenceDataUnfiltered = UnnecessaryMoleculesDeleter(G.currentReferenceDataUnfiltered)
+
     ReferenceData.ExportCollector('UnnecessaryMoleculesDeleter')
     
     # Export the reference data files that have been stored by ReferenceData.ExportCollector
@@ -4353,6 +4364,98 @@ def subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtract, 
     rawsignalstosubtract = littleSimulationFunction(concentrationsToSubtract, matching_correction_values_to_subtract)#The raw signals are simulated from the correction values and raw signals containing all molecules we don't want to consider.
     rawsignals_remaining = rawsignalsarrayline - rawsignalstosubtract
     return rawsignals_remaining
+
+
+
+#This function is intended to add back any concentration / intensity that was removed or distorted by reference fragmentation pattern high pass filtering (which is UserChoices['minimalReferenceValue']['referenceValueThreshold']). It also adds half of the difference to the uncertainties.  As of 5/17/20, only a single recursion iteration is performed.
+#The corrections are performed from largest to smallest (in percentage), with only one molecule's correction per sls mass. That is, the effect of molecule A's filtering on molecule B's concentration, for example. A molecule can be its largest self correction (A to A). Each molecule is corrected in kind, so serial (stacked) correction is among the possibilities that can occur.
+#TODO: May 17 2020. Right now, we only take the LARGEST correction for each sls when deciding which sls mass to correct, then we apply that correction. But maybe we should take a single recursion of all molecules affecting? Then apply all molecules to that sls mass before moving to the next one? This would still be a single recursion, but would matter if (for example) a single molecule's sls was able to occur due to filtering out 20 other molecule's contributions at that mass.
+class referenceThresholdFilterCorrectingSandbox():
+    def __init__(self, solvedConcentrationsAtThisTime,referenceBeforeFiltering,referenceAfterFiltering, slsSolvedMasses):
+        #The below few lines are to get the existing simulated signals for this time point.
+        #We put list brackets around the arguments below because the RawSignalSimulation function actually expects an array of arrays.
+        simulateddataAtThisTime = RawSignalsSimulation(numpy.array([solvedConcentrationsAtThisTime]), numpy.array([referenceAfterFiltering.matching_correction_values]))
+        simulateddataAtThisTime1D = simulateddataAtThisTime[0] #The RawSignalsSimulation function returns a nested object, so we un-nest it.                                
+        self.slsSolvedMasses = slsSolvedMasses
+        self.referenceBeforeFiltering = referenceBeforeFiltering
+        self.referenceAfterFiltering = referenceAfterFiltering
+        self.solvedConcentrationsAtThisTimeUncorrected = solvedConcentrationsAtThisTime*1.0
+        self.solvedConcentrationsCorrected1D = solvedConcentrationsAtThisTime*1.0 #just initializing. This *does* include the time value.
+        self.correctedAlreadyCounter = self.solvedConcentrationsCorrected1D[1:]*0.0 #Just initializing with same length as molecules. Will put a 1 inside any index once it's corrected.  We use the 1: because we need to exclude the time column.
+        
+        for moleculesCounter in range(len(self.solvedConcentrationsCorrected1D)):#We loop across the number of molecules, not knowing which one we'll pick each time. Also, we may not pick them all. So this counter is not used for anything other than the number of times looping.
+            self.populateVariablesFunction(self.solvedConcentrationsCorrected1D) #Get things ready to figure out which concentration needs to be decreased.
+            self.calculateMaxContribution()  #This figures out which concentration needs to be decreased.
+            #Now decrease the concentration that needs to be decreased.     
+            if type(self.slsMassWithGreatestContributionToCorrectMoleculeIndex) != type(None):
+                self.solvedConcentrationsCorrected1D[self.slsMassWithGreatestContributionToCorrectMoleculeIndex+1] = (1+self.slsMassWithGreatestContributionToCorrectContributionRatio)*self.solvedConcentrationsCorrected1D[self.slsMassWithGreatestContributionToCorrectMoleculeIndex+1]  #The +1 indexing is needed because the first column is time.  It's "1+...ratio" rather than "1-...ratio" because a negative ratio is defined as decreasing and a positive ratio as increasing.
+                #Keep track of that having already been solved for.
+                self.correctedAlreadyCounter[self.slsMassWithGreatestContributionToCorrectMoleculeIndex] =  1
+            #Now the loop will occur again.
+        
+    def populateVariablesFunction(self, solvedConcentrationsCorrected):
+        self.allMoleculesFilteredContributions = []
+        self.allMoleculesSlsSimulatedSignals = []
+        self.allMoleculesSlsMassIndices = []
+        self.separatedSimulatedSignalsWithFiltering = []
+        self.separatedSimulatedSignalsWithoutFiltering = []
+        for moleculeIndex in range(len(self.slsSolvedMasses)):
+            if self.correctedAlreadyCounter[moleculeIndex] == 0: #We only do this if the Counter's flag is still at 0 for this molecule. If it's at 1 that means any other contributions to this molecule have already occurred.
+                slsSolvedMass = self.slsSolvedMasses[moleculeIndex]
+                #Grab all of the masses and find the mass index for this mass.
+                slsMassIndex = list(ExperimentData.mass_fragment_numbers).index(slsSolvedMass) #The reference object *does not* keep within it the mass fragment numbers of the observed signals. The mass fragments of the observed signals are an experimental quantity so are only in ExperimentData.
+                #TODO: Consider that we are only going to do one recursive loop here. Maybe that should change.
+                solvedConcentrationsWithoutOtherMolecules = solvedConcentrationsCorrected*0.0  #Need to keep the same shape but have zeros for other molecules.
+                solvedConcentrationsWithoutOtherMolecules[moleculeIndex+1] = solvedConcentrationsCorrected[moleculeIndex+1] #the plus one is because this has "time" also.
+                thisMoleculeSimulatedSignalWithReferenceWithoutFiltering = RawSignalsSimulation(numpy.array([solvedConcentrationsWithoutOtherMolecules]), numpy.array([self.referenceBeforeFiltering.matching_correction_values]))
+                #There is a subtlety because the with filtering case must use the ORIGINAL concentration, because in the iterative way of doing things the solvedConcentrationsCorrected will no longer reflect he originally ascribed signal. We need to compare to that.
+                solvedConcentrationsAtThisTimeUncorrectedWithoutOtherMolecules = self.solvedConcentrationsAtThisTimeUncorrected*0.0
+                solvedConcentrationsAtThisTimeUncorrectedWithoutOtherMolecules[moleculeIndex+1] = solvedConcentrationsCorrected[moleculeIndex+1]
+                thisMoleculeSimulatedSignalWithReferenceWithFilteringOriginal = RawSignalsSimulation(numpy.array([solvedConcentrationsAtThisTimeUncorrectedWithoutOtherMolecules]), numpy.array([self.referenceAfterFiltering.matching_correction_values]))
+                thisMoleculefilteredContributions = (thisMoleculeSimulatedSignalWithReferenceWithFilteringOriginal - thisMoleculeSimulatedSignalWithReferenceWithoutFiltering)[0][1:]  #The 0 is necessary because this is actually a nested object. Then, the 1: is to remove the index that is related to time. We could have sliced before the subtraction, but we just do it after.
+                thisMoleculeSlsSimulatedSignal = thisMoleculeSimulatedSignalWithReferenceWithFilteringOriginal[0][slsMassIndex+1]  #Need+1 because the simulated signal array includes the time.
+                self.allMoleculesSlsSimulatedSignals.append(thisMoleculeSlsSimulatedSignal)
+                self.allMoleculesFilteredContributions.append(thisMoleculefilteredContributions)
+                self.allMoleculesSlsMassIndices.append(slsMassIndex)
+                self.separatedSimulatedSignalsWithFiltering.append(thisMoleculeSimulatedSignalWithReferenceWithFilteringOriginal)
+                self.separatedSimulatedSignalsWithoutFiltering.append(thisMoleculeSimulatedSignalWithReferenceWithoutFiltering)
+            else: #The else implies correctedAlreadyCounter[moleculeIndex] == 1. if it's already been done, we'll append "none". 
+                self.allMoleculesSlsSimulatedSignals.append(None)
+                self.allMoleculesFilteredContributions.append(None)
+                self.allMoleculesSlsMassIndices.append(None)
+                self.separatedSimulatedSignalsWithFiltering.append(None)
+                self.separatedSimulatedSignalsWithoutFiltering.append(None)
+    def calculateMaxContribution(self):
+        self.slsMassWithGreatestContributionToCorrectContributionRatio = 0
+        self.slsMassWithGreatestContributionToCorrectMoleculeIndex = None
+        self.slsMassWithGreatestContributionToCorrectSlsMassIndex = None
+        self.slsMassWithGreatestContributionToCorrectSlsMassValue = None
+        self.slsMassWithGreatestContributingMoleculeIndex = None
+        #We're going to loop across each sls mass and find the maximum contribution ratio for that mass. We'll stick the ratio into maxContributionRatioThisSlsMass.
+        for moleculeIndex, slsMassToCorrectFor in enumerate(self.slsSolvedMasses):#This is same length as molecules.
+            if self.correctedAlreadyCounter[moleculeIndex] == 0: #We only check if the molecule hasn't been corrected yet.   
+                slsSimulatedSignalInQuestion = self.allMoleculesSlsSimulatedSignals[moleculeIndex] #This pulls out a particular molecule's contribution to is 'sls signal'. We can't take the signal directly because that signal would (potentially) include other contributions.
+                slsMassIndex=self.allMoleculesSlsMassIndices[moleculeIndex] #This is the mass index within the slsSimulatedSignalInQuestion
+                individualMoleculeContributionsToThisMass = [] #Initializing
+                maxContributionRatioThisSlsMass = 0  #Initializing
+                maxContributingMoleculeIndex = None #Initializing
+                #We're going to loop across all contributing molecules to find which one contributes most to this slsMass.\
+                for MoleculeIndex in range(len(self.slsSolvedMasses)):#This is same length as molecules. We're going to get the contribution to this slsMass from each molecule.
+                    if type(self.allMoleculesFilteredContributions[MoleculeIndex]) != type(None):
+                        filteredContributionAllMasses = self.allMoleculesFilteredContributions[MoleculeIndex]
+                        filteredContributionThisMass = filteredContributionAllMasses[slsMassIndex]
+                        contributionRatio = filteredContributionThisMass / slsSimulatedSignalInQuestion 
+                        #Here we keep track of whether this one was the greatest contributor or not.
+                        if abs(contributionRatio) > abs(maxContributionRatioThisSlsMass) and abs(contributionRatio) > 0:  #need to take the absolute value because the biggest change could be a negative change, even though that's not we are normally searching for.
+                            maxContributingMoleculeIndex = MoleculeIndex
+                            maxContributionRatioThisSlsMass = contributionRatio
+                #Now we check if this is the biggest ratio so far for *all* slsMasses or not.
+                if abs(maxContributionRatioThisSlsMass) > abs(self.slsMassWithGreatestContributionToCorrectContributionRatio): #need to take the absolute value because the biggest change could be a negative change, even though that's not we are normally searching for.
+                    self.slsMassWithGreatestContributionToCorrectContributionRatio= maxContributionRatioThisSlsMass
+                    self.slsMassWithGreatestContributionToCorrectMoleculeIndex = moleculeIndex
+                    self.slsMassWithGreatestContributionToCorrectSlsMassIndex = slsMassIndex
+                    self.slsMassWithGreatestContributionToCorrectSlsMassValue = slsMassToCorrectFor
+                    self.slsMassWithGreatestContributingMoleculeIndex = maxContributingMoleculeIndex
     
 #this function can be useful for preventing negative concentrations. If it finds negatives it uses an optimizing finisher (grid based brute method) to search in the observed concentration range.
 #The function finds other molecules that contribute to the signals that were relevant for that molecule, and then solves only those molecules.
@@ -5366,6 +5469,22 @@ def main():
             
             if G.negativeAnalyzerYorN == 'yes':
                 arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption, G.maxPermutations, G.NegativeAnalyzerTopNContributors, G.NegativeAnalyzerBaseNumberOfGridIntervals)
+
+            if G.implicitSLScorrection == True: #Note: Not compatibile with iterative. Needs to be executed before the concentrations (arrayline) are stacked.
+            #TODO: May 17 2020. Right now, we only take the LARGEST correction for each sls when deciding which sls mass to correct, then we apply that correction. But maybe we should take a single recursion of all molecules affecting? Then apply all molecules to that sls mass before moving to the next one?
+                G.implicitSLScorrectionOccurred = False #This is a flag that will get set to true after the correction.
+                if G.iterativeAnalysis == False:
+                    if G.uniqueOrCommon=='unique' and (G.answer == 'sls' or G.answer =='autosolver'):
+                        solvedConcentrationsAtThisTime = arrayline
+                        referenceBeforeFiltering = G.currentReferenceDataUnfiltered
+                        referenceAfterFiltering = currentReferenceData
+                        slsSolvedMasses = G.massesUsedInSolvingMoleculesForThisPoint
+                        
+                        #Now need to move the class out of this area. Currently test 2 is taking 0.08 to 0.20 anlaysis time versus 0.014 for test_1.
+                        filterCorrectingObject = referenceThresholdFilterCorrectingSandbox(solvedConcentrationsAtThisTime,referenceBeforeFiltering,referenceAfterFiltering, slsSolvedMasses)
+                        implicitSLScorrectionAmounts = filterCorrectingObject.solvedConcentrationsCorrected1D[1:] - arrayline[1:]  #The 1: is to remove the "time" value.
+                        arrayline = filterCorrectingObject.solvedConcentrationsCorrected1D
+                        G.implicitSLScorrectionOccurred = True
                 
             if timeIndex == 0: #Can't vstack with an array of zeros or else the first time is 0 with all data points at 0 so make first row the first arrayline provided
                 concentrationsScaledToCOarray = arrayline*1.0
@@ -5373,6 +5492,16 @@ def main():
                 concentrationsScaledToCOarray = numpy.vstack((concentrationsScaledToCOarray,arrayline))
             correctionFactorArraysList.append(currentReferenceData.matching_correction_values) #populate the list with the proper correction values
             if (G.calculateUncertaintiesInConcentrations == True):  #Keep track of uncertainties same way as concentrationsScaledToCOarray 
+                #We have an 'optional'/'added' correction here related to G.implicitSLScorrection
+                if G.implicitSLScorrection == True: 
+                    if G.implicitSLScorrectionOccurred == True: #if implicitSLScorrectionOccurred then need to add half of implicitSLScorrectionAmounts to the absolute uncertainties (assume orthogonal). We use half because that would make the full correction approximated as a 95% confidence interval and half the correction as 1 sigma, which is how our errors are defined.
+                        implicitSLScorrectionAmounts1sigma = implicitSLScorrectionAmounts*0.5
+                        concentrations_absolute_uncertainties_one_time_revised = (implicitSLScorrectionAmounts1sigma**2 + uncertainties_dict['concentrations_absolute_uncertainties_one_time']**2)**0.5
+                        #Now to use the same ratio on the relative uncertainties.
+                        concentrations_relative_uncertainties_one_time_revised = uncertainties_dict['concentrations_relative_uncertainties_one_time']*concentrations_absolute_uncertainties_one_time_revised/uncertainties_dict['concentrations_absolute_uncertainties_one_time']
+                        #Now to populate both variables in the uncertainties dictionary.
+                        uncertainties_dict['concentrations_relative_uncertainties_one_time']=concentrations_relative_uncertainties_one_time_revised
+                        uncertainties_dict['concentrations_absolute_uncertainties_one_time']=concentrations_absolute_uncertainties_one_time_revised
                 if timeIndex == 0: #NOTE: In the below lines we use a variable outside the dictionary because the dictionary gets reset with each iteration.
                     concentrations_relative_uncertainties_all_times = uncertainties_dict['concentrations_relative_uncertainties_one_time'] *1.0
                     concentrations_absolute_uncertainties_all_times = uncertainties_dict['concentrations_absolute_uncertainties_one_time']*1.0
@@ -5381,12 +5510,19 @@ def main():
                     concentrations_relative_uncertainties_all_times = numpy.vstack((concentrations_relative_uncertainties_all_times,uncertainties_dict['concentrations_relative_uncertainties_one_time']))
             if G.iterativeAnalysis: #If using iterative analysis, append the subtracted signals' matching correction values that were used to SS_matching_correction_values_TimesList
                 SS_matching_correction_values_TimesList.append(currentReferenceData.SSmatching_correction_values)
+                
+            
+
+                            
+                
+
                         
         concentrationsScaledToCOarray[:,1:] = concentrationsScaledToCOarray[:,1:]/G.scaleRawDataFactor #correct for any scaling factor that was used during analysis.
         if (G.calculateUncertaintiesInConcentrations == True):#correct for any scaling factor that was used during analysis.
             concentrations_absolute_uncertainties_all_times/G.scaleRawDataFactor
             #The relative absolute uncertainties should not be divided.
         
+        #Now store things in resulsObjects.
         resultsObjects['concentrationsScaledToCOarray'] = concentrationsScaledToCOarray #Store in the global resultsObjects dictionary
         if (G.calculateUncertaintiesInConcentrations == True):
             resultsObjects['concentrations_absolute_uncertainties_all_times'] = concentrations_absolute_uncertainties_all_times*1.0
