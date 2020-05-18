@@ -245,8 +245,8 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
             
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
     #The original variable names were single variables. Now, we are using a dictionary type structure (right side of equal signs) so they are being mapped to the single variables (left side of equal sign)
-    #TODO: G.iterativeAnalysis = True or False should be changed to G.IterativeAnalysis_On or something like that, but will break backwards compatibility unless special care is taken.
-    #I think that other variables should change to have names like G.specificMolecules_chosenMoleculesNames
+    #TODO: Consider if G.iterativeAnalysis = True or False should be changed to G.IterativeAnalysis_On or something like that, but will break backwards compatibility unless special care is taken.
+    #Also to consider if other variables should change to have names like G.specificMolecules_chosenMoleculesNames. Probably not necessary since we have the dictionaries.
     SettingsVDictionary = {}  
     SettingsVDictionary['referenceFileNamesList']   = UserChoices['inputFiles']['referenceFileNamesList']
     SettingsVDictionary['referenceFormsList']   = UserChoices['inputFiles']['referenceFormsList']
@@ -370,6 +370,10 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['distinguished']   = UserChoices['dataAnalysisMethods']['distinguished']
     SettingsVDictionary['fullBrute']   = UserChoices['dataAnalysisMethods']['fullBrute']
     SettingsVDictionary['SLSUniqueExport']   = UserChoices['dataAnalysisMethods']['SLSUniqueExport']
+    if 'implicitSLScorrection' in UserChoices['dataAnalysisMethods']:
+        SettingsVDictionary['implicitSLScorrection'] = UserChoices['dataAnalysisMethods']['implicitSLScorrection']
+    else:
+        SettingsVDictionary['implicitSLScorrection'] = False #This is maintain backwards compatibility with old unit tests.
     SettingsVDictionary['finalOptimization']   = UserChoices['dataAnalysisMethods']['finalOptimization']
 
     SettingsVDictionary['concentrationFinder']   = UserChoices['concentrationFinder']['on']
