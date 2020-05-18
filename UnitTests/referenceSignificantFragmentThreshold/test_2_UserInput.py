@@ -86,6 +86,7 @@ bruteOption = 'ssr'
 distinguished = 'yes'
 fullBrute = 'no'
 SLSUniqueExport = 'yes'
+implicitSLScorrection = False
 slsUniquePositiveConcentrationsOnly = False
 collectedFileUncertainties = None
 finalOptimization = 'None'
