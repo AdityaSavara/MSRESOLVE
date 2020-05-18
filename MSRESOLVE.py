@@ -5387,7 +5387,7 @@ def main():
                         referenceAfterFiltering = currentReferenceData
                         slsSolvedMasses = G.massesUsedInSolvingMoleculesForThisPoint
                         
-                        
+                        #Now need to move the class out of this area. Currently test 2 is taking 0.08 to 0.20 anlaysis time versus 0.014 for test_1.
                         class filterCorrectingSandbox():
                             def __init__(self, solvedConcentrationsAtThisTime,referenceBeforeFiltering,referenceAfterFiltering, slsSolvedMasses):
                                 #The below few lines are to get the existing simulated signals for this time point.
