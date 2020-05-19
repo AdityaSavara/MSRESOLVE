@@ -1,4 +1,4 @@
-Sun May 17 21:48:44 2020
+Mon May 18 15:52:28 2020
 
 referenceFileName = ['ConvertedSpectra.csv'] 
 form  = ['xyyy'] 
@@ -11,13 +11,15 @@ chosenMoleculesNames = ['2buten1ol(crotyl alcohol)', '2butenalE(crotonaldehyde)'
 specificMassFragments = yes 
 chosenMassFragments = [44, 46, 54, 56, 58, 59, 70, 71] 
 minimalReferenceValue = yes 
-referenceValueThreshold = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5] 
+referenceValueThreshold = [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0] 
 referenceSignificantFragmentThresholds = [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0] 
-answer = inverse 
-distinguished = yes 
+answer = sls 
+uniqueOrCommon = unique 
+slsFinish = brute 
+bruteOption = ssr 
 scaleRawDataFactor  = 1.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 4.55192 seconds 
+Run Time 3.09540 seconds 
 ###################################################################### 

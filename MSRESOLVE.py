@@ -932,7 +932,10 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
 #relative to CO) It does this by looking at the matching mass fragments and deleting any columns which contain only
 #zeros, and then also deletes that molecule form the molecules array and the correction values array.
 def  UnnecessaryMoleculesDeleter(ReferenceData):
-    width = len(ReferenceData.monitored_reference_intensities[0,:])
+    try:
+        width = len(ReferenceData.monitored_reference_intensities[0,:])
+    except:
+        print("ERROR: There was an error in attempting to get the width of monitored_reference_intensities. This usually means that the Experimental data file is missing its comment line. Try adding a line with just the symbol # to the top of the experimental data file if there is not a line like this already. You may add any words you would like after the # symbol.")
     height = len(ReferenceData.monitored_reference_intensities[:,0])
     place_holder = 0
     for columncounter in range(width):#array-indexed for loop
