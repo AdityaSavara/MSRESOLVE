@@ -533,6 +533,7 @@ def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThresh
 #the right time and then gets each number following the first, and finds its ratio
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
+#TODO: add a check to pop out or warn people if someone chooses a mass that is not in experimental data.
 def ExtractReferencePatternFromData(ExperimentData, referenceDataArray, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
     copyOfReferenceDataArray = copy.deepcopy(referenceDataArray)    
     try:
@@ -545,22 +546,20 @@ def ExtractReferencePatternFromData(ExperimentData, referenceDataArray, rpcChose
         massfragindexerRef = [] #This is for the indices of the desired mass fragments in the reference pattern.
         for moleculecounter in range(len(copyOfReferenceDataArray.molecules)):#array-indexed for loop
             if copyOfReferenceDataArray.molecules[moleculecounter] == rpcChosenMolecules[chosenmoleculescounter]:#finds index of molecule
-                if len(rpcChosenMoleculesMF[chosenmoleculescounter]) == 1:#if only one number is given then the function changes all the other values according to this one
+                if len(rpcChosenMoleculesMF[chosenmoleculescounter]) == 1:#if only one number is given then we alter the list so that the function will change (extract) all the other values scaled according to this one.
                     for x in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
-                        if ExperimentData.mass_fragment_numbers[x] != 0:#finds the other mass fragments and appends them
-                            rpcChosenMoleculesMF[chosenmoleculescounter].append(ExperimentData.mass_fragment_numbers[x])
-                            rpcTimeRanges[chosenmoleculescounter].append(rpcTimeRanges[chosenmoleculescounter][0])
-                            if ExperimentData.mass_fragment_numbers[x] == rpcChosenMoleculesMF[chosenmoleculescounter][0]:#if the mass fragment is equal to the one being checked with, it is not need so it is deleted
-                                rpcChosenMoleculesMF[chosenmoleculescounter].pop()
-                                rpcTimeRanges[chosenmoleculescounter].pop()
+                        if ExperimentData.mass_fragment_numbers[x] != 0:#finds the other mass fragments and appends them. The !=0 is probably not necessary.
+                            if ExperimentData.mass_fragment_numbers[x] != rpcChosenMoleculesMF[chosenmoleculescounter][0]:#We only append for masses different than the one we're scaling by.
+                                rpcChosenMoleculesMF[chosenmoleculescounter].append(ExperimentData.mass_fragment_numbers[x])
+                                rpcTimeRanges[chosenmoleculescounter].append(rpcTimeRanges[chosenmoleculescounter][0])
                 #For a given molecule, and a given mass fragment to be changed, the below for loop finds the index of the fragment to be changed, with respect to the reference pattern's mass fragments.
-                for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
+                for eachChosenMoleculesMFIndex in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
                     for refMFCounter in range(len(copyOfReferenceDataArray.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
-                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == copyOfReferenceDataArray.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMFIndex] == copyOfReferenceDataArray.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
                             massfragindexerRef.append(refMFCounter)
-                for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
+                for eachChosenMoleculesMFIndex in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
                     for expMFCounter in range(len(ExperimentData.mass_fragment_numbers)):
-                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMF] == ExperimentData.mass_fragment_numbers[expMFCounter]: #This if statment means that the masss fragment number that is desired for this molecule is at the current expMFCounter index.
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMFIndex] == ExperimentData.mass_fragment_numbers[expMFCounter]: #This if statment means that the masss fragment number that is desired for this molecule is at the current expMFCounter index.
                             for timecounter in range(len(ExperimentData.times)):#array-indexed for loop. This for loop extracts the data.
                                 if (rpcTimeRanges[chosenmoleculescounter][0] <= ExperimentData.times[timecounter]) and (rpcTimeRanges[chosenmoleculescounter][1] >= ExperimentData.times[timecounter]):#gets index of time
                                     extractedIntensities.append(ExperimentData.workingData[timecounter,expMFCounter])
@@ -571,22 +570,23 @@ def ExtractReferencePatternFromData(ExperimentData, referenceDataArray, rpcChose
                 #Convert list to an array
                 allExtractedIntensitiesArray = numpy.array(allExtractedIntensities)
                 #Initialize empty list to store average values
-                allExtractedIntensitiesAverage = []
-                allExtractedIntensitiesStandardDeviation = []
+                allExtractedIntensitiesAveragesList = []
+                allExtractedIntensitiesStandardDeviationsList = []
                 #For loop to find the average intensity values
                 #Then store the average value in the allExtractedIntensityAverage list
-                for eachChosenMoleculesMF in range(len(allExtractedIntensitiesArray)):
-                    intensitiesAverage = numpy.average(allExtractedIntensitiesArray[eachChosenMoleculesMF])
-                    intensitiesStandardDeviation = numpy.std(allExtractedIntensitiesArray[eachChosenMoleculesMF])
-                    allExtractedIntensitiesAverage.append(intensitiesAverage)
-                    allExtractedIntensitiesStandardDeviation.append(intensitiesStandardDeviation)
+                for eachChosenMoleculesMFIndex in range(len(allExtractedIntensitiesArray)):
+                    intensitiesAverage = numpy.average(allExtractedIntensitiesArray[eachChosenMoleculesMFIndex])
+                    intensitiesStandardDeviation = numpy.std(allExtractedIntensitiesArray[eachChosenMoleculesMFIndex])
+                    allExtractedIntensitiesAveragesList.append(intensitiesAverage)
+                    allExtractedIntensitiesStandardDeviationsList.append(intensitiesStandardDeviation)
                 #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment (that is, to make a reference pattern with a ratio matching the extracted ratio)
-                normalizationFactor = copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1]
+                normalizationFactor = copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1] #The +1 is to skip the column that has mass fragment values.
                 if normalizationFactor == 0: #This is just for the case that there's an 'exception' with no reasonable value provided by the line above.
                     normalizationFactor = 1
-                for eachChosenMoleculesMF in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])): #I believe the +1 below is b/c first column is mass frag?
-                    copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesAverage[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor
-                    copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties[massfragindexerRef[eachChosenMoleculesMF],moleculecounter+1] = (allExtractedIntensitiesStandardDeviation[eachChosenMoleculesMF]/allExtractedIntensitiesAverage[0])*normalizationFactor #Need to divide by the same thing and multiply by the same thing as previous line to get right scaling.
+                    print("WARNING: There may be an error occurring when extracting the reference pattern. Search for normalizationFactor == 0 in the code for debugging.")
+                for eachChosenMoleculesMFIndex in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])): #The +1 below is b/c first column is mass frag
+                    copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMFIndex],moleculecounter+1] = (allExtractedIntensitiesAveragesList[eachChosenMoleculesMFIndex]/allExtractedIntensitiesAveragesList[0])*normalizationFactor
+                    copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties[massfragindexerRef[eachChosenMoleculesMFIndex],moleculecounter+1] = (allExtractedIntensitiesStandardDeviationsList[eachChosenMoleculesMFIndex]/allExtractedIntensitiesAveragesList[0])*normalizationFactor #Need to divide by the same thing and multiply by the same thing as previous line to get right scaling.
     return copyOfReferenceDataArray.provided_reference_patterns, copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties
 
 '''
@@ -932,7 +932,10 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
 #relative to CO) It does this by looking at the matching mass fragments and deleting any columns which contain only
 #zeros, and then also deletes that molecule form the molecules array and the correction values array.
 def  UnnecessaryMoleculesDeleter(ReferenceData):
-    width = len(ReferenceData.monitored_reference_intensities[0,:])
+    try:
+        width = len(ReferenceData.monitored_reference_intensities[0,:])
+    except:
+        print("ERROR: There was an error in attempting to get the width of monitored_reference_intensities. This usually means that the Experimental data file is missing its comment line. Try adding a line with just the symbol # to the top of the experimental data file if there is not a line like this already. You may add any words you would like after the # symbol.")
     height = len(ReferenceData.monitored_reference_intensities[:,0])
     place_holder = 0
     for columncounter in range(width):#array-indexed for loop
