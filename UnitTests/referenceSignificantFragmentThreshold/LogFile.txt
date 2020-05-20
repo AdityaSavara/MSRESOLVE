@@ -1,4 +1,4 @@
-Tue May 19 21:19:42 2020
+Wed May 20 00:33:38 2020
 
 referenceFileName = ['reference_measured_EthyleneExtracted.csv'] 
 form  = ['xyyy'] 
@@ -27,5 +27,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.09662 seconds 
+Run Time 0.12649 seconds 
 ###################################################################### 
