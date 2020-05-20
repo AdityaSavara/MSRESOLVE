@@ -176,7 +176,7 @@ UserChoices['extractReferencePatternFromDataOption']['rpcTimeRanges'] = [
 #The first mass fragment is the base fragment and it will not be changed.  The fragments following the first one are all altered based on the signal of the first fragment from the collected data
 UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] = [
                                                                                   [70,57], #For each molecule for using the rpc on, make a new line with a list of masses (length of each should be greater than 1).
-                                                                                  ]
+                                                                                  ]   #Make sure every mass you listed was collected otherwise there will be an error.
 
 #//Reference Mass Fragmentation Threshold//
 UserChoices['minimalReferenceValue'] = {} #initialize the minimalReferenceValue container
