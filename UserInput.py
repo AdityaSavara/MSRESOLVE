@@ -227,8 +227,8 @@ UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent'] = []
 #//Uncertainties for Calculating Uncertainties in Concentrations//
 UserChoices['uncertainties'] = {}
 UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = False
-UserChoices['uncertainties']['referenceFileUncertainties'] = 2 #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _absolute_uncertainties after that) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
-UserChoices['uncertainties']['collectedFileUncertainties'] = 'Auto' # or 'File' or 'None'. Will expect same file name as collected file with _uncertainties after that).
+UserChoices['uncertainties']['referenceFileUncertainties'] = 2 #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _absolute_uncertainties.csv at end of file name) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
+UserChoices['uncertainties']['collectedFileUncertainties'] = 'Auto'  # Can be 'Auto' or 'File' or 'None' or an Integer like 3 (no quotation marks). If 'File', will expect same file name as collected file with _absolute_uncertainties.csv at end of file name). An integer defines a point radius. 'Auto' simply uses a point radius of 5.  The 'File' feature has not yet been implemented.
 UserChoices['uncertainties']['referenceCorrectionCoefficientsUncertainties'] = None #Else a dictionary of uncertainties for 'A', 'B', 'C'. Not yet implemented.
 UserChoices['uncertainties']['referenceCorrectionCoefficientsIonizationUncertainties'] = None #Not yet implemented.
 

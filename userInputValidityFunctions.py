@@ -243,10 +243,12 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
             UserChoices['dataAnalysisMethods']['SLSUniqueExport'] = 'no'
             print("Incompatible choice detected: forcing SLSUniqueExport to no.")
             
-    if UserChoices['dataAnalysisMethods']['implicitSLScorrection'] == True:
-        if UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique' or UserChoices['dataAnalysisMethods']['answer'] != 'sls':
-            UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
-            print("Incompatible choice detected: forcing implicitSLScorrection to False.")
+    if 'implicitSLScorrection' in UserChoices['dataAnalysisMethods']:
+        if UserChoices['dataAnalysisMethods']['implicitSLScorrection'] == True:
+            if UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique' or UserChoices['dataAnalysisMethods']['answer'] != 'sls':
+                UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
+                print("Incompatible choice detected: forcing implicitSLScorrection to False.")
+
             
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
     #The original variable names were single variables. Now, we are using a dictionary type structure (right side of equal signs) so they are being mapped to the single variables (left side of equal sign)

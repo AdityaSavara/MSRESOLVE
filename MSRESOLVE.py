@@ -1447,6 +1447,10 @@ def DataInputPreProcessing(ExperimentData):
             ExperimentData.rawsignals_absolute_uncertainties = None
             ExperimentData.rawsignals_average_residuals = None
             G.collectedFileUncertainties = None
+    if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the point radius.
+            UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsPointRadius=G.collectedFileUncertainties)
+            ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
+            ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
     elif type(G.collectedFileUncertainties) == type([1]) or type(G.collectedFileUncertainties) == type(numpy.array([1])): #if it's a list or a numpy array, it should be the same length as the number of mass fragments and will be populated for all times.
             ExperimentData.rawsignals_absolute_uncertainties = numpy.ones(numpy.shape(ExperimentData.workingData)) #just initializing as an array of ones.
             uncertaintiesPerTime = numpy.array(G.collectedFileUncertainties)
