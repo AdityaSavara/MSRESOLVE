@@ -1,0 +1,21 @@
+Thu May 21 20:37:44 2020
+
+referenceFileName = ['ExistingReferencePatterns.csv'] 
+form  = ['xyyy'] 
+collectedFileName = Collected_Reference.csv 
+linearBaselineCorrectionSemiAutomatic = yes 
+selection = ['linear'] 
+massesToBackgroundCorrect = [12.0 13.0 14.0 15.0 16.0 17.0 21.0 22.0 24.0 25.0 26.0 27.0 28.0 29.0
+ 30.0] 
+earlyBaselineTimes = [[3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445], [3425, 3445]] 
+lateBaselineTimes = [[3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720], [3700, 3720]] 
+extractReferencePatternFromDataOption = yes 
+rpcMoleculesToChange = ['Ethylene'] 
+rpcMoleculesToChangeMF = [[27]] 
+rpcTimeRanges = [[3485, 3505]] 
+scaleRawDataFactor  = 1.0 
+resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
+concentrationsOutputName = ResolvedConcentrations.csv 
+simulatedSignalsOutputName = SimulatedRawSignals.csv 
+Run Time 4.24363 seconds 
+###################################################################### 
