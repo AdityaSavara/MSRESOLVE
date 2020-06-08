@@ -1,8 +1,0 @@
-In this example an Ethane pulse is fed into a reactor.
-A reference file has already been made along with uncertainties. We want to see if there is any Ethyne or Ethene in the pulse.
-
-For now (May2020), this example Analysis is run by running the MSRESOLVE.py file in this directory, or the runfile. In the future, it will probably require using the runfile.
-
-The collected file uncertainties are set to be taken from a point radius of 2. This small point radius was chosen because the pulse has relatively sharp changes in concentration.
-As can be seen, there is no 'detectable' Ethene or Ethyne since what is observed is within the error bars.
-

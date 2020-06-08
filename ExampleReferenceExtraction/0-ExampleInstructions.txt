@@ -1,0 +1,35 @@
+In this example an Ethene reference pattern is extracted from a collected file in which only a pulse of Ethene gas was fed.
+Collected_Reference.csv is the data it will be extracted from.
+
+In Collected_Reference_plotted.xlsx we have plotted the data and see that 3485-3505 is a good time range for extraction. 
+
+We must *always* have an existing file with a real or fake reference pattern to perform an extraction.
+
+Here, ExistingReferencePatterns.csv is that file.  We have put values of "6.0" for the intensity of each mass for Ethene to emphasize that it does not need to have realistic values for an extraction to occur.
+
+Next, we fill in the UserInput file as if we're doing a real analysis. 
+UserChoices['dataAnalysis']['on'] = 'yes'
+
+Also we have the linear baseline correction on.
+
+Then, we use UserChoices['extractReferencePatternFromDataOption']['on'] = 'yes'
+
+Inside UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] we need to put a list of masses which *starts* with the mass that other molecules will be 'referenced' to.  It does not have to be the highest mass. To demonstrate that point, we will put m27.
+Inside UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] = [[27]]
+
+UserChoices['ExportAtEachStep']['on'] = 'yes'
+
+Now run MSRESOLVE.py.
+
+In this example, the analysis will crash. That is fine, the reference pattern has been extracted and is in the first exported file
+Exported0ExtractReferencePatternFromData.csv
+
+Opening that file, we see that in this case, m27 remains at the same value that it was, and *all* other masses have been changed relative to that value.  Note that m28 was higher than m27, and this is reflected in the pattern.  MSRESOLVE standardizes the patterns, so they do not have to be standardized to 100 before running an analysis.
+
+It is also often useful change only a *few* masses in a reference pattern. That can be done like this:
+
+Inside UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] = [[27,15,28]]  #With this syntax, 15 and 28 would be changed relative to 27.
+
+For now (May2020), this example Analysis is run by running the MSRESOLVE.py file in this directory, or the runfile. In the future, it will probably require using the runfile.
+
+
