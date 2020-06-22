@@ -155,9 +155,9 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 UserChoices['measuredReferenceYorN']['on'] ='no'
-UserChoices['measuredReferenceYorN']['referenceMeasuredFileName'] =['ReferenceCollected.csv','xyyy']
-UserChoices['measuredReferenceYorN']['referenceLiteratureFileName'] =['ReferenceLiterature.csv','xyyy']
-#The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten (Ashi thinks it will generate a new reference pattern)
+UserChoices['measuredReferenceYorN']['referenceMeasuredFileName'] =['ReferenceCollected.csv','xyyy'] #This is the pattern that will be changed.
+UserChoices['measuredReferenceYorN']['referenceLiteratureFileName'] =['ReferenceLiterature.csv','xyyy'] #This is what the pattern will look more like after everything is done.
+#The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten and a new reference pattern is also generated to look more like the "Literature" case.
 UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients'] = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0.   Used as.... Factor = A*X^2 + B*X + C, so A=0,B=0,C=1.0 means the final factor is 1.0 and independent of molecular weight.
 UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients_cov'] = [0,0,0] #Covariance for reference correction coefficients for tuning corrector. Default is 0,0,0. Can be 9 x 9 covariance.
