@@ -122,8 +122,8 @@ scaleRawDataFactor = 1000.0
 #//Reference Correction Coefficients//
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 measuredReferenceYorN='no'
-referenceMeasuredFileName='AcetaldehydeMeasuredRef.csv'
-referenceLiteratureFileName ='AcetaldehydeOnlyNISTRef.csv'
+referenceFileToTune='AcetaldehydeMeasuredRef.csv'
+referenceFileToMatch ='AcetaldehydeOnlyNISTRef.csv'
 referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
 

@@ -117,7 +117,7 @@ def bestMassFragChooser(chosenMolecules,
             G.referenceCorrectionCoefficients = [G.referenceCorrectionCoefficients['A'],G.referenceCorrectionCoefficients['B'],G.referenceCorrectionCoefficients['C']]
         truncatedReferenceData.standardized_reference_patterns, ReferenceData.standardized_reference_patterns_tuning_uncertainties = MSRESOLVE.TuningCorrector(
             truncatedReferenceData.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov,
-            G.referenceLiteratureFileName, G.referenceMeasuredFileName, G.measuredReferenceYorN)  
+            G.referenceFileToMatch, G.referenceFileToTune, G.measuredReferenceYorN)  
     
     #Removing entire rows of data for mass fragments with all reference
     #intensities below the threshold.
