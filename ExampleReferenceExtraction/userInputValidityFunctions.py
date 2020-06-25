@@ -107,9 +107,9 @@ def parseUserInput(currentUserInput):
     
     #Reference Correction Changer
     parse.strCheck(currentUserInput.measuredReferenceYorN,'measuredReferenceYorN')
-    #The below two variables are no longer strings. They are now lists with two elements, each of which are strings. TODO: Change their names to referenceMeasuredFileNameAndForm and referenceLiteratureFileNameAndForm
-    #parse.strCheck(currentUserInput.referenceMeasuredFileName,'referenceMeasuredFileName')
-    #parse.strCheck(currentUserInput.referenceLiteratureFileName,'referenceLiteratureFileName')
+    #The below two variables are no longer strings. They are now lists with two elements, each of which are strings. TODO: Change their names to referenceFileToTuneAndForm and referenceFileToMatchAndForm
+    #parse.strCheck(currentUserInput.referenceFileToTune,'referenceFileToTune')
+    #parse.strCheck(currentUserInput.referenceFileToMatch,'referenceFileToMatch')
     
     #Reference Pattern Changer
     parse.strCheck(currentUserInput.extractReferencePatternFromDataOption,'extractReferencePatternFromDataOption')
@@ -313,8 +313,8 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['scaleRawDataFactor']   = UserChoices['scaleRawDataYorN']['scaleRawDataFactor']
 
     SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
-    SettingsVDictionary['referenceMeasuredFileName']    = UserChoices['measuredReferenceYorN']['referenceMeasuredFileName']
-    SettingsVDictionary['referenceLiteratureFileName']    = UserChoices['measuredReferenceYorN']['referenceLiteratureFileName']
+    SettingsVDictionary['referenceFileToTune']    = UserChoices['measuredReferenceYorN']['referenceFileToTune']
+    SettingsVDictionary['referenceFileToMatch']    = UserChoices['measuredReferenceYorN']['referenceFileToMatch']
     SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients']
     try:
         SettingsVDictionary['referenceCorrectionCoefficients_cov']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients_cov']
