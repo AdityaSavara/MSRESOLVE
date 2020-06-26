@@ -373,7 +373,7 @@ def MatchingNumbers(Array1, Array2):
 THis function determines and returns the ABC correction coefficients for Tuning Correction based off 
 of a literature (NIST) reference pattern and a measured (Experimental)reference pattern
 '''
-def ABCDetermination(ReferencePatternMeasuredFileNameAndForm, ReferencePatternLiteratureFileNameAndForm):
+def ABCDetermination(ReferencePatternToTuneFileNameAndForm, ReferencePatternToMatchFileNameAndForm):
     #The two arguments are actually lists containing strings of the name and form type: (["FileNameOne.csv","xyyy"],["FileNameTwo.csv", "xyyy"])
     '''
     Step 1: Read in all neccessary information from fragment patterns
@@ -383,50 +383,53 @@ def ABCDetermination(ReferencePatternMeasuredFileNameAndForm, ReferencePatternLi
     
     if G.minimalReferenceValue !='yes':
         print("Warning: The ABCDetermination will occur without threshold filtering, since that setting is off.")
+        
+    if G.extractReferencePatternFromDataOption == 'yes':
+        print("Warning: MSRESOLVE is set to do a tuning correction and is also set to extract the reference pattern from the data.  The tuning correction will be applied to the extracted pattern.  This is not a typical procedure. Typically, the extract pattern from dat feature is off when the tuning corrector is on.")
        
     #For simplicity, we will put the items into temporary items, then into dictionaries that we can then access.
-    ReferencePatternMeasuredDict = {}
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternMeasuredFileNameAndForm)
-    ReferencePatternMeasuredDict['molecules']=molecules
-    ReferencePatternMeasuredDict['provided_reference_patterns'] = provided_reference_patterns
-    ReferencePatternMeasuredDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternMeasuredDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
+    ReferencePatternToTuneDict = {}
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternToTuneFileNameAndForm)
+    ReferencePatternToTuneDict['molecules']=molecules
+    ReferencePatternToTuneDict['provided_reference_patterns'] = provided_reference_patterns
+    ReferencePatternToTuneDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternToTuneDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
     if G.minimalReferenceValue =='yes':
-        ReferencePatternMeasuredDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternMeasuredDict['provided_reference_patterns'],G.referenceValueThreshold)
+        ReferencePatternToTuneDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternToTuneDict['provided_reference_patterns'],G.referenceValueThreshold)
     
-    ReferencePatternLiteratureDict = {}
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternLiteratureFileNameAndForm)
-    ReferencePatternLiteratureDict['molecules']=molecules
-    ReferencePatternLiteratureDict['provided_reference_patterns'] = provided_reference_patterns
-    ReferencePatternLiteratureDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternLiteratureDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
+    ReferencePatternToMatchDict = {}
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternToMatchFileNameAndForm)
+    ReferencePatternToMatchDict['molecules']=molecules
+    ReferencePatternToMatchDict['provided_reference_patterns'] = provided_reference_patterns
+    ReferencePatternToMatchDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternToMatchDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
     if G.minimalReferenceValue =='yes':
-        ReferencePatternLiteratureDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternLiteratureDict['provided_reference_patterns'],G.referenceValueThreshold)
+        ReferencePatternToMatchDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternToMatchDict['provided_reference_patterns'],G.referenceValueThreshold)
     
     '''
     Step 3a: Truncate to the molecules which match.
     '''
-    OverlappingMolecules = numpy.intersect1d(ReferencePatternMeasuredDict['molecules'],ReferencePatternLiteratureDict['molecules'] )
-    OverlappingFragments = numpy.intersect1d(ReferencePatternMeasuredDict['provided_reference_patterns'][:,0],ReferencePatternLiteratureDict['provided_reference_patterns'][:,0])    
-    [OverlappingMolecules,ReferencePatternMeasuredDict['OverlappingIndices'], ReferencePatternLiteratureDict['OverlappingIndices']]  = numpy.intersect1d(ReferencePatternMeasuredDict['molecules'],ReferencePatternLiteratureDict['molecules'], return_indices=True)
+    OverlappingMolecules = numpy.intersect1d(ReferencePatternToTuneDict['molecules'],ReferencePatternToMatchDict['molecules'] )
+    OverlappingFragments = numpy.intersect1d(ReferencePatternToTuneDict['provided_reference_patterns'][:,0],ReferencePatternToMatchDict['provided_reference_patterns'][:,0])    
+    [OverlappingMolecules,ReferencePatternToTuneDict['OverlappingIndices'], ReferencePatternToMatchDict['OverlappingIndices']]  = numpy.intersect1d(ReferencePatternToTuneDict['molecules'],ReferencePatternToMatchDict['molecules'], return_indices=True)
 
     
-    ReferencePatternMeasuredDict['OverlappingMolecules'] = OverlappingMolecules
-    ReferencePatternLiteratureDict['OverlappingMolecules'] = OverlappingMolecules
+    ReferencePatternToTuneDict['OverlappingMolecules'] = OverlappingMolecules
+    ReferencePatternToMatchDict['OverlappingMolecules'] = OverlappingMolecules
     
-    ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'] = []
+    ReferencePatternToTuneDict['overlapping_provided_reference_patterns'] = []
     #Now need to get only the overlapping indices values. The numpy take function will work if we do it one row at a time:
-    for rowIndex,row in enumerate(ReferencePatternMeasuredDict['provided_reference_patterns']):
+    for rowIndex,row in enumerate(ReferencePatternToTuneDict['provided_reference_patterns']):
             massFragment = row[0]
-            truncatedIntensities = numpy.take(row[1:],ReferencePatternMeasuredDict['OverlappingIndices'])    
+            truncatedIntensities = numpy.take(row[1:],ReferencePatternToTuneDict['OverlappingIndices'])    
             rowTruncated = numpy.insert(truncatedIntensities, 0, massFragment)
-            ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
+            ReferencePatternToTuneDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
     
-    ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'] = []
+    ReferencePatternToMatchDict['overlapping_provided_reference_patterns'] = []
     #Now need to get only the overlapping indices values. The numpy take function will work if we do it one row at a time:
-    for rowIndex,row in enumerate(ReferencePatternLiteratureDict['provided_reference_patterns']):
+    for rowIndex,row in enumerate(ReferencePatternToMatchDict['provided_reference_patterns']):
             massFragment = row[0]
-            truncatedIntensities = numpy.take(row[1:],ReferencePatternLiteratureDict['OverlappingIndices'])   
+            truncatedIntensities = numpy.take(row[1:],ReferencePatternToMatchDict['OverlappingIndices'])   
             rowTruncated = numpy.insert(truncatedIntensities, 0, massFragment)
-            ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
+            ReferencePatternToMatchDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
     #Note that the columns of overlapping_provided_reference_patterns are not just truncated but also rearranged. 
     #Thus, going forward, OverlappingMolecules must be used for indices rather than using molecules.
   
@@ -436,32 +439,32 @@ def ABCDetermination(ReferencePatternMeasuredFileNameAndForm, ReferencePatternLi
     '''    
     #Only append rows that have an overlapping mass fragment.
     matchingFragmentsOnlyPatterns = []
-    for row in ReferencePatternMeasuredDict['overlapping_provided_reference_patterns']:
+    for row in ReferencePatternToTuneDict['overlapping_provided_reference_patterns']:
         if row[0] in OverlappingFragments:
             matchingFragmentsOnlyPatterns.append(row)
     #now swap in the new list.
-    ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns    
+    ReferencePatternToTuneDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns    
 
     #Only append rows that have an overlapping mass fragment.
     matchingFragmentsOnlyPatterns = []
-    for row in ReferencePatternLiteratureDict['overlapping_provided_reference_patterns']:
+    for row in ReferencePatternToMatchDict['overlapping_provided_reference_patterns']:
         if row[0] in OverlappingFragments:
             matchingFragmentsOnlyPatterns.append(row)
     #now swap in the new list.
-    ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns
+    ReferencePatternToMatchDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns
 
     #Convert the two lists to numpy arrays so that they can be divided....
-    ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'])
-    ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'])
+    ReferencePatternToTuneDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternToTuneDict['overlapping_provided_reference_patterns'])
+    ReferencePatternToMatchDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternToMatchDict['overlapping_provided_reference_patterns'])
     #Need to standardize again, because the ratios during division below will be wrong if the largest peak was not among the matching fragments.
-    ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
-    ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
+    ReferencePatternToTuneDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternToTuneDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
+    ReferencePatternToMatchDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternToMatchDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
 
     '''
     Find a,b,c:
     '''
     numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.
-    RatioOfPatterns = ReferencePatternLiteratureDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternMeasuredDict['overlapping_provided_reference_patterns'][:,1:]    
+    RatioOfPatterns = ReferencePatternToMatchDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternToTuneDict['overlapping_provided_reference_patterns'][:,1:]    
     #For each row, excluding the Take the mean excluding nan values.
     meanRatioPerMassFragment = numpy.nanmean(RatioOfPatterns,1) #the 1 is for over axis 1, not over axix 0.    
     numpy.seterr(divide='warn', invalid='warn') #This is to [it tje warnings back how they normally are.
