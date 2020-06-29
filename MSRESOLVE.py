@@ -766,11 +766,12 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
                                                                                                             chosenMassFragments, header_dtype_casting=float)
-    if type(G.collectedFileUncertainties) != type(None): #TODO: As of Feb 5th 2020, this if statement has been added but not tested. It simply mimics the above code.   The below function   trimDataMassesToMatchReference is similar and has been tested.
-            (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
-                                                                                                            trimmedExperimentData2.mass_fragment_numbers,
-                                                                                                            chosenMassFragments, header_dtype_casting=float)
-            trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
+    if G.calculateUncertaintiesInConcentrations:
+        if type(G.collectedFileUncertainties) != type(None): #TODO: As of Feb 5th 2020, this if statement has been added but not tested. It simply mimics the above code.   The below function   trimDataMassesToMatchReference is similar and has been tested.
+                (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
+                                                                                                                trimmedExperimentData2.mass_fragment_numbers,
+                                                                                                                chosenMassFragments, header_dtype_casting=float)
+                trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
     trimmedExperimentData.ExportCollector("MassFragChooser")
     
     return trimmedExperimentData
@@ -1441,26 +1442,27 @@ def DataInputPreProcessing(ExperimentData):
         G.lastFigureNumber = G.lastFigureNumber+1
 
     #Need to add uncertainties somewhere before interpolation and before datasmoother for the case that it is going to be provided as an input file.
-    if type(G.collectedFileUncertainties) == type("String"):
-        if G.collectedFileUncertainties.lower() == 'auto' :
-            UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
-            ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
-            ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
-        if G.collectedFileUncertainties.lower() == 'none' :
+    if G.calculateUncertaintiesInConcentrations:
+        if type(G.collectedFileUncertainties) == type("String"):
+            if G.collectedFileUncertainties.lower() == 'auto' 
+                UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
+                ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
+                ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
+            if G.collectedFileUncertainties.lower() == 'none' :
+                ExperimentData.rawsignals_absolute_uncertainties = None
+                ExperimentData.rawsignals_average_residuals = None
+                G.collectedFileUncertainties = None
+        if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the point radius.
+                UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsPointRadius=G.collectedFileUncertainties)
+                ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
+                ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
+        elif type(G.collectedFileUncertainties) == type([1]) or type(G.collectedFileUncertainties) == type(numpy.array([1])): #if it's a list or a numpy array, it should be the same length as the number of mass fragments and will be populated for all times.
+                ExperimentData.rawsignals_absolute_uncertainties = numpy.ones(numpy.shape(ExperimentData.workingData)) #just initializing as an array of ones.
+                uncertaintiesPerTime = numpy.array(G.collectedFileUncertainties)
+                ExperimentData.rawsignals_absolute_uncertainties = ExperimentData.rawsignals_absolute_uncertainties*uncertaintiesPerTime        
+        elif type(G.collectedFileUncertainties) == type(None):
             ExperimentData.rawsignals_absolute_uncertainties = None
             ExperimentData.rawsignals_average_residuals = None
-            G.collectedFileUncertainties = None
-    if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the point radius.
-            UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsPointRadius=G.collectedFileUncertainties)
-            ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
-            ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
-    elif type(G.collectedFileUncertainties) == type([1]) or type(G.collectedFileUncertainties) == type(numpy.array([1])): #if it's a list or a numpy array, it should be the same length as the number of mass fragments and will be populated for all times.
-            ExperimentData.rawsignals_absolute_uncertainties = numpy.ones(numpy.shape(ExperimentData.workingData)) #just initializing as an array of ones.
-            uncertaintiesPerTime = numpy.array(G.collectedFileUncertainties)
-            ExperimentData.rawsignals_absolute_uncertainties = ExperimentData.rawsignals_absolute_uncertainties*uncertaintiesPerTime        
-    elif type(G.collectedFileUncertainties) == type(None):
-        ExperimentData.rawsignals_absolute_uncertainties = None
-        ExperimentData.rawsignals_average_residuals = None
 
     if G.interpolateYorN == 'yes':
         [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
