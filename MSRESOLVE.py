@@ -1444,7 +1444,7 @@ def DataInputPreProcessing(ExperimentData):
     #Need to add uncertainties somewhere before interpolation and before datasmoother for the case that it is going to be provided as an input file.
     if G.calculateUncertaintiesInConcentrations:
         if type(G.collectedFileUncertainties) == type("String"):
-            if G.collectedFileUncertainties.lower() == 'auto' 
+            if G.collectedFileUncertainties.lower() == 'auto':
                 UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
                 ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
                 ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
