@@ -373,7 +373,7 @@ def MatchingNumbers(Array1, Array2):
 THis function determines and returns the ABC correction coefficients for Tuning Correction based off 
 of a literature (NIST) reference pattern and a measured (Experimental)reference pattern
 '''
-def ABCDetermination(ReferencePatternToTuneFileNameAndForm, ReferencePatternToMatchFileNameAndForm):
+def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePatternDesiredTuning_FileNameAndForm):
     #The two arguments are actually lists containing strings of the name and form type: (["FileNameOne.csv","xyyy"],["FileNameTwo.csv", "xyyy"])
     '''
     Step 1: Read in all neccessary information from fragment patterns
@@ -388,48 +388,48 @@ def ABCDetermination(ReferencePatternToTuneFileNameAndForm, ReferencePatternToMa
         print("Warning: MSRESOLVE is set to do a tuning correction and is also set to extract the reference pattern from the data.  The tuning correction will be applied to the extracted pattern.  This is not a typical procedure. Typically, the extract pattern from dat feature is off when the tuning corrector is on.")
        
     #For simplicity, we will put the items into temporary items, then into dictionaries that we can then access.
-    ReferencePatternToTuneDict = {}
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternToTuneFileNameAndForm)
-    ReferencePatternToTuneDict['molecules']=molecules
-    ReferencePatternToTuneDict['provided_reference_patterns'] = provided_reference_patterns
-    ReferencePatternToTuneDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternToTuneDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
+    ReferencePatternExistingTuningDict = {}
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternExistingTuning_FileNameAndForm)
+    ReferencePatternExistingTuningDict['molecules']=molecules
+    ReferencePatternExistingTuningDict['provided_reference_patterns'] = provided_reference_patterns
+    ReferencePatternExistingTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternExistingTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
     if G.minimalReferenceValue =='yes':
-        ReferencePatternToTuneDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternToTuneDict['provided_reference_patterns'],G.referenceValueThreshold)
+        ReferencePatternExistingTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternExistingTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
     
-    ReferencePatternToMatchDict = {}
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternToMatchFileNameAndForm)
-    ReferencePatternToMatchDict['molecules']=molecules
-    ReferencePatternToMatchDict['provided_reference_patterns'] = provided_reference_patterns
-    ReferencePatternToMatchDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternToMatchDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
+    ReferencePatternDesiredTuningDict = {}
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternDesiredTuning_FileNameAndForm)
+    ReferencePatternDesiredTuningDict['molecules']=molecules
+    ReferencePatternDesiredTuningDict['provided_reference_patterns'] = provided_reference_patterns
+    ReferencePatternDesiredTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternDesiredTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
     if G.minimalReferenceValue =='yes':
-        ReferencePatternToMatchDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternToMatchDict['provided_reference_patterns'],G.referenceValueThreshold)
+        ReferencePatternDesiredTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternDesiredTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
     
     '''
     Step 3a: Truncate to the molecules which match.
     '''
-    OverlappingMolecules = numpy.intersect1d(ReferencePatternToTuneDict['molecules'],ReferencePatternToMatchDict['molecules'] )
-    OverlappingFragments = numpy.intersect1d(ReferencePatternToTuneDict['provided_reference_patterns'][:,0],ReferencePatternToMatchDict['provided_reference_patterns'][:,0])    
-    [OverlappingMolecules,ReferencePatternToTuneDict['OverlappingIndices'], ReferencePatternToMatchDict['OverlappingIndices']]  = numpy.intersect1d(ReferencePatternToTuneDict['molecules'],ReferencePatternToMatchDict['molecules'], return_indices=True)
+    OverlappingMolecules = numpy.intersect1d(ReferencePatternExistingTuningDict['molecules'],ReferencePatternDesiredTuningDict['molecules'] )
+    OverlappingFragments = numpy.intersect1d(ReferencePatternExistingTuningDict['provided_reference_patterns'][:,0],ReferencePatternDesiredTuningDict['provided_reference_patterns'][:,0])    
+    [OverlappingMolecules,ReferencePatternExistingTuningDict['OverlappingIndices'], ReferencePatternDesiredTuningDict['OverlappingIndices']]  = numpy.intersect1d(ReferencePatternExistingTuningDict['molecules'],ReferencePatternDesiredTuningDict['molecules'], return_indices=True)
 
     
-    ReferencePatternToTuneDict['OverlappingMolecules'] = OverlappingMolecules
-    ReferencePatternToMatchDict['OverlappingMolecules'] = OverlappingMolecules
+    ReferencePatternExistingTuningDict['OverlappingMolecules'] = OverlappingMolecules
+    ReferencePatternDesiredTuningDict['OverlappingMolecules'] = OverlappingMolecules
     
-    ReferencePatternToTuneDict['overlapping_provided_reference_patterns'] = []
+    ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'] = []
     #Now need to get only the overlapping indices values. The numpy take function will work if we do it one row at a time:
-    for rowIndex,row in enumerate(ReferencePatternToTuneDict['provided_reference_patterns']):
+    for rowIndex,row in enumerate(ReferencePatternExistingTuningDict['provided_reference_patterns']):
             massFragment = row[0]
-            truncatedIntensities = numpy.take(row[1:],ReferencePatternToTuneDict['OverlappingIndices'])    
+            truncatedIntensities = numpy.take(row[1:],ReferencePatternExistingTuningDict['OverlappingIndices'])    
             rowTruncated = numpy.insert(truncatedIntensities, 0, massFragment)
-            ReferencePatternToTuneDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
+            ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
     
-    ReferencePatternToMatchDict['overlapping_provided_reference_patterns'] = []
+    ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'] = []
     #Now need to get only the overlapping indices values. The numpy take function will work if we do it one row at a time:
-    for rowIndex,row in enumerate(ReferencePatternToMatchDict['provided_reference_patterns']):
+    for rowIndex,row in enumerate(ReferencePatternDesiredTuningDict['provided_reference_patterns']):
             massFragment = row[0]
-            truncatedIntensities = numpy.take(row[1:],ReferencePatternToMatchDict['OverlappingIndices'])   
+            truncatedIntensities = numpy.take(row[1:],ReferencePatternDesiredTuningDict['OverlappingIndices'])   
             rowTruncated = numpy.insert(truncatedIntensities, 0, massFragment)
-            ReferencePatternToMatchDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
+            ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'].append(rowTruncated)    
     #Note that the columns of overlapping_provided_reference_patterns are not just truncated but also rearranged. 
     #Thus, going forward, OverlappingMolecules must be used for indices rather than using molecules.
   
@@ -439,32 +439,32 @@ def ABCDetermination(ReferencePatternToTuneFileNameAndForm, ReferencePatternToMa
     '''    
     #Only append rows that have an overlapping mass fragment.
     matchingFragmentsOnlyPatterns = []
-    for row in ReferencePatternToTuneDict['overlapping_provided_reference_patterns']:
+    for row in ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns']:
         if row[0] in OverlappingFragments:
             matchingFragmentsOnlyPatterns.append(row)
     #now swap in the new list.
-    ReferencePatternToTuneDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns    
+    ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns    
 
     #Only append rows that have an overlapping mass fragment.
     matchingFragmentsOnlyPatterns = []
-    for row in ReferencePatternToMatchDict['overlapping_provided_reference_patterns']:
+    for row in ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns']:
         if row[0] in OverlappingFragments:
             matchingFragmentsOnlyPatterns.append(row)
     #now swap in the new list.
-    ReferencePatternToMatchDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns
+    ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'] = matchingFragmentsOnlyPatterns
 
     #Convert the two lists to numpy arrays so that they can be divided....
-    ReferencePatternToTuneDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternToTuneDict['overlapping_provided_reference_patterns'])
-    ReferencePatternToMatchDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternToMatchDict['overlapping_provided_reference_patterns'])
+    ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'])
+    ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'] = numpy.array(ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'])
     #Need to standardize again, because the ratios during division below will be wrong if the largest peak was not among the matching fragments.
-    ReferencePatternToTuneDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternToTuneDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
-    ReferencePatternToMatchDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternToMatchDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
+    ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
+    ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'],len(OverlappingMolecules)) #this does have the molecular weight as the first column.
 
     '''
     Find a,b,c:
     '''
     numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.
-    RatioOfPatterns = ReferencePatternToMatchDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternToTuneDict['overlapping_provided_reference_patterns'][:,1:]    
+    RatioOfPatterns = ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'][:,1:]    
     #For each row, excluding the Take the mean excluding nan values.
     meanRatioPerMassFragment = numpy.nanmean(RatioOfPatterns,1) #the 1 is for over axis 1, not over axix 0.    
     numpy.seterr(divide='warn', invalid='warn') #This is to [it tje warnings back how they normally are.
@@ -485,9 +485,9 @@ def ABCDetermination(ReferencePatternToTuneFileNameAndForm, ReferencePatternToMa
 #this function either creates or gets the three coefficients for the polynomial correction (Tuning Correction) and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileToTuneAndForm,referenceFileToMatchAndForm,measuredReferenceYorN):
+def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,measuredReferenceYorN):
     if measuredReferenceYorN =='yes':
-        abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileToTuneAndForm,referenceFileToMatchAndForm)
+        abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
         G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
@@ -766,11 +766,12 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
                                                                                                             chosenMassFragments, header_dtype_casting=float)
-    if type(G.collectedFileUncertainties) != type(None): #TODO: As of Feb 5th 2020, this if statement has been added but not tested. It simply mimics the above code.   The below function   trimDataMassesToMatchReference is similar and has been tested.
-            (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
-                                                                                                            trimmedExperimentData2.mass_fragment_numbers,
-                                                                                                            chosenMassFragments, header_dtype_casting=float)
-            trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
+    if G.calculateUncertaintiesInConcentrations:
+        if type(G.collectedFileUncertainties) != type(None): #TODO: As of Feb 5th 2020, this if statement has been added but not tested. It simply mimics the above code.   The below function   trimDataMassesToMatchReference is similar and has been tested.
+                (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
+                                                                                                                trimmedExperimentData2.mass_fragment_numbers,
+                                                                                                                chosenMassFragments, header_dtype_casting=float)
+                trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
     trimmedExperimentData.ExportCollector("MassFragChooser")
     
     return trimmedExperimentData
@@ -785,11 +786,12 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                         trimmedExperimentData.mass_fragment_numbers,
                                                                                                         ReferenceData.provided_mass_fragments, header_dtype_casting=float)
-    if type(G.collectedFileUncertainties) != type(None): #Note: As of Feb 5th 2020, this code has been added and tested.
-        (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
-                                                                                                            trimmedExperimentData2.mass_fragment_numbers,
-                                                                                                            ReferenceData.provided_mass_fragments, header_dtype_casting=float)
-        trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
+    if G.calculateUncertaintiesInConcentrations:
+        if type(G.collectedFileUncertainties) != type(None): #Note: As of Feb 5th 2020, this code has been added and tested.
+            (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
+                                                                                                                trimmedExperimentData2.mass_fragment_numbers,
+                                                                                                                ReferenceData.provided_mass_fragments, header_dtype_casting=float)
+            trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
                                                                                                             
     return trimmedExperimentData
 
@@ -1197,7 +1199,7 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #Wanted to do something like "if list(G.referenceCorrectionCoefficients) != [0,0,1]:" but can't do it out here. Can do it inside function.                                                                                                                  
     ReferenceData.standardized_reference_patterns, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
                                                            G.referenceCorrectionCoefficients,G.referenceCorrectionCoefficients_cov,
-                                                           G.referenceFileToMatch, G.referenceFileToTune,
+                                                           G.referenceFileDesiredTuning, G.referenceFileExistingTuning,
                                                            G.measuredReferenceYorN)
     #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
     try:
@@ -1441,26 +1443,27 @@ def DataInputPreProcessing(ExperimentData):
         G.lastFigureNumber = G.lastFigureNumber+1
 
     #Need to add uncertainties somewhere before interpolation and before datasmoother for the case that it is going to be provided as an input file.
-    if type(G.collectedFileUncertainties) == type("String"):
-        if G.collectedFileUncertainties.lower() == 'auto' :
-            UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
-            ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
-            ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
-        if G.collectedFileUncertainties.lower() == 'none' :
+    if G.calculateUncertaintiesInConcentrations:
+        if type(G.collectedFileUncertainties) == type("String"):
+            if G.collectedFileUncertainties.lower() == 'auto':
+                UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
+                ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
+                ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
+            if G.collectedFileUncertainties.lower() == 'none' :
+                ExperimentData.rawsignals_absolute_uncertainties = None
+                ExperimentData.rawsignals_average_residuals = None
+                G.collectedFileUncertainties = None
+        if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the point radius.
+                UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsPointRadius=G.collectedFileUncertainties)
+                ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
+                ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
+        elif type(G.collectedFileUncertainties) == type([1]) or type(G.collectedFileUncertainties) == type(numpy.array([1])): #if it's a list or a numpy array, it should be the same length as the number of mass fragments and will be populated for all times.
+                ExperimentData.rawsignals_absolute_uncertainties = numpy.ones(numpy.shape(ExperimentData.workingData)) #just initializing as an array of ones.
+                uncertaintiesPerTime = numpy.array(G.collectedFileUncertainties)
+                ExperimentData.rawsignals_absolute_uncertainties = ExperimentData.rawsignals_absolute_uncertainties*uncertaintiesPerTime        
+        elif type(G.collectedFileUncertainties) == type(None):
             ExperimentData.rawsignals_absolute_uncertainties = None
             ExperimentData.rawsignals_average_residuals = None
-            G.collectedFileUncertainties = None
-    if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the point radius.
-            UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsPointRadius=G.collectedFileUncertainties)
-            ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
-            ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
-    elif type(G.collectedFileUncertainties) == type([1]) or type(G.collectedFileUncertainties) == type(numpy.array([1])): #if it's a list or a numpy array, it should be the same length as the number of mass fragments and will be populated for all times.
-            ExperimentData.rawsignals_absolute_uncertainties = numpy.ones(numpy.shape(ExperimentData.workingData)) #just initializing as an array of ones.
-            uncertaintiesPerTime = numpy.array(G.collectedFileUncertainties)
-            ExperimentData.rawsignals_absolute_uncertainties = ExperimentData.rawsignals_absolute_uncertainties*uncertaintiesPerTime        
-    elif type(G.collectedFileUncertainties) == type(None):
-        ExperimentData.rawsignals_absolute_uncertainties = None
-        ExperimentData.rawsignals_average_residuals = None
 
     if G.interpolateYorN == 'yes':
         [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)

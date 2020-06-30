@@ -1,4 +1,4 @@
-Thu May 21 15:53:44 2020
+Tue Jun 30 09:45:08 2020
 
 referenceFileName = ['ConvertedSpectra.csv'] 
 form  = ['xyyy'] 
@@ -21,5 +21,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 2.66577 seconds 
+Run Time 3.09461 seconds 
 ###################################################################### 
