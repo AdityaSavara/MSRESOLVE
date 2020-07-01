@@ -968,10 +968,14 @@ def  TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
         if ExperimentData.times[timescounter-place_holder] < timeRangeStart: #all rows that are before the time range are deleted from the collected data and times abscissa
             ExperimentData.times = numpy.delete(ExperimentData.times,timescounter-place_holder) #place holder subtracts from the for loop so that the correct index is maintained
             ExperimentData.workingData = numpy.delete(ExperimentData.workingData,timescounter-place_holder,axis = 0)
+            if hasattr(ExperimentData,'rawsignals_absolute_uncertainties'): #copying the line from above.
+                ExperimentData.rawsignals_absolute_uncertainties = numpy.delete(ExperimentData.rawsignals_absolute_uncertainties,timescounter-place_holder,axis = 0) 
             place_holder = place_holder + 1 #the place holder increased by one with every deleted row to maintain array indexing
         if ExperimentData.times[timescounter-place_holder] > timeRangeFinish: #once the time is greater than the time range finish, all values after are deleted
             ExperimentData.times = numpy.delete(ExperimentData.times,timescounter-place_holder)
             ExperimentData.workingData = numpy.delete(ExperimentData.workingData,timescounter-place_holder,axis = 0)
+            if hasattr(ExperimentData,'rawsignals_absolute_uncertainties'): #copying the line from above.
+                ExperimentData.rawsignals_absolute_uncertainties = numpy.delete(ExperimentData.rawsignals_absolute_uncertainties,timescounter-place_holder,axis = 0) 
             place_holder = place_holder + 1
     return None
 
@@ -5532,7 +5536,7 @@ def main():
                         
         concentrationsScaledToCOarray[:,1:] = concentrationsScaledToCOarray[:,1:]/G.scaleRawDataFactor #correct for any scaling factor that was used during analysis.
         if (G.calculateUncertaintiesInConcentrations == True):#correct for any scaling factor that was used during analysis.
-            concentrations_absolute_uncertainties_all_times/G.scaleRawDataFactor
+            concentrations_absolute_uncertainties_all_times = concentrations_absolute_uncertainties_all_times/G.scaleRawDataFactor
             #The relative absolute uncertainties should not be divided.
         
         #Now store things in resulsObjects.
