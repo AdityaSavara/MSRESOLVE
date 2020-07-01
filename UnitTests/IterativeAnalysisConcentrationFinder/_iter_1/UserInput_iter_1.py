@@ -110,8 +110,8 @@ simulatedSignalsOutputName = 'SimulatedRawSignals.csv'
 TotalConcentrationsOutputName = 'TotalConcentrations.csv'
 ExportAtEachStep = 'yes'
 generatePercentages = 'no'
-checkpoint = 5.8125505
-start = 5.8125494
+checkpoint = 3.47384
+start = 3.4738397
 timeSinceLastCheckpoint = ''
 iterationNumber = 1
 
