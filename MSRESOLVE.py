@@ -5496,13 +5496,15 @@ def main():
                         referenceBeforeFiltering = G.currentReferenceDataUnfiltered
                         referenceAfterFiltering = currentReferenceData
                         slsSolvedMasses = G.massesUsedInSolvingMoleculesForThisPoint
-                        
-                        #Now need to move the class out of this area. Currently test 2 is taking 0.08 to 0.20 anlaysis time versus 0.014 for test_1.
-                        filterCorrectingObject = referenceThresholdFilterCorrectingSandbox(solvedConcentrationsAtThisTime,referenceBeforeFiltering,referenceAfterFiltering, slsSolvedMasses)
-                        implicitSLScorrectionAmounts = filterCorrectingObject.solvedConcentrationsCorrected1D[1:] - arrayline[1:]  #The 1: is to remove the "time" value.
-                        arrayline = filterCorrectingObject.solvedConcentrationsCorrected1D
-                        G.implicitSLScorrectionOccurred = True
-                
+                        if 0 in slsSolvedMasses:
+                            print("The concentrations are currently not completely solvable by SLS at this time so implicitSLScorrection is being skipped and changed to False. One option to consider is increasing UserChoices['minimalReferenceValue']['referenceValueThreshold'] to a highernumber." )
+                            G.implicitSLScorrection = False
+                        else:
+                            #Now need to move the class out of this area. Currently test 2 is taking 0.08 to 0.20 anlaysis time versus 0.014 for test_1.
+                            filterCorrectingObject = referenceThresholdFilterCorrectingSandbox(solvedConcentrationsAtThisTime,referenceBeforeFiltering,referenceAfterFiltering, slsSolvedMasses)
+                            implicitSLScorrectionAmounts = filterCorrectingObject.solvedConcentrationsCorrected1D[1:] - arrayline[1:]  #The 1: is to remove the "time" value.
+                            arrayline = filterCorrectingObject.solvedConcentrationsCorrected1D
+                            G.implicitSLScorrectionOccurred = True
             if timeIndex == 0: #Can't vstack with an array of zeros or else the first time is 0 with all data points at 0 so make first row the first arrayline provided
                 concentrationsScaledToCOarray = arrayline*1.0
             elif timeIndex > 0: #Everything else is appended via numpy.vstack
