@@ -5,7 +5,7 @@ sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 import MSRESOLVE, importlib; importlib.reload(MSRESOLVE)
-import DefaultUserInput as G, imp; imp.reload(G) #This is needed because we need the __var_list__
+import DefaultUserInput as G, importlib; importlib.reload(G) #This is needed because we need the __var_list__
 MSRESOLVE.G = G #This is because we need to overwrite whatever user input the user has with the default user input.
 MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
     
