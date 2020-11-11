@@ -31,7 +31,7 @@ MSRESOLVE.G.exportAtEachStep = 'no'
 MSRESOLVE.main()
 
 #Get data from the reference file
-ReferenceInfo = numpy.genfromtxt('AcetaldehydeNISTRefKnownFactors.csv',dtype=None,delimiter=',')
+ReferenceInfo = numpy.genfromtxt('AcetaldehydeNISTRefKnownFactors.csv',dtype=None,delimiter=',', encoding=None)
 
 #ionization factors are on the fifth row
 knownIonizationFactorsRN2 = ReferenceInfo[4][1:].astype(float) #convert values to a float

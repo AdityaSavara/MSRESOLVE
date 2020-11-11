@@ -3929,7 +3929,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
                 solutionsholder[solvedmoleculesIndex] = solutions[place_holder]
                 place_holder = place_holder + 1 #helps add the two arrays together
         solutions = solutionsholder
-    return [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,solvedmolecules]
+    return [molecules_unedited,remaining_reference_intensities_SLS,remaining_correction_factors_SLS,remaining_rawsignals_SLS,solutions,remaining_molecules_SLS,solvedmolecules, uncertainties_dict]
 
 
 #this function simply calls the other functions to be used, based on the user input pathway, that means that this
