@@ -5586,12 +5586,13 @@ def main():
         if G.generateStatistics == True and G.iterativeAnalysis == False:
             ScaledConcentrations_Statistics = []
             import numpy as np
-            ScaledConcentrations = numpy.genfromtxt("ScaledConcentrations.csv", delimiter=',',skip_header=1)
+            ScaledConcentrations = numpy.genfromtxt(G.resolvedScaledConcentrationsOutputName, delimiter=',',skip_header=1)
             x_axis = ScaledConcentrations[:,0]
             ScaledConcentrations_data = ScaledConcentrations[:,1:]
             ScaledConcentrations_Means = numpy.atleast_2d(numpy.mean(ScaledConcentrations_data, axis=0)) #atleast_2D is just making it 2D
             ScaledConcentrations_StdDevs = numpy.atleast_2d(numpy.std(ScaledConcentrations_data, axis=0))
             ScaledConcentrations_StdErrs = ScaledConcentrations_StdDevs/(len(x_axis)**0.5)
+            ScaledConcentrations_StdErrs_data = ScaledConcentrations_StdErrs #storing this for use below.
             # numpy.savetxt("ScaledConcentrations_TimeRange_Means.csv", ScaledConcentrations_Means, delimiter = ',', fmt ="%s")
             # numpy.savetxt("ScaledConcentrations_TimeRange_StdDevs.csv", ScaledConcentrations_StdDevs, delimiter = ',', fmt ="%s")
             # numpy.savetxt("ScaledConcentrations_TimeRange_StdErrs.csv", ScaledConcentrations_StdDevs/(len(x_axis)**0.5), delimiter = ',', fmt ="%s")
@@ -5609,6 +5610,7 @@ def main():
                 ScaledConcentrations_absolute_uncertainties_StdDevs = numpy.atleast_2d(numpy.std(ScaledConcentrations_absolute_uncertainties_data, axis=0))
                 ScaledConcentrations_relative_uncertainties_Means =   numpy.atleast_2d  (ScaledConcentrations_absolute_uncertainties_Means.flatten()/np.array(ScaledConcentrations_Means[1:]).flatten()) #Need to skip first value since now that is a word.
                 ScaledConcentrations_relative_uncertainties_StdDevs =  numpy.atleast_2d  (ScaledConcentrations_absolute_uncertainties_StdDevs.flatten()/np.array(ScaledConcentrations_Means[1:]).flatten()) #Need to skip first value since now that is a word.
+                ScaledConcentrations_absolute_uncertainties_Total = numpy.atleast_2d ( (ScaledConcentrations_StdErrs_data.flatten()**2 + ScaledConcentrations_absolute_uncertainties_StdDevs.flatten()**2)**0.5 )
                 # numpy.savetxt("ScaledConcentrations_TimeRange_Absolute_Uncertainties_Means.csv", ScaledConcentrations_absolute_uncertainties_Means, delimiter = ',', fmt ="%s")
                 # numpy.savetxt("ScaledConcentrations_TimeRange_Absolute_Uncertainties_StdDevs.csv", ScaledConcentrations_absolute_uncertainties_StdDevs, delimiter = ',', fmt ="%s")
                 # numpy.savetxt("ScaledConcentrations_TimeRange_Relative_Uncertainties_Means.csv", ScaledConcentrations_relative_uncertainties_Means, delimiter = ',', fmt ="%s")
@@ -5616,8 +5618,10 @@ def main():
                 ScaledConcentrations_absolute_uncertainties_StdDevs = ["ScaledConcentrations_absolute_uncertainties_StdDevs"] + list(ScaledConcentrations_absolute_uncertainties_StdDevs.flatten())
                 ScaledConcentrations_relative_uncertainties_Means = ["ScaledConcentrations_relative_uncertainties_Means"] + list(ScaledConcentrations_relative_uncertainties_Means.flatten())
                 ScaledConcentrations_relative_uncertainties_StdDevs = ["ScaledConcentrations_relative_uncertainties_StdDevs"] + list(ScaledConcentrations_relative_uncertainties_StdDevs.flatten())
-                ScaledConcentrations_Statistics = ScaledConcentrations_Statistics + [ScaledConcentrations_absolute_uncertainties_Means, ScaledConcentrations_absolute_uncertainties_StdDevs,ScaledConcentrations_relative_uncertainties_Means, ScaledConcentrations_relative_uncertainties_StdDevs]
-            numpy.savetxt("ScaledConcentrations_Statistics.csv", np.array(ScaledConcentrations_Statistics), delimiter = ',', fmt ="%s")
+                ScaledConcentrations_relative_uncertainties_TotUnc = ["ScaledConcentrations_absolute_uncertainties_Total"] + list(ScaledConcentrations_absolute_uncertainties_Total.flatten())
+                ScaledConcentrations_Statistics = ScaledConcentrations_Statistics + [ScaledConcentrations_absolute_uncertainties_Means, ScaledConcentrations_absolute_uncertainties_StdDevs,ScaledConcentrations_relative_uncertainties_Means, ScaledConcentrations_relative_uncertainties_StdDevs, ScaledConcentrations_relative_uncertainties_TotUnc]
+            moleculesHeader = 'molecules,' + str(list(currentReferenceData.molecules)).replace("[",'').replace("]",'')
+            numpy.savetxt(G.resolvedScaledConcentrationsOutputName.replace(".csv",'') + "_Statistics.csv", np.array(ScaledConcentrations_Statistics), delimiter = ',', fmt ="%s", header=moleculesHeader)
             
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
