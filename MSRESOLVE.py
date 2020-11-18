@@ -5610,7 +5610,7 @@ def main():
                 ScaledConcentrations_absolute_uncertainties_StdDevs = numpy.atleast_2d(numpy.std(ScaledConcentrations_absolute_uncertainties_data, axis=0))
                 ScaledConcentrations_relative_uncertainties_Means =   numpy.atleast_2d  (ScaledConcentrations_absolute_uncertainties_Means.flatten()/np.array(ScaledConcentrations_Means[1:]).flatten()) #Need to skip first value since now that is a word.
                 ScaledConcentrations_relative_uncertainties_StdDevs =  numpy.atleast_2d  (ScaledConcentrations_absolute_uncertainties_StdDevs.flatten()/np.array(ScaledConcentrations_Means[1:]).flatten()) #Need to skip first value since now that is a word.
-                ScaledConcentrations_absolute_uncertainties_Total = numpy.atleast_2d ( (ScaledConcentrations_StdErrs_data.flatten()**2 + ScaledConcentrations_absolute_uncertainties_StdDevs.flatten()**2)**0.5 )
+                ScaledConcentrations_absolute_uncertainties_Total = numpy.atleast_2d ( (ScaledConcentrations_StdErrs_data.flatten()**2 + ScaledConcentrations_absolute_uncertainties_Means.flatten()**2)**0.5 )
                 # numpy.savetxt("ScaledConcentrations_TimeRange_Absolute_Uncertainties_Means.csv", ScaledConcentrations_absolute_uncertainties_Means, delimiter = ',', fmt ="%s")
                 # numpy.savetxt("ScaledConcentrations_TimeRange_Absolute_Uncertainties_StdDevs.csv", ScaledConcentrations_absolute_uncertainties_StdDevs, delimiter = ',', fmt ="%s")
                 # numpy.savetxt("ScaledConcentrations_TimeRange_Relative_Uncertainties_Means.csv", ScaledConcentrations_relative_uncertainties_Means, delimiter = ',', fmt ="%s")
