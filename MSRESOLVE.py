@@ -1137,7 +1137,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     #sort through the matrix and remove labels
     #masses = numpy.delete(masses, -1)
     for i in range(0,len(masses)):
-        masses[i] = masses[i].replace('m','')
+        masses[i] = str(masses[i]).replace('m','')
     #convert the matrix to floats if they aren't already 
     mass_fragment_numbers = masses.astype(numpy.float)
     
@@ -1984,7 +1984,6 @@ def readDataFile(collectedFileName):
     #convert to matrix
     masses = dfmass.values
     #sort through the matrix and remove labels
-    print("1951", masses)
     for i in range(0,len(masses)):
         if type(masses[i]) == type("string"):
             masses[i] = masses[i].replace('mass','')
