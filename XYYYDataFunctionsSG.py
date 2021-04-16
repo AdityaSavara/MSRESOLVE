@@ -342,7 +342,9 @@ headersToConfineTo is not intended to be used, but is kept to have a parallel ar
 At present it is assumed that polynomialOrder will always be kept at 1, but it's conceivable somebody might want to do differently.
 We keep this function separate from DataSmoother for several reasons: a) this can run when that doesn't, b) this one will always do all masses, c) this one runs before interpolator on purpose.
 '''
-def UncertaintiesFromLocalWindows(data,abscissa,headers,UncertaintiesWindowsChoice='pointrange',UncertaintiesWindowsTimeRadius=0,UncertaintiesWindowsPointRadius=5,headersToConfineTo=[],polynomialOrder = 1):    
+def UncertaintiesFromLocalWindows(data,abscissa,headers,UncertaintiesWindowsChoice='pointrange',UncertaintiesWindowsTimeRadius=0,UncertaintiesWindowsPointRadius=5,headersToConfineTo=[],polynomialOrder = 1, UncertaintiesType="standardError"):    
+    #UncertaintiesWindowsChoice can be 'pointrange' or 'timerange'. The corresponding radius is used.
+    #uncertaintiesType can be standardError or aggregateError or standardDeviation
     UncertaintiesFromData = copy.deepcopy(data) #First make a copy of the data to have the right shape. THis does not have the times, just the intensities.  
     AverageResidualsFromData = UncertaintiesFromData*0.0 #just making an array of the same size.
     if UncertaintiesWindowsChoice == 'timerange':
@@ -367,12 +369,31 @@ def UncertaintiesFromLocalWindows(data,abscissa,headers,UncertaintiesWindowsChoi
             # Smooth the data
             smoothedData[timecounter,:] = DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray, abscissa[timecounter], polynomialOrder)
             smoothedDataFromWindowOfTimes = DataSmootherPolynomialSmoothing(timeslist, currentWindowAsArray, abscissa[timecounter], polynomialOrder, returnAllTimes = True)
+            #Below is Calculating the standardError.
             subtractedDataForTimeCounter =  dataWindowsYYYYvaluesInArrays[timecounter] - smoothedDataFromWindowOfTimes #The first index (rows) are time, second are masses. We want to find the standard deviation across masses.
             averageResidualForTimeCounter = numpy.mean(abs(subtractedDataForTimeCounter), axis=0) #averaging across all times for each mass.
             standardDeviationForTimeCounter = numpy.std((subtractedDataForTimeCounter), axis=0) #standard deviation across all times in the window for each mass.
+            standardErrorOfTheMeanForTimeCounter = standardDeviationForTimeCounter/(len(subtractedDataForTimeCounter)**0.5)
             AverageResidualsFromData[timecounter] = averageResidualForTimeCounter
-            UncertaintiesFromData[timecounter] = standardDeviationForTimeCounter
-    return UncertaintiesFromData, AverageResidualsFromData    
+            #Below is Calculating the aggregateError.
+            #First get the residuals for this timeCounter.
+            numOfValues = len(subtractedDataForTimeCounter[:])
+            #now, because unfortunately we are working with windows of data, we need to assess if the number of points is odd or even.
+            if (numOfValues % 2) == 0: #then it is even. This is the expected case, and if there are 10 points we need index 5 (just past halfway mark).
+                indexToExtract = int(numOfValues/2)
+            if (numOfValues % 2) != 0: #then it is odd. This is not the expected case, and if there are 9 points we need index 4 (which is the middle point)
+                indexToExtract = numOfValues/2.0
+                from math import floor
+                indexToExtract = int(floor(indexToExtract))
+            residualForThisTimeCounter = abs(subtractedDataForTimeCounter[indexToExtract])            
+            aggregateUncertaintyForThisTimeCounter = (residualForThisTimeCounter**2 + averageResidualForTimeCounter**2 + standardErrorOfTheMeanForTimeCounter**2)**0.5
+            if UncertaintiesType == "standardError":
+                UncertaintiesFromData[timecounter] = standardErrorOfTheMeanForTimeCounter
+            if UncertaintiesType == "aggregateError": 
+                UncertaintiesFromData[timecounter] = aggregateUncertaintyForThisTimeCounter
+            if UncertaintiesType == "standardDeviation": 
+                UncertaintiesFromData[timecounter] = standardDeviationForTimeCounter
+    return UncertaintiesFromData, AverageResidualsFromData        
 
 '''
 The DataSmoothing function 'smooths' data over a certain time or datapoint ranges:

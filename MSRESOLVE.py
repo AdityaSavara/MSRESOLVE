@@ -1458,15 +1458,29 @@ def DataInputPreProcessing(ExperimentData):
     if G.calculateUncertaintiesInConcentrations:
         if type(G.collectedFileUncertainties) == type("String"):
             if G.collectedFileUncertainties.lower() == 'auto':
-                UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
+                if G.UserChoices['dataSmootherYorN']['on'].lower() == "yes":
+                    G.UserChoices['uncertainties']['collectedFileUncertainties_radiusType'] = G.dataSmootherChoice
+                    UncertaintiesWindowsTimeRadius = G.dataSmootherTimeRadius
+                    UncertaintiesWindowsPointRadius = G.dataSmootherPointRadius
+                    UncertaintiesType = "standardError"
+                else:
+                    G.UserChoices['uncertainties']['collectedFileUncertainties_radiusType'] = 'pointrange' #This is the hardcoded default choice for 'auto'
+                    UncertaintiesWindowsPointRadius = 5 # This is the hardcoded default choice for 'auto'
+                    UncertaintiesWindowsTimeRadius = 5 #not relevant for 'auto'
+                    UncertaintiesType = "aggregateError"                       
+                UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsChoice=G.UserChoices['uncertainties']['collectedFileUncertainties_radiusType'], UncertaintiesWindowsPointRadius=UncertaintiesWindowsPointRadius,  UncertaintiesWindowsTimeRadius=UncertaintiesWindowsTimeRadius,UncertaintiesType=UncertaintiesType)
                 ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
                 ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
             if G.collectedFileUncertainties.lower() == 'none' :
                 ExperimentData.rawsignals_absolute_uncertainties = None
                 ExperimentData.rawsignals_average_residuals = None
                 G.collectedFileUncertainties = None
-        if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the point radius.
-                UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsPointRadius=G.collectedFileUncertainties)
+        if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the pointradius/timeradius.
+                if G.UserChoices['dataSmootherYorN']['on'].lower() == "yes": #If smoothing, we don't use the residuals for errors.
+                    UncertaintiesType = "standardError"
+                else:
+                    UncertaintiesType = "aggregateError"            
+                UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsChoice=G.UserChoices['uncertainties']['collectedFileUncertainties_radiusType'],UncertaintiesWindowsPointRadius=G.collectedFileUncertainties, UncertaintiesWindowsTimeRadius=G.collectedFileUncertainties, UncertaintiesType=UncertaintiesType)
                 ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
                 ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
         elif type(G.collectedFileUncertainties) == type([1]) or type(G.collectedFileUncertainties) == type(numpy.array([1])): #if it's a list or a numpy array, it should be the same length as the number of mass fragments and will be populated for all times.
