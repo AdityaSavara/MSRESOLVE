@@ -386,7 +386,7 @@ def UncertaintiesFromLocalWindows(data,abscissa,headers,UncertaintiesWindowsChoi
                 from math import floor
                 indexToExtract = int(floor(indexToExtract))
             residualForThisTimeCounter = abs(subtractedDataForTimeCounter[indexToExtract])            
-            aggregateUncertaintyForThisTimeCounter = (residualForThisTimeCounter**2 + standardDeviationForTimeCounter**2)**0.5
+            aggregateUncertaintyForThisTimeCounter = (residualForThisTimeCounter**2 + averageResidualForTimeCounter**2 + standardErrorOfTheMeanForTimeCounter**2)**0.5
             if UncertaintiesType == "standardError":
                 UncertaintiesFromData[timecounter] = standardErrorOfTheMeanForTimeCounter
             if UncertaintiesType == "aggregateError": 
