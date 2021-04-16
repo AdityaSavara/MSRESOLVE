@@ -1462,7 +1462,7 @@ def DataInputPreProcessing(ExperimentData):
                     G.UserChoices['uncertainties']['collectedFileUncertainties_radiusType'] = G.dataSmootherChoice
                     UncertaintiesWindowsTimeRadius = G.dataSmootherTimeRadius
                     UncertaintiesWindowsPointRadius = G.dataSmootherPointRadius
-                    UncertaintiesType = "standardError"
+                    UncertaintiesType = "standardDeviation"
                 else:
                     G.UserChoices['uncertainties']['collectedFileUncertainties_radiusType'] = 'pointrange' #This is the hardcoded default choice for 'auto'
                     UncertaintiesWindowsPointRadius = 5 # This is the hardcoded default choice for 'auto'
@@ -1477,7 +1477,7 @@ def DataInputPreProcessing(ExperimentData):
                 G.collectedFileUncertainties = None
         if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the pointradius/timeradius.
                 if G.UserChoices['dataSmootherYorN']['on'].lower() == "yes": #If smoothing, we don't use the residuals for errors.
-                    UncertaintiesType = "standardError"
+                    UncertaintiesType = "standardDeviation"
                 else:
                     UncertaintiesType = "aggregateError"            
                 UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsChoice=G.UserChoices['uncertainties']['collectedFileUncertainties_radiusType'],UncertaintiesWindowsPointRadius=G.collectedFileUncertainties, UncertaintiesWindowsTimeRadius=G.collectedFileUncertainties, UncertaintiesType=UncertaintiesType)
