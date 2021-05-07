@@ -1,4 +1,6 @@
 INTRODUCTION TO THE MSRESOLVE PROGRAM: 
+A program for converting mass spectrometry signals to concentrations. Baseline corrections, smoothing, solving overlapping patterns, mass spectrometer tuning, and more. 
+
 The Need for MSRESOLVE and what it offers
 During “solving” of collected mass spectrometry spectra to extract concentrations, there are several sources of challenges.
 A)	For time dependent signal collection, pre-processing may be required (such as baseline corrections, smoothing, etc.)
