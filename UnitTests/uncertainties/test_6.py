@@ -46,8 +46,8 @@ resultObj = (output1, output2)
 #String is provided
 resultStr = str(resultObj)
 
-relativeTolerance = 1.0E-2
-absoluteTolerance = 1.0E-1
+relativeTolerance = 1.0E-1
+absoluteTolerance = 1.0E-9
 
 
 #this is so that pytest can do UnitTesterSG tests.
