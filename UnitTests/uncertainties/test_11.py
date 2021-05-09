@@ -48,7 +48,7 @@ print(np.shape(expected_output2), np.shape(output2))
 #String is provided
 resultStr = str(resultObj)
 
-relativeTolerance = 1.0E-2
+relativeTolerance = 1.0E-1
 absoluteTolerance = 1.0E-9
 
 

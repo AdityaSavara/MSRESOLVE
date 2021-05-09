@@ -47,7 +47,7 @@ ut.set_expected_result((expected_output1,expected_output2) ,str((expected_output
 #String is provided
 resultStr = str(resultObj)
 
-relativeTolerance = 1.0E-2
+relativeTolerance = 1.0E-1
 absoluteTolerance = 1.0E-9
 
 
