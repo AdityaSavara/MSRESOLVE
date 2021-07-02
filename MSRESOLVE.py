@@ -5206,7 +5206,7 @@ def main():
             G.collectedFileUncertainties = int(G.collectedFileUncertainties)
 
 
-    prototypicalReferenceData = ReferenceDataList[0]
+    prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
 
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referencePatternTimeRanges) > 0 and (len(G.referenceFileNamesList) > len(G.referencePatternTimeRanges)):
