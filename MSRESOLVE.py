@@ -539,6 +539,15 @@ def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThresh
 #TODO: add a check to pop out or warn people if someone chooses a mass that is not in experimental data.
 def ExtractReferencePatternFromData(ExperimentData, referenceDataArray, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
     copyOfReferenceDataArray = copy.deepcopy(referenceDataArray)    
+    for moleculeIndex in range(len(rpcChosenMoleculesMF)):
+        currentMassesList = rpcChosenMoleculesMF[moleculeIndex]
+        for massChoice in currentMassesList:
+            if massChoice not in ExperimentData.mass_fragment_numbers:
+                print("ERROR: You have selected to extract the reference pattern intensity of mass " + str(massChoice) + " from experimental data for one of your molecules, but this mass was not monitored. Please adjust your choices and run MSRESOLVE again."); sys.exit()
+            if massChoice not in copyOfReferenceDataArray.provided_mass_fragments:
+                print("ERROR: You have selected to extract the reference pattern intensity of mass " + str(massChoice) + " from experimental data for one of your molecules, but this mass did not have a value greater than 0 in in your original reference pattern. Please adjust your inputs and run MSRESOLVE again."); sys.exit()
+                
+                
     try:
         type(copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties) #this checks if the variable exists.
     except: #create the variable if it does not exist.
