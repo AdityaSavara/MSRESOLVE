@@ -1543,9 +1543,10 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
     # ReferenceData.matching_correction_values fields
     # based on the masses in ExperimentData.mass_fragment_numbers
     ReferenceData = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceData)
-    if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also.
+    if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
         G.currentReferenceDataUnfiltered = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,G.currentReferenceDataUnfiltered)
-        
+  #Exports the matching correction value 
+    ReferenceData.ExportCollector('MatchingCorrectionValues', export_matching_correction_value = True)              #exports matching correction value 
     #Only print if not called from interpolating reference objects
     if verbose:
         print("Matching Correction Values complete")
@@ -2456,7 +2457,7 @@ class MSReference (object):
     #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
-    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_uncertainties = False, export_standard_uncertainties=False, export_tuning_uncertainties=False):
+    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_matching_correction_value = False, export_uncertainties = False, export_standard_uncertainties=False, export_tuning_uncertainties=False):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
@@ -2472,6 +2473,8 @@ class MSReference (object):
             #record data 
             if export_uncertainties:
                 self.dataToExport.append(self.provided_reference_patterns_absolute_uncertainties.copy())
+            elif export_matching_correction_value:
+                self.dataToExport.append(self.matching_correction_values.copy())     #Export Correction values along with provided reference patterns
             elif export_tuning_uncertainties:
                 self.dataToExport.append(self.standardized_reference_patterns_tuning_uncertainties.copy())
             elif export_standard_uncertainties:
@@ -2483,6 +2486,7 @@ class MSReference (object):
             elif not use_provided_reference_patterns:
                 self.dataToExport.append(self.standardized_reference_patterns.copy())
             
+          
     def ExportFragmentationPatterns(self, verbose=True):
         #Only print if not called from interpolating reference objects
         if verbose:
@@ -5343,7 +5347,7 @@ def main():
             except:
                 ReferenceDataList[i].populateIonizationEfficiencies()
             ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
-                              
+            
     if (G.dataAnalysis == 'yes'):
         print("Entering Data Analysis")
         #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
