@@ -94,7 +94,7 @@ UserChoices['linearBaselineCorrectionSemiAutomatic'] = {} #initialize the linear
 #To change delete background average/slope based on time-interval, input below information below. 'yes' enables 'no' disables
 UserChoices['linearBaselineCorrectionSemiAutomatic']['on'] = 'no'  #selection can be 'yes' or 'no'
 UserChoices['linearBaselineCorrectionSemiAutomatic']['baselineType'] = ['linear'] 	#baselineType may be either 'flat' or 'linear'	
-# if you would like to apply this correction to all fragments, leave as []
+# if you would like to apply this correction to all fragments, leave below as []
 UserChoices['linearBaselineCorrectionSemiAutomatic']['massesToBackgroundCorrect'] = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70]			#mflist: enter mass list delimited With commas [m1, m2, m3]
 # to apply a uniform time range to all fragments, only insert one time range as such [[x,y]]
 UserChoices['linearBaselineCorrectionSemiAutomatic']['earlyBaselineTimes'] = [[177.0, 177.1]]	# to apply different times for each fragment enter time pairs as such [[x,y],[z,w]..]
@@ -157,6 +157,8 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 UserChoices['measuredReferenceYorN']['on'] ='no'
 UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =['ReferenceCollected.csv','xyyy'] #This is the pattern that will be changed.
 UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =['ReferenceLiterature.csv','xyyy'] #This is what the pattern will look more like after everything is done.
+UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =[]         #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
+UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'] =[]        #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum concetrations must be provided
 #The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten and a new reference pattern is also generated to look more like the "Literature" case.
 UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients'] = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0.   Used as.... Factor = A*X^2 + B*X + C, so A=0,B=0,C=1.0 means the final factor is 1.0 and independent of molecular weight.
