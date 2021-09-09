@@ -2655,8 +2655,8 @@ class MSReference (object):
             referenceFileHeader += "Source:,"  + str(self.SourceOfFragmentationPatterns) + "\n"
             referenceFileHeader += "Molecules," + str(self.molecules) + "\n"
             referenceFileHeader += "Electron Numbers," + str(self.electronnumbers) + "\n"
-            referenceFileHeader += "Molecular Mass," + str(self.molecularWeights) + "\n"
-            numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader)
+            referenceFileHeader += "Molecular Mass," + str(self.molecularWeights)# + "\n"
+            numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
         
 '''
 The MolecularIonizationData class is used to generate a molecule's ionization factor based on its ionization type
