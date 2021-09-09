@@ -13,10 +13,10 @@ if str(__name__) != "DefaultUserInput":
 
 #//Input Files//
 UserChoices['inputFiles'] = {} #initialize the inputFiles container
-UserChoices['inputFiles']['referenceFileNamesList'] = ['ExtractedReferencePattern.csv'] #enter the file name of the file containing reference information
+UserChoices['inputFiles']['referenceFileNamesList'] = ['LiteratureReference.csv'] #enter the file name of the file containing reference information
 UserChoices['inputFiles']['referenceFormsList'] = 'xyyy' #form is either 'xyyy' or 'xyxy' (if using reference pattern time chooser enter as list with forms for each individual reference file ['xyyy','xyyy','xyyy'])
 UserChoices['inputFiles']['referencePatternTimeRanges'] = [] #Leave empty if not using reference pattern time chooser []
-UserChoices['inputFiles']['collectedFileName'] = 'Collected_Reference.csv'	#enter the file name with raw mass spectrometer data
+UserChoices['inputFiles']['collectedFileName'] = 'Collected_Data.csv'	#enter the file name with raw mass spectrometer data
 
 UserChoices['inputFiles']['ionizationDataFileName'] = '181017ProvidedIonizationData.csv' #the name of the file containing the ionization data
 
@@ -46,18 +46,18 @@ UserChoices['dataAnalysis'] = {} #initialize the dataAnalysis container
 UserChoices['dataAnalysis']['on'] = 'yes'
 #options for dataSimulation are 'yes' or 'no' 
 UserChoices['dataSimulation'] = {} #initialzie the dataSimulation container
-UserChoices['dataSimulation']['on'] = 'no'
+UserChoices['dataSimulation']['on'] = 'yes'
 
 #//Graphing//
 UserChoices['grapher'] = {} #initialize grapher container
 #option allowing you to view a graph of determined concentrations
 UserChoices['grapher']['on'] = 'yes' #yes will graph function no will not
-UserChoices['grapher']['stopAtGraphs'] = True #True will cause stopping at graphs.
+UserChoices['grapher']['stopAtGraphs'] = False #True will cause stopping at graphs.
 
 #//Time Range//
 UserChoices['timeRangeLimit'] = {} #initialize the timeRangeLimit container
 #This function limits the data analyzed and proccessed to a certain subset of the total data
-UserChoices['timeRangeLimit']['on'] = 'no'	#if you wish to enable this function enter 'yes' otherwise 'no'
+UserChoices['timeRangeLimit']['on'] = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
 UserChoices['timeRangeLimit']['timeRangeStart'] = 176  #start time (-int)
 UserChoices['timeRangeLimit']['timeRangeFinish'] = 900	#finish time (-int)
 
@@ -92,14 +92,14 @@ UserChoices['sensitivityValues']['sensitivityValues'] = []
 #//Baseline Correction - Linear Semiautomatic//
 UserChoices['linearBaselineCorrectionSemiAutomatic'] = {} #initialize the linearBaselineCorrectionSemiAutomatic container
 #To change delete background average/slope based on time-interval, input below information below. 'yes' enables 'no' disables
-UserChoices['linearBaselineCorrectionSemiAutomatic']['on'] = 'yes'  #selection can be 'yes' or 'no'
+UserChoices['linearBaselineCorrectionSemiAutomatic']['on'] = 'no'  #selection can be 'yes' or 'no'
 UserChoices['linearBaselineCorrectionSemiAutomatic']['baselineType'] = ['linear'] 	#baselineType may be either 'flat' or 'linear'	
-# if you would like to apply this correction to all fragments, leave as []
-UserChoices['linearBaselineCorrectionSemiAutomatic']['massesToBackgroundCorrect'] = []			#mflist: enter mass list delimited With commas [m1, m2, m3]. Leave blank for all.
+# if you would like to apply this correction to all fragments, leave below as []
+UserChoices['linearBaselineCorrectionSemiAutomatic']['massesToBackgroundCorrect'] = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70]			#mflist: enter mass list delimited With commas [m1, m2, m3]
 # to apply a uniform time range to all fragments, only insert one time range as such [[x,y]]
-UserChoices['linearBaselineCorrectionSemiAutomatic']['earlyBaselineTimes'] = [[850,870]]	# to apply different times for each fragment enter time pairs as such [[x,y],[z,w]..]
+UserChoices['linearBaselineCorrectionSemiAutomatic']['earlyBaselineTimes'] = [[177.0, 177.1]]	# to apply different times for each fragment enter time pairs as such [[x,y],[z,w]..]
 # to apply a uniform time range to all fragments, only insert one time range [[x,y]]
-UserChoices['linearBaselineCorrectionSemiAutomatic']['lateBaselineTimes'] = [[1050,1070]]	#if you do not wish to enter a second time list enter 0's [[0,0],[0,0]...] or [[0,0]]
+UserChoices['linearBaselineCorrectionSemiAutomatic']['lateBaselineTimes'] = [[901.0,902.0],[496.0,503.0],[901.0,902.0],[496.0,503.0],[901.0,902.0],[901.0,902.0],[901.0,902.0],[496.0,503.0],[901.0,902.0],[901.0,902.0]]	#if you do not wish to enter a second time list enter 0's [[0,0],[0,0]...] or [[0,0]]
 
 #//Baseline Correction - Linear  Manual//
 UserChoices['linearBaselineCorrectionManual'] = {} #initialize the linearBaselineCorrectionManual container
@@ -155,9 +155,11 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 UserChoices['measuredReferenceYorN']['on'] ='no'
-UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =['ReferenceCollected.csv','xyyy']
-UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =['ReferenceLiterature.csv','xyyy']
-#The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten (Ashi thinks it will generate a new reference pattern)
+UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =['ExtractedReferencePattern.csv','xyyy'] #This is the pattern that will be changed.
+UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =['LiteratureReference.csv','xyyy'] #This is what the pattern will look more like after everything is done.
+UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =['ethane', 'ethene', 'ethyne']         #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
+UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'] =[10, 2, 1]        #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum concetrations must be provided
+#The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten and a new reference pattern is also generated to look more like the "Literature" case.
 UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients'] = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0.   Used as.... Factor = A*X^2 + B*X + C, so A=0,B=0,C=1.0 means the final factor is 1.0 and independent of molecular weight.
 UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients_cov'] = [0,0,0] #Covariance for reference correction coefficients for tuning corrector. Default is 0,0,0. Can be 9 x 9 covariance.
@@ -167,23 +169,23 @@ UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients_cov'] = [0
 UserChoices['extractReferencePatternFromDataOption'] = {} #initialize the extractReferencePatternFromDataOption container
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
 UserChoices['extractReferencePatternFromDataOption']['on'] = 'no'
-UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChange'] = ['Ethane'] #Acetylene	Ethylene	Ethane
+UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChange'] = ['Crotyl Alcohol']
 #rpcTimeRanges and rpcMoleculesToChangeMF are nested lists.  Each nested list corresponds to a molecule in rpcMoleculesToChange
 #To make this easier to visualize, each nested list is placed on its own line so the first line refers to the first molecule, second line refers to the second molecule and so on
 UserChoices['extractReferencePatternFromDataOption']['rpcTimeRanges'] = [
-                                                                         [920,950], #For each molecule to be changed, a pair of times is required.
+                                                                         [300,500], #For each molecule to be changed, a pair of times is required.
                                                                          ]
 #The first mass fragment is the base fragment and it will not be changed.  The fragments following the first one are all altered based on the signal of the first fragment from the collected data
 UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] = [
-                                                                                  [28 ,12	,13	,14	,15	,16	,17	,21	,22	,24	,25	,26	,27	,29	,30], #For each molecule for using the rpc on, make a new line with a list of masses (length of each should be greater than 1).
-                                                                                  ]
+                                                                                  [70,57], #For each molecule for using the rpc on, make a new line with a list of masses (length of each should be greater than 1).
+                                                                                  ]   #Make sure every mass you listed was collected otherwise there will be an error.
 
 #//Reference Mass Fragmentation Threshold//
 UserChoices['minimalReferenceValue'] = {} #initialize the minimalReferenceValue container
 # if you want to exclude tiny fragmentation peaks
-UserChoices['minimalReferenceValue']['on'] = 'yes'
-UserChoices['minimalReferenceValue']['referenceValueThreshold'] = [1.01]
-UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds'] = [20.0]
+UserChoices['minimalReferenceValue']['on'] = 'no'
+UserChoices['minimalReferenceValue']['referenceValueThreshold'] = [2.0]
+UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds'] = [6.0]
 
 #//Data Threshold Filter//
 UserChoices['lowerBoundThresholdChooser'] = {} #initialize the lowerBoundThresholdChooser container
@@ -226,9 +228,10 @@ UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent'] = []
 
 #//Uncertainties for Calculating Uncertainties in Concentrations//
 UserChoices['uncertainties'] = {}
-UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = True
-UserChoices['uncertainties']['referenceFileUncertainties'] = 'File' #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _uncertainties after that) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
-UserChoices['uncertainties']['collectedFileUncertainties'] =  2 # Can be 'Auto' or 'File' or 'None' or an Integer like 3 (no quotation marks). If 'File', will expect same file name as collected file with _uncertainties after that). An integer defines a point radius. 'Auto' simply uses a point radius of 5.
+UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = False
+UserChoices['uncertainties']['referenceFileUncertainties'] = 2 #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _absolute_uncertainties.csv at end of file name) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
+UserChoices['uncertainties']['collectedFileUncertainties'] =  'Auto' # Can be 'Auto' or 'File' or 'None' or an Integer like 3 (no quotation marks). Or, you can put in a list: one value for each mass, which will be used for all times. If 'File', will expect same file name as collected file with _uncertainties after that). An integer defines a point radius. 'Auto' without dataSmoother simply uses a point radius of 5. If dataSmoother is being used, it is strongly recommended to set this to 'auto', in which case the range used for each window will match that of dataSmoother. 
+UserChoices['uncertainties']['collectedFileUncertainties_radiusType'] = 'pointrange' #Can be 'pointrange' or 'timerange'.  If collectedFileUncertainties is set to auto, then the radiustype will be forced to match datasmoother choice (if dataSmoother is being used), or will be forced to 'pointrange' (if dataSmoother is not being used).
 UserChoices['uncertainties']['referenceCorrectionCoefficientsUncertainties'] = None #Else a dictionary of uncertainties for 'A', 'B', 'C'. Not yet implemented.
 UserChoices['uncertainties']['referenceCorrectionCoefficientsIonizationUncertainties'] = None #Not yet implemented.
 
@@ -242,16 +245,16 @@ UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerBaseNumberOfGridIntervals']
 #//Data Analysis Methods
 UserChoices['dataAnalysisMethods'] = {} #initialize the dataAnalysisMethods container
 #Below the path for the analysis of the data; sls or inverse
-UserChoices['dataAnalysisMethods']['answer'] = 'sls'	#'inverse' or 'sls'; sls is suggested
-UserChoices['dataAnalysisMethods']['uniqueOrCommon'] = 'unique'	#'unique' or 'common'; common is suggested
-UserChoices['dataAnalysisMethods']['slsWeighting'] = [1,1,1,1] #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
-UserChoices['dataAnalysisMethods']['slsFinish'] = 'brute'	#'brute' or 'inverse'; brute is suggested
+UserChoices['dataAnalysisMethods']['answer'] = 'inverse'	#'inverse' or 'sls'; sls is suggested
+UserChoices['dataAnalysisMethods']['uniqueOrCommon'] = 'unique'	#'unique' or 'common'; unique is suggested when uncertainties will be used.
+UserChoices['dataAnalysisMethods']['slsWeighting'] = [1,0,0,0] #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
+UserChoices['dataAnalysisMethods']['slsFinish'] = 'inverse'	#'brute' or 'inverse'; inverse is currently suggested if using the uncertainties feature.
 UserChoices['dataAnalysisMethods']['slsUniquePositiveConcentrationsOnly'] = False #Can be true or false. This is faster but less accurate than NegativeAnalyzer
 UserChoices['dataAnalysisMethods']['bruteOption'] = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 UserChoices['dataAnalysisMethods']['distinguished'] = 'yes'
 UserChoices['dataAnalysisMethods']['fullBrute'] = 'yes'
 UserChoices['dataAnalysisMethods']['SLSUniqueExport'] = 'yes'
-UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = True
+UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False #recommended when doing SLS Unique with uncertainties.
 UserChoices['dataAnalysisMethods']['finalOptimization'] = 'None' #options are 'None' or... 'Nelder-Mead','Powell','CG','BFGS','Newton-CG','L-BFGS-B','TNC','COBYLA','SLSQP','dogleg','trust-ncg','trust-xact','trust-krylov' from scipy.optimize.minimze
 
 #//Concentration Finder//
@@ -278,7 +281,7 @@ UserChoices['outputFiles']['concentrationsOutputName'] = 'ResolvedConcentrations
 UserChoices['outputFiles']['simulatedSignalsOutputName'] = 'SimulatedRawSignals.csv'
 
 UserChoices['ExportAtEachStep'] = {} #initialize the ExportAtEachStep container
-UserChoices['ExportAtEachStep']['on'] = 'no'
+UserChoices['ExportAtEachStep']['on'] = 'yes'
 UserChoices['generatePercentages'] = {} #initialize the generatePercentages container
 UserChoices['generatePercentages']['on'] = 'no'
 
