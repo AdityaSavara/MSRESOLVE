@@ -2650,12 +2650,12 @@ class MSReference (object):
         numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file
     
     def exportReferencePattern(self, referenceFileName):
-        with open('referenceFileName.txt', 'w') as the_file:          
+        with open(referenceFileName, 'w') as the_file:          
             referenceFileHeader = ''
-            referenceFileHeader += "Source:,"  + str(SourceOfFragmentationPatterns) + "\n"
-            referenceFileHeader += "Molecules," + str(molecules) + "\n"
-            referenceFileHeader += "Electron Numbers," + str(electronnumbers) + "\n"
-            referenceFileHeader += "Molecular Mass," + str(molecularWeights) + "\n"
+            referenceFileHeader += "Source:,"  + str(self.SourceOfFragmentationPatterns) + "\n"
+            referenceFileHeader += "Molecules," + str(self.molecules) + "\n"
+            referenceFileHeader += "Electron Numbers," + str(self.electronnumbers) + "\n"
+            referenceFileHeader += "Molecular Mass," + str(self.molecularWeights) + "\n"
             numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader)
         
 '''
@@ -5393,7 +5393,7 @@ def main():
         simulateddata = RawSignalsSimulation(knownConcentrationsArray, matching_correction_values_array)
         ExportXYYYData("TuningCorrectorGasMixtureHypotheticalSimulatedSignals.csv", simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'simulated')
         #now need to make a fake reference file for that.
-        
+        TuningCorrectorGasMixtureReferenceDataObject.exportReferencePattern("ExportReferenceTest.csv")
         
         print("line 5352!!!"); sys.exit()
             
