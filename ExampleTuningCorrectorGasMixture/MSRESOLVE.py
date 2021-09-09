@@ -5359,32 +5359,34 @@ def main():
             ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
 
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
-        TuningCorrectorGasMixtureReferenceDataList = GenerateReferenceDataList([G.UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'][0]],[G.UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'][1]]) #Still need to put the last argument in later: #GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_ObjectsDict={})
+        #Because MSRESOLVE normally works with a datalist, Getting matching correction patterns requires making a "DataList" object. To do things the normal way, we need to provide the reference file name and that it is "xyyy".
+        TuningCorrectorGasMixtureReferenceDataList = GenerateReferenceDataList([G.UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'][0]],[G.UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'][1]])#TODO: For above function call, Still need to put the last argument in later which is the ionization information: #GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_ObjectsDict={})
         TuningCorrectorGasMixtureReferenceDataObject = TuningCorrectorGasMixtureReferenceDataList[0] #it's a list of one, so we take the first item.
         print(TuningCorrectorGasMixtureReferenceDataObject.molecules)
         print("line 5355")
         TuningCorrectorGasMixtureReferenceDataObject = ReferenceInputPreProcessing(TuningCorrectorGasMixtureReferenceDataObject, verbose=True)
         TuningCorrectorGasMixtureReferenceDataObject = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,TuningCorrectorGasMixtureReferenceDataObject)
         print(TuningCorrectorGasMixtureReferenceDataObject.matching_correction_values)
+        #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
         #now need to make a list for the concentrations and re-order the concentrations.
         knownConcentrationsArray = copy.deepcopy(list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'])) #just initializing.
-        print("line 5365", knownConcentrationsArray)
+        #The desired molecules list is the one in TuningCorrectorGasMixtureReferenceDataObject.molecules, so we will loop across those.
         for moleculeIndex,moleculeName in enumerate(TuningCorrectorGasMixtureReferenceDataObject.molecules):
             desiredConcentrationIndex = moleculeIndex  #have to add one because the concentrations 
             currentConcentrationIndex = list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']).index(moleculeName)
             knownConcentrationsArray[desiredConcentrationIndex] = G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'][currentConcentrationIndex]
-            
         #The first item in the concentrations array is supposed to be the time. We will simply put the integer "1" there, since we will have one point. 
         knownConcentrationsArray.insert(0, 1)
-        knownConcentrationsArray = numpy.array([knownConcentrationsArray]) #needs to be nested in a numpy array for right dimensionality.
-        
-        #The desired molecules list is the one in TuningCorrectorGasMixtureReferenceDataObject.molecules, so we will loop across those.
-        print("line 5372", knownConcentrationsArray)
-        
-        matching_correction_values_array = numpy.array([TuningCorrectorGasMixtureReferenceDataObject.matching_correction_values]) #needs to be nested in a numpy array for right dimensionality.
+        #knownConcentrationsArray needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
+        knownConcentrationsArray = numpy.array([knownConcentrationsArray])
+        #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
+        matching_correction_values_array = numpy.array([TuningCorrectorGasMixtureReferenceDataObject.matching_correction_values]) 
+        #now need to do the actual simulation of the gas mixture signals.
         simulateddata = RawSignalsSimulation(knownConcentrationsArray, matching_correction_values_array)
-        print(simulateddata)
-        ExportXYYYData("TuningCorrectorGasMixtureHypotheticalReferenceSimulatedSignals.csv", simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'simulated')
+        ExportXYYYData("TuningCorrectorGasMixtureHypotheticalSimulatedSignals.csv", simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'simulated')
+        #now need to make a fake reference file for that.
+        
+        
         print("line 5352!!!"); sys.exit()
             
     if (G.dataAnalysis == 'yes'):
