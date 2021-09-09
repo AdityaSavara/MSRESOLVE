@@ -491,10 +491,12 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
         G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
+        #Export the TuningCorrectorCoefficients as a list.
         with open('TuningCorrectorCoefficients.txt', 'w') as the_file:
-            the_file.write(abcCoefficients) 
-        with open('TuningCorrectorCoefficients_cov.txt', 'w') as the_file:
-            the_file.write(abcCoefficients_cov) 
+            the_file.write(str(list(abcCoefficients))) 
+        #Export the TuningCorrectorCoefficients_cov to a csv.
+        numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
