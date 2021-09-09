@@ -19,7 +19,19 @@ def returnPolyvalEstimatedUncertainties(arrayOfAbscissaValues, listOfParameters,
     uncertaintiesArray = numpy.sqrt(numpy.diag(Cov_y))  # Standard deviations are sqrt of diagonal
     return uncertaintiesArray
 
-
+    #Takes a 1D array or list and returns a comma separated string.
+def arrayLikeToCSVstring(inputArray):
+    #First check if the objects are strings. If they are, we will have to remove single quotes from our final string.
+    if (type(inputArray[0]) == type("string") ) or (type(inputArray[0]) == type(numpy.str_("string"))) :
+        stringObjects = True
+    else:
+        stringObjects = False
+    listString = str(list(inputArray))
+    CSVstring = listString[1:-1]
+    if stringObjects == True:
+        CSVstring= CSVstring.replace("'"," ")
+    return CSVstring
+    
 def AppendColumnsToCSV(CSVName, YYYYData, columnheaders, rowIndex = [], rowIndexHeader = []):
     #rowIndex and rowIndexHeader are only used if there is not already a file with the specified name. 
    

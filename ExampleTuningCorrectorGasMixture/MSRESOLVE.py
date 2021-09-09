@@ -2652,10 +2652,10 @@ class MSReference (object):
     def exportReferencePattern(self, referenceFileName):
         with open(referenceFileName, 'w') as the_file:          
             referenceFileHeader = ''
-            referenceFileHeader += "Source:,"  + str(self.SourceOfFragmentationPatterns) + "\n"
-            referenceFileHeader += "Molecules," + str(self.molecules) + "\n"
-            referenceFileHeader += "Electron Numbers," + str(self.electronnumbers) + "\n"
-            referenceFileHeader += "Molecular Mass," + str(self.molecularWeights)# + "\n"
+            referenceFileHeader += "Source:,"  + DataFunctions.arrayLikeToCSVstring(self.SourceOfFragmentationPatterns) + "\n"
+            referenceFileHeader += "Molecules," + DataFunctions.arrayLikeToCSVstring(self.molecules) + "\n"
+            referenceFileHeader += "Electron Numbers," + DataFunctions.arrayLikeToCSVstring(self.electronnumbers) + "\n"
+            referenceFileHeader += "Molecular Mass," + DataFunctions.arrayLikeToCSVstring(self.molecularWeights)# + "\n"
             numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
         
 '''
