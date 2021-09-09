@@ -2481,7 +2481,6 @@ class MSReference (object):
             if export_uncertainties:
                 self.dataToExport.append(self.provided_reference_patterns_absolute_uncertainties.copy())
             elif export_matching_correction_value:
-                print("line 2477", self.matching_correction_values)
                 self.dataToExport.append(self.matching_correction_values.copy())     #Export Correction values along with provided reference patterns
             elif export_tuning_uncertainties:
                 self.dataToExport.append(self.standardized_reference_patterns_tuning_uncertainties.copy())
@@ -2641,7 +2640,7 @@ class MSReference (object):
                     self.ionizationEfficienciesList[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
                     self.ionizationEfficienciesSourcesList[moleculeIndex] = 'MadixAndKo' #ionization efficiency obtained via Madix and Ko equation
 
-#Export the ionization efficiencies used and their respective method used to obtain them (known factor, known molecule, known ionization type, or Madix and Ko)    
+    #Export the ionization efficiencies used and their respective method used to obtain them (known factor, known molecule, known ionization type, or Madix and Ko)    
     def exportIonizationInfo(self):
         ionizationData = numpy.vstack((self.molecules,self.ionizationEfficienciesList,self.ionizationEfficienciesSourcesList)) #make a 2d array containing molecule names (for the header), the ionization efficiencies, and which method was chosen
         ionizationDataAbsicca = numpy.array([['Molecule'],
@@ -2649,7 +2648,16 @@ class MSReference (object):
                                              ['Method to Obtain Ionization Efficiency']]) #create the abscissa headers for the csv file
         ionizationDataToExport = numpy.hstack((ionizationDataAbsicca,ionizationData)) #use hstack to obtain a 2d array with the first column being the abscissa headers
         numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file
-                    
+    
+    def exportReferencePattern(self, referenceFileName):
+        with open('referenceFileName.txt', 'w') as the_file:          
+            referenceFileHeader = ''
+            referenceFileHeader += "Source:,"  + str(SourceOfFragmentationPatterns) + "\n"
+            referenceFileHeader += "Molecules," + str(molecules) + "\n"
+            referenceFileHeader += "Electron Numbers," + str(electronnumbers) + "\n"
+            referenceFileHeader += "Molecular Mass," + str(molecularWeights) + "\n"
+            numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader)
+        
 '''
 The MolecularIonizationData class is used to generate a molecule's ionization factor based on its ionization type
 '''        
