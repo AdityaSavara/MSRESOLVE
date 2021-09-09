@@ -155,10 +155,10 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 UserChoices['measuredReferenceYorN']['on'] ='no'
-UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =['ExtractedReferencePattern.csv','xyyy'] #This is the pattern that will be changed.
-UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =['LiteratureReference.csv','xyyy'] #This is what the pattern will look more like after everything is done.
-UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =['ethane', 'ethene', 'ethyne']         #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
-UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'] =[10, 2, 1]        #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum concetrations must be provided
+UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =['LiteratureReference.csv','xyyy'] #This is the pattern that will be changed. Typically this is NIST patterns.
+UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =['ExtractedReferencePattern.csv','xyyy'] #This is what the pattern will look more like after everything is done. Typically, this is a measured pattern.
+UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =['ethane', 'ethene', 'ethyne']  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
+UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'] =[10, 2, 1]  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum concetrations must be provided
 #The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten and a new reference pattern is also generated to look more like the "Literature" case.
 UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients'] = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0.   Used as.... Factor = A*X^2 + B*X + C, so A=0,B=0,C=1.0 means the final factor is 1.0 and independent of molecular weight.

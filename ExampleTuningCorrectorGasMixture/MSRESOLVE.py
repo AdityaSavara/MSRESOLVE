@@ -2588,6 +2588,7 @@ class MSReference (object):
 #If the ionization factor is unknown and the particular molecule does not exist in the MID Data, then the function checks the molecule's ionization type(s).  The function will take all molecules from the MID data that have the same type and will perform a linear fit on the data.  The ionization factor for this molecule is determined based on the linear fit and number of electrons
 #If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
     def populateIonizationEfficiencies(self, AllMID_ObjectsDict={}):
+        print("line 2591", numpy.zeros(len(self.molecules)))
         self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here and used in CorrectionValuesObtain
         self.ionizationEfficienciesSourcesList = copy.copy(self.molecules) #initialize an array to store which method was used to obtain a molecule's ionization factor
         for moleculeIndex in range(len(self.molecules)): #loop through our initialized array
@@ -2656,6 +2657,10 @@ class MSReference (object):
             referenceFileHeader += "Molecules," + DataFunctions.arrayLikeToCSVstring(self.molecules) + "\n"
             referenceFileHeader += "Electron Numbers," + DataFunctions.arrayLikeToCSVstring(self.electronnumbers) + "\n"
             referenceFileHeader += "Molecular Mass," + DataFunctions.arrayLikeToCSVstring(self.molecularWeights)# + "\n"
+            if hasattr(self ,"standardized_reference_patterns"):
+                pass
+            else:
+                self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
         
 '''
@@ -5365,10 +5370,11 @@ def main():
             except:
                 ReferenceDataList[i].populateIonizationEfficiencies()
             ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
-
+    
+    #This codeblock is for the TuningCorrectorGasMixture feature.
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
         #Because MSRESOLVE normally works with a datalist, Getting matching correction patterns requires making a "DataList" object. To do things the normal way, we need to provide the reference file name and that it is "xyyy".
-        TuningCorrectorGasMixtureReferenceDataList = GenerateReferenceDataList([G.UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'][0]],[G.UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'][1]])#TODO: For above function call, Still need to put the last argument in later which is the ionization information: #GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_ObjectsDict={})
+        TuningCorrectorGasMixtureReferenceDataList = GenerateReferenceDataList(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])#TODO: For above function call, Still need to put the last argument in later which is the ionization information: #GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_ObjectsDict={})
         TuningCorrectorGasMixtureReferenceDataObject = TuningCorrectorGasMixtureReferenceDataList[0] #it's a list of one, so we take the first item.
         print(TuningCorrectorGasMixtureReferenceDataObject.molecules)
         print("line 5355")
@@ -5392,8 +5398,23 @@ def main():
         #now need to do the actual simulation of the gas mixture signals.
         simulateddata = RawSignalsSimulation(knownConcentrationsArray, matching_correction_values_array)
         ExportXYYYData("TuningCorrectorGasMixtureHypotheticalSimulatedSignals.csv", simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'simulated')
-        #now need to make a fake reference file for that.
+        #now need to make a fake reference file for that. We'll make an MSReferenceObject and then use the internally built exportReferencePattern class function.
+        simulateddata_intensities = simulateddata[0][1:] #The "0" is because it's a nested object. THe slicing is becuase the abscissa (time) value needs to be removed.
+        print('line 5396', ExperimentData.mass_fragment_numbers)
+        
+        
+        #Now to transpose the simulateddata to make the simulated_reference_pattern
+        simulated_reference_pattern = numpy.vstack((ExperimentData.mass_fragment_numbers, simulateddata_intensities)).transpose()
+        print("line 5403", TuningCorrectorGasMixtureReferenceDataObject.knownIonizationFactorsRelativeToN2)
+        TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], SourceOfIonizationData=["referenceFileExistingTuning"], knownIonizationFactorsRelativeToN2=[1], knownMoleculesIonizationTypes=["unknown"])
+        
         TuningCorrectorGasMixtureReferenceDataObject.exportReferencePattern("ExportReferenceTest.csv")
+        TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
+        #MSRESOLVE makes a ReferenceDataObjectList, after which the object needs to be pulled out.
+        TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataList = GenerateReferenceDataList("TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", G.referenceFileDesiredTuning[1])
+        TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataObject = TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataList[0]
+        #TuningCorrectorGasMixtureSimulatedReferenceData
+        #TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv
         
         print("line 5352!!!"); sys.exit()
             
