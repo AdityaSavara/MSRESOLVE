@@ -393,6 +393,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     ReferencePatternExistingTuningDict['molecules']=molecules
     ReferencePatternExistingTuningDict['provided_reference_patterns'] = provided_reference_patterns
     ReferencePatternExistingTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternExistingTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
+    
     if G.minimalReferenceValue =='yes':
         ReferencePatternExistingTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternExistingTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
     
@@ -410,7 +411,6 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     OverlappingMolecules = numpy.intersect1d(ReferencePatternExistingTuningDict['molecules'],ReferencePatternDesiredTuningDict['molecules'] )
     OverlappingFragments = numpy.intersect1d(ReferencePatternExistingTuningDict['provided_reference_patterns'][:,0],ReferencePatternDesiredTuningDict['provided_reference_patterns'][:,0])    
     [OverlappingMolecules,ReferencePatternExistingTuningDict['OverlappingIndices'], ReferencePatternDesiredTuningDict['OverlappingIndices']]  = numpy.intersect1d(ReferencePatternExistingTuningDict['molecules'],ReferencePatternDesiredTuningDict['molecules'], return_indices=True)
-
     
     ReferencePatternExistingTuningDict['OverlappingMolecules'] = OverlappingMolecules
     ReferencePatternDesiredTuningDict['OverlappingMolecules'] = OverlappingMolecules
@@ -464,6 +464,8 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     Find a,b,c:
     '''
     numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.
+    print("line 466", ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'][:,1:])
+    print("line 467", ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'][:,1:]    )
     RatioOfPatterns = ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'][:,1:]    
     #For each row, excluding the Take the mean excluding nan values.
     meanRatioPerMassFragment = numpy.nanmean(RatioOfPatterns,1) #the 1 is for over axis 1, not over axix 0.    
@@ -476,6 +478,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         # meanRatioPerMassFragment[meanRatioPerMassFragment==-inf] = 'nan'
     #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
+
     abcCoefficients, abcCoefficients_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
     #Factor = A*X^2 + B*X + C, so C=1.0 means the factor is 1.0 and independent of molecular weight.
     #To use this with mixed patterns (meaning, some patterns taken from Literature reference like NIST) you will need to first determine the A,B,C coefficients, then you'll have to divide the Literature reference pattern by this factor. This will compensate for when the code multiplies by the factor, thus putting the mixed patterns into the same tuning.
@@ -1289,6 +1292,7 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
     ##If referenceFileNamesList is a string or if form is a string then make them lists
     if isinstance(referenceFileNamesList,str):
         referenceFileNamesList = [referenceFileNamesList]
+        print("line 1292", referenceFileNamesList)
     if isinstance(referenceFormsList,str):
         referenceFormsList = [referenceFormsList]
     #If referenceFileNamesList and forms are lists of 1 then create a list of the single MSReference object
@@ -2056,6 +2060,7 @@ def readDataFile(collectedFileName):
 #variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
 def readReferenceFile(referenceFileName, form):        
     #This function converts the XYXY data to an XYYY format
+    form = form.lower()
     def FromXYXYtoXYYY(provided_reference_patterns):
         print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
         masslists = [] #future lists must be must empty here to append in the for loops
@@ -2107,6 +2112,7 @@ def readReferenceFile(referenceFileName, form):
     dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
     
     if form == 'xyyy':
+        print("line 2112")
         for rowIndex in range(len(dataFrame)): #Loop through each row and check the abscissa value
             try: #Try to convert the abscissa title to a float
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
@@ -2292,7 +2298,8 @@ def readReferenceFile(referenceFileName, form):
 
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
-        
+    else:
+        print("Form of reference pattern not recognized. Only XYYY or XYXY allowed."); sys.exit()
     return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
 
 '''
@@ -4405,8 +4412,6 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
 #signals that we acquired, which will later be printed out in the main() function. The inputs for this function are the signals 
 #array as well as the correction values, in order to simulate the raw signals
 def RawSignalsSimulation(scaledConcentrationsarray,matching_correction_values):
-    print("line 4389", len(scaledConcentrationsarray[:,0]))
-    print("line 4390", len(matching_correction_values[0][:,0]))
     simulateddata = numpy.zeros([len(scaledConcentrationsarray[:,0]),len(matching_correction_values[0][:,0])+1])#a simulated data array made the height of the signals array and the width equal to the correction arrays height
     times = scaledConcentrationsarray[:,0]#the first row of the signals array is the times
     scaledConcentrationsarray = scaledConcentrationsarray[:,1:] #because one of the lines here is the times, and it need to be removed
@@ -5373,14 +5378,17 @@ def main():
     
     #This codeblock is for the TuningCorrectorGasMixture feature.
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
+        #TO CONSIDER: I think that the various GenerateRefernenceDataList below can and should be changed to "readReferenceFile". It just requires making two lines like below.
+        
+        
         #Because MSRESOLVE normally works with a datalist, Getting matching correction patterns requires making a "DataList" object. To do things the normal way, we need to provide the reference file name and that it is "xyyy".
-        TuningCorrectorGasMixtureReferenceDataList = GenerateReferenceDataList(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])#TODO: For above function call, Still need to put the last argument in later which is the ionization information: #GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_ObjectsDict={})
+        #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1])
+        TuningCorrectorGasMixtureReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
+        #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
         TuningCorrectorGasMixtureReferenceDataObject = TuningCorrectorGasMixtureReferenceDataList[0] #it's a list of one, so we take the first item.
-        print(TuningCorrectorGasMixtureReferenceDataObject.molecules)
-        print("line 5355")
         TuningCorrectorGasMixtureReferenceDataObject = ReferenceInputPreProcessing(TuningCorrectorGasMixtureReferenceDataObject, verbose=True)
         TuningCorrectorGasMixtureReferenceDataObject = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,TuningCorrectorGasMixtureReferenceDataObject)
-        print(TuningCorrectorGasMixtureReferenceDataObject.matching_correction_values)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
         #now need to make a list for the concentrations and re-order the concentrations.
         knownConcentrationsArray = copy.deepcopy(list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'])) #just initializing.
@@ -5400,24 +5408,28 @@ def main():
         ExportXYYYData("TuningCorrectorGasMixtureHypotheticalSimulatedSignals.csv", simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'simulated')
         #now need to make a fake reference file for that. We'll make an MSReferenceObject and then use the internally built exportReferencePattern class function.
         simulateddata_intensities = simulateddata[0][1:] #The "0" is because it's a nested object. THe slicing is becuase the abscissa (time) value needs to be removed.
-        print('line 5396', ExperimentData.mass_fragment_numbers)
-        
-        
         #Now to transpose the simulateddata to make the simulated_reference_pattern
         simulated_reference_pattern = numpy.vstack((ExperimentData.mass_fragment_numbers, simulateddata_intensities)).transpose()
-        print("line 5403", TuningCorrectorGasMixtureReferenceDataObject.knownIonizationFactorsRelativeToN2)
         TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], SourceOfIonizationData=["referenceFileExistingTuning"], knownIonizationFactorsRelativeToN2=[1], knownMoleculesIonizationTypes=["unknown"])
         
         TuningCorrectorGasMixtureReferenceDataObject.exportReferencePattern("ExportReferenceTest.csv")
         TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
-        #MSRESOLVE makes a ReferenceDataObjectList, after which the object needs to be pulled out.
-        TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataList = GenerateReferenceDataList("TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", G.referenceFileDesiredTuning[1])
+        #To make a reference object from the measured file, we need to provide the reference file name and that it is "xyyy".
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile("TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY")
+        TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
         TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataObject = TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataList[0]
         #TuningCorrectorGasMixtureSimulatedReferenceData
         #TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv
         
+        #we will use ReferenceDataList[0] for the standardized reference patterns, which is the same as the "Existing" patterns that we want to have tuning corrected.
+        #def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,measuredReferenceYorN)
+        print("line 5429", ReferenceDataList[0].standardized_reference_patterns)
+        referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataList[0].standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
+        print("line 5431", referenceDataArrayWithAbscissa)
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataList[0].electronnumbers, molecules=ReferenceDataList[0].molecules, molecularWeights=ReferenceDataList[0].molecularWeights, SourceOfFragmentationPatterns=ReferenceDataList[0].SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataList[0].SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataList[0].knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataList[0].knownMoleculesIonizationTypes)
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
         print("line 5352!!!"); sys.exit()
-            
+        
     if (G.dataAnalysis == 'yes'):
         print("Entering Data Analysis")
         #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data

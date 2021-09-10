@@ -29,7 +29,7 @@ def arrayLikeToCSVstring(inputArray):
     listString = str(list(inputArray))
     CSVstring = listString[1:-1]
     if stringObjects == True:
-        CSVstring= CSVstring.replace("'"," ")
+        CSVstring= CSVstring.replace("'","")
     return CSVstring
     
 def AppendColumnsToCSV(CSVName, YYYYData, columnheaders, rowIndex = [], rowIndexHeader = []):
