@@ -531,6 +531,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     # referenceDataArrayWithAbscissa[:,0] = referenceabscissa
     # referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #This is actually already occuring above because it's a pointer, but this line is just to make more clear what has happened.
     referenceDataArrayWithAbscissa[:,1:] = nonZeroValueLocations*referenceDataArray #we are setting things to zero if they were originally zero (this multiplies the nonzero locations by 1, and everything else by 0)
+    referenceDataArrayWithAbscissa[:,1:] = (referenceDataArrayWithAbscissa[:,1:] > 0)*referenceDataArrayWithAbscissa[:,1:]  #multiplying by 1 where the final value is >0, and by 0 everywhere else.
     referenceDataArrayWithAbscissa_tuning_uncertainties = referenceDataArrayWithAbscissa*1.0 #creating copy with abscissa, then will fill.
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
     return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
