@@ -2472,9 +2472,9 @@ class MSReference (object):
             self.molecules[moleculeIndex] = moleculeName.strip()     
         
         '''Initializing some list variables with defaults.'''
-        if self.knownIonizationFactorsRelativeToN2 == []
+        if self.knownIonizationFactorsRelativeToN2 == []:
             self.knownIonizationFactorsRelativeToN2 = ['unknown']* len(self.molecules)
-        if self.knownMoleculesIonizationTypes == []
+        if self.knownMoleculesIonizationTypes == []:
             self.knownMoleculesIonizationTypes = ['unknown']* len(self.molecules)
 
         '''Initializing Export Collector Variables'''
