@@ -2533,6 +2533,7 @@ class MSReference (object):
         DataFunctions.addXYYYtoXYYY(self.provided_reference_patterns, standardized_reference_patterns)
         #Rather than adding to the standarized reference patterns separately, will just go ahead and restandardize.
         self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
+        return self
 
     #For removing molecules we will use an external function trimDataMoleculesToMatchChosenMolecules
     #Note that this actually makes a new reference object!
@@ -5540,8 +5541,27 @@ def main():
         print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
         print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns)
         
-        #Now to make the mixed reference pattern using a function. It requires 
-        #def makeMixedReferencePattern(OriginalReferencePattern, PatternToExtendBy):
+        #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
+        #It will use the existing add molecule and remove molecules functions. We just need to get the "new" molecules first.
+        #It 
+        def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
+
+            #First figure out which molecules are needed and which are duplicates.
+            moleculesToExtendBy = [] #first initialize, then we'll populate below
+            duplicateMolecules = [] #first initialize, then populate below
+            for moleculeName in ReferenceDataToExtendBy.molecules:
+                if moleculeName in OriginalReferenceData.molecules:
+                    duplicateMolecules.append(moleculeName)
+                else: #implies not in OriginalReferenceData.molecules
+                    moleculesToExtendBy.append(moleculeName)
+            ReferenceDataToExtendBy = ReferenceDataToExtendBy.removeMolecules(duplicateMolecules) #this removes the duplicates and makes a new object. It does not affect the original reference data object.
+            
+            extendedReferenceData = copy.deepcopy(OriginalReferenceData)  #We need to make a copy so we don't change anything in the original reference data object, since that may not be desired.
+            #The below command will modify the  extendedReferenceData, so we don't need to return anything from the function though we will do so.
+            extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.provided_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataToExtendBy.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataToExtendBy.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataToExtendBy.knownMoleculesIonizationTypes)
+            
+            return extendedReferenceData
+
             
             
         
