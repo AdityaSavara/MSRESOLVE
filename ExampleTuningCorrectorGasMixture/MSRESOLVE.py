@@ -480,6 +480,22 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
 
     abcCoefficients, abcCoefficients_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
+    reverseRatio = 1/meanRatioPerMassFragment
+    abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],reverseRatio[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
+    
+    #Export the TuningCorrectorCoefficients as a list.
+    with open('TuningCorrectorCoefficients.txt', 'w') as the_file:
+        the_file.write(str(list(abcCoefficients))) 
+    #Export the TuningCorrectorCoefficients_cov to a csv.
+    numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+    #Do the same for the reverse relation.
+    with open('TuningCorrectorCoefficientsReverse.txt', 'w') as the_file:
+        the_file.write(str(list(abcCoefficients_reverse))) 
+    #Export the TuningCorrectorCoefficients_cov to a csv.
+    numpy.savetxt('TuningCorrectorCoefficientsReverse_cov.csv', abcCoefficients_reverse_cov, delimiter=",")
+
+
+    
     #Factor = A*X^2 + B*X + C, so C=1.0 means the factor is 1.0 and independent of molecular weight.
     #To use this with mixed patterns (meaning, some patterns taken from Literature reference like NIST) you will need to first determine the A,B,C coefficients, then you'll have to divide the Literature reference pattern by this factor. This will compensate for when the code multiplies by the factor, thus putting the mixed patterns into the same tuning.
     return abcCoefficients, abcCoefficients_cov
@@ -494,11 +510,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
         G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
-        #Export the TuningCorrectorCoefficients as a list.
-        with open('TuningCorrectorCoefficients.txt', 'w') as the_file:
-            the_file.write(str(list(abcCoefficients))) 
-        #Export the TuningCorrectorCoefficients_cov to a csv.
-        numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+
 
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
