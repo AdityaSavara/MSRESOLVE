@@ -2669,11 +2669,19 @@ class MSReference (object):
                     reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
         self.provided_reference_patterns = reference_holder
 
-#populateIonizationEfficiencies is an MSReference function that populates a variable, ionizationEfficienciesList, that contains the ionization factors used in CorrectionValuesObtain
-#If the ionization factor is known and in the reference data, then that value is used
-#If the ionization factor is unknown the the function will look in the MID Dictionary and check if the molecule exists in the ionization data.  If it does the the ionization average of the ionization factors for that particular molecule in the data is used
-#If the ionization factor is unknown and the particular molecule does not exist in the MID Data, then the function checks the molecule's ionization type(s).  The function will take all molecules from the MID data that have the same type and will perform a linear fit on the data.  The ionization factor for this molecule is determined based on the linear fit and number of electrons
-#If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
+    def addSuffixToSourceOfFragmentationPatterns(self, suffixString):
+        #this modifies the original object so that it is not necessary to return anything.
+        print("line 2674", suffixString)
+        self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns)
+        for moleculeIndex, sourceString in enumerate(self.SourceOfFragmentationPatterns):
+            self.SourceOfFragmentationPatterns[moleculeIndex] = sourceString + suffixString
+        print("line 2676", self.SourceOfFragmentationPatterns)
+        
+    #populateIonizationEfficiencies is an MSReference function that populates a variable, ionizationEfficienciesList, that contains the ionization factors used in CorrectionValuesObtain
+    #If the ionization factor is known and in the reference data, then that value is used
+    #If the ionization factor is unknown the the function will look in the MID Dictionary and check if the molecule exists in the ionization data.  If it does the the ionization average of the ionization factors for that particular molecule in the data is used
+    #If the ionization factor is unknown and the particular molecule does not exist in the MID Data, then the function checks the molecule's ionization type(s).  The function will take all molecules from the MID data that have the same type and will perform a linear fit on the data.  The ionization factor for this molecule is determined based on the linear fit and number of electrons
+    #If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
     def populateIonizationEfficiencies(self, AllMID_ObjectsDict={}):
         self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here and used in CorrectionValuesObtain
         self.ionizationEfficienciesSourcesList = copy.copy(self.molecules) #initialize an array to store which method was used to obtain a molecule's ionization factor
@@ -5519,6 +5527,7 @@ def main():
         referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataList[0].standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
         print("line 5431", referenceDataArrayWithAbscissa)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataList[0].electronnumbers, molecules=ReferenceDataList[0].molecules, molecularWeights=ReferenceDataList[0].molecularWeights, SourceOfFragmentationPatterns=ReferenceDataList[0].SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataList[0].SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataList[0].knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataList[0].knownMoleculesIonizationTypes)
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
         
         #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
@@ -5530,6 +5539,11 @@ def main():
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = TuningCorrectorGasMixtureCorrectedReferenceDataObject.removeMolecules("ethane")
         print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
         print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns)
+        
+        #Now to make the mixed reference pattern using a function. It requires 
+        #def makeMixedReferencePattern(OriginalReferencePattern, PatternToExtendBy):
+            
+            
         
         ##FIXME: BELOW IS A SCRATCH TESTING LINE
         DataFunctions.addXYYYtoXYYY(referenceDataArrayWithAbscissa, StandardizeReferencePattern(referenceFileDesiredTuning_provided_reference_patterns)) #need to use StandardizeReferencePattern because sometimes the values may be too small.
