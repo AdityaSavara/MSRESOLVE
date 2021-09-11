@@ -222,7 +222,7 @@ def GetDataWindows(data, abscissa, radius, dataSmootherChoice):
 GetRelevantData() is used when headersToConfineTo != [] (only needed for options 3 and 4). 
 In other words when we only want to smooth the data associated with certain masses.
 'headers' is a list of all masses that are being analyzed (should have the same number 
-of elements as there are Y in XYY data). headersToConfineTo
+of elements as there are Y in XYYY data). headersToConfineTo
 is a list of masses that we want to smooth, it is a subset of headers. This function 
 takes 'data' and returns a numpy array of the same form 'tempData'
 that has only the columns of data series to be smoothed.
@@ -1178,3 +1178,49 @@ def removeColumnsWithAllvaluesBelowZeroOrThreshold(dataValuesArray, startingRowI
     reducedDataValuesArray=numpy.array(dataValuesList)   
      
     return reducedDataValuesArray
+
+'''Takes an XYYY array and another XYYY array (can be just XY), then creates a merged XYYY array.
+Note that the abscissa do not have to match. A merged abscissa is made, an any missing values are filled with a third optional argument.
+We assume that the abscissa are floats and then use the == comparison to check if they are the same.
+With small values  and large values (e.g. 1E-8 and 1E9) there can be problems.
+'''
+def addXYYYtoXYYY(XYYYarray1, XYYYarray2, defaultValue=0):
+    abscissa1 = numpy.array(XYYYarray1[:,0], dtype='float')
+    abscissa2 = numpy.array(XYYYarray2[:,0], dtype='float')
+    numOrdinatesArray1 = int(len(XYYYarray1[0]) - 1) #subtract 1 for abscissa. #number of ordinated values in array.
+    numOrdinatesArray2 = int(len(XYYYarray2[0]) - 1) #subtract 1 for abscissa  #number of ordinated values in array.
+    
+    #Make the combined abscissa.
+    abscissaCombined = set(abscissa1)|set(abscissa2) #This combines the two sets.
+    abscissaCombined = numpy.array(list(abscissaCombined), dtype='float') #convert to list, then to numpy array.
+    abscissaCombinedLength = len(abscissaCombined)
+
+    #for each of the existing XYYY datasets, we will make an extended version where the blanks are filled.
+    XYYYarray1extended = numpy.full((abscissaCombinedLength ,numOrdinatesArray1+1), defaultValue)
+    XYYYarray1extended[:,0] = abscissaCombined*1.0
+    for newAbscissaIndex,newAbscissaValue in enumerate(abscissaCombined):
+        #Now check if newAbscissaValue occurs in abscissa1. Originaly tried using numpy.where, but it did not work. I did not understand why, but switched to using a loop.
+        for oldAbscissaIndex, oldAbscissaValue in enumerate(abscissa1):
+            if newAbscissaValue == oldAbscissaValue: #This means the value exists in abscissa1
+                XYYYarray1extended[newAbscissaIndex][1:] =  XYYYarray1[oldAbscissaIndex][1:]*1.0#skip first column because it has the abscissa values in it.
+            #else: #This else is implied because the array was initialized with the default value.
+            #    XYYYarray1extended[newAbscissaIndex,1:] =  defaultValue
+    XYYYarray2extended = numpy.full((abscissaCombinedLength ,numOrdinatesArray2+1), defaultValue)
+    XYYYarray2extended[:,0] = abscissaCombined*1.0
+    for newAbscissaIndex,newAbscissaValue in enumerate(abscissaCombined):
+        #Now check if newAbscissaValue occurs in abscissa2. Originaly tried using numpy.where, but it did not work. I did not understand why, but switched to using a loop.
+        for oldAbscissaIndex, oldAbscissaValue in enumerate(abscissa2):
+            if newAbscissaValue == oldAbscissaValue: #This means the value exists in abscissa1
+                XYYYarray2extended[newAbscissaIndex][1:] =  XYYYarray2[oldAbscissaIndex][1:]*1.0#skip first column because it has the abscissa values in it. 
+            #else: #This else is implied because the array was initialized with the default value.
+            #    XYYYarray2extended[newAbscissaIndex,1:] =  defaultValue
+    
+    #now just need to combine the extended arrays with a stacking command.
+    combinedArray = numpy.zeros((abscissaCombinedLength,numOrdinatesArray1+numOrdinatesArray2+1))
+    combinedArray[:,0] = abscissaCombined
+    combinedArray[:,1:numOrdinatesArray1+1] = XYYYarray1extended[:,1:]
+    combinedArray[:,numOrdinatesArray1+1:numOrdinatesArray1+numOrdinatesArray2+1] = XYYYarray2extended[:,1:]
+    return combinedArray
+    
+    
+    

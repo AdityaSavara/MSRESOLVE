@@ -1134,9 +1134,12 @@ StandardizeReferencePattern uses StandardizeTo100 to modify reference values so 
 mass framgnet numbers. 
 Parameters: 
 standardizedReference -  a name chosen for the numpy array that contains reference values
-num_of_molecues-  an integer describing the number of  molecues that contributed to the reference file
+num_of_molecues-  an integer describing the number of  molecues that contributed to the reference file. 
+If the num_of_molecues is fed in as 0 0 or not provided it will be calculated automatically.
 '''
-def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules):
+def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules=0):
+    if num_of_molecules==0:
+        num_of_molecules = len(referenceUnstandardized[0]) -1 #subtract 1 for the abscissa.
     # preallocate new array for standardized values
     standardizedReference = copy.deepcopy(referenceUnstandardized)
     # standardize
@@ -5424,6 +5427,7 @@ def main():
 
         #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We'll extract that from the desired reference pattern.
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1])
+        referenceFileDesiredTuning_provided_reference_patterns = provided_reference_patterns #For creating the mixed reference pattern later.
         referenceFileDesiredTuningMassFragments = provided_reference_patterns[:,0]
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = Populate_matching_correction_values(referenceFileDesiredTuningMassFragments,TuningCorrectorGasMixtureExistingTuningReferenceDataObject)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
@@ -5454,6 +5458,8 @@ def main():
         print("line 5431", referenceDataArrayWithAbscissa)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataList[0].electronnumbers, molecules=ReferenceDataList[0].molecules, molecularWeights=ReferenceDataList[0].molecularWeights, SourceOfFragmentationPatterns=ReferenceDataList[0].SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataList[0].SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataList[0].knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataList[0].knownMoleculesIonizationTypes)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
+        DataFunctions.addXYYYtoXYYY(referenceDataArrayWithAbscissa, StandardizeReferencePattern(referenceFileDesiredTuning_provided_reference_patterns)) #need to use StandardizeReferencePattern because sometimes the values may be too small.
+        
         print("line 5352!!!"); sys.exit()
         
     if (G.dataAnalysis == 'yes'):
