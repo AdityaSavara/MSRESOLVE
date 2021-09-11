@@ -5421,8 +5421,8 @@ def main():
 
         #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We'll extract that from the desired reference pattern.
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1])
-        print("line 5424", molecularWeights, ExperimentData.mass_fragment_numbers)
-        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,TuningCorrectorGasMixtureExistingTuningReferenceDataObject)
+        referenceFileDesiredTuningMassFragments = provided_reference_patterns[:,0]
+        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = Populate_matching_correction_values(referenceFileDesiredTuningMassFragments,TuningCorrectorGasMixtureExistingTuningReferenceDataObject)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
 
 
