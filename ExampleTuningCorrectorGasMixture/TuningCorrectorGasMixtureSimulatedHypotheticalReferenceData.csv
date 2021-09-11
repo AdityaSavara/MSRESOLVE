@@ -1,6 +1,8 @@
 Source:,simulated
 Molecules,GasMixture
 Electron Numbers,1
+ionizationEfficiencies,0.4428571428571429
+ionizationEfficienciesSources,MadixAndKo
 Molecular Mass,1
 1.200000000000000000e+01,2.820818482369992775e-01
 1.300000000000000000e+01,6.848997932552134404e-01

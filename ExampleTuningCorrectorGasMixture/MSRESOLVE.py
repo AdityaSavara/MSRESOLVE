@@ -464,8 +464,6 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     Find a,b,c:
     '''
     numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.
-    print("line 466", ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'][:,1:])
-    print("line 467", ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'][:,1:]    )
     RatioOfPatterns = ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'][:,1:]    
     #For each row, excluding the Take the mean excluding nan values.
     meanRatioPerMassFragment = numpy.nanmean(RatioOfPatterns,1) #the 1 is for over axis 1, not over axix 0.    
@@ -738,7 +736,8 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
-    
+    print("line 739", ReferenceData.SourceOfIonizationData)
+    print("line 740", trimmedRefererenceData.SourceOfIonizationData)
     #trim the reference fragmentation patterns to only the selected molecules 
     #unused trimmed copy molecules is just a place holder to dispose of a function return that is not needed
     trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_patterns[:,1:],
@@ -752,7 +751,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     #TODO continued: The best solution is probably to do the standardization earlier and then do this trimming after that.
     #Add the abscissa back into the reference values
     trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
-    
+    print("line 753", trimmedRefererenceData.SourceOfIonizationData, trimmedMoleculesList)
     #Shorten the electronnumbers to the correct values, using the full copy of molecules. Do the same for molecularWeights and sourceInfo
     trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.molecularWeights, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.molecularWeights, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
@@ -760,6 +759,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.knownIonizationFactorsRelativeToN2, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownIonizationFactorsRelativeToN2, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfFragmentationPatterns, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfFragmentationPatterns, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
+    print("line 761", trimmedRefererenceData.SourceOfIonizationData, trimmedMoleculesList)
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None): #The [:,1:] is related to the mass fragements.  Just copying the two lines syntax from above.
             trimmedAbsoluteUncertainties, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.absolute_standard_uncertainties[:,1:], 
@@ -2505,7 +2505,9 @@ class MSReference (object):
     #This function allows adding molecules to an existing reference patterns. When using TuningCorrector it is used to create MixedReference patterns.
     #Though these variable names are plural, they are expected to be lists of one. "molecules" is supposed to be a list of variable names.
     #provided_reference_patterns should be in an XYYY format.  If starting with XYXY data, is okay to feed a single "XY" at a time and to do so repeatedly in a loop.
-    def addMolecules(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], SourceOfIonizationData=[], knownIonizationFactorsRelativeToN2=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
+    def addMolecules(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], SourceOfIonizationData=[], knownIonizationFactorsRelativeToN2=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):      
+        print("line 2509", SourceOfIonizationData, knownIonizationFactorsRelativeToN2)
+        
         #In case somebody decides to try to feed single molecule's name directly.
         if type(molecules) == type("string"):
             molecules = [molecules]
@@ -2517,20 +2519,22 @@ class MSReference (object):
         if knownIonizationFactorsRelativeToN2 == []:
            knownIonizationFactorsRelativeToN2 = ['unknown']* len(self.molecules)
         if knownMoleculesIonizationTypes == []:
-           knownMoleculesIonizationTypes = ['unknown']* len(self.molecules)        
+           knownMoleculesIonizationTypes = ['unknown']* len(self.molecules)
            
-        #Now to extend the existing reference objects.
-        self.electronnumbers = list(self.electronnumbers).extend(list(electronnumbers))
-        self.molecules = list(self.molecules).extend(list(molecules))
-        self.molecularWeights = list(self.molecularWeights).extend(list(molecularWeights))
-        self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns).extend(list(SourceOfFragmentationPatterns))
-        self.SourceOfIonizationData = list(self.SourceOfIonizationData).extend(list(SourceOfIonizationData))
-        self.knownIonizationFactorsRelativeToN2 = list(self.knownIonizationFactorsRelativeToN2).extend(list(knownIonizationFactorsRelativeToN2))
-        self.knownMoleculesIonizationTypes = list(self.knownMoleculesIonizationTypes).extend(list(knownMoleculesIonizationTypes))
+        #Now to concatenate to the existing reference objects. Can't use ".extend" because that modifies the original list while returning "None."
+        self.electronnumbers = list(self.electronnumbers) + (list(electronnumbers))
+        self.molecules = list(self.molecules) + (list(molecules))
+        self.molecularWeights = list(self.molecularWeights) + (list(molecularWeights))
+        self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns) + (list(SourceOfFragmentationPatterns))
+        self.SourceOfIonizationData = list(self.SourceOfIonizationData) + (list(SourceOfIonizationData))
+        self.knownIonizationFactorsRelativeToN2 = list(self.knownIonizationFactorsRelativeToN2) + (list(knownIonizationFactorsRelativeToN2))
+        print("line 2531", self.knownIonizationFactorsRelativeToN2)
+        self.knownMoleculesIonizationTypes = list(self.knownMoleculesIonizationTypes) + (list(knownMoleculesIonizationTypes))
+        print("line 2533", self.knownMoleculesIonizationTypes)
         
         #Will to standardize the molecules reference patterns before adding. This is important because the addXYYYtoXYYY function drops values that are small like 1E-8.
         standardized_reference_patterns=StandardizeReferencePattern(provided_reference_patterns,len(molecules))
-        DataFunctions.addXYYYtoXYYY(self.provided_reference_patterns, standardized_reference_patterns)
+        self.provided_reference_patterns = DataFunctions.addXYYYtoXYYY(self.provided_reference_patterns, standardized_reference_patterns)
         #Rather than adding to the standarized reference patterns separately, will just go ahead and restandardize.
         self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
         return self
@@ -2581,7 +2585,7 @@ class MSReference (object):
             elif not use_provided_reference_patterns:
                 self.dataToExport.append(self.standardized_reference_patterns.copy())
             
-          
+    #this function exports only an XYYY file. To export a full referenceData file, use the function exportReferencePattern
     def ExportFragmentationPatterns(self, verbose=True):
         #Only print if not called from interpolating reference objects
         if verbose:
@@ -2745,12 +2749,15 @@ class MSReference (object):
         ionizationDataToExport = numpy.hstack((ionizationDataAbsicca,ionizationData)) #use hstack to obtain a 2d array with the first column being the abscissa headers
         numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file
     
+    #This makes a full Reference data file, not just a pattern.
     def exportReferencePattern(self, referenceFileName):
         with open(referenceFileName, 'w') as the_file:          
             referenceFileHeader = ''
             referenceFileHeader += "Source:,"  + DataFunctions.arrayLikeToCSVstring(self.SourceOfFragmentationPatterns) + "\n"
             referenceFileHeader += "Molecules," + DataFunctions.arrayLikeToCSVstring(self.molecules) + "\n"
             referenceFileHeader += "Electron Numbers," + DataFunctions.arrayLikeToCSVstring(self.electronnumbers) + "\n"
+            referenceFileHeader += "ionizationEfficiencies," + DataFunctions.arrayLikeToCSVstring(self.ionizationEfficienciesList) + "\n"
+            referenceFileHeader += "ionizationEfficienciesSources," + DataFunctions.arrayLikeToCSVstring(self.ionizationEfficienciesSourcesList) + "\n"
             referenceFileHeader += "Molecular Mass," + DataFunctions.arrayLikeToCSVstring(self.molecularWeights)# + "\n"
             if hasattr(self ,"standardized_reference_patterns"):
                 pass
@@ -5498,8 +5505,14 @@ def main():
 
         #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We'll extract that from the desired reference pattern.
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1])
-        referenceFileDesiredTuning_provided_reference_patterns = provided_reference_patterns #For creating the mixed reference pattern later.
+        #We don't need a desired tuning Data Object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
+        referenceDataDesiredTuningList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
+        referenceDataDesiredTuning = referenceDataDesiredTuningList[0] #it's a list of one, so we take the first item.
+        referenceFileDesiredTuning_provided_reference_patterns = provided_reference_patterns  #TODO: get rid of this and use referenceDataDesiredTuningList.provided_reference_patterns
         referenceFileDesiredTuningMassFragments = provided_reference_patterns[:,0]
+        
+        
+        #
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = Populate_matching_correction_values(referenceFileDesiredTuningMassFragments,TuningCorrectorGasMixtureExistingTuningReferenceDataObject)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
 
@@ -5526,21 +5539,21 @@ def main():
         #def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,measuredReferenceYorN)
         print("line 5429", ReferenceDataList[0].standardized_reference_patterns)
         referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataList[0].standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
-        print("line 5431", referenceDataArrayWithAbscissa)
+        print("line 5431", ReferenceDataList[0].knownIonizationFactorsRelativeToN2)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataList[0].electronnumbers, molecules=ReferenceDataList[0].molecules, molecularWeights=ReferenceDataList[0].molecularWeights, SourceOfFragmentationPatterns=ReferenceDataList[0].SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataList[0].SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataList[0].knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataList[0].knownMoleculesIonizationTypes)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
+        print("line 5540", TuningCorrectorGasMixtureCorrectedReferenceDataObject.knownIonizationFactorsRelativeToN2)
+        print("line 5540", TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
         
         #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
+        print("line 5543", TuningCorrectorGasMixtureCorrectedReferenceDataObject.knownIonizationFactorsRelativeToN2)
+        print("line 5543", TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
-        
-        
-        print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
-        print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns)
+        print("line 5546", TuningCorrectorGasMixtureCorrectedReferenceDataObject.knownIonizationFactorsRelativeToN2)
+        print("line 5546", TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)        
+        print("line 5550", TuningCorrectorGasMixtureCorrectedReferenceDataObject.SourceOfIonizationData)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = TuningCorrectorGasMixtureCorrectedReferenceDataObject.removeMolecules("ethane")
-        print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
-        print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns)
-        
         #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
         #It will use the existing add molecule and remove molecules functions. We just need to get the "new" molecules first.
         #It 
@@ -5558,11 +5571,13 @@ def main():
             
             extendedReferenceData = copy.deepcopy(OriginalReferenceData)  #We need to make a copy so we don't change anything in the original reference data object, since that may not be desired.
             #The below command will modify the  extendedReferenceData, so we don't need to return anything from the function though we will do so.
+            print('line 5571 before 2509', ReferenceDataToExtendBy.SourceOfIonizationData, knownIonizationFactorsRelativeToN2)
             extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.provided_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataToExtendBy.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataToExtendBy.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataToExtendBy.knownMoleculesIonizationTypes)
-            
             return extendedReferenceData
-
-            
+        
+        print("line 5580", TuningCorrectorGasMixtureCorrectedReferenceDataObject.SourceOfIonizationData)
+        mixedReferenceDataDesiredTuning = extendReferencePattern(referenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
+        mixedReferenceDataDesiredTuning.exportReferencePattern("TuningCorrectorMixedPattern.csv")
             
         
         ##FIXME: BELOW IS A SCRATCH TESTING LINE

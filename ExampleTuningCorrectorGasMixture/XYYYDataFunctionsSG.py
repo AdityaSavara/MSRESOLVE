@@ -1189,13 +1189,12 @@ def addXYYYtoXYYY(XYYYarray1, XYYYarray2, defaultValue=0):
     abscissa2 = numpy.array(XYYYarray2[:,0], dtype='float')
     numOrdinatesArray1 = int(len(XYYYarray1[0]) - 1) #subtract 1 for abscissa. #number of ordinated values in array.
     numOrdinatesArray2 = int(len(XYYYarray2[0]) - 1) #subtract 1 for abscissa  #number of ordinated values in array.
-    
+       
     #Make the combined abscissa.
     abscissaCombined = set(abscissa1)|set(abscissa2) #This combines the two sets.
     abscissaCombined = numpy.array(list(abscissaCombined), dtype='float') #convert to list, then to numpy array.
     abscissaCombinedLength = len(abscissaCombined)
-
-    #for each of the existing XYYY datasets, we will make an extended version where the blanks are filled.
+    #for each of the existing XYYY datasets, we will make an extended version (only extended in rows) where the blanks are filled.
     XYYYarray1extended = numpy.full((abscissaCombinedLength ,numOrdinatesArray1+1), defaultValue)
     XYYYarray1extended[:,0] = abscissaCombined*1.0
     for newAbscissaIndex,newAbscissaValue in enumerate(abscissaCombined):
@@ -1214,7 +1213,6 @@ def addXYYYtoXYYY(XYYYarray1, XYYYarray2, defaultValue=0):
                 XYYYarray2extended[newAbscissaIndex][1:] =  XYYYarray2[oldAbscissaIndex][1:]*1.0#skip first column because it has the abscissa values in it. 
             #else: #This else is implied because the array was initialized with the default value.
             #    XYYYarray2extended[newAbscissaIndex,1:] =  defaultValue
-    
     #now just need to combine the extended arrays with a stacking command.
     combinedArray = numpy.zeros((abscissaCombinedLength,numOrdinatesArray1+numOrdinatesArray2+1))
     combinedArray[:,0] = abscissaCombined
