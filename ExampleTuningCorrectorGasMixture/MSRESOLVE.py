@@ -1145,7 +1145,6 @@ def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules=0):
     # standardize
     for moleculeIndex in range(1,num_of_molecules+1): #Note that we start at an index of 1 in order to skip the mass fragments (so they don't get 'standardized')
         standardizedReference[0:,moleculeIndex]=StandardizeTo100(referenceUnstandardized[0:,moleculeIndex],1) #TODO: Low priority. Change this to use amax so the loop isn't executed.
-
     return standardizedReference
 
 '''The following two functions are currently not used in the program,
@@ -2462,7 +2461,7 @@ class MSData (object):
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
                                         
 class MSReference (object):
-    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
+    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], SourceOfIonizationData=[], knownIonizationFactorsRelativeToN2=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
         self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.SourceOfFragmentationPatterns, self.SourceOfIonizationData, self.knownIonizationFactorsRelativeToN2, self.knownMoleculesIonizationTypes, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
@@ -2471,13 +2470,20 @@ class MSReference (object):
         for moleculeIndex, moleculeName in enumerate(self.molecules):
             self.molecules[moleculeIndex] = moleculeName.strip()     
         
-        '''Initializing some list variables with defaults.'''
+        #Initializing some list variables with defaults.
+        if self.SourceOfFragmentationPatterns == []
+            self.SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
+        if self.SourceOfIonizationData == []
+            self.SourceOfIonizationData = ['unknown']* len(self.molecules)       
         if self.knownIonizationFactorsRelativeToN2 == []:
             self.knownIonizationFactorsRelativeToN2 = ['unknown']* len(self.molecules)
         if self.knownMoleculesIonizationTypes == []:
             self.knownMoleculesIonizationTypes = ['unknown']* len(self.molecules)
 
-        '''Initializing Export Collector Variables'''
+        #initialize the standardized_reference_patterns
+        self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
+            
+        #Initializing Export Collector Variables
         #start the timer function
         self.previousTime = timeit.default_timer()
         #initalize debugging lists
@@ -2492,6 +2498,40 @@ class MSReference (object):
         #Get ionization efficiencies and export their values and what method was used to obtain them
         self.populateIonizationEfficiencies(AllMID_ObjectsDict)
         self.exportIonizationInfo()
+
+    #This function allows adding molecules to an existing reference patterns. When using TuningCorrector it is used to create MixedReference patterns.
+    #Though these variable names are plural, they are expected to be lists of one. "molecules" is supposed to be a list of variable names.
+    #provided_reference_patterns should be in an XYYY format.  If starting with XYXY data, is okay to feed a single "XY" at a time and to do so repeatedly in a loop.
+    def addMolecules(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], SourceOfIonizationData=[], knownIonizationFactorsRelativeToN2=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
+        #In case somebody decides to try to feed single molecule's name directly.
+        if type(molecules) == type("string"):
+            molecules = [molecules]
+        #Initializing some list variables with defaults.
+        if SourceOfFragmentationPatterns == []
+           SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
+        if SourceOfIonizationData == []
+           SourceOfIonizationData = ['unknown']* len(self.molecules)       
+        if knownIonizationFactorsRelativeToN2 == []:
+           knownIonizationFactorsRelativeToN2 = ['unknown']* len(self.molecules)
+        if knownMoleculesIonizationTypes == []:
+           knownMoleculesIonizationTypes = ['unknown']* len(self.molecules)        
+           
+        #Now to extend the existing reference objects.
+        self.electronnumbers = list(self.electronnumbers).extend(list(electronnumbers))
+        self.molecules = list(self.molecules).extend(list(molecules))
+        self.molecularWeights = list(self.molecularWeights).extend(list(molecularWeights))
+        self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns).extend(list(SourceOfFragmentationPatterns))
+        self.SourceOfIonizationData = list(self.SourceOfIonizationData).extend(list(SourceOfIonizationData))
+        self.knownIonizationFactorsRelativeToN2 = list(self.knownIonizationFactorsRelativeToN2).extend(list(knownIonizationFactorsRelativeToN2))
+        self.knownMoleculesIonizationTypes = list(self.knownMoleculesIonizationTypes).extend(list(knownMoleculesIonizationTypes))
+        
+        #Will to standardize the molecules reference patterns before adding. This is important because the addXYYYtoXYYY function drops values that are small like 1E-8.
+        standardized_reference_patterns=StandardizeReferencePattern(provided_reference_patterns,len(molecules))
+        DataFunctions.addXYYYtoXYYY(self.provided_reference_patterns, standardized_reference_patterns)
+        #Rather than adding to the standarized reference patterns separately, will just go ahead and restandardize.
+        self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
+
+
     #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
@@ -5463,7 +5503,13 @@ def main():
         referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataList[0].standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
         print("line 5431", referenceDataArrayWithAbscissa)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataList[0].electronnumbers, molecules=ReferenceDataList[0].molecules, molecularWeights=ReferenceDataList[0].molecularWeights, SourceOfFragmentationPatterns=ReferenceDataList[0].SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataList[0].SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataList[0].knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataList[0].knownMoleculesIonizationTypes)
+        
+        #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
+        
+        
+        ##FIXME: BELOW IS A SCRATCH TESTING LINE
         DataFunctions.addXYYYtoXYYY(referenceDataArrayWithAbscissa, StandardizeReferencePattern(referenceFileDesiredTuning_provided_reference_patterns)) #need to use StandardizeReferencePattern because sometimes the values may be too small.
         
         print("line 5352!!!"); sys.exit()
