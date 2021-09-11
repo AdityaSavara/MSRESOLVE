@@ -2471,9 +2471,9 @@ class MSReference (object):
             self.molecules[moleculeIndex] = moleculeName.strip()     
         
         #Initializing some list variables with defaults.
-        if self.SourceOfFragmentationPatterns == []
+        if self.SourceOfFragmentationPatterns == []:
             self.SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
-        if self.SourceOfIonizationData == []
+        if self.SourceOfIonizationData == []:
             self.SourceOfIonizationData = ['unknown']* len(self.molecules)       
         if self.knownIonizationFactorsRelativeToN2 == []:
             self.knownIonizationFactorsRelativeToN2 = ['unknown']* len(self.molecules)
