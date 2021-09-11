@@ -515,6 +515,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
+    nonZeroValueLocations = referenceDataArray > 0 
     referenceDataArray_tuning_uncertainties = referenceDataArray*0.0 #just initializing.
     if list(referenceCorrectionCoefficients) != [0,0,1]:                                                                                    
         for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
@@ -529,6 +530,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
                     referenceDataArray_tuning_uncertainties[massfrag_counter,:]=referenceDataArray[massfrag_counter,:]*factor_uncertainty                                                                                                                  
     # referenceDataArrayWithAbscissa[:,0] = referenceabscissa
     # referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #This is actually already occuring above because it's a pointer, but this line is just to make more clear what has happened.
+    referenceDataArrayWithAbscissa[:,1:] = nonZeroValueLocations*referenceDataArray #we are setting things to zero if they were originally zero (this multiplies the nonzero locations by 1, and everything else by 0)
     referenceDataArrayWithAbscissa_tuning_uncertainties = referenceDataArrayWithAbscissa*1.0 #creating copy with abscissa, then will fill.
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
     return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
