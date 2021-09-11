@@ -772,6 +772,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     #remove any zero rows that may have been created
     trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
     
+    trimmedRefererenceData.standardized_reference_patterns=StandardizeReferencePattern(trimmedRefererenceData.provided_reference_patterns,len(trimmedRefererenceData.molecules))
     trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)    
     return trimmedRefererenceData
     
@@ -2480,6 +2481,9 @@ class MSReference (object):
         if self.knownMoleculesIonizationTypes == []:
             self.knownMoleculesIonizationTypes = ['unknown']* len(self.molecules)
 
+        self.provided_mass_fragments = self.provided_reference_patterns[:,0]
+        #clear ClearZeroRowsFromProvidedReferenceIntensities
+        self.ClearZeroRowsFromProvidedReferenceIntensities()
         #initialize the standardized_reference_patterns
         self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             
@@ -2494,7 +2498,6 @@ class MSReference (object):
         self.moleculesToExport = []
         self.exportSuffix = ''
         #self.experimentTimes = []       
-        self.provided_mass_fragments = self.provided_reference_patterns[:,0]
         #Get ionization efficiencies and export their values and what method was used to obtain them
         self.populateIonizationEfficiencies(AllMID_ObjectsDict)
         self.exportIonizationInfo()
@@ -2531,7 +2534,20 @@ class MSReference (object):
         #Rather than adding to the standarized reference patterns separately, will just go ahead and restandardize.
         self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
 
+    #For removing molecules we will use an external function trimDataMoleculesToMatchChosenMolecules
+    #Note that this actually makes a new reference object!
+    def removeMolecules(self, listOfMoleculesToRemove):
+        if type(listOfMoleculesToRemove) == type("string"):
+            listOfMoleculesToRemove = [listOfMoleculesToRemove]
 
+        moleculesToKeep = list(copy.deepcopy(self.molecules)) #make a copy of molecules.
+        #now go through the original list of molecules and pop unwanted molecules from moleculesToKeep
+        for moleculeName in self.molecules:
+            if moleculeName in listOfMoleculesToRemove:
+                moleculesToKeep.remove(moleculeName)
+        trimmedRefererenceData = trimDataMoleculesToMatchChosenMolecules(self, moleculesToKeep)        
+        return trimmedRefererenceData
+    
     #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
@@ -5508,6 +5524,12 @@ def main():
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
         
+        
+        print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
+        print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns)
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject = TuningCorrectorGasMixtureCorrectedReferenceDataObject.removeMolecules("ethane")
+        print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
+        print(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns)
         
         ##FIXME: BELOW IS A SCRATCH TESTING LINE
         DataFunctions.addXYYYtoXYYY(referenceDataArrayWithAbscissa, StandardizeReferencePattern(referenceFileDesiredTuning_provided_reference_patterns)) #need to use StandardizeReferencePattern because sometimes the values may be too small.
