@@ -2607,7 +2607,6 @@ class MSReference (object):
 #If the ionization factor is unknown and the particular molecule does not exist in the MID Data, then the function checks the molecule's ionization type(s).  The function will take all molecules from the MID data that have the same type and will perform a linear fit on the data.  The ionization factor for this molecule is determined based on the linear fit and number of electrons
 #If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
     def populateIonizationEfficiencies(self, AllMID_ObjectsDict={}):
-        print("line 2591", numpy.zeros(len(self.molecules)))
         self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here and used in CorrectionValuesObtain
         self.ionizationEfficienciesSourcesList = copy.copy(self.molecules) #initialize an array to store which method was used to obtain a molecule's ionization factor
         for moleculeIndex in range(len(self.molecules)): #loop through our initialized array
@@ -5398,23 +5397,37 @@ def main():
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1])
         TuningCorrectorGasMixtureReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
-        TuningCorrectorGasMixtureReferenceDataObject = TuningCorrectorGasMixtureReferenceDataList[0] #it's a list of one, so we take the first item.
-        TuningCorrectorGasMixtureReferenceDataObject = ReferenceInputPreProcessing(TuningCorrectorGasMixtureReferenceDataObject, verbose=True)
-        TuningCorrectorGasMixtureReferenceDataObject = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,TuningCorrectorGasMixtureReferenceDataObject)
-        #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
-        #now need to make a list for the concentrations and re-order the concentrations.
-        knownConcentrationsArray = copy.deepcopy(list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'])) #just initializing.
-        #The desired molecules list is the one in TuningCorrectorGasMixtureReferenceDataObject.molecules, so we will loop across those.
-        for moleculeIndex,moleculeName in enumerate(TuningCorrectorGasMixtureReferenceDataObject.molecules):
-            desiredConcentrationIndex = moleculeIndex  #have to add one because the concentrations 
-            currentConcentrationIndex = list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']).index(moleculeName)
-            knownConcentrationsArray[desiredConcentrationIndex] = G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'][currentConcentrationIndex]
+        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = TuningCorrectorGasMixtureReferenceDataList[0] #it's a list of one, so we take the first item.
+        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = ReferenceInputPreProcessing(TuningCorrectorGasMixtureExistingTuningReferenceDataObject, verbose=True)
+                
+        #We need to make a list for the concentrations. 
+        #The concentrations must match the molecular order of the literature file.
+        #  Firstly, the literature file can have molecules not part of the concentrations, so we should add concentrations of zero for those. (It's easier than removing those molecules from the literature object).
+        #  Seconds, we need to re-order the concentrations to match the l
+        knownConcentrationsArray = list(numpy.zeros(len(TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules))) #initializing to number of molecules. Making it a list so we can insert later.
+        #The desired molecules list is the one in TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules, so we will loop across those.
+        for moleculeIndex,moleculeName in enumerate(TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules):
+            desiredConcentrationIndex = moleculeIndex  
+            #Take the concentration if it's named:
+            if moleculeName in G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']:
+                currentConcentrationIndex = list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']).index(moleculeName)
+                knownConcentrationsArray[desiredConcentrationIndex] = G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'][currentConcentrationIndex]
+            else: #else set it to zero.
+                knownConcentrationsArray[desiredConcentrationIndex] = 0
         #The first item in the concentrations array is supposed to be the time. We will simply put the integer "1" there, since we will have one point. 
         knownConcentrationsArray.insert(0, 1)
         #knownConcentrationsArray needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
         knownConcentrationsArray = numpy.array([knownConcentrationsArray])
+
+        #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We'll extract that from the desired reference pattern.
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1])
+        print("line 5424", molecularWeights, ExperimentData.mass_fragment_numbers)
+        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,TuningCorrectorGasMixtureExistingTuningReferenceDataObject)
+        #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
+
+
         #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
-        matching_correction_values_array = numpy.array([TuningCorrectorGasMixtureReferenceDataObject.matching_correction_values]) 
+        matching_correction_values_array = numpy.array([TuningCorrectorGasMixtureExistingTuningReferenceDataObject.matching_correction_values]) 
         #now need to do the actual simulation of the gas mixture signals.
         simulateddata = RawSignalsSimulation(knownConcentrationsArray, matching_correction_values_array)
         ExportXYYYData("TuningCorrectorGasMixtureHypotheticalSimulatedSignals.csv", simulateddata, ExperimentData.mass_fragment_numbers, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'simulated')
@@ -5423,8 +5436,6 @@ def main():
         #Now to transpose the simulateddata to make the simulated_reference_pattern
         simulated_reference_pattern = numpy.vstack((ExperimentData.mass_fragment_numbers, simulateddata_intensities)).transpose()
         TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], SourceOfIonizationData=["referenceFileExistingTuning"], knownIonizationFactorsRelativeToN2=[1], knownMoleculesIonizationTypes=["unknown"])
-        
-        TuningCorrectorGasMixtureReferenceDataObject.exportReferencePattern("ExportReferenceTest.csv")
         TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
         #To make a reference object from the measured file, we need to provide the reference file name and that it is "xyyy".
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile("TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY")
