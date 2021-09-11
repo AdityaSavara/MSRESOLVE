@@ -2507,9 +2507,9 @@ class MSReference (object):
         if type(molecules) == type("string"):
             molecules = [molecules]
         #Initializing some list variables with defaults.
-        if SourceOfFragmentationPatterns == []
+        if SourceOfFragmentationPatterns == []:
            SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
-        if SourceOfIonizationData == []
+        if SourceOfIonizationData == []:
            SourceOfIonizationData = ['unknown']* len(self.molecules)       
         if knownIonizationFactorsRelativeToN2 == []:
            knownIonizationFactorsRelativeToN2 = ['unknown']* len(self.molecules)
