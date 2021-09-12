@@ -1220,8 +1220,8 @@ Performs some manipulations related to the reference pattern
 '''
 def ReferenceInputPreProcessing(ReferenceData, verbose=True):
 
-    # standardize the reference data columns such that the maximum value is 100 and everything else is
-    # linearly scaled according that the maximum value scaling
+    # standardize the reference data columns such that the maximum intensity value per molecules 100 and everything else is
+    # scaled to those values
     ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizeReferencePattern')
     if G.calculateUncertaintiesInConcentrations == True: 
@@ -5482,12 +5482,13 @@ def main():
         TuningCorrectorGasMixtureReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = TuningCorrectorGasMixtureReferenceDataList[0] #it's a list of one, so we take the first item.
+        #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = ReferenceInputPreProcessing(TuningCorrectorGasMixtureExistingTuningReferenceDataObject, verbose=True)
                 
         #We need to make a list for the concentrations. 
         #The concentrations must match the molecular order of the literature file.
         #  Firstly, the literature file can have molecules not part of the concentrations, so we should add concentrations of zero for those. (It's easier than removing those molecules from the literature object).
-        #  Seconds, we need to re-order the concentrations to match the l
+        #  Seconds, we need to re-order the concentrations to match the those of the existing reference pattern.
         knownConcentrationsArray = list(numpy.zeros(len(TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules))) #initializing to number of molecules. Making it a list so we can insert later.
         #The desired molecules list is the one in TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules, so we will loop across those.
         for moleculeIndex,moleculeName in enumerate(TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules):
@@ -5530,9 +5531,7 @@ def main():
         #TuningCorrectorGasMixtureSimulatedReferenceData
         #TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv
         
-        #we will use ReferenceDataList[0] for the standardized reference patterns, which is the same as the "Existing" patterns that we want to have tuning corrected.
-        #def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,measuredReferenceYorN)
-        print("line 5429", ReferenceDataList[0].standardized_reference_patterns)
+        
         referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataList[0].standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
         print("line 5431", ReferenceDataList[0].knownIonizationFactorsRelativeToN2)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataList[0].electronnumbers, molecules=ReferenceDataList[0].molecules, molecularWeights=ReferenceDataList[0].molecularWeights, SourceOfFragmentationPatterns=ReferenceDataList[0].SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataList[0].SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataList[0].knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataList[0].knownMoleculesIonizationTypes)
@@ -5548,7 +5547,6 @@ def main():
         print("line 5546", TuningCorrectorGasMixtureCorrectedReferenceDataObject.knownIonizationFactorsRelativeToN2)
         print("line 5546", TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)        
         print("line 5550", TuningCorrectorGasMixtureCorrectedReferenceDataObject.SourceOfIonizationData)
-        TuningCorrectorGasMixtureCorrectedReferenceDataObject = TuningCorrectorGasMixtureCorrectedReferenceDataObject.removeMolecules("ethane")
         #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
         #It will use the existing add molecule and remove molecules functions. We just need to get the "new" molecules first.
         #It 
