@@ -2693,7 +2693,7 @@ class MSReference (object):
         for moleculeIndex in range(len(self.molecules)): #loop through our initialized array
             if isinstance(self.knownIonizationFactorsRelativeToN2[moleculeIndex],float): #if the knownIonizationFactor is a float, then that is the value defined by the user
                 self.ionizationEfficienciesList[moleculeIndex] = self.knownIonizationFactorsRelativeToN2[moleculeIndex]
-                self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownIonizationFactorFromReferenceFile' #the molecule's factor was known
+                self.ionizationEfficienciesSourcesList[moleculeIndex] = self.SourceOfIonizationData[moleculeIndex] #the molecule's factor was known
             else: #Ionization factor is not known so look at molecular ionization data from literatiure 
                 #Initialize three lists
                 MatchingMID_Objects = []
@@ -5510,13 +5510,8 @@ def main():
         referenceDataDesiredTuning = referenceDataDesiredTuningList[0] #it's a list of one, so we take the first item.
         referenceFileDesiredTuning_provided_reference_patterns = provided_reference_patterns  #TODO: get rid of this and use referenceDataDesiredTuningList.provided_reference_patterns
         referenceFileDesiredTuningMassFragments = provided_reference_patterns[:,0]
-        
-        
-        #
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = Populate_matching_correction_values(referenceFileDesiredTuningMassFragments,TuningCorrectorGasMixtureExistingTuningReferenceDataObject)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
-
-
         #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
         matching_correction_values_array = numpy.array([TuningCorrectorGasMixtureExistingTuningReferenceDataObject.matching_correction_values]) 
         #now need to do the actual simulation of the gas mixture signals.
