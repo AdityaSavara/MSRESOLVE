@@ -503,6 +503,9 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
 def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,measuredReferenceYorN):
+    #Tuning corrector is designed to work with standardized_reference_patterns, so first we make sure standardize the data.
+    referenceDataArrayWithAbscissa=StandardizeReferencePattern(referenceDataArrayWithAbscissa)
+    
     if measuredReferenceYorN =='yes':
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
@@ -5528,10 +5531,8 @@ def main():
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile("TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY")
         TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
         TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataObject = TuningCorrectorGasMixtureMeasuredHypotheticalReferenceDataList[0]
-        #TuningCorrectorGasMixtureSimulatedReferenceData
-        #TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv
         
-        
+        #Tuning corrector does not operate on a ReferencData object, it operates on standardized reference patterns.
         referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(TuningCorrectorGasMixtureExistingTuningReferenceDataObject.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.electronnumbers, molecules=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules, molecularWeights=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecularWeights, SourceOfFragmentationPatterns=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.SourceOfFragmentationPatterns, SourceOfIonizationData=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.knownMoleculesIonizationTypes)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
