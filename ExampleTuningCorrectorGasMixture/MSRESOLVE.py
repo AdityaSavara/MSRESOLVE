@@ -1591,7 +1591,6 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[
     ReferenceData = UnnecessaryMoleculesDeleter(ReferenceData)
     if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also.
         G.currentReferenceDataUnfiltered = UnnecessaryMoleculesDeleter(G.currentReferenceDataUnfiltered)
-
     ReferenceData.ExportCollector('UnnecessaryMoleculesDeleter')
     
     # Export the reference data files that have been stored by ReferenceData.ExportCollector
@@ -5489,6 +5488,7 @@ def main():
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = TuningCorrectorGasMixtureExistingTuningReferenceDataList[0] #it's a list of one, so we take the first item.
         #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = ReferenceInputPreProcessing(TuningCorrectorGasMixtureExistingTuningReferenceDataObject, verbose=True)
+
                 
         #We need to make prepare an appropriately made list for the concentrations to use in simulating data using the ExistingTuningReferencePattern 
         #The concentrations must match the molecular order of the literature file.
@@ -5517,8 +5517,7 @@ def main():
         referenceFileDesiredTuning_provided_reference_patterns = provided_reference_patterns  #TODO: get rid of this and use referenceDataDesiredTuningList.provided_reference_patterns
         referenceFileDesiredTuningMassFragments = provided_reference_patterns[:,0]
         print("line 5517", provided_reference_patterns[:,0])
-        print("line 5518", TuningCorrectorGasMixtureExistingTuningReferenceDataObject.standardized_reference_patterns[:,0])
-        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = Populate_matching_correction_values(referenceFileDesiredTuningMassFragments,TuningCorrectorGasMixtureExistingTuningReferenceDataObject)
+        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = PrepareReferenceObjectsAndCorrectionValues(TuningCorrectorGasMixtureExistingTuningReferenceDataObject,referenceFileDesiredTuningMassFragments)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
         #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
         matching_correction_values_array = numpy.array([TuningCorrectorGasMixtureExistingTuningReferenceDataObject.matching_correction_values]) 
