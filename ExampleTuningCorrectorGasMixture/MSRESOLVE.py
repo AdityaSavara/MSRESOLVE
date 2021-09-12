@@ -5562,8 +5562,8 @@ def main():
             return extendedReferenceData
         
         print("line 5580", TuningCorrectorGasMixtureCorrectedReferenceDataObject.SourceOfIonizationData)
-        mixedReferenceDataDesiredTuning = extendReferencePattern(ReferenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
-        mixedReferenceDataDesiredTuning.exportReferencePattern("TuningCorrectorMixedPattern.csv")
+        ReferenceDataDesiredTuningMixed = extendReferencePattern(ReferenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
+        ReferenceDataDesiredTuningMixed.exportReferencePattern("TuningCorrectorMixedPattern.csv")
 
         
         print("line 5352!!!"); sys.exit()
