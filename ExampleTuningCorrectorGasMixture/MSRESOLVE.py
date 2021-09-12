@@ -2489,6 +2489,7 @@ class MSReference (object):
         self.ClearZeroRowsFromProvidedReferenceIntensities()
         #initialize the standardized_reference_patterns
         self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
+        print("line 2492", self.standardized_reference_patterns)
             
         #Initializing Export Collector Variables
         #start the timer function
@@ -5514,6 +5515,8 @@ def main():
         referenceDataDesiredTuning = referenceDataDesiredTuningList[0] #it's a list of one, so we take the first item.
         referenceFileDesiredTuning_provided_reference_patterns = provided_reference_patterns  #TODO: get rid of this and use referenceDataDesiredTuningList.provided_reference_patterns
         referenceFileDesiredTuningMassFragments = provided_reference_patterns[:,0]
+        print("line 5517", provided_reference_patterns[:,0])
+        print("line 5518", TuningCorrectorGasMixtureExistingTuningReferenceDataObject.standardized_reference_patterns[:,0])
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = Populate_matching_correction_values(referenceFileDesiredTuningMassFragments,TuningCorrectorGasMixtureExistingTuningReferenceDataObject)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
         #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
