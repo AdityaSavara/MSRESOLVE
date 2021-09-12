@@ -659,7 +659,7 @@ def RemoveUnreferencedMasses(ExperimentData, reference):  ## DEPRECATED Replaced
 
 '''
 MassFragChooser() compares chosenMassFragments and ExperimentData.mass_fragment_numbers. If there is a 
-mass in mass_fragment_nubmers that isn't in chosenMassFragments it removes that mass from
+mass in mass_fragment_numbers that isn't in chosenMassFragments it removes that mass from
 mass_fragment_numbers. It also removes the column of data that corresponds to that mass
 from ExperimentData.workingData.
 NOTE: This code was changed algorithmically by Clint on 171204. We believe that it is functioning
@@ -1431,7 +1431,7 @@ def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRan
             #Reads in current reference pattern, next reference pattern, current time, gap start time, and gap end time
             currentReferenceData = InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
             #Prepare the current reference data
-            currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
+            currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData.mass_fragment_numbers, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
             if G.iterativeAnalysis: #If using iterative analysis, interpolate the subtracted signals' matching correction factors between the two reference objects
                 currentReferenceData.SSmatching_correction_values = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.SSmatching_correction_values,secondReferenceObject.SSmatching_correction_values,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
         #If we are out of the first time range, not in a gap, and not in the last time range, then we are in the next time range
@@ -1559,7 +1559,7 @@ def DataInputPreProcessing(ExperimentData):
 '''
 PrepareReferenceOjbectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
 '''
-def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
+def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[], ExperimentData=None, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
     # Reference Pattern Changer
     if extractReferencePatternFromDataOption == 'yes':
         ReferenceData.provided_reference_patterns, ReferenceData.provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
@@ -1572,16 +1572,17 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
     ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose) #Note: if implicitSLScorrection is being used, G.currentReferenceDataUnfiltered gets created inside ReferenceInputPreProcessing
     # Set the ReferenceData.monitored_reference_intensities and
     # ReferenceData.matching_correction_values fields
-    # based on the masses in ExperimentData.mass_fragment_numbers
-    ReferenceData = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceData)
-    if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
-        G.currentReferenceDataUnfiltered = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,G.currentReferenceDataUnfiltered)
-  #Exports the matching correction value 
-    print("line 1549", ReferenceData.matching_correction_values)
-    ReferenceData.ExportCollector('MatchingCorrectionValues', export_matching_correction_value = True)              #exports matching correction value 
-    #Only print if not called from interpolating reference objects
-    if verbose:
-        print("Matching Correction Values complete")
+    # based on the massesOfInteres, which is typically the ExperimentData.mass_fragment_numbers
+    if len(massesOfInterest) > 0:
+        ReferenceData = Populate_matching_correction_values(massesOfInterest,ReferenceData)
+        if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
+            G.currentReferenceDataUnfiltered = Populate_matching_correction_values(massesOfInterest,G.currentReferenceDataUnfiltered)
+        #Exports the matching correction value 
+        print("line 1549", ReferenceData.matching_correction_values)
+        ReferenceData.ExportCollector('MatchingCorrectionValues', export_matching_correction_value = True)              #exports matching correction value 
+        #Only print if not called from interpolating reference objects
+        if verbose:
+            print("Matching Correction Values complete")
     # Remove reference species that have no mass fragment data
     # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
     ## TODO: Consider changing this function to take the array directly i.e.
@@ -5296,7 +5297,7 @@ def main():
     #Then prepare AllMoleculesReferenceDataList to get matching_correction_values, this value is fed into RatioFinder
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
         AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
-        PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],AllMassFragmentsExperimentData)
+        PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],AllMassFragmentsExperimentData.mass_fragment_numbers, AllMassFragmentsExperimentData)
         
     #Read in the molecules used before parsing the user input file    
     G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
@@ -5466,14 +5467,14 @@ def main():
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
         #Prepare prototypicalReferenceData which is currently the first reference object in the list
 
-        prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData,ExperimentData,G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+        prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData, ExperimentData.mass_fragment_numbers, ExperimentData,G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         #for loop to preprocess the remaining MSReference objects and match correction values
         for i in range(len(ReferenceDataList)):
             try:
                 ReferenceDataList[i].populateIonizationEfficiencies(G.AllMID_ObjectsDict)
             except:
                 ReferenceDataList[i].populateIonizationEfficiencies()
-            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData.mass_fragment_numbers, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
     
     #This codeblock is for the TuningCorrectorGasMixture feature.
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
