@@ -5478,13 +5478,12 @@ def main():
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
         #TO CONSIDER: I think that the various GenerateRefernenceDataList below can and should be changed to "readReferenceFile". It just requires making two lines like below.
         
-        
         #Because MSRESOLVE normally works with a datalist, Getting matching correction patterns requires making a "DataList" object. To do things the normal way, we need to provide the reference file name and that it is "xyyy".
         #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1])
-        TuningCorrectorGasMixtureReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
+        TuningCorrectorGasMixtureExstingTuningReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
-        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = TuningCorrectorGasMixtureReferenceDataList[0] #it's a list of one, so we take the first item.
+        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = TuningCorrectorGasMixtureExstingTuningReferenceDataList[0] #it's a list of one, so we take the first item.
         #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = ReferenceInputPreProcessing(TuningCorrectorGasMixtureExistingTuningReferenceDataObject, verbose=True)
                 
