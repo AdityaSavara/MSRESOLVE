@@ -5490,7 +5490,7 @@ def main():
         #We need to make prepare an appropriately made list for the concentrations to use in simulating data using the ExistingTuningReferencePattern 
         #The concentrations must match the molecular order of the literature file.
         #  Firstly, the literature file can have molecules not part of the concentrations, so we should add concentrations of zero for those. (It's easier than removing those molecules from the literature object).
-        #  Seconds, we need to re-order the concentrations to match the those of the existing reference pattern.
+        #  Secondly, we need to re-order the concentrations to match the those of the existing reference pattern.
         knownConcentrationsArray = list(numpy.zeros(len(TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules))) #initializing to number of molecules. Making it a list so we can insert later.
         #The desired molecules list is the one in TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules, so we will loop across those.
         for moleculeIndex,moleculeName in enumerate(TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules):
