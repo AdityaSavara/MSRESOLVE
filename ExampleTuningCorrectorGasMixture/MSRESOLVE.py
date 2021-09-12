@@ -1578,7 +1578,6 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[
         if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
             G.currentReferenceDataUnfiltered = Populate_matching_correction_values(massesOfInterest,G.currentReferenceDataUnfiltered)
         #Exports the matching correction value 
-        print("line 1549", ReferenceData.matching_correction_values)
         ReferenceData.ExportCollector('MatchingCorrectionValues', export_matching_correction_value = True)              #exports matching correction value 
         #Only print if not called from interpolating reference objects
         if verbose:
@@ -2133,7 +2132,6 @@ def readReferenceFile(referenceFileName, form):
     dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
     
     if form == 'xyyy':
-        print("line 2112")
         for rowIndex in range(len(dataFrame)): #Loop through each row and check the abscissa value
             try: #Try to convert the abscissa title to a float
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
@@ -2489,7 +2487,6 @@ class MSReference (object):
         self.ClearZeroRowsFromProvidedReferenceIntensities()
         #initialize the standardized_reference_patterns
         self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
-        print("line 2492", self.standardized_reference_patterns)
             
         #Initializing Export Collector Variables
         #start the timer function
@@ -5516,10 +5513,12 @@ def main():
         referenceDataDesiredTuning = referenceDataDesiredTuningList[0] #it's a list of one, so we take the first item.
         referenceFileDesiredTuning_provided_reference_patterns = provided_reference_patterns  #TODO: get rid of this and use referenceDataDesiredTuningList.provided_reference_patterns
         referenceFileDesiredTuningMassFragments = provided_reference_patterns[:,0]
+        print("line 5519", referenceDataDesiredTuningList[0].standardized_reference_patterns)
+        print("line 5520", TuningCorrectorGasMixtureExistingTuningReferenceDataObject.standardized_reference_patterns)
         
-        #The main reason for the below function call is that it calls Populate_matching_correction_values. That could have been called directly, but this waw
-        #Some other things occur such as mass fragment threshold filtering.
-        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = PrepareReferenceObjectsAndCorrectionValues(TuningCorrectorGasMixtureExistingTuningReferenceDataObject,referenceFileDesiredTuningMassFragments)
+        #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply a tuning factor correction.
+        print("line 5520", TuningCorrectorGasMixtureExistingTuningReferenceDataObject.standardized_reference_patterns)
+        TuningCorrectorGasMixtureExistingTuningReferenceDataObject = Populate_matching_correction_values(referenceFileDesiredTuningMassFragments, TuningCorrectorGasMixtureExistingTuningReferenceDataObject)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
         #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
         matching_correction_values_array = numpy.array([TuningCorrectorGasMixtureExistingTuningReferenceDataObject.matching_correction_values]) 
@@ -5541,17 +5540,10 @@ def main():
         referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(TuningCorrectorGasMixtureExistingTuningReferenceDataObject.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.electronnumbers, molecules=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecules, molecularWeights=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.molecularWeights, SourceOfFragmentationPatterns=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.SourceOfFragmentationPatterns, SourceOfIonizationData=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=TuningCorrectorGasMixtureExistingTuningReferenceDataObject.knownMoleculesIonizationTypes)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
-        print("line 5540", TuningCorrectorGasMixtureCorrectedReferenceDataObject.knownIonizationFactorsRelativeToN2)
-        print("line 5540", TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
         
         #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
-        print("line 5543", TuningCorrectorGasMixtureCorrectedReferenceDataObject.knownIonizationFactorsRelativeToN2)
-        print("line 5543", TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
-        print("line 5546", TuningCorrectorGasMixtureCorrectedReferenceDataObject.knownIonizationFactorsRelativeToN2)
-        print("line 5546", TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules)        
-        print("line 5550", TuningCorrectorGasMixtureCorrectedReferenceDataObject.SourceOfIonizationData)
         #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
         #It will use the existing add molecule and remove molecules functions. We just need to get the "new" molecules first.
         #It 
