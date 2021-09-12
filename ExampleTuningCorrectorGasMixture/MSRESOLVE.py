@@ -5509,8 +5509,8 @@ def main():
         #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1])
         #We don't need a desired tuning Data Object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
-        referenceDataDesiredTuningList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
-        referenceDataDesiredTuning = referenceDataDesiredTuningList[0] #it's a list of one, so we take the first item.
+        ReferenceDataDesiredTuningList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
+        ReferenceDataDesiredTuning = ReferenceDataDesiredTuningList[0] #it's a list of one, so we take the first item.
         
         #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply a tuning factor correction.
         print("line 5520", ReferenceDataExistingTuning.standardized_reference_patterns)
@@ -5562,7 +5562,7 @@ def main():
             return extendedReferenceData
         
         print("line 5580", TuningCorrectorGasMixtureCorrectedReferenceDataObject.SourceOfIonizationData)
-        mixedReferenceDataDesiredTuning = extendReferencePattern(referenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
+        mixedReferenceDataDesiredTuning = extendReferencePattern(ReferenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
         mixedReferenceDataDesiredTuning.exportReferencePattern("TuningCorrectorMixedPattern.csv")
 
         
