@@ -5475,6 +5475,7 @@ def main():
             ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
     
     #This codeblock is for the TuningCorrectorGasMixture feature.
+    #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
         #TO CONSIDER: I think that the various GenerateRefernenceDataList below can and should be changed to "readReferenceFile". It just requires making two lines like below.
         
@@ -5487,7 +5488,7 @@ def main():
         #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
         TuningCorrectorGasMixtureExistingTuningReferenceDataObject = ReferenceInputPreProcessing(TuningCorrectorGasMixtureExistingTuningReferenceDataObject, verbose=True)
                 
-        #We need to make a list for the concentrations. 
+        #We need to make prepare an appropriately made list for the concentrations to use in simulating data using the ExistingTuningReferencePattern 
         #The concentrations must match the molecular order of the literature file.
         #  Firstly, the literature file can have molecules not part of the concentrations, so we should add concentrations of zero for those. (It's easier than removing those molecules from the literature object).
         #  Seconds, we need to re-order the concentrations to match the those of the existing reference pattern.
@@ -5506,7 +5507,7 @@ def main():
         #knownConcentrationsArray needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
         knownConcentrationsArray = numpy.array([knownConcentrationsArray])
 
-        #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We'll extract that from the desired reference pattern.
+        #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1])
         #We don't need a desired tuning Data Object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
         referenceDataDesiredTuningList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
