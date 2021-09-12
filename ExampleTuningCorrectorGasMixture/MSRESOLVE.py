@@ -5564,10 +5564,7 @@ def main():
         print("line 5580", TuningCorrectorGasMixtureCorrectedReferenceDataObject.SourceOfIonizationData)
         mixedReferenceDataDesiredTuning = extendReferencePattern(referenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
         mixedReferenceDataDesiredTuning.exportReferencePattern("TuningCorrectorMixedPattern.csv")
-            
-        
-        ##FIXME: BELOW IS A SCRATCH TESTING LINE
-        DataFunctions.addXYYYtoXYYY(referenceDataArrayWithAbscissa, referenceDataDesiredTuning.standardized_reference_patterns) #need to use StandardizeReferencePattern because sometimes the values may be too small.
+
         
         print("line 5352!!!"); sys.exit()
         
