@@ -5511,10 +5511,6 @@ def main():
         #We don't need a desired tuning Data Object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
         referenceDataDesiredTuningList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
         referenceDataDesiredTuning = referenceDataDesiredTuningList[0] #it's a list of one, so we take the first item.
-        referenceFileDesiredTuning_provided_reference_patterns = provided_reference_patterns  #TODO: get rid of this and use referenceDataDesiredTuningList.provided_reference_patterns
-        referenceFileDesiredTuningMassFragments = provided_reference_patterns[:,0]
-        print("line 5519", referenceDataDesiredTuningList[0].standardized_reference_patterns)
-        print("line 5520", TuningCorrectorGasMixtureExistingTuningReferenceDataObject.standardized_reference_patterns)
         
         #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply a tuning factor correction.
         print("line 5520", TuningCorrectorGasMixtureExistingTuningReferenceDataObject.standardized_reference_patterns)
@@ -5571,7 +5567,7 @@ def main():
             
         
         ##FIXME: BELOW IS A SCRATCH TESTING LINE
-        DataFunctions.addXYYYtoXYYY(referenceDataArrayWithAbscissa, StandardizeReferencePattern(referenceFileDesiredTuning_provided_reference_patterns)) #need to use StandardizeReferencePattern because sometimes the values may be too small.
+        DataFunctions.addXYYYtoXYYY(referenceDataArrayWithAbscissa, referenceDataDesiredTuning.standardized_reference_patterns) #need to use StandardizeReferencePattern because sometimes the values may be too small.
         
         print("line 5352!!!"); sys.exit()
         
