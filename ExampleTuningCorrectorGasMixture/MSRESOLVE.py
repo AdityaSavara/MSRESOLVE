@@ -5324,6 +5324,20 @@ def main():
     G.start = timeit.default_timer()
     G.checkpoint = timeit.default_timer()
     
+
+
+    #initalize the data classes with the data from given Excel files
+    #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
+    global ReferenceDataList
+    global ExperimentData
+    global prototypicalReferenceData
+    global currentReferenceData
+    global resultsObjects
+    resultsObjects = {}
+    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
+    ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
+    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
+
     #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
@@ -5414,19 +5428,11 @@ def main():
 
         
         print("line 5352!!!"); sys.exit()
-
-
-    #initalize the data classes with the data from given Excel files
-    #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
-    global ReferenceDataList
-    global ExperimentData
-    global prototypicalReferenceData
-    global currentReferenceData
-    global resultsObjects
-    resultsObjects = {}
-    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
-    ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
-    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
+    
+    
+    prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
+    
+    
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
     if type(G.collectedFileUncertainties) != type(None):
@@ -5434,7 +5440,6 @@ def main():
             G.collectedFileUncertainties = int(G.collectedFileUncertainties)
 
 
-    prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
 
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referencePatternTimeRanges) > 0 and (len(G.referenceFileNamesList) > len(G.referencePatternTimeRanges)):
