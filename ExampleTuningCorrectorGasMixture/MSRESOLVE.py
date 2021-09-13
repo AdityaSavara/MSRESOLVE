@@ -5420,18 +5420,12 @@ def main():
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
         
-        
         #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
         #It will use the existing add molecule and remove molecules functions. We just need to get the "new" molecules first.
-        
-        
-        print("line 5580", TuningCorrectorGasMixtureCorrectedReferenceDataObject.SourceOfIonizationData)
         #TODO: Change this so that the extension occurs for each item in ReferenceDataList.
         ReferenceDataDesiredTuningMixed = extendReferencePattern(ReferenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
         ReferenceDataDesiredTuningMixed.exportReferencePattern("TuningCorrectorMixedPattern.csv")
-
-        
-        print("line 5352!!!"); sys.exit()
+        print("line 5428!!!"); sys.exit()
     
     
     prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
