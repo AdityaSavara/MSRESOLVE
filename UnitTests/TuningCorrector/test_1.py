@@ -23,8 +23,8 @@ suffix = ut.returnDigitFromFilename(__file__)
 #We can use the default user input, which is already in MSRESOLVE.G.
 #Need to change the "direct variable" version rather than the dictionary version.
 MSRESOLVE.G.measuredReferenceYorN = 'yes'
-MSRESOLVE.G.referenceFileExistingTuning = ['ReferenceCollected.csv','xyyy']
-MSRESOLVE.G.referenceFileDesiredTuning =['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileExistingTuning = ['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileDesiredTuning =['ReferenceCollected.csv','xyyy']
 
 #apparently need to have dataAnalysis on to use this feature (should not need to, but as of Sep 2019, do need to.
 MSRESOLVE.G.dataAnalysis ='yes'
