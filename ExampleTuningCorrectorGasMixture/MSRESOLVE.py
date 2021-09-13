@@ -1387,7 +1387,8 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
     ReferenceDataList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNamesList)):
-        ReferenceDataList.append(createReferenceDataObject(referenceFileNamesList[i],listOfForms[i], AllMID_ObjectsDict=AllMID_ObjectsDict)]
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[i],listOfForms[i])
+        ReferenceDataList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
         #save each global variable into the class objects 
         ReferenceDataList[i].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[i].iterationSuffix = G.iterationSuffix
