@@ -1169,6 +1169,13 @@ def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules=0):
         standardizedReference[0:,moleculeIndex]=StandardizeTo100(referenceUnstandardized[0:,moleculeIndex],1) #TODO: Low priority. Change this to use amax so the loop isn't executed.
     return standardizedReference
 
+'''This function is just a helper function to create a ReferenceData object from a file.'''
+def createReferenceDataObject(referenceDataFileName = "ReferenceData.csv", referenceDataForm = "xyyy"):
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceDataFileName,referenceDataForm)
+    ReferenceData = MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})
+    return ReferenceData
+
+
 '''The following two functions are currently not used in the program,
 but have been saved in case they are needed in the future'''
 def CanBeFloat(value):
@@ -2648,7 +2655,7 @@ class MSReference (object):
             #whether we deleted rows or not, we increase the counter of the rows.
             currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
             
-#This class function converts the XYXY data to an XYYY format
+    #This class function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(self):
         masslists = [] #future lists must be must empty here to append in the for loops
         relativeintensitieslists = [] #future list
