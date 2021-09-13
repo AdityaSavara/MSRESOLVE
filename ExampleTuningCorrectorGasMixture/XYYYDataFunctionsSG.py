@@ -1189,13 +1189,12 @@ def addXYYYtoXYYY(XYYYarray1, XYYYarray2, defaultValue=0):
     abscissa2 = numpy.array(XYYYarray2[:,0], dtype='float')
     numOrdinatesArray1 = int(len(XYYYarray1[0]) - 1) #subtract 1 for abscissa. #number of ordinated values in array.
     numOrdinatesArray2 = int(len(XYYYarray2[0]) - 1) #subtract 1 for abscissa  #number of ordinated values in array.
-       
     #Make the combined abscissa.
     abscissaCombined = set(abscissa1)|set(abscissa2) #This combines the two sets.
     abscissaCombined = numpy.array(list(abscissaCombined), dtype='float') #convert to list, then to numpy array.
     abscissaCombinedLength = len(abscissaCombined)
     #for each of the existing XYYY datasets, we will make an extended version (only extended in rows) where the blanks are filled.
-    XYYYarray1extended = numpy.full((abscissaCombinedLength ,numOrdinatesArray1+1), defaultValue)
+    XYYYarray1extended = numpy.full((abscissaCombinedLength ,numOrdinatesArray1+1), defaultValue, dtype="float")
     XYYYarray1extended[:,0] = abscissaCombined*1.0
     for newAbscissaIndex,newAbscissaValue in enumerate(abscissaCombined):
         #Now check if newAbscissaValue occurs in abscissa1. Originaly tried using numpy.where, but it did not work. I did not understand why, but switched to using a loop.
@@ -1204,7 +1203,7 @@ def addXYYYtoXYYY(XYYYarray1, XYYYarray2, defaultValue=0):
                 XYYYarray1extended[newAbscissaIndex][1:] =  XYYYarray1[oldAbscissaIndex][1:]*1.0#skip first column because it has the abscissa values in it.
             #else: #This else is implied because the array was initialized with the default value.
             #    XYYYarray1extended[newAbscissaIndex,1:] =  defaultValue
-    XYYYarray2extended = numpy.full((abscissaCombinedLength ,numOrdinatesArray2+1), defaultValue)
+    XYYYarray2extended = numpy.full((abscissaCombinedLength ,numOrdinatesArray2+1), defaultValue, dtype="float")
     XYYYarray2extended[:,0] = abscissaCombined*1.0
     for newAbscissaIndex,newAbscissaValue in enumerate(abscissaCombined):
         #Now check if newAbscissaValue occurs in abscissa2. Originaly tried using numpy.where, but it did not work. I did not understand why, but switched to using a loop.
@@ -1214,7 +1213,7 @@ def addXYYYtoXYYY(XYYYarray1, XYYYarray2, defaultValue=0):
             #else: #This else is implied because the array was initialized with the default value.
             #    XYYYarray2extended[newAbscissaIndex,1:] =  defaultValue
     #now just need to combine the extended arrays with a stacking command.
-    combinedArray = numpy.zeros((abscissaCombinedLength,numOrdinatesArray1+numOrdinatesArray2+1))
+    combinedArray = numpy.zeros((abscissaCombinedLength,numOrdinatesArray1+numOrdinatesArray2+1), dtype="float")
     combinedArray[:,0] = abscissaCombined
     combinedArray[:,1:numOrdinatesArray1+1] = XYYYarray1extended[:,1:]
     combinedArray[:,numOrdinatesArray1+1:numOrdinatesArray1+numOrdinatesArray2+1] = XYYYarray2extended[:,1:]
