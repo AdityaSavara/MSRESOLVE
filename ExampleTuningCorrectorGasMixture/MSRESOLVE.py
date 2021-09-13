@@ -543,8 +543,9 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
         ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
-        #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
-        ReferenceDataExistingTuning = ReferenceInputPreProcessing(ReferenceDataExistingTuning, verbose=True)
+        #Currently, in a "regular" MSRESOLVE run, the calculation of the correction values normally occurs inside  the ReferenceInputPreProcessing. That is a problem because 
+        #the funciton ReferenceInputPreProcessing applies a tuning correction. So we need to get the CorrectionValues directly.
+        ReferenceDataExistingTuning.correction_values, ReferenceDataExistingTuning.correction_values_relative_uncertainties = CorrectionValuesObtain(ReferenceDataExistingTuning)
 
         #By default, the regular reference file will be considered the desired tuning, if not specified.
         if G.referenceFileDesiredTuning == []:
@@ -573,7 +574,6 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         knownConcentrationsArray = numpy.array([knownConcentrationsArray])
 
         #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
-        
         #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply an undesired "before comparisons" tuning factor correction. We will need this done before we simulate any signals.
         ReferenceDataExistingTuning = Populate_matching_correction_values(ReferenceDataExistingTuning.standardized_reference_patterns[:,0], ReferenceDataExistingTuning)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
@@ -590,6 +590,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
                 
         #Tuning corrector does not operate on a ReferenceData object, it operates on standardized reference patterns.
+        ####print("line 594", ReferenceDataExistingTuning.standardized_reference_patterns)
         referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataExistingTuning.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataExistingTuning.electronnumbers, molecules=ReferenceDataExistingTuning.molecules, molecularWeights=ReferenceDataExistingTuning.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataExistingTuning.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataExistingTuning.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataExistingTuning.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataExistingTuning.knownMoleculesIonizationTypes)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
@@ -597,8 +598,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
-        
-        
+
         #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
         #In this loop the extension occurs for each item in ReferenceDataList.
         #The extendReferencePattern function uses existing add molecule and remove molecules functions.
@@ -1217,7 +1217,7 @@ greatest number is 100 within the array
 
 def StandardizeTo100(a1DArray,n):
     maxNumber=float(numpy.max(a1DArray))
-    multiplier=100/maxNumber
+    multiplier=100.0/maxNumber
     for index2 in range(0,len(a1DArray)):
         a1DArray[index2]=(a1DArray[index2]*multiplier)
     return a1DArray
@@ -2608,7 +2608,6 @@ class MSReference (object):
     #provided_reference_patterns should be in an XYYY format.  If starting with XYXY data, is okay to feed a single "XY" at a time and to do so repeatedly in a loop.
     def addMolecules(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], SourceOfIonizationData=[], knownIonizationFactorsRelativeToN2=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):      
         print("line 2509", SourceOfIonizationData, knownIonizationFactorsRelativeToN2)
-        
         #In case somebody decides to try to feed single molecule's name directly.
         if type(molecules) == type("string"):
             molecules = [molecules]
@@ -2629,10 +2628,7 @@ class MSReference (object):
         self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns) + (list(SourceOfFragmentationPatterns))
         self.SourceOfIonizationData = list(self.SourceOfIonizationData) + (list(SourceOfIonizationData))
         self.knownIonizationFactorsRelativeToN2 = list(self.knownIonizationFactorsRelativeToN2) + (list(knownIonizationFactorsRelativeToN2))
-        print("line 2531", self.knownIonizationFactorsRelativeToN2)
         self.knownMoleculesIonizationTypes = list(self.knownMoleculesIonizationTypes) + (list(knownMoleculesIonizationTypes))
-        print("line 2533", self.knownMoleculesIonizationTypes)
-        
         #Will to standardize the molecules reference patterns before adding. This is important because the addXYYYtoXYYY function drops values that are small like 1E-8.
         standardized_reference_patterns=StandardizeReferencePattern(provided_reference_patterns,len(molecules))
         self.provided_reference_patterns = DataFunctions.addXYYYtoXYYY(self.provided_reference_patterns, standardized_reference_patterns)
