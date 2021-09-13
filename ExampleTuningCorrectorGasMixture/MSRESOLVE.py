@@ -543,8 +543,9 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
         ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
-        #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
-        ReferenceDataExistingTuning = ReferenceInputPreProcessing(ReferenceDataExistingTuning, verbose=True)
+        #Currently, in a "regular" MSRESOLVE run, the calculation of the correction values normally occurs inside  the ReferenceInputPreProcessing. That is a problem because 
+        #the funciton ReferenceInputPreProcessing applies a tuning correction. So we need to get the CorrectionValues directly.
+        ReferenceDataExistingTuning.correction_values, ReferenceDataExistingTuning.correction_values_relative_uncertainties = CorrectionValuesObtain(ReferenceDataExistingTuning)
 
         #By default, the regular reference file will be considered the desired tuning, if not specified.
         if G.referenceFileDesiredTuning == []:
