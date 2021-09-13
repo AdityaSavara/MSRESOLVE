@@ -5359,14 +5359,11 @@ def main():
     #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
-        #TO CONSIDER: I think that the various GenerateRefernenceDataList below can and should be changed to "readReferenceFile". It just requires making two lines like below.
-        
         #Because MSRESOLVE normally works with a datalist, Getting matching correction patterns requires making a "DataList" object. To do things the normal way, we need to provide the reference file name and that it is "xyyy".
         #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1])
-        ReferenceDataExistingTuningList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
+        ReferenceDataExistingTuning = MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
-        ReferenceDataExistingTuning = ReferenceDataExistingTuningList[0] #it's a list of one, so we take the first item.
         #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
         ReferenceDataExistingTuning = ReferenceInputPreProcessing(ReferenceDataExistingTuning, verbose=True)
 
@@ -5392,8 +5389,7 @@ def main():
         #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
         [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1])
         #We don't need a desired tuning Data Object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
-        ReferenceDataDesiredTuningList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})]
-        ReferenceDataDesiredTuning = ReferenceDataDesiredTuningList[0] #it's a list of one, so we take the first item.
+        ReferenceDataDesiredTuning = MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict={})
         
         #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply a tuning factor correction.
         print("line 5520", ReferenceDataExistingTuning.standardized_reference_patterns)
