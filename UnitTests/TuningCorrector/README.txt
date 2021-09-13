@@ -1,6 +1,6 @@
 TuningCorrector Unit Tester ReadMe
 
-This feature is for correcting reference patterns between different mass spectrometer tunings. In practice, it is for 'correcting' ones own mass spectrometer's tuning with the assumption that the NIST tuning is 'correct'. However, it can also be used to externally adjusted reference patterns (like NIST) to better align with one's own data.
+This feature is for correcting reference patterns between different mass spectrometer tunings. In practice, it is for externally adjusted reference patterns (like NIST) to better align with one's own data (converting external spectra to match your spectrometer's tuning). However, it can also be used for adjusting spectra from one's own spectrometer to match tuning from external ones (such as NIST's).
 
 
 The way the feature works is it looks at reference patterns collected from two mass spectrometres, then it uses a fit to make polynomial based tuning correction so that it can make the reference pattern from one mass spectrometer look like it was collected on the other one.
@@ -9,10 +9,10 @@ The way the feature works is it looks at reference patterns collected from two m
 
 test_1.py takes the ReferenceCollected.csv and ReferenceLiterature.csv
 
-ReferenceLiterature.csv does not have as many molecules as ReferenceCollected.csv and the higher masses have lower intensity in ReferenceLiterature.csv.
-So the feature uses a polynomial function and applies it to *all* molecules in ReferenceCollected.csv to make it look more like ReferenceLiterature.csv.
+ReferenceCollected.csv does not have as many molecules as ReferenceLiterature.csv and the higher masses have lower intensity in ReferenceCollected.csv
+So the feature uses a polynomial function and applies it to *all* molecules in ReferenceLiterature.csv to make it look more like ReferenceCollected.csv.
 
 In the test_1.py, the reference threshold filter is off.
 In  test_2.py, the reference threshold filter is on.
 
-In many real applications of this feature, what is desired is to predict from an external reference what the fragmentation pattern would be on one's own spectrometer.  In that situation, the "ReferenceCollected.csv" is the external one and the "ReferenceLiterature.csv" is the internal one. These names should be changed in the future.
+In many real applications of this feature, what is desired is to predict from an external reference what the fragmentation pattern would be on one's own spectrometer.  In that situation, the "ReferenceCollected.csv" is the desired pattern one and the "ReferenceLiterature.csv" is the existing pattern to be adjusted. These names may become further adjusted to "PatternToMatch" and "PatternToAdjust" or something like that.
