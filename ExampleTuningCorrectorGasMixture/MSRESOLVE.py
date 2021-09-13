@@ -506,6 +506,8 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     #Tuning corrector is designed to work with standardized_reference_patterns, so first we make sure standardize the data.
     referenceDataArrayWithAbscissa=StandardizeReferencePattern(referenceDataArrayWithAbscissa)    
     if measuredReferenceYorN =='yes':
+        if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
+            referenceFileDesiredTuningAndForm = [ G.referenceFileNamesList[0],G.referenceFormsList[0] ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.        
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
@@ -533,7 +535,9 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     referenceDataArrayWithAbscissa_tuning_uncertainties = referenceDataArrayWithAbscissa*1.0 #creating copy with abscissa, then will fill.
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
     return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
-    
+
+#tuningCorrectorGasMixture will correct all items in the ReferenceDataList, but uses a single tuning correction that it applies to each of the ReferenceData objects in the list.
+#This function takes a measured gas mixture set of signals, then creates simulated signals (from NIST patterns, for example) to get a tuning correction for the spectrometer.
 def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there are UserInput choices that are needed for this feature.
         #Because MSRESOLVE normally works with a datalist, Getting matching correction patterns requires making a "DataList" object. To do things the normal way, we need to provide the reference file name and that it is "xyyy".
         #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
@@ -542,6 +546,10 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
         ReferenceDataExistingTuning = ReferenceInputPreProcessing(ReferenceDataExistingTuning, verbose=True)
 
+        #By default, the regular reference file will be considered the desired tuning, if not specified.
+        if G.referenceFileDesiredTuning == []:
+            G.referenceFileDesiredTuning = [ G.referenceFileNamesList[0],G.referenceFormsList[0] ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+            
         #We don't need a desired tuning data object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
         ReferenceDataDesiredTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
 
@@ -591,12 +599,15 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
         
         
-
         #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
-        #It will use the existing add molecule and remove molecules functions. We just need to get the "new" molecules first.
-        #TODO: Change this so that the extension occurs for each item in ReferenceDataList.
-        ReferenceDataDesiredTuningMixed = extendReferencePattern(ReferenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
-        ReferenceDataDesiredTuningMixed.exportReferencePattern("TuningCorrectorMixedPattern.csv")
+        #In this loop the extension occurs for each item in ReferenceDataList.
+        #The extendReferencePattern function uses existing add molecule and remove molecules functions.
+        for ReferenceDataIndex in range(len(ReferenceDataList)):
+            ReferenceDataList[ReferenceDataIndex] = extendReferencePattern(ReferenceDataList[ReferenceDataIndex],TuningCorrectorGasMixtureCorrectedReferenceDataObject)
+            if len(ReferenceDataList) == 1:
+                ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern.csv")
+            else:
+                ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern" + str(ReferenceDataIndex) + ".csv")
         print("line 5428!!!"); sys.exit()
         return ReferenceDataList
 
