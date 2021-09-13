@@ -504,15 +504,12 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
 #of relative intensities
 def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,measuredReferenceYorN):
     #Tuning corrector is designed to work with standardized_reference_patterns, so first we make sure standardize the data.
-    referenceDataArrayWithAbscissa=StandardizeReferencePattern(referenceDataArrayWithAbscissa)
-    
+    referenceDataArrayWithAbscissa=StandardizeReferencePattern(referenceDataArrayWithAbscissa)    
     if measuredReferenceYorN =='yes':
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
         G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
-
-
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
@@ -537,7 +534,73 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
     return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
     
+def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there are UserInput choices that are needed for this feature.
+        #Because MSRESOLVE normally works with a datalist, Getting matching correction patterns requires making a "DataList" object. To do things the normal way, we need to provide the reference file name and that it is "xyyy".
+        #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
+        ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
+        #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
+        #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
+        ReferenceDataExistingTuning = ReferenceInputPreProcessing(ReferenceDataExistingTuning, verbose=True)
+
+        #We don't need a desired tuning data object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
+        ReferenceDataDesiredTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
+
+        #We need to make prepare an appropriately made list for the concentrations to use in simulating data using the ExistingTuningReferencePattern 
+        #The concentrations must match the molecular order of the literature file.
+        #  Firstly, the literature file can have molecules not part of the concentrations, so we should add concentrations of zero for those. (It's easier than removing those molecules from the literature object).
+        #  Secondly, we need to re-order the concentrations to match the those of the existing reference pattern.
+        knownConcentrationsArray = list(numpy.zeros(len(ReferenceDataExistingTuning.molecules))) #initializing to number of molecules. Making it a list so we can insert later.
+        #The desired molecules list is the one in ReferenceDataExistingTuning.molecules, so we will loop across those.
+        for moleculeIndex,moleculeName in enumerate(ReferenceDataExistingTuning.molecules):
+            desiredConcentrationIndex = moleculeIndex  
+            #Take the concentration if it's named:
+            if moleculeName in G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']:
+                currentConcentrationIndex = list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']).index(moleculeName)
+                knownConcentrationsArray[desiredConcentrationIndex] = G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'][currentConcentrationIndex]
+            else: #else set it to zero.
+                knownConcentrationsArray[desiredConcentrationIndex] = 0
+        #The first item in the concentrations array is supposed to be the time. We will simply put the integer "1" there, since we will have one point. 
+        knownConcentrationsArray.insert(0, 1)
+        #knownConcentrationsArray needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
+        knownConcentrationsArray = numpy.array([knownConcentrationsArray])
+
+        #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
         
+        #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply an undesired "before comparisons" tuning factor correction. We will need this done before we simulate any signals.
+        ReferenceDataExistingTuning = Populate_matching_correction_values(ReferenceDataExistingTuning.standardized_reference_patterns[:,0], ReferenceDataExistingTuning)
+        #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
+        #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
+        matching_correction_values_array = numpy.array([ReferenceDataExistingTuning.matching_correction_values]) 
+        #now need to do the actual simulation of the gas mixture signals.
+        simulateddata = RawSignalsSimulation(knownConcentrationsArray, matching_correction_values_array)
+        ExportXYYYData("TuningCorrectorGasMixtureHypotheticalSimulatedSignals.csv", simulateddata, ReferenceDataExistingTuning.standardized_reference_patterns[:,0], abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'simulated')
+        #now need to make a fake reference file for that. We'll make an MSReferenceObject and then use the internally built exportReferencePattern class function.
+        simulateddata_intensities = simulateddata[0][1:] #The "0" is because it's a nested object. THe slicing is becuase the abscissa (time) value needs to be removed.
+        #Now to transpose the simulateddata to make the simulated_reference_pattern
+        simulated_reference_pattern = numpy.vstack((ReferenceDataExistingTuning.standardized_reference_patterns[:,0], simulateddata_intensities)).transpose()
+        TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], SourceOfIonizationData=["referenceFileExistingTuning"], knownIonizationFactorsRelativeToN2=['GasMixture'], knownMoleculesIonizationTypes=["GasMixture"]) #We fill some variables with the word "GasMixture" because there is no single ionization factor for the gas mixture.
+        TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
+                
+        #Tuning corrector does not operate on a ReferenceData object, it operates on standardized reference patterns.
+        referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataExistingTuning.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataExistingTuning.electronnumbers, molecules=ReferenceDataExistingTuning.molecules, molecularWeights=ReferenceDataExistingTuning.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataExistingTuning.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataExistingTuning.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataExistingTuning.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataExistingTuning.knownMoleculesIonizationTypes)
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
+        
+        #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
+        
+        
+
+        #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
+        #It will use the existing add molecule and remove molecules functions. We just need to get the "new" molecules first.
+        #TODO: Change this so that the extension occurs for each item in ReferenceDataList.
+        ReferenceDataDesiredTuningMixed = extendReferencePattern(ReferenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
+        ReferenceDataDesiredTuningMixed.exportReferencePattern("TuningCorrectorMixedPattern.csv")
+        print("line 5428!!!"); sys.exit()
+        return ReferenceDataList
+
+
 #this function eliminates (neglects) reference intensities that are below a certain threshold. Useful for solving 
 #data that is giving negatives or over emphasizing small mass fragments,by assuming no contribution from the molecule at that mass fragment.
 def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThreshold):
@@ -5367,71 +5430,6 @@ def main():
     #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
-        def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there are UserInput choices that are needed for this feature.
-            #Because MSRESOLVE normally works with a datalist, Getting matching correction patterns requires making a "DataList" object. To do things the normal way, we need to provide the reference file name and that it is "xyyy".
-            #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
-            ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
-            #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
-            #Currently, the matching_correction_values require the ReferenceInputPreProcessing to occur. 
-            ReferenceDataExistingTuning = ReferenceInputPreProcessing(ReferenceDataExistingTuning, verbose=True)
-
-            #We don't need a desired tuning data object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
-            ReferenceDataDesiredTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
-
-            #We need to make prepare an appropriately made list for the concentrations to use in simulating data using the ExistingTuningReferencePattern 
-            #The concentrations must match the molecular order of the literature file.
-            #  Firstly, the literature file can have molecules not part of the concentrations, so we should add concentrations of zero for those. (It's easier than removing those molecules from the literature object).
-            #  Secondly, we need to re-order the concentrations to match the those of the existing reference pattern.
-            knownConcentrationsArray = list(numpy.zeros(len(ReferenceDataExistingTuning.molecules))) #initializing to number of molecules. Making it a list so we can insert later.
-            #The desired molecules list is the one in ReferenceDataExistingTuning.molecules, so we will loop across those.
-            for moleculeIndex,moleculeName in enumerate(ReferenceDataExistingTuning.molecules):
-                desiredConcentrationIndex = moleculeIndex  
-                #Take the concentration if it's named:
-                if moleculeName in G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']:
-                    currentConcentrationIndex = list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']).index(moleculeName)
-                    knownConcentrationsArray[desiredConcentrationIndex] = G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'][currentConcentrationIndex]
-                else: #else set it to zero.
-                    knownConcentrationsArray[desiredConcentrationIndex] = 0
-            #The first item in the concentrations array is supposed to be the time. We will simply put the integer "1" there, since we will have one point. 
-            knownConcentrationsArray.insert(0, 1)
-            #knownConcentrationsArray needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
-            knownConcentrationsArray = numpy.array([knownConcentrationsArray])
-
-            #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
-            
-            #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply an undesired "before comparisons" tuning factor correction. We will need this done before we simulate any signals.
-            ReferenceDataExistingTuning = Populate_matching_correction_values(ReferenceDataExistingTuning.standardized_reference_patterns[:,0], ReferenceDataExistingTuning)
-            #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
-            #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
-            matching_correction_values_array = numpy.array([ReferenceDataExistingTuning.matching_correction_values]) 
-            #now need to do the actual simulation of the gas mixture signals.
-            simulateddata = RawSignalsSimulation(knownConcentrationsArray, matching_correction_values_array)
-            ExportXYYYData("TuningCorrectorGasMixtureHypotheticalSimulatedSignals.csv", simulateddata, ReferenceDataExistingTuning.standardized_reference_patterns[:,0], abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'simulated')
-            #now need to make a fake reference file for that. We'll make an MSReferenceObject and then use the internally built exportReferencePattern class function.
-            simulateddata_intensities = simulateddata[0][1:] #The "0" is because it's a nested object. THe slicing is becuase the abscissa (time) value needs to be removed.
-            #Now to transpose the simulateddata to make the simulated_reference_pattern
-            simulated_reference_pattern = numpy.vstack((ReferenceDataExistingTuning.standardized_reference_patterns[:,0], simulateddata_intensities)).transpose()
-            TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], SourceOfIonizationData=["referenceFileExistingTuning"], knownIonizationFactorsRelativeToN2=['GasMixture'], knownMoleculesIonizationTypes=["GasMixture"]) #We fill some variables with the word "GasMixture" because there is no single ionization factor for the gas mixture.
-            TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
-                    
-            #Tuning corrector does not operate on a ReferenceData object, it operates on standardized reference patterns.
-            referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataExistingTuning.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
-            TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataExistingTuning.electronnumbers, molecules=ReferenceDataExistingTuning.molecules, molecularWeights=ReferenceDataExistingTuning.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataExistingTuning.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataExistingTuning.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataExistingTuning.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataExistingTuning.knownMoleculesIonizationTypes)
-            TuningCorrectorGasMixtureCorrectedReferenceDataObject.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
-            
-            #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
-            TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
-            TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
-            
-            
-
-            #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
-            #It will use the existing add molecule and remove molecules functions. We just need to get the "new" molecules first.
-            #TODO: Change this so that the extension occurs for each item in ReferenceDataList.
-            ReferenceDataDesiredTuningMixed = extendReferencePattern(ReferenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
-            ReferenceDataDesiredTuningMixed.exportReferencePattern("TuningCorrectorMixedPattern.csv")
-            print("line 5428!!!"); sys.exit()
-            return ReferenceDataList
         ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
         
     prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
