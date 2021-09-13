@@ -607,7 +607,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
                 ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern.csv")
             else:
                 ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern" + str(ReferenceDataIndex) + ".csv")
-        print("line 5428!!!"); sys.exit()
+        print("line 5428!!!")
         return ReferenceDataList
 
 
@@ -1334,48 +1334,53 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
             b_array = ReferenceData.standardized_reference_patterns[:,1:] 
             ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
             ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-
-    #Only print if not called from interpolating reference objects
-    if verbose:
-        print('beginning TuningCorrector')
-    if type(G.referenceCorrectionCoefficients) == type({}):#check if it's a dictionary.
-        G.referenceCorrectionCoefficients = [G.referenceCorrectionCoefficients['A'],G.referenceCorrectionCoefficients['B'],G.referenceCorrectionCoefficients['C']]
-    #only apply the tuning correction if the list is not 0 0 1.
-    try:
-        type(G.referenceCorrectionCoefficients_cov)#If it doesn't exist, we'll make it a None type.
-    except:    
-        G.referenceCorrectionCoefficients_cov = None
-    #Wanted to do something like "if list(G.referenceCorrectionCoefficients) != [0,0,1]:" but can't do it out here. Can do it inside function.                                                                                                                  
-    ReferenceData.standardized_reference_patterns, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
-                                                           G.referenceCorrectionCoefficients,G.referenceCorrectionCoefficients_cov,
-                                                           G.referenceFileExistingTuning, G.referenceFileDesiredTuning, 
-                                                           G.measuredReferenceYorN)
-    #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
-    try:
-        ReferenceData.absolute_standard_uncertainties = (ReferenceData.absolute_standard_uncertainties**2 + ReferenceData.standardized_reference_patterns_tuning_uncertainties**2)**0.5
-    except:
-        ReferenceData.absolute_standard_uncertainties = ReferenceData.standardized_reference_patterns_tuning_uncertainties
     
-    ReferenceData.ExportCollector('TuningCorrector')
-    ReferenceData.ExportCollector('TuningCorrector_absolute_standard_uncertainties', export_tuning_uncertainties= True) #These are not yet actually standardized. Happens below.
-    if G.calculateUncertaintiesInConcentrations == True: 
-        if type(G.referenceFileUncertainties) != type(None):                                                      
-            pass #TODO: consider to propagate TuningCorrector uncertainties into the ReferenceData.relative_standard_uncertainties
     
-    #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
-    ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.standardized_reference_patterns,len(ReferenceData.molecules))
-    ReferenceData.ExportCollector('StandardizeReferencePattern')
-    #Note: it is assumed that the relative_standard_uncertainties correspond to original reference, so before tuning corrector, thus we do not recalculate that factor.
-    ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+    #TODO: Fix the logic here. Currently, this TuningCorrector gets skipped if a GaxMixture is being used.
+    #Most likely, either this call should be moved out or that call should be moved in.
+    if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) == 0:
+        #Only print if not called from interpolating reference objects
+        if verbose:
+            print('beginning TuningCorrector')
+        if type(G.referenceCorrectionCoefficients) == type({}):#check if it's a dictionary.
+            G.referenceCorrectionCoefficients = [G.referenceCorrectionCoefficients['A'],G.referenceCorrectionCoefficients['B'],G.referenceCorrectionCoefficients['C']]
+        #only apply the tuning correction if the list is not 0 0 1.
+        try:
+            type(G.referenceCorrectionCoefficients_cov)#If it doesn't exist, we'll make it a None type.
+        except:    
+            G.referenceCorrectionCoefficients_cov = None
+        #Wanted to do something like "if list(G.referenceCorrectionCoefficients) != [0,0,1]:" but can't do it out here. Can do it inside function.                                                                                                                  
+        ReferenceData.standardized_reference_patterns, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
+                                                               G.referenceCorrectionCoefficients,G.referenceCorrectionCoefficients_cov,
+                                                               G.referenceFileExistingTuning, G.referenceFileDesiredTuning, 
+                                                               G.measuredReferenceYorN)
+        #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
+        try:
+            ReferenceData.absolute_standard_uncertainties = (ReferenceData.absolute_standard_uncertainties**2 + ReferenceData.standardized_reference_patterns_tuning_uncertainties**2)**0.5
+        except:
+            ReferenceData.absolute_standard_uncertainties = ReferenceData.standardized_reference_patterns_tuning_uncertainties
+        
+        ReferenceData.ExportCollector('TuningCorrector')
+        ReferenceData.ExportCollector('TuningCorrector_absolute_standard_uncertainties', export_tuning_uncertainties= True) #These are not yet actually standardized. Happens below.
+        if G.calculateUncertaintiesInConcentrations == True: 
+            if type(G.referenceFileUncertainties) != type(None):                                                      
+                pass #TODO: consider to propagate TuningCorrector uncertainties into the ReferenceData.relative_standard_uncertainties
     
-    #Now need to update the relative uncertainties again. #TODO: This should become a function.
-    ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
-    #now populate the non-mass fragment parts by dividing.
-    #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
-    a_array = ReferenceData.relative_standard_uncertainties[:,1:]
-    b_array = ReferenceData.standardized_reference_patterns[:,1:] 
-    ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
-    ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+        #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
+        ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.standardized_reference_patterns,len(ReferenceData.molecules))
+        ReferenceData.ExportCollector('StandardizeReferencePattern')
+        #Note: it is assumed that the relative_standard_uncertainties correspond to original reference, so before tuning corrector, thus we do not recalculate that factor.
+        ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+    
+    if G.UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] == True:#FIXME: This is not the right way to check this variable.
+        #Now need to update the relative uncertainties again. #TODO: This should become a function.
+        ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
+        #now populate the non-mass fragment parts by dividing.
+        #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
+        a_array = ReferenceData.relative_standard_uncertainties[:,1:]
+        b_array = ReferenceData.standardized_reference_patterns[:,1:] 
+        ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+        ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
     
     
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
@@ -5433,10 +5438,14 @@ def main():
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
 
+    print("line 5441", ReferenceDataList[0].molecules)
+    print("line 5442", ReferenceDataList[0].ionizationEfficienciesList)
     #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
         ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
+        print("line 5445", ReferenceDataList[0].molecules)
+        print("line 5445", ReferenceDataList[0].ionizationEfficienciesList)
         
     prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
     
