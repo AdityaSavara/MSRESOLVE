@@ -729,6 +729,24 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
     #                 place_holder = place_holder + 1
                     
     #return [mass_fragment_numbers2,ExperimentData.workingData]
+
+#This function "combines" two reference patterns by adding to the first pattern any molecules that are only the 2nd pattern.
+#This is *not* a merging function. If the molecule is only in the first pattern, then it keeps the version in the first pattern.
+def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
+    #First figure out which molecules are needed and which are duplicates.
+    moleculesToExtendBy = [] #first initialize, then we'll populate below
+    duplicateMolecules = [] #first initialize, then populate below
+    for moleculeName in ReferenceDataToExtendBy.molecules:
+        if moleculeName in OriginalReferenceData.molecules:
+            duplicateMolecules.append(moleculeName)
+        else: #implies not in OriginalReferenceData.molecules
+            moleculesToExtendBy.append(moleculeName)
+    ReferenceDataToExtendBy = ReferenceDataToExtendBy.removeMolecules(duplicateMolecules) #this removes the duplicates and makes a new object. It does not affect the original reference data object.
+    
+    extendedReferenceData = copy.deepcopy(OriginalReferenceData)  #We need to make a copy so we don't change anything in the original reference data object, since that may not be desired.
+    #The below command will modify the  extendedReferenceData, so we don't need to return anything from the function though we will do so.
+    extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.provided_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataToExtendBy.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataToExtendBy.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataToExtendBy.knownMoleculesIonizationTypes)
+    return extendedReferenceData
     
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
@@ -5401,28 +5419,14 @@ def main():
         #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
+        
+        
         #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
         #It will use the existing add molecule and remove molecules functions. We just need to get the "new" molecules first.
-        #It 
-        def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
-
-            #First figure out which molecules are needed and which are duplicates.
-            moleculesToExtendBy = [] #first initialize, then we'll populate below
-            duplicateMolecules = [] #first initialize, then populate below
-            for moleculeName in ReferenceDataToExtendBy.molecules:
-                if moleculeName in OriginalReferenceData.molecules:
-                    duplicateMolecules.append(moleculeName)
-                else: #implies not in OriginalReferenceData.molecules
-                    moleculesToExtendBy.append(moleculeName)
-            ReferenceDataToExtendBy = ReferenceDataToExtendBy.removeMolecules(duplicateMolecules) #this removes the duplicates and makes a new object. It does not affect the original reference data object.
-            
-            extendedReferenceData = copy.deepcopy(OriginalReferenceData)  #We need to make a copy so we don't change anything in the original reference data object, since that may not be desired.
-            #The below command will modify the  extendedReferenceData, so we don't need to return anything from the function though we will do so.
-            print('line 5571 before 2509', ReferenceDataToExtendBy.SourceOfIonizationData, knownIonizationFactorsRelativeToN2)
-            extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.provided_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataToExtendBy.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataToExtendBy.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataToExtendBy.knownMoleculesIonizationTypes)
-            return extendedReferenceData
+        
         
         print("line 5580", TuningCorrectorGasMixtureCorrectedReferenceDataObject.SourceOfIonizationData)
+        #TODO: Change this so that the extension occurs for each item in ReferenceDataList.
         ReferenceDataDesiredTuningMixed = extendReferencePattern(ReferenceDataDesiredTuning,TuningCorrectorGasMixtureCorrectedReferenceDataObject)
         ReferenceDataDesiredTuningMixed.exportReferencePattern("TuningCorrectorMixedPattern.csv")
 
