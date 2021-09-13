@@ -13,7 +13,7 @@ if str(__name__) != "DefaultUserInput":
 
 #//Input Files//
 UserChoices['inputFiles'] = {} #initialize the inputFiles container
-UserChoices['inputFiles']['referenceFileNamesList'] = ['LiteratureReference.csv'] #enter the file name of the file containing reference information
+UserChoices['inputFiles']['referenceFileNamesList'] = ['ExtractedReferencePattern.csv'] #enter the file name of the file containing reference information
 UserChoices['inputFiles']['referenceFormsList'] = 'xyyy' #form is either 'xyyy' or 'xyxy' (if using reference pattern time chooser enter as list with forms for each individual reference file ['xyyy','xyyy','xyyy'])
 UserChoices['inputFiles']['referencePatternTimeRanges'] = [] #Leave empty if not using reference pattern time chooser []
 UserChoices['inputFiles']['collectedFileName'] = 'Collected_Data.csv'	#enter the file name with raw mass spectrometer data
