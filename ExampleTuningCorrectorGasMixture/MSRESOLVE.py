@@ -396,6 +396,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     
     if G.minimalReferenceValue =='yes':
         ReferencePatternExistingTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternExistingTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
+        print("line 399", G.referenceValueThreshold)
     
     ReferencePatternDesiredTuningDict = {}
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternDesiredTuning_FileNameAndForm)
@@ -404,6 +405,8 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternDesiredTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
     if G.minimalReferenceValue =='yes':
         ReferencePatternDesiredTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternDesiredTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
+        print("line 408", G.referenceValueThreshold)
+        print("line 409", ReferencePatternDesiredTuningDict['provided_reference_patterns'])
     
     '''
     Step 3a: Truncate to the molecules which match.
@@ -608,6 +611,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
             if len(ReferenceDataList) == 1:
                 print("line 609", ReferenceDataList[ReferenceDataIndex].relativeIonizationEfficiencies)
                 print("line 610", ReferenceDataList[ReferenceDataIndex].sourceOfIonizationData)
+                print(G.UserChoices['minimalReferenceValue']['referenceValueThreshold'])
                 ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern.csv")
             else:
                 ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern" + str(ReferenceDataIndex) + ".csv")
@@ -618,6 +622,10 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
 #this function eliminates (neglects) reference intensities that are below a certain threshold. Useful for solving 
 #data that is giving negatives or over emphasizing small mass fragments,by assuming no contribution from the molecule at that mass fragment.
 def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThreshold):
+    numMolecules = len(referenceDataArrayWithAbscissa[0]-1)
+    if numMolecules > len(list(referenceValueThreshold)):
+        referenceValueThreshold = list(referenceValueThreshold)* numMolecules
+    print('line 637', referenceDataArrayWithAbscissa, referenceValueThreshold)
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:] #all the data except the line of abscissa- mass fragment numbers
     for columncounter in range(len(referenceDataArray[0,:])):#goes through all columns in all rows in reference (this loop is one molecule at a time)
         for rowcounter in range(len(referenceDataArray[:,0])):#goes through all rows in references (one mass fragment at a time)        
@@ -3752,6 +3760,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         #Before going forward, we're going to make a variable called remaining_referenceSignificantFragmentThresholds, using a function.       
             def get_remaining_referenceSignificantFragmentThresholds(referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS):
                 remaining_referenceSignificantFragmentThresholds = list(copy.deepcopy(referenceSignificantFragmentThresholds))
+                if len(molecules_unedited) > len(remaining_referenceSignificantFragmentThresholds):
+                    remaining_referenceSignificantFragmentThresholds = remaining_referenceSignificantFragmentThresholds*len(molecules_unedited)
                 molecules_unedited_to_reduce = list(copy.deepcopy(molecules_unedited))
                 for moleculeIndex, moleculeName in enumerate(molecules_unedited):
                     if moleculeName in remaining_molecules_SLS:

@@ -127,8 +127,9 @@ def parseUserInput(currentUserInput):
     if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
         currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
         #The length of the reference value thresholds needs to be the same length as the number of molecules
-        currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
-        currentUserInput.referenceSignificantFragmentThresholds = parse.parallelVectorize(currentUserInput.referenceSignificantFragmentThresholds,len(chosenMoleculesForParsing))
+        #currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
+        currentUserInput.referenceSignificantFragmentThresholds = parse.listCast(currentUserInput.referenceSignificantFragmentThresholds) #referenceSignificantFragmentThresholds is a list
+        #currentUserInput.referenceSignificantFragmentThresholds = parse.parallelVectorize(currentUserInput.referenceSignificantFragmentThresholds,len(chosenMoleculesForParsing))
     
     #Data Threshold Filter
     parse.strCheck(currentUserInput.lowerBoundThresholdChooser,'lowerBoundThresholdChooser')
