@@ -2268,7 +2268,7 @@ def readReferenceFile(referenceFileName, form):
                     dfknownMoleculesIonizationTypes = dataFrame.iloc[rowIndex][1:] #select row of names
                     knownMoleculesIonizationTypes = dfknownMoleculesIonizationTypes.values #convert to matrix
                     knownMoleculesIonizationTypes = knownMoleculesIonizationTypes.astype(numpy.str) #save as class object with type string
-                elif dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies':
+                elif (dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies') or (dataFrame.iloc[rowIndex][0] == 'knownIonizationFactorsRelativeToN2'):
                     dfrelativeIonizationEfficiencies = dataFrame.iloc[rowIndex][1:] #select row of names
                     relativeIonizationEfficiencies = dfrelativeIonizationEfficiencies.values #convert to matrix
                     for index in range(len(relativeIonizationEfficiencies)):
