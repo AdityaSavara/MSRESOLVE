@@ -2,7 +2,7 @@ Source:,NIST_TuningCorrected, NIST_TuningCorrected, NIST_TuningCorrected, NIST_T
 Molecules,ethene, ethane, ethyne, 1butanal
 Electron Numbers,16, 18, 14, 40
 ionizationEfficiencies,1.0857142857142859, 1.1714285714285713, 1.0, 2.1142857142857143
-ionizationEfficienciesSources,MadixAnd, MadixAnd, MadixAnd, MadixAnd
+ionizationEfficienciesSources,MadixAndKo, MadixAndKo, MadixAndKo, MadixAndKo
 Molecular Mass,28.05, 30.07, 26.0373, 72.11
 2.000000000000000000e+00,1.553705758830522532e-01,3.107411517661045064e-01,0.000000000000000000e+00,0.000000000000000000e+00
 1.200000000000000000e+01,8.374968951397797623e-01,6.699975161118237876e-01,1.025953782189063412e+00,2.646558393305206702e-01
