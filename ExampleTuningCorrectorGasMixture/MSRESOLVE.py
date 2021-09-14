@@ -5073,10 +5073,14 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
         formatedDataHeader = ['%s Concentration Relative to CO' % molecule for molecule in dataHeader]
     if dataType == 'concentration':
         label = 'Concentration(%s)' % units
-        formatedDataHeader = [molecule + label for molecule in dataHeader]
-    if dataType == 'percent_concentration':
+        formatedDataHeader = [molecule + ' ' + label for molecule in dataHeader]
+    if dataType == 'percent_concentration': #deprecated, used to be used for relative_uncertainty
         label = 'Percent' 
         formatedDataHeader = [molecule + label for molecule in dataHeader]
+    if dataType == 'relative_uncertainty':
+        label = 'relative uncertainty' 
+        formatedDataHeader = [molecule + ' ' + label for molecule in dataHeader]
+
 
     #extraLine is used to create CSV files that conform to MSRESOLVE's import requirements i.e. having a row for comments at the top
     extraLine = False
@@ -5981,7 +5985,7 @@ def main():
             concentrations_absolute_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_absolute_uncertainties_all_times']))
             concentrations_relative_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_relative_uncertainties_all_times']))
             ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'scaled', units = None)
-            ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'percent_concentration', units = None)
+            ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
 
         
         G.generateStatistics = True #FIXME: This variable needs to be added to user Input somehow. Also does not work with iterative.
@@ -6041,7 +6045,7 @@ def main():
                 concentrations_absolute_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_absolute_uncertainties_all_times_scaled_to_unit']))
                 concentrations_relative_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_relative_uncertainties_all_times']))
                 ExportXYYYData(G.concentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
-                ExportXYYYData(G.concentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'percent_concentration', units = None)
+                ExportXYYYData(G.concentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
 
         
             #Graph the concentration/relative signal data
