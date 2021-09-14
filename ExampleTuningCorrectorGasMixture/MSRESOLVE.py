@@ -389,7 +389,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
        
     #For simplicity, we will put the items into temporary items, then into dictionaries that we can then access.
     ReferencePatternExistingTuningDict = {}
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternExistingTuning_FileNameAndForm)
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternExistingTuning_FileNameAndForm)
     ReferencePatternExistingTuningDict['molecules']=molecules
     ReferencePatternExistingTuningDict['provided_reference_patterns'] = provided_reference_patterns
     ReferencePatternExistingTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternExistingTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
@@ -398,7 +398,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         ReferencePatternExistingTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternExistingTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
     
     ReferencePatternDesiredTuningDict = {}
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternDesiredTuning_FileNameAndForm)
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternDesiredTuning_FileNameAndForm)
     ReferencePatternDesiredTuningDict['molecules']=molecules
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = provided_reference_patterns
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternDesiredTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
@@ -586,12 +586,12 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         simulateddata_intensities = simulateddata[0][1:] #The "0" is because it's a nested object. THe slicing is becuase the abscissa (time) value needs to be removed.
         #Now to transpose the simulateddata to make the simulated_reference_pattern
         simulated_reference_pattern = numpy.vstack((ReferenceDataExistingTuning.standardized_reference_patterns[:,0], simulateddata_intensities)).transpose()
-        TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], SourceOfIonizationData=["referenceFileExistingTuning"], knownIonizationFactorsRelativeToN2=['GasMixture'], knownMoleculesIonizationTypes=["GasMixture"]) #We fill some variables with the word "GasMixture" because there is no single ionization factor for the gas mixture.
+        TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], SourceOfIonizationData=["referenceFileExistingTuning"], relativeIonizationEfficiencies=['GasMixture'], knownMoleculesIonizationTypes=["GasMixture"]) #We fill some variables with the word "GasMixture" because there is no single ionization factor for the gas mixture.
         TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
                 
         #Tuning corrector does not operate on a ReferenceData object, it operates on standardized reference patterns.
         referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataExistingTuning.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
-        TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataExistingTuning.electronnumbers, molecules=ReferenceDataExistingTuning.molecules, molecularWeights=ReferenceDataExistingTuning.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataExistingTuning.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataExistingTuning.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataExistingTuning.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataExistingTuning.knownMoleculesIonizationTypes)
+        TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(referenceDataArrayWithAbscissa, electronnumbers=ReferenceDataExistingTuning.electronnumbers, molecules=ReferenceDataExistingTuning.molecules, molecularWeights=ReferenceDataExistingTuning.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataExistingTuning.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataExistingTuning.SourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataExistingTuning.relativeIonizationEfficiencies, knownMoleculesIonizationTypes=ReferenceDataExistingTuning.knownMoleculesIonizationTypes)
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
         
         #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
@@ -818,7 +818,7 @@ def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
     
     extendedReferenceData = copy.deepcopy(OriginalReferenceData)  #We need to make a copy so we don't change anything in the original reference data object, since that may not be desired.
     #The below command will modify the  extendedReferenceData, so we don't need to return anything from the function though we will do so.
-    extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.provided_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataToExtendBy.SourceOfIonizationData, knownIonizationFactorsRelativeToN2=ReferenceDataToExtendBy.knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes=ReferenceDataToExtendBy.knownMoleculesIonizationTypes)
+    extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.provided_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, SourceOfIonizationData=ReferenceDataToExtendBy.SourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataToExtendBy.relativeIonizationEfficiencies, knownMoleculesIonizationTypes=ReferenceDataToExtendBy.knownMoleculesIonizationTypes)
     return extendedReferenceData
     
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
@@ -850,7 +850,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.molecularWeights, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.molecularWeights, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.knownMoleculesIonizationTypes, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownMoleculesIonizationTypes, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
-    trimmedRefererenceData.knownIonizationFactorsRelativeToN2, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownIonizationFactorsRelativeToN2, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
+    trimmedRefererenceData.relativeIonizationEfficiencies, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.relativeIonizationEfficiencies, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfFragmentationPatterns, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfFragmentationPatterns, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     print("line 761", trimmedRefererenceData.SourceOfIonizationData, trimmedMoleculesList)
@@ -1244,8 +1244,8 @@ def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules=0):
 
 '''This function is just a helper function to create a ReferenceData object from a file.'''
 def createReferenceDataObject(referenceDataFileName = "ReferenceData.csv", referenceDataForm = "xyyy", AllMID_ObjectsDict={}):
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceDataFileName,referenceDataForm)
-    ReferenceData = MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceDataFileName,referenceDataForm)
+    ReferenceData = MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)
     return ReferenceData
 
 
@@ -1422,8 +1422,8 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
     #If referenceFileNamesList and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
     if len(referenceFormsList) == 1 and len(referenceFileNamesList) == 1:
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[0],referenceFormsList[0])
-        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[0],referenceFormsList[0])
+        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
         #save each global variable into the class objects
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[0].iterationSuffix = G.iterationSuffix
@@ -1443,7 +1443,7 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[0].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[0])
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[0])
                     ReferenceDataList[0].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[0].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[0].absolute_standard_uncertainties[:,1:] = 100*ReferenceDataList[0].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
@@ -1465,8 +1465,8 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
     ReferenceDataList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNamesList)):
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[i],listOfForms[i])
-        ReferenceDataList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[i],listOfForms[i])
+        ReferenceDataList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
         #save each global variable into the class objects 
         ReferenceDataList[i].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[i].iterationSuffix = G.iterationSuffix
@@ -1486,7 +1486,7 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[i].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[i])
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[i])
                     ReferenceDataList[i].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[i].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[i].absolute_standard_uncertainties[:,1:] = ReferenceDataList[i].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
@@ -2268,22 +2268,22 @@ def readReferenceFile(referenceFileName, form):
                     dfknownMoleculesIonizationTypes = dataFrame.iloc[rowIndex][1:] #select row of names
                     knownMoleculesIonizationTypes = dfknownMoleculesIonizationTypes.values #convert to matrix
                     knownMoleculesIonizationTypes = knownMoleculesIonizationTypes.astype(numpy.str) #save as class object with type string
-                elif dataFrame.iloc[rowIndex][0] == 'knownIonizationFactorsRelativeToN2':
-                    dfknownIonizationFactorsRelativeToN2 = dataFrame.iloc[rowIndex][1:] #select row of names
-                    knownIonizationFactorsRelativeToN2 = dfknownIonizationFactorsRelativeToN2.values #convert to matrix
-                    for index in range(len(knownIonizationFactorsRelativeToN2)):
+                elif dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies':
+                    dfrelativeIonizationEfficiencies = dataFrame.iloc[rowIndex][1:] #select row of names
+                    relativeIonizationEfficiencies = dfrelativeIonizationEfficiencies.values #convert to matrix
+                    for index in range(len(relativeIonizationEfficiencies)):
                         try: #try to convert to a float
-                            knownIonizationFactorsRelativeToN2[index] = float(knownIonizationFactorsRelativeToN2[index])
+                            relativeIonizationEfficiencies[index] = float(relativeIonizationEfficiencies[index])
                         except: #if not possible, the value is probably None or 'unknown' so leave as a string
                             pass
-#                    knownIonizationFactorsRelativeToN2 = knownIonizationFactorsRelativeToN2.astype(numpy.float) #save as class object with type float
+#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(numpy.float) #save as class object with type float
 
         try: #if using an older reference file, it will not have ionization factors so the elif statement never gets entered meaning knownIonizationFactors does not exist
-            knownIonizationFactorsRelativeToN2 #Try calling this variable, if it exists there will be no error
+            relativeIonizationEfficiencies #Try calling this variable, if it exists there will be no error
         except: #if it does not exist, populate it with unknown
-            knownIonizationFactorsRelativeToN2 = ['unknown'] #initialize as a list of len(1)
-            knownIonizationFactorsRelativeToN2 = parse.parallelVectorize(knownIonizationFactorsRelativeToN2,len(molecules)) #parallel vectorize to length of molecules
-            knownIonizationFactorsRelativeToN2 = numpy.array(knownIonizationFactorsRelativeToN2) #convert to matrix
+            relativeIonizationEfficiencies = ['unknown'] #initialize as a list of len(1)
+            relativeIonizationEfficiencies = parse.parallelVectorize(relativeIonizationEfficiencies,len(molecules)) #parallel vectorize to length of molecules
+            relativeIonizationEfficiencies = numpy.array(relativeIonizationEfficiencies) #convert to matrix
             
         try: #if using an old reference file, it will not have ionization types so the elif statement never gets entered meaning knownMoleculesIonizationTypes does not exist
             knownMoleculesIonizationTypes #Try calling this variable, if it exists there will be no error
@@ -2422,7 +2422,7 @@ def readReferenceFile(referenceFileName, form):
         mass_fragment_numbers_monitored = None
     else:
         print("Form of reference pattern not recognized. Only XYYY or XYXY allowed."); sys.exit()
-    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
+    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
 
 '''
 getMoleculesFromReferenceData is a function that takes in the reference filename and just returns the molecules present
@@ -2567,8 +2567,8 @@ class MSData (object):
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
                                         
 class MSReference (object):
-    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], SourceOfIonizationData=[], knownIonizationFactorsRelativeToN2=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
-        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.SourceOfFragmentationPatterns, self.SourceOfIonizationData, self.knownIonizationFactorsRelativeToN2, self.knownMoleculesIonizationTypes, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
+    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], SourceOfIonizationData=[], relativeIonizationEfficiencies=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
+        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.SourceOfFragmentationPatterns, self.SourceOfIonizationData, self.relativeIonizationEfficiencies, self.knownMoleculesIonizationTypes, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, relativeIonizationEfficiencies, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         self.iterationSuffix = ''
@@ -2581,8 +2581,8 @@ class MSReference (object):
             self.SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
         if self.SourceOfIonizationData == []:
             self.SourceOfIonizationData = ['unknown']* len(self.molecules)       
-        if self.knownIonizationFactorsRelativeToN2 == []:
-            self.knownIonizationFactorsRelativeToN2 = ['unknown']* len(self.molecules)
+        if self.relativeIonizationEfficiencies == []:
+            self.relativeIonizationEfficiencies = ['unknown']* len(self.molecules)
         if self.knownMoleculesIonizationTypes == []:
             self.knownMoleculesIonizationTypes = ['unknown']* len(self.molecules)
 
@@ -2610,8 +2610,8 @@ class MSReference (object):
     #This function allows adding molecules to an existing reference patterns. When using TuningCorrector it is used to create MixedReference patterns.
     #Though these variable names are plural, they are expected to be lists of one. "molecules" is supposed to be a list of variable names.
     #provided_reference_patterns should be in an XYYY format.  If starting with XYXY data, is okay to feed a single "XY" at a time and to do so repeatedly in a loop.
-    def addMolecules(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], SourceOfIonizationData=[], knownIonizationFactorsRelativeToN2=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):      
-        print("line 2509", SourceOfIonizationData, knownIonizationFactorsRelativeToN2)
+    def addMolecules(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], SourceOfIonizationData=[], relativeIonizationEfficiencies=[], knownMoleculesIonizationTypes=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):      
+        print("line 2509", SourceOfIonizationData, relativeIonizationEfficiencies)
         #In case somebody decides to try to feed single molecule's name directly.
         if type(molecules) == type("string"):
             molecules = [molecules]
@@ -2620,8 +2620,8 @@ class MSReference (object):
            SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
         if SourceOfIonizationData == []:
            SourceOfIonizationData = ['unknown']* len(self.molecules)       
-        if knownIonizationFactorsRelativeToN2 == []:
-           knownIonizationFactorsRelativeToN2 = ['unknown']* len(self.molecules)
+        if relativeIonizationEfficiencies == []:
+           relativeIonizationEfficiencies = ['unknown']* len(self.molecules)
         if knownMoleculesIonizationTypes == []:
            knownMoleculesIonizationTypes = ['unknown']* len(self.molecules)
            
@@ -2631,7 +2631,7 @@ class MSReference (object):
         self.molecularWeights = list(self.molecularWeights) + (list(molecularWeights))
         self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns) + (list(SourceOfFragmentationPatterns))
         self.SourceOfIonizationData = list(self.SourceOfIonizationData) + (list(SourceOfIonizationData))
-        self.knownIonizationFactorsRelativeToN2 = list(self.knownIonizationFactorsRelativeToN2) + (list(knownIonizationFactorsRelativeToN2))
+        self.relativeIonizationEfficiencies = list(self.relativeIonizationEfficiencies) + (list(relativeIonizationEfficiencies))
         self.knownMoleculesIonizationTypes = list(self.knownMoleculesIonizationTypes) + (list(knownMoleculesIonizationTypes))
         #Will to standardize the molecules reference patterns before adding. This is important because the addXYYYtoXYYY function drops values that are small like 1E-8.
         standardized_reference_patterns=StandardizeReferencePattern(provided_reference_patterns,len(molecules))
@@ -2792,8 +2792,8 @@ class MSReference (object):
         self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here and used in CorrectionValuesObtain
         self.ionizationEfficienciesSourcesList = copy.copy(self.molecules) #initialize an array to store which method was used to obtain a molecule's ionization factor
         for moleculeIndex in range(len(self.molecules)): #loop through our initialized array
-            if isinstance(self.knownIonizationFactorsRelativeToN2[moleculeIndex],float): #if the knownIonizationFactor is a float, then that is the value defined by the user
-                self.ionizationEfficienciesList[moleculeIndex] = self.knownIonizationFactorsRelativeToN2[moleculeIndex]
+            if isinstance(self.relativeIonizationEfficiencies[moleculeIndex],float): #if the knownIonizationFactor is a float, then that is the value defined by the user
+                self.ionizationEfficienciesList[moleculeIndex] = self.relativeIonizationEfficiencies[moleculeIndex]
                 self.ionizationEfficienciesSourcesList[moleculeIndex] = self.SourceOfIonizationData[moleculeIndex] #the molecule's factor was known
             else: #Ionization factor is not known so look at molecular ionization data from literatiure 
                 #Initialize three lists
@@ -2802,7 +2802,7 @@ class MSReference (object):
                 MatchingMID_ElectronNumbers = []
                 #Initialize a flag to overwrite if a molecule is in both self.molecules and the MID_ObjectDict
                 matchingMolecule = False
-                if self.knownIonizationFactorsRelativeToN2[moleculeIndex] == None or self.knownIonizationFactorsRelativeToN2[moleculeIndex] == 'unknown': #the ionization factor is not known so look in the AllMID_ObjectsDict
+                if self.relativeIonizationEfficiencies[moleculeIndex] == None or self.relativeIonizationEfficiencies[moleculeIndex] == 'unknown': #the ionization factor is not known so look in the AllMID_ObjectsDict
                     currentMoleculeKeyName = self.molecules[moleculeIndex] + '_IE' #holder variable to store the current molecule name + '_IE' to match the keys of AllMID_ObjectsDict (e.g. Acetaldehyde_IE)
                     if currentMoleculeKeyName in AllMID_ObjectsDict.keys(): #If the current molecule is in the dictionary, use its RS_Value
                         MatchingMID_Objects.append(currentMoleculeKeyName) #append the key
