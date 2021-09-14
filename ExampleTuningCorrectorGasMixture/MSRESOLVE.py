@@ -569,15 +569,16 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
                     ReferenceDataExistingTuning.absolute_standard_uncertainties[:,1:] = 100*ReferenceDataExistingTuning.absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
         if G.calculateUncertaintiesInConcentrations == True: 
             if type(G.referenceFileUncertainties) != type(None):
-                ReferenceDataExistingTuning.relative_standard_uncertainties = ReferenceDataExistingTuning.absolute_standard_uncertainties*1.0 #First make the array.
-                #now populate the non-mass fragment parts by dividing.
-                #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
-                a_array = ReferenceDataExistingTuning.relative_standard_uncertainties[:,1:]
-                b_array = ReferenceDataExistingTuning.standardized_reference_patterns[:,1:] 
-                ReferenceDataExistingTuning.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
-                ReferenceDataExistingTuning.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-                print("line 579 !!!!!!!!")#ReferenceDataExistingTuning.relative_standard_uncertainties)
-
+                def update_relative_standard_uncertainties(ReferenceData):
+                    ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
+                    #now populate the non-mass fragment parts by dividing.
+                    #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
+                    a_array = ReferenceData.relative_standard_uncertainties[:,1:]
+                    b_array = ReferenceData.standardized_reference_patterns[:,1:] 
+                    ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+                    ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
+                    print("line 579 !!!!!!!!")#ReferenceDataExistingTuning.relative_standard_uncertainties)
+                update_relative_standard_uncertainties(ReferenceDataExistingTuning)
         
         
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
@@ -2789,7 +2790,7 @@ class MSReference (object):
     #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
-    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_matching_correction_value = False, export_uncertainties = False, export_standard_uncertainties=False, export_tuning_uncertainties=False):
+    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_matching_correction_value = False, export_uncertainties = False, export_standard_uncertainties=False, export_tuning_uncertainties=False, export_relative_uncertainties=False):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
@@ -2811,6 +2812,8 @@ class MSReference (object):
                 self.dataToExport.append(self.standardized_reference_patterns_tuning_uncertainties.copy())
             elif export_standard_uncertainties:
                 self.dataToExport.append(self.absolute_standard_uncertainties.copy())
+            elif export_relative_uncertainties:
+                self.dataToExport.append(self.relative_standard_uncertainties.copy())               
             elif use_provided_reference_patterns:
                 self.dataToExport.append(self.provided_reference_patterns.copy())
             elif callingFunction == 'UnnecessaryMoleculesDeleter':
