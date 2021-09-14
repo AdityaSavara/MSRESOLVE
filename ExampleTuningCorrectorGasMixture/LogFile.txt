@@ -1,4 +1,4 @@
-Tue Sep 14 02:11:59 2021
+Tue Sep 14 02:14:09 2021
 
 referenceFileName = ['ExtractedReferencePattern.csv'] 
 form  = ['xyyy'] 
@@ -6,12 +6,6 @@ collectedFileName = Collected_Data.csv
 timeRangeLimit = yes 
 timeRangeStart = 176.0 
 timeRangeFinish = 900.0 
-measuredReferenceYorN = yes 
-referenceCorrectionCoefficientA = -0.006486881698506962 
-referenceCorrectionCoefficientB = 0.25062935187812 
-referenceCorrectionCoefficientC = -0.9533139758788823 
-referenceCorrection_abcCoefficients = ['A', 'B', 'C', 0, 1, 2] 
-referenceCorrection_abcCoefficients_cov = [[6.210441332505573e-06, -0.00026708328912830614, 0.002613875252542956], [-0.0002670832891283059, 0.01155046014720452, -0.11397285273190337], [0.0026138752525429526, -0.11397285273190326, 1.140196952429929]] 
 minimalReferenceValue = yes 
 referenceValueThreshold = [2.0] 
 referenceSignificantFragmentThresholds = [6.0] 
@@ -23,5 +17,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 4.42655 seconds 
+Run Time 3.97461 seconds 
 ###################################################################### 

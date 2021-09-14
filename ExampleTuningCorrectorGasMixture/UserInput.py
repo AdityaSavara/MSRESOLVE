@@ -154,7 +154,7 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 #TODO Reference Correction Coefficients feature should be upgraded to enable separate coefficients for each molecule to allow mixing and matching of reference patterns
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
-UserChoices['measuredReferenceYorN']['on'] ='yes'
+UserChoices['measuredReferenceYorN']['on'] ='no'
 UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =['LiteratureReference.csv','xyyy'] #This is the pattern that will be changed. Typically this is NIST patterns.
 UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =['ExtractedReferencePattern.csv','xyyy'] #This is what the pattern will look more like after everything is done. Typically, this is a measured pattern.
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =['ethane', 'ethene', 'ethyne']  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
