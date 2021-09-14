@@ -899,6 +899,7 @@ def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
     #The below command will modify the  extendedReferenceData, so we don't need to return anything from the function though we will do so.
     extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.provided_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, sourceOfIonizationData=ReferenceDataToExtendBy.sourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataToExtendBy.relativeIonizationEfficiencies, moleculeIonizationType=ReferenceDataToExtendBy.moleculeIonizationType)
     addedReferenceSlice = ReferenceDataToExtendBy #the addition has finished.
+    extendedReferenceData.exportIonizationInfo()
     return extendedReferenceData, addedReferenceSlice
     
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
