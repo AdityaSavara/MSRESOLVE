@@ -1410,18 +1410,8 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     ReferenceData.ExportCollector('StandardizeReferencePattern')
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None):
-            ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
-            #now populate the non-mass fragment parts by dividing.
-            #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
-            a_array = ReferenceData.relative_standard_uncertainties[:,1:]
-            b_array = ReferenceData.standardized_reference_patterns[:,1:] 
-            print("line 1422",a_array)
-            print("line 1423",b_array)
-            
-            ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
-            ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-    
-    
+            ReferenceData.update_relative_standard_uncertainties()
+
     #TODO: Fix the logic here. Currently, this TuningCorrector gets skipped if a GaxMixture is being used.
     #Most likely, either this call should be moved out or that call should be moved in.
     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) == 0:
@@ -1534,21 +1524,10 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[0].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[0].absolute_standard_uncertainties[:,1:] = 100*ReferenceDataList[0].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
                     #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
-        #The below process **normally** happened later, but because of TuningCorrectorGasMixture, this was needed earlier so has been copied earlier. It should not cause any harm.        
+        #The below process **normally** happened later, but because of TuningCorrectorGasMixture, this was needed earlier so has been copied to occur earlier also. It should not cause any harm.        
         if G.calculateUncertaintiesInConcentrations == True: 
             if type(G.referenceFileUncertainties) != type(None):
-                ReferenceDataList[0].relative_standard_uncertainties = ReferenceDataList[0].absolute_standard_uncertainties*1.0 #First make the array.
-                #now populate the non-mass fragment parts by dividing.
-                #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
-                a_array = ReferenceDataList[0].relative_standard_uncertainties[:,1:]
-                b_array = ReferenceDataList[0].standardized_reference_patterns[:,1:] 
-                print("line 1422",a_array)
-                print("line 1423",b_array)
-                
-                ReferenceDataList[0].relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
-                ReferenceDataList[0].ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-
-
+                ReferenceDataList[0].update_relative_standard_uncertainties()
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNamesList
@@ -1592,6 +1571,10 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[i].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[i].absolute_standard_uncertainties[:,1:] = ReferenceDataList[i].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
                     #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
+        #The below process **normally** happened later, but because of TuningCorrectorGasMixture, this was needed earlier so has been copied to occur earlier also. It should not cause any harm.        
+        if G.calculateUncertaintiesInConcentrations == True: 
+            if type(G.referenceFileUncertainties) != type(None):
+                ReferenceDataList[i].update_relative_standard_uncertainties()
     return ReferenceDataList
 
 '''
