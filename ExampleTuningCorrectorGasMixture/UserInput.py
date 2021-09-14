@@ -154,7 +154,7 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 #TODO Reference Correction Coefficients feature should be upgraded to enable separate coefficients for each molecule to allow mixing and matching of reference patterns
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
-UserChoices['measuredReferenceYorN']['on'] ='yes'
+UserChoices['measuredReferenceYorN']['on'] ='no'
 UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =['LiteratureReference.csv','xyyy'] #This is the pattern that will be changed. Typically this is NIST patterns.
 UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =['ExtractedReferencePattern.csv','xyyy'] #This is what the pattern will look more like after everything is done. Typically, this is a measured pattern.
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =['ethane', 'ethene', 'ethyne']  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
@@ -183,7 +183,7 @@ UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] =
 #//Reference Mass Fragmentation Threshold//
 UserChoices['minimalReferenceValue'] = {} #initialize the minimalReferenceValue container
 # if you want to exclude tiny fragmentation peaks
-UserChoices['minimalReferenceValue']['on'] = 'no'
+UserChoices['minimalReferenceValue']['on'] = 'yes'
 UserChoices['minimalReferenceValue']['referenceValueThreshold'] = [2.0]
 UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds'] = [6.0]
 
@@ -245,7 +245,7 @@ UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerBaseNumberOfGridIntervals']
 #//Data Analysis Methods
 UserChoices['dataAnalysisMethods'] = {} #initialize the dataAnalysisMethods container
 #Below the path for the analysis of the data; sls or inverse
-UserChoices['dataAnalysisMethods']['answer'] = 'inverse'	#'inverse' or 'sls'; sls is suggested
+UserChoices['dataAnalysisMethods']['answer'] = 'sls'	#'inverse' or 'sls'; sls is suggested
 UserChoices['dataAnalysisMethods']['uniqueOrCommon'] = 'unique'	#'unique' or 'common'; unique is suggested when uncertainties will be used.
 UserChoices['dataAnalysisMethods']['slsWeighting'] = [1,0,0,0] #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
 UserChoices['dataAnalysisMethods']['slsFinish'] = 'inverse'	#'brute' or 'inverse'; inverse is currently suggested if using the uncertainties feature.

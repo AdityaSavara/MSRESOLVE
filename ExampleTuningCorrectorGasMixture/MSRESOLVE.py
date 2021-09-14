@@ -5474,10 +5474,11 @@ def main():
     print("line 5442", ReferenceDataList[0].relativeIonizationEfficiencies)
     #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
-    if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
-        ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
-        print("line 5445", ReferenceDataList[0].molecules)
-        print("line 5445", ReferenceDataList[0].relativeIonizationEfficiencies)
+    if G.UserChoices['measuredReferenceYorN']['on'] == 'yes':
+        if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
+            ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
+            print("line 5445", ReferenceDataList[0].molecules)
+            print("line 5445", ReferenceDataList[0].relativeIonizationEfficiencies)
         
     prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
     
