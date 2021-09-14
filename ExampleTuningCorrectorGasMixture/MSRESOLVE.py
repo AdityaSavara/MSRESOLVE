@@ -545,6 +545,41 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         #First read in the existing tuning patterns.
         #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
         ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
+
+        #Copying what is in GenerateReferenceDataList and ReferenceInputPreProcessing, we need to add the following block of code in if we want to allow uncertainties.   
+        if G.calculateUncertaintiesInConcentrations == True:
+            if type(G.referenceFileUncertainties) != type(None):
+                if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
+                    #TODO: Low priority. The below results in "nan" values. It could be better to change it to make zeros using a numpy "where" statement.
+                    G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Maks sure we have a float.
+                    #Get what we need.
+                    provided_reference_patterns = ReferenceDataExistingTuning.provided_reference_patterns
+                    provided_reference_patterns_without_masses = ReferenceDataExistingTuning.provided_reference_patterns[:,1:] #[:,0] is mass fragments, so we slice to remove those. 
+                    #Make our variables ready.
+                    absolute_standard_uncertainties = provided_reference_patterns*1.0 #First we make a copy.
+                    absolute_standard_uncertainties_without_masses = (provided_reference_patterns_without_masses/provided_reference_patterns_without_masses)*G.referenceFileUncertainties #We do the division to get an array of ones. Then we multiply to get an array of the same size.
+                    #now we populate our copy's non-mass area.
+                    absolute_standard_uncertainties[:,1:] = absolute_standard_uncertainties_without_masses                                        
+                    ReferenceDataExistingTuning.absolute_standard_uncertainties = absolute_standard_uncertainties
+                    #We can't convert to relative uncertainties yet because the file may not be standardized yet.
+                if type(G.referenceFileUncertainties) == type('string'):
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(G.referenceFileExistingTuning[0][:-4]+"_absolute_uncertainties.csv",G.referenceFileExistingTuning[1])
+                    ReferenceDataExistingTuning.absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
+                    maximum_absolute_intensities = numpy.amax(ReferenceDataExistingTuning.provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
+                    ReferenceDataExistingTuning.absolute_standard_uncertainties[:,1:] = 100*ReferenceDataExistingTuning.absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
+        if G.calculateUncertaintiesInConcentrations == True: 
+            if type(G.referenceFileUncertainties) != type(None):
+                ReferenceDataExistingTuning.relative_standard_uncertainties = ReferenceDataExistingTuning.absolute_standard_uncertainties*1.0 #First make the array.
+                #now populate the non-mass fragment parts by dividing.
+                #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
+                a_array = ReferenceDataExistingTuning.relative_standard_uncertainties[:,1:]
+                b_array = ReferenceDataExistingTuning.standardized_reference_patterns[:,1:] 
+                ReferenceDataExistingTuning.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+                ReferenceDataExistingTuning.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+                print("line 579 !!!!!!!!")#ReferenceDataExistingTuning.relative_standard_uncertainties)
+
+        
+        
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
         #Currently, in a "regular" MSRESOLVE run, the calculation of the correction values normally occurs inside  the ReferenceInputPreProcessing. That is a problem because 
         #the funciton ReferenceInputPreProcessing applies a tuning correction. So we need to get the CorrectionValues directly.
@@ -603,11 +638,51 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns=StandardizeReferencePattern(TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns,len(TuningCorrectorGasMixtureCorrectedReferenceDataObject.molecules))
         TuningCorrectorGasMixtureCorrectedReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureCorrectedReferenceData.csv")
 
+        #Copying what is in GenerateReferenceDataList and ReferenceInputPreProcessing, we need to add the following block of code in if we want to allow uncertainties.   
+        if G.calculateUncertaintiesInConcentrations == True:
+            if type(G.referenceFileUncertainties) != type(None):
+                if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
+                    #TODO: Low priority. The below results in "nan" values. It could be better to change it to make zeros using a numpy "where" statement.
+                    G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Maks sure we have a float.
+                    #Get what we need.
+                    provided_reference_patterns = TuningCorrectorGasMixtureCorrectedReferenceDataObject.provided_reference_patterns
+                    provided_reference_patterns_without_masses = TuningCorrectorGasMixtureCorrectedReferenceDataObject.provided_reference_patterns[:,1:] #[:,0] is mass fragments, so we slice to remove those. 
+                    #Make our variables ready.
+                    absolute_standard_uncertainties = provided_reference_patterns*1.0 #First we make a copy.
+                    absolute_standard_uncertainties_without_masses = (provided_reference_patterns_without_masses/provided_reference_patterns_without_masses)*G.referenceFileUncertainties #We do the division to get an array of ones. Then we multiply to get an array of the same size.
+                    #now we populate our copy's non-mass area.
+                    absolute_standard_uncertainties[:,1:] = absolute_standard_uncertainties_without_masses                                        
+                    TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties = absolute_standard_uncertainties
+                    #We can't convert to relative uncertainties yet because the file may not be standardized yet.
+                if type(G.referenceFileUncertainties) == type('string'):
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile("TuningCorrectorGasMixtureCorrectedReferenceData.csv"[:-4]+"_absolute_uncertainties.csv","xyyy")
+                    TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
+                    maximum_absolute_intensities = numpy.amax(TuningCorrectorGasMixtureCorrectedReferenceDataObject.provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
+                    TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties[:,1:] = 100*TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
+        if G.calculateUncertaintiesInConcentrations == True: 
+            if type(G.referenceFileUncertainties) != type(None):
+                TuningCorrectorGasMixtureCorrectedReferenceDataObject.relative_standard_uncertainties = TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties*1.0 #First make the array.
+                #now populate the non-mass fragment parts by dividing.
+                #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
+                a_array = TuningCorrectorGasMixtureCorrectedReferenceDataObject.relative_standard_uncertainties[:,1:]
+                b_array = TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns[:,1:] 
+                TuningCorrectorGasMixtureCorrectedReferenceDataObject.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+                TuningCorrectorGasMixtureCorrectedReferenceDataObject.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+
+
+
         #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
         #In this loop the extension occurs for each item in ReferenceDataList.
         #The extendReferencePattern function uses existing add molecule and remove molecules functions.
         for ReferenceDataIndex in range(len(ReferenceDataList)):
-            ReferenceDataList[ReferenceDataIndex] = extendReferencePattern(ReferenceDataList[ReferenceDataIndex],TuningCorrectorGasMixtureCorrectedReferenceDataObject)
+            ReferenceDataList[ReferenceDataIndex], addedReferenceSlice = extendReferencePattern(ReferenceDataList[ReferenceDataIndex],TuningCorrectorGasMixtureCorrectedReferenceDataObject)
+            #extendReferencePattern can't currently add the uncertainties sub-objects, so we do that in the lines below.
+            if G.calculateUncertaintiesInConcentrations == True: 
+                if type(G.referenceFileUncertainties) != type(None):
+                    #We need to add uncertainties for *only* the molecules which were extended by.                        
+                    ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties,addedReferenceSlice.relative_standard_uncertainties)
+                    ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties,addedReferenceSlice.absolute_standard_uncertainties)
+        
             if len(ReferenceDataList) == 1:
                 print("line 609", ReferenceDataList[ReferenceDataIndex].relativeIonizationEfficiencies)
                 print("line 610", ReferenceDataList[ReferenceDataIndex].sourceOfIonizationData)
@@ -836,7 +911,8 @@ def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
     extendedReferenceData = copy.deepcopy(OriginalReferenceData)  #We need to make a copy so we don't change anything in the original reference data object, since that may not be desired.
     #The below command will modify the  extendedReferenceData, so we don't need to return anything from the function though we will do so.
     extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.provided_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, sourceOfIonizationData=ReferenceDataToExtendBy.sourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataToExtendBy.relativeIonizationEfficiencies, moleculeIonizationType=ReferenceDataToExtendBy.moleculeIonizationType)
-    return extendedReferenceData
+    addedReferenceSlice = ReferenceDataToExtendBy #the addition has finished.
+    return extendedReferenceData, addedReferenceSlice
     
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
@@ -1352,6 +1428,9 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
             #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
             a_array = ReferenceData.relative_standard_uncertainties[:,1:]
             b_array = ReferenceData.standardized_reference_patterns[:,1:] 
+            print("line 1422",a_array)
+            print("line 1423",b_array)
+            
             ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
             ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
     
@@ -1468,6 +1547,21 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[0].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[0].absolute_standard_uncertainties[:,1:] = 100*ReferenceDataList[0].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
                     #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
+        #The below process **normally** happened later, but because of TuningCorrectorGasMixture, this was needed earlier so has been copied earlier. It should not cause any harm.        
+        if G.calculateUncertaintiesInConcentrations == True: 
+            if type(G.referenceFileUncertainties) != type(None):
+                ReferenceDataList[0].relative_standard_uncertainties = ReferenceDataList[0].absolute_standard_uncertainties*1.0 #First make the array.
+                #now populate the non-mass fragment parts by dividing.
+                #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
+                a_array = ReferenceDataList[0].relative_standard_uncertainties[:,1:]
+                b_array = ReferenceDataList[0].standardized_reference_patterns[:,1:] 
+                print("line 1422",a_array)
+                print("line 1423",b_array)
+                
+                ReferenceDataList[0].relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+                ReferenceDataList[0].ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+
+
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNamesList
@@ -5480,7 +5574,7 @@ def main():
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
-
+    print("line 5560", ReferenceDataList[0].relative_standard_uncertainties)
     print("line 5441", ReferenceDataList[0].molecules)
     print("line 5442", ReferenceDataList[0].relativeIonizationEfficiencies)
     #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
