@@ -932,11 +932,12 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
                                                                                                         trimmedExperimentData.mass_fragment_numbers,
                                                                                                         ReferenceData.provided_mass_fragments, header_dtype_casting=float)
     if G.calculateUncertaintiesInConcentrations:
-        if type(G.collectedFileUncertainties) != type(None): #Note: As of Feb 5th 2020, this code has been added and tested.
-            (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
-                                                                                                                trimmedExperimentData2.mass_fragment_numbers,
-                                                                                                                ReferenceData.provided_mass_fragments, header_dtype_casting=float)
-            trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
+        if (type(G.collectedFileUncertainties) != type(None)) and (str(G.collectedFileUncertainties).lower() != str('None').lower()): #Note: As of Feb 5th 2020, this code has been added and tested.
+            if hasattr(trimmedExperimentData2, 'rawsignals_absolute_uncertainties'):
+                (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
+                                                                                                                    trimmedExperimentData2.mass_fragment_numbers,
+                                                                                                                    ReferenceData.provided_mass_fragments, header_dtype_casting=float)
+                trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
                                                                                                             
     return trimmedExperimentData
 
@@ -3620,7 +3621,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     
     if len(uncertainties_dict) > 0: #This means that the uncertainties_dict argument has been passed in with values to use.
         uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['matching_correction_values_relative_uncertainties_one_time'])
-        if type(uncertainties_dict['rawsignals_absolute_uncertainties']) != type(None):
+        if (type(uncertainties_dict['rawsignals_absolute_uncertainties']) != type(None)) and (str(uncertainties_dict['rawsignals_absolute_uncertainties']).lower() != 'none'):
             uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['rawsignals_absolute_uncertainties_one_time'])
             #need to also make it 2D and then transpose.
             uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = numpy.atleast_2d(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']).transpose()
@@ -3783,7 +3784,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                     correctionFactorsUncertaintiesAtThatMassFragment = uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'][massFragmentIndex_i]
             signalsAtThatMassFragment = remaining_rawsignals_SLS[massFragmentIndex_i]
             if len(uncertainties_dict) > 0: #Just mimicing the above line to pass on the uncertainties.
-                if type(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) != type(None):
+                if (type(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) != type(None)) and (str(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']).lower() != 'none'):
                     signalsAtThatMassFragmentForThisSLS_absolute_uncertainty = uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'][massFragmentIndex_i]
                 else:
                     signalsAtThatMassFragmentForThisSLS_absolute_uncertainty = 0 #We will set it to zero here if there is no uncertainty provided.
@@ -4011,9 +4012,9 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 remaining_rawsignals_SLS = numpy.delete(remaining_rawsignals_SLS,correctionIndex-place_holder,axis = 0)
                 remaining_reference_intensities_SLS = numpy.delete(remaining_reference_intensities_SLS,correctionIndex-place_holder,axis = 0)
                 if len(uncertainties_dict) > 0: #Will just mimic the deletions done for the above lines in the uncertainties.
-                    if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
+                    if (type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None)) and (str(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'].lower() != 'none')):
                         uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],correctionIndex-place_holder,axis = 0)
-                    if type(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) != type(None):
+                    if (type(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS']) != type(None)) and (str(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'].lower() != 'none')):
                         uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'],correctionIndex-place_holder,axis = 0)
                 place_holder = place_holder + 1#since the arrays are being deleted, this keeps the indexing correct
     if sum(solvedmolecules) == 0:#if none of the solutions have been found
@@ -5710,9 +5711,10 @@ def main():
                 elif type(G.referenceFileUncertainties) == type(None):
                     uncertainties_dict['correction_values_relative_uncertainties'] = None
                 #G.collectedFileUncertainties = None
-                if type(G.collectedFileUncertainties) != type(None):
-                    uncertainties_dict['rawsignals_absolute_uncertainties'] = ExperimentData.rawsignals_absolute_uncertainties #This is for *all* times.
-                    uncertainties_dict['rawsignals_absolute_uncertainties_one_time']=uncertainties_dict['rawsignals_absolute_uncertainties'][timeIndex] #This is for one time.                                                                                                                                         
+                if (type(G.collectedFileUncertainties) != type(None)) and (str(G.collectedFileUncertainties).lower() != "none"):
+                        print("line 5715", G.collectedFileUncertainties)
+                        uncertainties_dict['rawsignals_absolute_uncertainties'] = ExperimentData.rawsignals_absolute_uncertainties #This is for *all* times.
+                        uncertainties_dict['rawsignals_absolute_uncertainties_one_time']=uncertainties_dict['rawsignals_absolute_uncertainties'][timeIndex] #This is for one time.                                                                                                                                         
                 elif type(G.collectedFileUncertainties) == type(None):
                     uncertainties_dict['rawsignals_absolute_uncertainties'] = None
                     uncertainties_dict['rawsignals_absolute_uncertainties_one_time']= ExperimentData.workingData[timeIndex]*0.0                                                                                                             

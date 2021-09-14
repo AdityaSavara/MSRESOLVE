@@ -2,3 +2,8 @@
 ScaledConcentrations_Means,nan,nan,nan
 ScaledConcentrations_StdDevs,nan,nan,nan
 ScaledConcentrations_StdErrs,nan,nan,nan
+ScaledConcentrations_absolute_uncertainties_Means,nan,nan,nan
+ScaledConcentrations_absolute_uncertainties_StdDevs,nan,nan,nan
+ScaledConcentrations_relative_uncertainties_Means,nan,nan,nan
+ScaledConcentrations_relative_uncertainties_StdDevs,nan,nan,nan
+ScaledConcentrations_absolute_uncertainties_Total,nan,nan,nan
