@@ -1,7 +1,7 @@
 There is a file called "ExtractedReferencePattern.csv" which came from actual calibration measurements on a mass spectrometer.
 There is a file called "LiteratureReference.csv" which came from downloading the JDXConverter and NIST spectra for JDX.
 
-For this example, we have created a fictional case of a gas mixture with concentrations in the ratio of ethane:ethene:ethyne of 10:3:1.
+For this example, we have created a fictional case of a gas mixture by multiplying the patterns in the ratio of ethane:ethene:ethyne of 10:3:1.
 This is in the file TuningCorrectorGasMixtureHypotheticalReferenceMeasuredSignals.csv
 
 

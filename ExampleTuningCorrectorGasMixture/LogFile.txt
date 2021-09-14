@@ -1,24 +1,22 @@
-Thu May 21 16:26:45 2020
+Tue Sep 14 01:26:50 2021
 
 referenceFileName = ['ExtractedReferencePattern.csv'] 
 form  = ['xyyy'] 
-collectedFileName = Collected_Reference.csv 
-linearBaselineCorrectionSemiAutomatic = yes 
-selection = ['linear'] 
-massesToBackgroundCorrect = [12.0 13.0 14.0 15.0 16.0 17.0 21.0 22.0 24.0 25.0 26.0 27.0 28.0 29.0
- 30.0] 
-earlyBaselineTimes = [[850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870]] 
-lateBaselineTimes = [[1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070]] 
-minimalReferenceValue = yes 
-referenceValueThreshold = [1.01, 1.01, 1.01] 
-referenceSignificantFragmentThresholds = [20.0, 20.0, 20.0] 
-answer = sls 
-uniqueOrCommon = unique 
-slsFinish = brute 
-bruteOption = ssr 
+collectedFileName = Collected_Data.csv 
+timeRangeLimit = yes 
+timeRangeStart = 176.0 
+timeRangeFinish = 900.0 
+measuredReferenceYorN = yes 
+referenceCorrectionCoefficientA = -0.0020989151535147836 
+referenceCorrectionCoefficientB = 0.04157215585217539 
+referenceCorrectionCoefficientC = 1.4864561825544307 
+referenceCorrection_abcCoefficients = ['A', 'B', 'C', 0, 1, 2] 
+referenceCorrection_abcCoefficients_cov = [[1.2492624590610567e-05, -0.0005194880772509613, 0.004840004740739307], [-0.0005194880772509612, 0.02175161242655096, -0.2044900914686305], [0.004840004740739303, -0.2044900914686304, 1.9513836251337222]] 
+answer = inverse 
+distinguished = yes 
 scaleRawDataFactor  = 1.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 5.35075 seconds 
+Run Time 3.75465 seconds 
 ###################################################################### 

@@ -611,7 +611,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
                 ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern.csv")
             else:
                 ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern" + str(ReferenceDataIndex) + ".csv")
-        print("line 5428!!!"); sys.exit()
+        print("line 5428!!!")
         return ReferenceDataList
 
 
