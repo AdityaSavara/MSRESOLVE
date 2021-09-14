@@ -569,16 +569,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
                     ReferenceDataExistingTuning.absolute_standard_uncertainties[:,1:] = 100*ReferenceDataExistingTuning.absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
         if G.calculateUncertaintiesInConcentrations == True: 
             if type(G.referenceFileUncertainties) != type(None):
-                def update_relative_standard_uncertainties(ReferenceData):
-                    ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
-                    #now populate the non-mass fragment parts by dividing.
-                    #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
-                    a_array = ReferenceData.relative_standard_uncertainties[:,1:]
-                    b_array = ReferenceData.standardized_reference_patterns[:,1:] 
-                    ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
-                    ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
-                    print("line 579 !!!!!!!!")#ReferenceDataExistingTuning.relative_standard_uncertainties)
-                update_relative_standard_uncertainties(ReferenceDataExistingTuning)
+                ReferenceDataExistingTuning.update_relative_standard_uncertainties()
         
         
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
@@ -2988,6 +2979,16 @@ class MSReference (object):
                                              ['Method to Obtain Ionization Efficiency']]) #create the abscissa headers for the csv file
         ionizationDataToExport = numpy.hstack((ionizationDataAbsicca,ionizationData)) #use hstack to obtain a 2d array with the first column being the abscissa headers
         numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file
+    
+    def update_relative_standard_uncertainties(self):
+        self.relative_standard_uncertainties = self.absolute_standard_uncertainties*1.0 #First make the array.
+        #now populate the non-mass fragment parts by dividing.
+        #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
+        a_array = self.relative_standard_uncertainties[:,1:]
+        b_array = self.standardized_reference_patterns[:,1:] 
+        self.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+        self.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
+
     
     #This makes a full Reference data file, not just a pattern.
     def exportReferencePattern(self, referenceFileName):
