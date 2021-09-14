@@ -545,7 +545,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         #First read in the existing tuning patterns.
         #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
         ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
-
+        ReferenceDataExistingTuning.ExportAtEachStep = G.ExportAtEachStep
         #Copying what is in GenerateReferenceDataList and ReferenceInputPreProcessing, we need to add the following block of code in if we want to allow uncertainties.   
         if G.calculateUncertaintiesInConcentrations == True:
             if type(G.referenceFileUncertainties) != type(None):
@@ -583,6 +583,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
             
         #We don't need a desired tuning data object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
         ReferenceDataDesiredTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
+        ReferenceDataExistingTuning.ExportAtEachStep = G.ExportAtEachStep
 
         #We need to make prepare an appropriately made list for the concentrations to use in simulating data using the ExistingTuningReferencePattern 
         #The concentrations must match the molecular order of the literature file.
@@ -654,15 +655,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
                     TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties[:,1:] = 100*TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
         if G.calculateUncertaintiesInConcentrations == True: 
             if type(G.referenceFileUncertainties) != type(None):
-                TuningCorrectorGasMixtureCorrectedReferenceDataObject.relative_standard_uncertainties = TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties*1.0 #First make the array.
-                #now populate the non-mass fragment parts by dividing.
-                #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
-                a_array = TuningCorrectorGasMixtureCorrectedReferenceDataObject.relative_standard_uncertainties[:,1:]
-                b_array = TuningCorrectorGasMixtureCorrectedReferenceDataObject.standardized_reference_patterns[:,1:] 
-                TuningCorrectorGasMixtureCorrectedReferenceDataObject.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
-                TuningCorrectorGasMixtureCorrectedReferenceDataObject.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-
-
+                TuningCorrectorGasMixtureCorrectedReferenceDataObject.update_relative_standard_uncertainties()
 
         #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
         #In this loop the extension occurs for each item in ReferenceDataList.
@@ -670,6 +663,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         for ReferenceDataIndex in range(len(ReferenceDataList)):
             ReferenceDataList[ReferenceDataIndex], addedReferenceSlice = extendReferencePattern(ReferenceDataList[ReferenceDataIndex],TuningCorrectorGasMixtureCorrectedReferenceDataObject)
             #extendReferencePattern can't currently add the uncertainties sub-objects, so we do that in the lines below.
+            ReferenceDataList[ReferenceDataIndex].ExportAtEachStep = G.ExportAtEachStep
             if G.calculateUncertaintiesInConcentrations == True: 
                 if type(G.referenceFileUncertainties) != type(None):
                     #We need to add uncertainties for *only* the molecules which were extended by.                        
@@ -2790,8 +2784,9 @@ class MSReference (object):
         self.previousTime = currentTime
         #add the name of the calling function to mark its use
         self.labelToExport.append(callingFunction) 
-        
+        print("line 2793")
         if self.ExportAtEachStep == 'yes':
+            print("line 2795")
             ##record molecules of experiment
             self.moleculesToExport.append(self.molecules.copy())
             #record data 
