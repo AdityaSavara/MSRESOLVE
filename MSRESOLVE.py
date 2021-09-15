@@ -2605,7 +2605,7 @@ class MSReference (object):
                     self.ionizationEfficienciesList[moleculeIndex] = MatchingMID_RS_Values[0]
                     self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownIonizationFactorFromProvidedCSV' #A molecule in the reference data is also in the ionization data
                 elif matchingMolecule == False: #Otherwise matchingMolecule is False which means its not in the data from literature.  So we will approximate the ionization factor based on a linear fit of the data from literature that share the molecule's type or use the Madix and Ko equation
-                    if type(self.knownMoleculesIonizationTypes[moleculeIndex]) != type(None) and self.knownMoleculesIonizationTypes[moleculeIndex] != 'unknown': #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
+                    if (type(self.knownMoleculesIonizationTypes[moleculeIndex]) != type(None)) and (self.knownMoleculesIonizationTypes[moleculeIndex] != 'unknown'): #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
                         #Then get an estimate by performing a linear fit on the data in the MID Dictionary
 			#TODO:The program currently only takes in one type but it is a desired feature to allow users to put in multiple types such as type1+type2 which would make a linear fit of the combined data between the two types
 			#TODO continued:The user should also be able to put in type1;type2 and the program would find the ionization factor using a linear fit of data from type1 and using a linear fit of data from type2.  The largest of the two ionization factors would be used.
