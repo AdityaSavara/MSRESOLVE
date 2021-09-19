@@ -1529,14 +1529,6 @@ def DataInputPreProcessing(ExperimentData):
 PrepareReferenceOjbectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
 '''
 def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
-    # Reference Pattern Changer
-    if extractReferencePatternFromDataOption == 'yes':
-        ReferenceData.provided_reference_patterns, ReferenceData.provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
-        ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
-        ReferenceData.ExportCollector('ExtractReferencePatternFromData_absolute_uncertainties', export_uncertainties= True)
-        #Only print if not called from interpolating reference objects
-        if verbose:
-            print('ReferencePatternChanger complete')
     # Some initial preprocessing on the reference data
     ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose) #Note: if implicitSLScorrection is being used, G.currentReferenceDataUnfiltered gets created inside ReferenceInputPreProcessing
     # Set the ReferenceData.monitored_reference_intensities and
@@ -5289,6 +5281,15 @@ def main():
         # if we are here then 'G.preProcessing' != ('yes' or 'skip' or 'load')
         raise ValueError("The value of preProcessing is not set appropriately, it should be 'yes', 'skip' or 'load'." +
                          "Or you are attempting to load pre-processed data without running data analysis")
+
+    # Reference Pattern Changer
+    if extractReferencePatternFromDataOption == 'yes':
+        ReferenceData.provided_reference_patterns, ReferenceData.provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, ReferenceData, rpcMoleculesToChange, rpcMoleculesToChangeMF, rpcTimeRanges)
+        ReferenceData.ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
+        ReferenceData.ExportCollector('ExtractReferencePatternFromData_absolute_uncertainties', export_uncertainties= True)
+        #Only print if not called from interpolating reference objects
+        if verbose:
+            print('ReferencePatternChanger complete')
 
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     #Steps required if preprocessing has also been run
