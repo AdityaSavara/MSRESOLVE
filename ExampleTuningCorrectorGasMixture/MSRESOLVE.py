@@ -1679,7 +1679,8 @@ def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRan
             #Reads in current reference pattern, next reference pattern, current time, gap start time, and gap end time
             currentReferenceData = InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
             #Prepare the current reference data
-            currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData.mass_fragment_numbers, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
+            extractReferencePatternFromDataOptionHere = "no" #should be extracted already.
+            currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData, extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
             if G.iterativeAnalysis: #If using iterative analysis, interpolate the subtracted signals' matching correction factors between the two reference objects
                 currentReferenceData.SSmatching_correction_values = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.SSmatching_correction_values,secondReferenceObject.SSmatching_correction_values,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
         #If we are out of the first time range, not in a gap, and not in the last time range, then we are in the next time range
@@ -5748,6 +5749,15 @@ def main():
         raise ValueError("The value of preProcessing is not set appropriately, it should be 'yes', 'skip' or 'load'." +
                          "Or you are attempting to load pre-processed data without running data analysis")
 
+    # Reference Pattern Changer
+    if G.extractReferencePatternFromDataOption == 'yes':
+        for i in range(len(ReferenceDataList)):#perform for each reference pattenr.
+            ReferenceDataList[i].provided_reference_patterns, ReferenceDataList[i].provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, ReferenceDataList[i], G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+            ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
+            ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData_absolute_uncertainties', export_uncertainties= True)
+        prototypicalReferenceData.provided_reference_patterns, prototypicalReferenceData.provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, prototypicalReferenceData, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+        print('ReferencePatternChanger complete')
+
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     #Steps required if preprocessing has also been run
     if (G.dataAnalysis == 'yes' and G.preProcessing == 'yes'):
@@ -5802,14 +5812,16 @@ def main():
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
         #Prepare prototypicalReferenceData which is currently the first reference object in the list
         print("line 5778", prototypicalReferenceData.standardized_reference_patterns)
-        prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData, ExperimentData.mass_fragment_numbers, ExperimentData,G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+        extractReferencePatternFromDataOptionHere = 'no' #should be extracted already
+        prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData, ExperimentData.mass_fragment_numbers, ExperimentData,extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         #for loop to preprocess the remaining MSReference objects and match correction values
         for i in range(len(ReferenceDataList)):
             try:
                 ReferenceDataList[i].populateIonizationEfficiencies(G.AllMID_ObjectsDict)
             except:
                 ReferenceDataList[i].populateIonizationEfficiencies()
-            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData.mass_fragment_numbers, ExperimentData, G.extractReferencePatternFromDataOption, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+            extractReferencePatternFromDataOptionHere = 'no' #should be extracted already
+            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData.mass_fragment_numbers, ExperimentData, extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         
     if (G.dataAnalysis == 'yes'):
         print("Entering Data Analysis")
