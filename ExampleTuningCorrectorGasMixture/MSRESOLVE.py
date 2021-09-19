@@ -1,3 +1,4 @@
+
 import bisect
 import copy 
 import ParsingFunctions as parse
@@ -386,7 +387,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         print("Warning: The ABCDetermination will occur without threshold filtering, since that setting is off.")
         
     if G.extractReferencePatternFromDataOption == 'yes':
-        print("Warning: MSRESOLVE is set to do a tuning correction and is also set to extract the reference pattern from the data.  The tuning correction will be applied to the extracted pattern.  This is not a typical procedure. Typically, the extract pattern from dat feature is off when the tuning corrector is on.")
+        print("Warning: MSRESOLVE is set to do a tuning correction and is also set to extract the reference pattern from the data.  The tuning correction will be applied to the extracted pattern.  This is not a typical procedure. Typically, the extract pattern from data feature is off when the tuning corrector is on.")
        
     #For simplicity, we will put the items into temporary items, then into dictionaries that we can then access.
     ReferencePatternExistingTuningDict = {}
@@ -1804,7 +1805,7 @@ def DataInputPreProcessing(ExperimentData):
     return ExperimentData
 
 '''
-PrepareReferenceOjbectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
+PrepareReferenceObjectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
 '''
 def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[], ExperimentData=None, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
     # Reference Pattern Changer
@@ -5828,7 +5829,7 @@ def main():
         # while subsequent opens to this file will append
         if G.SLSUniqueExport == 'yes':
             createSLSUniqueExportFiles(ExperimentData.abscissaHeader,
-                                     prototypicalReferenceData.molecules)
+                                     prototypicalReferenceData.molecules) #TODO: Ensure this is okay since UnnecessaryMoleculesDeleter occurs inside PrepareReferenceObjectAndCorrectionValues  (specifically in ReferenceInputPreProcessing), which seems to mean that the prototypicalReferenceData may not match for cases where some molecules are removed at that step.
             
         #this numpy.zeros line is going to be the array that holds all of the answers before they are printed out, which
         #is done in order to save time and decrease expense
