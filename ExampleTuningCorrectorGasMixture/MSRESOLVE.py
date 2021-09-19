@@ -5635,7 +5635,6 @@ def main():
     G.beforeParsedGDict = beforeParsedGDict # now we save it into the globals module for using later.
     from userInputValidityFunctions import parseUserInput
     parseUserInput(G) #This parses the variables in the user input file
-    
             
     #it is useful to trim whitespace from each chosenMolecules string. The same thing is done to the molecule names of each reference pattern when an MSReference object is created.
     for moleculeIndex, moleculeName in enumerate(G.chosenMoleculesNames):
@@ -5644,8 +5643,6 @@ def main():
     #Record the time
     G.start = timeit.default_timer()
     G.checkpoint = timeit.default_timer()
-    
-
 
     #initalize the data classes with the data from given Excel files
     #These are being made into globals primarily for unit testing and that functions are expected to receive the data as arguments rather than accessing them as globals
@@ -5669,16 +5666,11 @@ def main():
             print("line 5445", ReferenceDataList[0].molecules)
             print("line 5445", ReferenceDataList[0].relativeIonizationEfficiencies)
         
-    prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
-    
-    
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
     if type(G.collectedFileUncertainties) != type(None):
         if type(G.collectedFileUncertainties) != type("str") and type(G.collectedFileUncertainties) != type(['list']) : # if it's not a string or a list, then it's assumed to be an integer for which local region to use during/like datasmoother.
             G.collectedFileUncertainties = int(G.collectedFileUncertainties)
-
-
 
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referencePatternTimeRanges) > 0 and (len(G.referenceFileNamesList) > len(G.referencePatternTimeRanges)):
@@ -5755,8 +5747,10 @@ def main():
             ReferenceDataList[i].provided_reference_patterns, ReferenceDataList[i].provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, ReferenceDataList[i], G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
             ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
             ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData_absolute_uncertainties', export_uncertainties= True)
-        prototypicalReferenceData.provided_reference_patterns, prototypicalReferenceData.provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, prototypicalReferenceData, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         print('ReferencePatternChanger complete')
+
+    #Creating prototypicalReferenceData which will be interrogated later for which molecules and masses to expect in the ReferenceDataObjects.
+    prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
 
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     #Steps required if preprocessing has also been run
