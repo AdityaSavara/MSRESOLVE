@@ -5221,9 +5221,6 @@ def main():
         if type(G.collectedFileUncertainties) != type("str") and type(G.collectedFileUncertainties) != type(['list']) : # if it's not a string or a list, then it's assumed to be an integer for which local region to use during/like datasmoother.
             G.collectedFileUncertainties = int(G.collectedFileUncertainties)
 
-
-    prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
-
     #Prints a warning if the user has more reference files than specified time ranges
     if len(G.referencePatternTimeRanges) > 0 and (len(G.referenceFileNamesList) > len(G.referencePatternTimeRanges)):
         print("WARNING: There are more reference files given than time ranges")
@@ -5299,10 +5296,11 @@ def main():
             ReferenceDataList[i].provided_reference_patterns, ReferenceDataList[i].provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, ReferenceDataList[i], G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
             ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
             ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData_absolute_uncertainties', export_uncertainties= True)
-        prototypicalReferenceData.provided_reference_patterns, prototypicalReferenceData.provided_reference_patterns_absolute_uncertainties = ExtractReferencePatternFromData(ExperimentData, prototypicalReferenceData, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
-        #Only print if not called from interpolating reference objects
         print('ReferencePatternChanger complete')
-
+    
+    #Creating prototypicalReferenceData which will be interrogated later for which molecules and masses to expect in the ReferenceDataObjects.
+    prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
+    
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
     #Steps required if preprocessing has also been run
     if (G.dataAnalysis == 'yes' and G.preProcessing == 'yes'):
