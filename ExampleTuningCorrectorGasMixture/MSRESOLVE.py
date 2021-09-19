@@ -5658,13 +5658,6 @@ def main():
     print("line 5560", ReferenceDataList[0].relative_standard_uncertainties)
     print("line 5441", ReferenceDataList[0].molecules)
     print("line 5442", ReferenceDataList[0].relativeIonizationEfficiencies)
-    #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
-    #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
-    if G.UserChoices['measuredReferenceYorN']['on'] == 'yes':
-        if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
-            ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
-            print("line 5445", ReferenceDataList[0].molecules)
-            print("line 5445", ReferenceDataList[0].relativeIonizationEfficiencies)
         
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
@@ -5748,6 +5741,15 @@ def main():
             ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData',use_provided_reference_patterns = True)
             ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData_absolute_uncertainties', export_uncertainties= True)
         print('ReferencePatternChanger complete')
+
+    #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
+    #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
+    if G.UserChoices['measuredReferenceYorN']['on'] == 'yes':
+        if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
+            ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
+            print("line 5445", ReferenceDataList[0].molecules)
+            print("line 5445", ReferenceDataList[0].relativeIonizationEfficiencies)
+
 
     #Creating prototypicalReferenceData which will be interrogated later for which molecules and masses to expect in the ReferenceDataObjects.
     prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
