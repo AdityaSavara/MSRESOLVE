@@ -1187,12 +1187,8 @@ def ImportAnalyzedData(concentrationsOutputName):
     
     return analyzedData
 
-
-'''
-Performs some manipulations related to the reference pattern
-'''
-def ReferenceInputPreProcessing(ReferenceData, verbose=True):
-
+'''Makes a mixed reference pattern from two reference patterns, including tuning correction.'''
+def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
     # standardize the reference data columns such that the maximum value is 100 and everything else is
     # linearly scaled according that the maximum value scaling
     ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
@@ -1206,7 +1202,6 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
             b_array = ReferenceData.standardized_reference_patterns[:,1:] 
             ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
             ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-
     #Only print if not called from interpolating reference objects
     if verbose:
         print('beginning TuningCorrector')
@@ -1227,19 +1222,18 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
         ReferenceData.absolute_standard_uncertainties = (ReferenceData.absolute_standard_uncertainties**2 + ReferenceData.standardized_reference_patterns_tuning_uncertainties**2)**0.5
     except:
         ReferenceData.absolute_standard_uncertainties = ReferenceData.standardized_reference_patterns_tuning_uncertainties
-    
     ReferenceData.ExportCollector('TuningCorrector')
     ReferenceData.ExportCollector('TuningCorrector_absolute_standard_uncertainties', export_tuning_uncertainties= True) #These are not yet actually standardized. Happens below.
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None):                                                      
             pass #TODO: consider to propagate TuningCorrector uncertainties into the ReferenceData.relative_standard_uncertainties
-    
+
     #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
     ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.standardized_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizeReferencePattern')
     #Note: it is assumed that the relative_standard_uncertainties correspond to original reference, so before tuning corrector, thus we do not recalculate that factor.
     ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-    
+
     #Now need to update the relative uncertainties again. #TODO: This should become a function.
     ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
     #now populate the non-mass fragment parts by dividing.
@@ -1248,8 +1242,13 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     b_array = ReferenceData.standardized_reference_patterns[:,1:] 
     ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
     ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-    
-    
+    return ReferenceData
+
+'''
+Performs some manipulations related to the reference pattern
+'''
+def ReferenceInputPreProcessing(ReferenceData, verbose=True):
+    ReferenceData = createReferencePatternWithTuningCorrection(ReferenceData, verbose=verbose)
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
     #TODO: option 2: Or we can below assign to preprocessed_reference_pattern rather than standardized_reference_patterns and then use that in data analysis (Note that interpolate would continue to use standardized_reference_patterns as well as preprocess the output)
