@@ -2609,8 +2609,38 @@ class MSReference (object):
                 currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
             #whether we deleted rows or not, we increase the counter of the rows.
             currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
+
+    def ClearZeroRowsFromStandardizedReferenceIntensities(self):
+        #initial a counter for the row index, which will be updated during the loop
+        currentRowIndexAccountingForDeletions = 0
+        #standardized_reference_patterns_unedited is not used, but is made for future use (see below)
+        standardized_reference_patterns_unedited = self.standardized_reference_patterns[:,1:]
+        self.standardized_reference_patterns_mass_fragments = self.provided_reference_patterns[:,0]
+        for intensitiesOnlyInRow in standardized_reference_patterns_unedited:
+            #This line checks if there are any non-zeros in the row.
+            numberOfNonzeros = numpy.count_nonzero(intensitiesOnlyInRow)
+            if numberOfNonzeros == 0 :
+                #If there are only zeros. we delete a row and adjust the row index to account for that deletion.
+                self.standardized_reference_patterns = numpy.delete(self.standardized_reference_patterns, currentRowIndexAccountingForDeletions, axis=0 ) #axis = 0 specifies to delete rows (i.e. entire abscissa values at the integer of currentRowIndexAccountingForDeletions).
+                self.standardized_reference_patterns_mass_fragments = numpy.delete(self.standardized_reference_patterns_mass_fragments, currentRowIndexAccountingForDeletions, axis=0 )
+                try: #Under normal situations, this try is a bit like an implied if G.calculateuncertaintiesInConcentrations != None:
+                    self.absolute_standard_uncertainties = numpy.delete(self.absolute_standard_uncertainties, currentRowIndexAccountingForDeletions, axis=0 )
+                except:
+                    print("line 2892")
+                    pass                                                                                                                                     
+                currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
+            #whether we deleted rows or not, we increase the counter of the rows.
+            currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
+        print("line 2897", numpy.shape(self.standardized_reference_patterns), numpy.shape(self.absolute_standard_uncertainties))
+        try:
+            self.update_relative_standard_uncertainties()
+        except:
+            print("Warning: line 2897 was unable to update the relative uncertainties of a reference pattern.")
+        self.ExportCollector("ClearZeroRowsFromStandardizedReferenceIntensities", use_provided_reference_patterns=False)
+        self.ExportCollector("ClearZeroRowsFromAbsoluteStandardUncertainties", export_standard_uncertainties=True)
+        self.ExportCollector("ClearZeroRowsFromRelativeStandardUncertainties", export_relative_uncertainties=True)
             
-#This class function converts the XYXY data to an XYYY format
+    #This class function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(self):
         masslists = [] #future lists must be must empty here to append in the for loops
         relativeintensitieslists = [] #future list
@@ -2655,6 +2685,13 @@ class MSReference (object):
                     reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
         self.provided_reference_patterns = reference_holder
 
+    def addSuffixToSourceOfFragmentationPatterns(self, suffixString):
+        #this modifies the original object so that it is not necessary to return anything.
+        print("line 2674", suffixString)
+        self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns)
+        for moleculeIndex, sourceString in enumerate(self.SourceOfFragmentationPatterns):
+            self.SourceOfFragmentationPatterns[moleculeIndex] = sourceString + suffixString
+        print("line 2676", self.SourceOfFragmentationPatterns)
 #populateIonizationEfficiencies is an MSReference function that populates a variable, ionizationEfficienciesList, that contains the ionization factors used in CorrectionValuesObtain
 #If the ionization factor is known and in the reference data, then that value is used
 #If the ionization factor is unknown the the function will look in the MID Dictionary and check if the molecule exists in the ionization data.  If it does the the ionization average of the ionization factors for that particular molecule in the data is used
@@ -2722,6 +2759,31 @@ class MSReference (object):
         ionizationDataToExport = numpy.hstack((ionizationDataAbsicca,ionizationData)) #use hstack to obtain a 2d array with the first column being the abscissa headers
         numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file
                     
+    def update_relative_standard_uncertainties(self):
+        self.relative_standard_uncertainties = self.absolute_standard_uncertainties*1.0 #First make the array.
+        #now populate the non-mass fragment parts by dividing.
+        #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
+        a_array = self.relative_standard_uncertainties[:,1:]
+        b_array = self.standardized_reference_patterns[:,1:] 
+        self.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
+        #self.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
+
+    
+    #This makes a full Reference data file, not just a pattern.
+    def exportReferencePattern(self, referenceFileName):
+        with open(referenceFileName, 'w') as the_file:          
+            referenceFileHeader = ''
+            referenceFileHeader += "Source:,"  + DataFunctions.arrayLikeToCSVstring(self.SourceOfFragmentationPatterns) + "\n"
+            referenceFileHeader += "Molecules," + DataFunctions.arrayLikeToCSVstring(self.molecules) + "\n"
+            referenceFileHeader += "Electron Numbers," + DataFunctions.arrayLikeToCSVstring(self.electronnumbers) + "\n"
+            referenceFileHeader += "ionizationEfficiencies," + DataFunctions.arrayLikeToCSVstring(self.relativeIonizationEfficiencies) + "\n"
+            referenceFileHeader += "ionizationEfficienciesSources," + DataFunctions.arrayLikeToCSVstring(self.sourceOfIonizationData) + "\n"
+            referenceFileHeader += "Molecular Mass," + DataFunctions.arrayLikeToCSVstring(self.molecularWeights)# + "\n"
+            if hasattr(self ,"standardized_reference_patterns"):
+                pass
+            else:
+                self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
+            numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
 '''
 The MolecularIonizationData class is used to generate a molecule's ionization factor based on its ionization type
 '''        
@@ -4792,11 +4854,13 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
         formatedDataHeader = ['%s Concentration Relative to CO' % molecule for molecule in dataHeader]
     if dataType == 'concentration':
         label = 'Concentration(%s)' % units
-        formatedDataHeader = [molecule + label for molecule in dataHeader]
-    if dataType == 'percent_concentration':
+        formatedDataHeader = [molecule + ' ' + label for molecule in dataHeader]
+    if dataType == 'percent_concentration': #deprecated, used to be used for relative_uncertainty
         label = 'Percent' 
         formatedDataHeader = [molecule + label for molecule in dataHeader]
-
+    if dataType == 'relative_uncertainty':
+        label = 'relative uncertainty' 
+        formatedDataHeader = [molecule + ' ' + label for molecule in dataHeader]
     #extraLine is used to create CSV files that conform to MSRESOLVE's import requirements i.e. having a row for comments at the top
     extraLine = False
     if dataType == 'Experiment':
