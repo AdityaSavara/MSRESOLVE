@@ -2368,7 +2368,7 @@ def populateAllMID_ObjectsDict(ionizationDataFileName):
     try:
         AllMID_ObjectsDict = getIE_Data(ionizationDataFileName) #Read the ionization data and put the information into a dictionary
     except: #If the ionization file does not exist in the main directory, leave as an empty dictionary
-    print('Warning: ionizationDataFileName was not found. Simple heuristics will be used for ionization efficiencies.')
+        print('Warning: ionizationDataFileName was not found. Simple heuristics will be used for ionization efficiencies.')
         AllMID_ObjectsDict = {}
         
     return AllMID_ObjectsDict
