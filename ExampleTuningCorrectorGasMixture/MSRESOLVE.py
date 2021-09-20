@@ -517,8 +517,10 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
         referenceCorrectionCoefficients = [referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C']]
     
     if measuredReferenceYorN =='yes':
+        print("line 520!!!!!")
         if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
-            referenceFileDesiredTuningAndForm = [ G.referenceFileNamesList[0],G.referenceFormsList[0] ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.        
+            print("line 522!!!!!")
+            referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.        
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         print("line 519", abcCoefficients)
@@ -533,10 +535,8 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     referenceDataArray_tuning_uncertainties = referenceDataArray*0.0 #just initializing.
     if list(referenceCorrectionCoefficients) != [0,0,1]:                                                                                    
         for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
-            print("line 529", referenceCorrectionCoefficients)
             factor = referenceCorrectionCoefficients[0]*(referenceabscissa[massfrag_counter]**2)  + referenceCorrectionCoefficients[1]*referenceabscissa[massfrag_counter]+referenceCorrectionCoefficients[2] #obtains the factor from molecular weight of abscissa
             referenceDataArray[massfrag_counter,:] = referenceDataArray[massfrag_counter,:]*factor
-            print("line 532", referenceCorrectionCoefficients, massfrag_counter, factor)
             if type(referenceCorrectionCoefficients_cov) != None:
                 if sum(numpy.array(referenceCorrectionCoefficients_cov)).all()!=0:
                     if len(numpy.shape(referenceCorrectionCoefficients_cov)) == 1 and (len(referenceCorrectionCoefficients_cov) > 0): #If it's a 1D array/list that is filled, we'll diagonalize it.
@@ -555,11 +555,14 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
 #tuningCorrectorGasMixture will correct all items in the ReferenceDataList, but uses a single tuning correction that it applies to each of the ReferenceData objects in the list.
 #This function takes a measured gas mixture set of signals, then creates simulated signals (from NIST patterns, for example) to get a tuning correction for the spectrometer.
 def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there are UserInput choices that are needed for this feature.
+        print('line 557')
         #First read in the existing tuning patterns.
         #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
         ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
         ReferenceDataExistingTuning.ExportAtEachStep = G.ExportAtEachStep
+
         #Copying what is in GenerateReferenceDataList and ReferenceInputPreProcessing, we need to add the following block of code in if we want to allow uncertainties.   
+        print('line 566')
         if G.calculateUncertaintiesInConcentrations == True:
             if type(G.referenceFileUncertainties) != type(None):
                 if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
@@ -583,25 +586,24 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         if G.calculateUncertaintiesInConcentrations == True: 
             if type(G.referenceFileUncertainties) != type(None):
                 ReferenceDataExistingTuning.update_relative_standard_uncertainties()
-        
+        print('line 591')
         
         #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
         #Currently, in a "regular" MSRESOLVE run, the calculation of the correction values normally occurs inside  the ReferenceInputPreProcessing. That is a problem because 
         #the funciton ReferenceInputPreProcessing applies a tuning correction. So we need to get the CorrectionValues directly.
         ReferenceDataExistingTuning.correction_values, ReferenceDataExistingTuning.correction_values_relative_uncertainties = CorrectionValuesObtain(ReferenceDataExistingTuning)
-
-        #By default, the regular reference file will be considered the desired tuning, if not specified.
-        if G.referenceFileDesiredTuning == []:
-            G.referenceFileDesiredTuning = [ G.referenceFileNamesList[0],G.referenceFormsList[0] ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
-            
+        print('line 597')
         #We don't need a desired tuning data object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
-        ReferenceDataDesiredTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
-        ReferenceDataDesiredTuning.ExportAtEachStep = G.ExportAtEachStep
-        if ReferenceDataDesiredTuning.ExportAtEachStep == 'yes':
-            ReferenceDataDesiredTuning.ExportCollector('ProvidedReferencePattern', use_provided_reference_patterns=True)   
-            ReferenceDataDesiredTuning.ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
+        #By default, the regular reference data object will be considered the desired tuning, if not specified.
+        if G.referenceFileDesiredTuning == []:
+            #Take the first item from ReferenceDataList (which may have been extracted from the experiment file)
+            ReferenceDataDesiredTuning = ReferenceDataList[0]
+            ReferenceDataDesiredTuning.exportReferencePattern("ExportedDesiredTuningReferencePattern.csv") #Exported for during TuningCorrection.     
+        else:
+            ReferenceDataDesiredTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
+            ReferenceDataDesiredTuning.ExportAtEachStep = G.ExportAtEachStep
 
-
+        print('line 609')
         #We need to make prepare an appropriately made list for the concentrations to use in simulating data using the ExistingTuningReferencePattern 
         #The concentrations must match the molecular order of the literature file.
         #  Firstly, the literature file can have molecules not part of the concentrations, so we should add concentrations of zero for those. (It's easier than removing those molecules from the literature object).
@@ -620,7 +622,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         knownConcentrationsArray.insert(0, 1)
         #knownConcentrationsArray needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
         knownConcentrationsArray = numpy.array([knownConcentrationsArray])
-
+        print('line 628')
         #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
         #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply an undesired "before comparisons" tuning factor correction. We will need this done before we simulate any signals.
         ReferenceDataExistingTuningMassFragments = ReferenceDataExistingTuning.standardized_reference_patterns[:,0]
@@ -635,9 +637,10 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         simulateddata_intensities = simulateddata[0][1:] #The "0" is because it's a nested object. THe slicing is becuase the abscissa (time) value needs to be removed.
         #Now to transpose the simulateddata to make the simulated_reference_pattern
         simulated_reference_pattern = numpy.vstack((ReferenceDataExistingTuningMassFragments, simulateddata_intensities)).transpose()
+        print('line 643')
         TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], sourceOfIonizationData=["referenceFileExistingTuning"], relativeIonizationEfficiencies=['GasMixture'], moleculeIonizationType=["GasMixture"]) #We fill some variables with the word "GasMixture" because there is no single ionization factor for the gas mixture.
         TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
-                
+        print('line 646')        
         ReferenceDataExistingTuningAfterCorrection = copy.deepcopy(ReferenceDataExistingTuning) #just initializing here, then actual tuning correction occurs in next lines.                
         #Tuning corrector does not operate on a ReferenceData object, it operates on standardized reference patterns.
         ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns, ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceDataExistingTuning.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
@@ -657,7 +660,6 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns=StandardizeReferencePattern(ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns,len(ReferenceDataExistingTuningAfterCorrection.molecules))
         if ReferenceDataExistingTuningAfterCorrection.ExportAtEachStep == 'yes':
             ReferenceDataExistingTuningAfterCorrection.exportReferencePattern("ReferenceDataExistingTuningAfterCorrection.csv")
-        print("line 660", ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns)
         # #Copying what is in GenerateReferenceDataList and ReferenceInputPreProcessing, we need to add the following block of code in if we want to allow uncertainties.   
         # if G.calculateUncertaintiesInConcentrations == True:
             # if type(G.referenceFileUncertainties) != type(None):
@@ -1379,7 +1381,6 @@ def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules=0):
 
 '''This function is just a helper function to create a ReferenceData object from a file.'''
 def createReferenceDataObject(referenceDataFileName = "ReferenceData.csv", referenceDataForm = "xyyy", AllMID_ObjectsDict={}):
-    print("line 1247", referenceDataFileName)
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceDataFileName,referenceDataForm)
     print("line 1248", referenceDataFileName, sourceOfIonizationData)
     ReferenceData = MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)
@@ -1476,6 +1477,8 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
         #Only print if not called from interpolating reference objects
         if verbose:
             print('beginning TuningCorrector')
+        if G.referenceFileExistingTuning == []: #Mkae the current reference data the Existing Tuning pattern.
+            ReferenceData.exportReferencePattern("ExportedExistingTuningReferencePattern.csv")
         if type(G.referenceCorrectionCoefficients) == type({}):#check if it's a dictionary.
             G.referenceCorrectionCoefficients = [G.referenceCorrectionCoefficients['A'],G.referenceCorrectionCoefficients['B'],G.referenceCorrectionCoefficients['C']]
         #only apply the tuning correction if the list is not 0 0 1.
@@ -2384,7 +2387,6 @@ def readReferenceFile(referenceFileName, form):
     dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
     
     if form == 'xyyy':
-        print('line 2240')
         for rowIndex in range(len(dataFrame)): #Loop through each row and check the abscissa value
             try: #Try to convert the abscissa title to a float
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
@@ -2733,12 +2735,8 @@ class MSReference (object):
         if self.sourceOfIonizationData == []:
             self.sourceOfIonizationData = ['unknown']* len(self.molecules)       
             self.sourceOfIonizationData = numpy.array(self.sourceOfIonizationData, dtype="str")
-            print("line 2585", self.sourceOfIonizationData)
         else:
-            print("line 2587", self.sourceOfIonizationData)
             self.sourceOfIonizationData = numpy.array(self.sourceOfIonizationData, dtype="str")
-            print("line 2587", self.sourceOfIonizationData)
-        print("line 2585", relativeIonizationEfficiencies)
         if self.relativeIonizationEfficiencies == []:
             self.relativeIonizationEfficiencies = ['unknown']* len(self.molecules)
             self.relativeIonizationEfficiencies = numpy.array(self.relativeIonizationEfficiencies, dtype="object") #can have Strings or floats, so use dtype="object"
@@ -3046,7 +3044,6 @@ class MSReference (object):
 
     #Export the ionization efficiencies used and their respective method used to obtain them (known factor, known molecule, known ionization type, or Madix and Ko)    
     def exportIonizationInfo(self):
-        print("line 2856", self.sourceOfIonizationData)
         ionizationData = numpy.vstack((self.molecules,self.relativeIonizationEfficiencies,self.sourceOfIonizationData)) #make a 2d array containing molecule names (for the header), the ionization efficiencies, and which method was chosen
         ionizationDataAbsicca = numpy.array([['Molecule'],
                                              ['Ionization Efficiency'],
@@ -3060,7 +3057,6 @@ class MSReference (object):
         #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
         a_array = self.relative_standard_uncertainties[:,1:]
         b_array = self.standardized_reference_patterns[:,1:] 
-        print("line 2999", self.relative_standard_uncertainties, self.standardized_reference_patterns)
         self.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
         #self.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
 
@@ -5654,11 +5650,7 @@ def main():
     resultsObjects = {}
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
-    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
-    print("line 5560", ReferenceDataList[0].relative_standard_uncertainties)
-    print("line 5441", ReferenceDataList[0].molecules)
-    print("line 5442", ReferenceDataList[0].relativeIonizationEfficiencies)
-        
+    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)        
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
     if type(G.collectedFileUncertainties) != type(None):
@@ -5746,9 +5738,11 @@ def main():
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
     if G.UserChoices['measuredReferenceYorN']['on'] == 'yes':
         if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
+            print("line 5752", ReferenceDataList[0].molecules)
+            print("line 5753", ReferenceDataList[0].relativeIonizationEfficiencies)
             ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
-            print("line 5445", ReferenceDataList[0].molecules)
-            print("line 5445", ReferenceDataList[0].relativeIonizationEfficiencies)
+            print("line 5755", ReferenceDataList[0].molecules)
+            print("line 5756", ReferenceDataList[0].relativeIonizationEfficiencies)
 
 
     #Creating prototypicalReferenceData which will be interrogated later for which molecules and masses to expect in the ReferenceDataObjects.
@@ -5807,7 +5801,6 @@ def main():
     # and needed if G.dataAnalysis == 'load' or 'yes'  
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
         #Prepare prototypicalReferenceData which is currently the first reference object in the list
-        print("line 5778", prototypicalReferenceData.standardized_reference_patterns)
         extractReferencePatternFromDataOptionHere = 'no' #should be extracted already
         prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData, ExperimentData.mass_fragment_numbers, ExperimentData,extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         #for loop to preprocess the remaining MSReference objects and match correction values

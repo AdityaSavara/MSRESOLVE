@@ -155,8 +155,8 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 UserChoices['measuredReferenceYorN']['on'] ='yes'
-UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =['LiteratureReference.csv','xyyy'] #This is the pattern that will be changed. Typically this is NIST patterns.
-UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =['ExtractedReferencePattern.csv','xyyy'] #This is what the pattern will look more like after everything is done. Typically, this is a measured pattern.
+UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] = ['LiteratureReference.csv','xyyy'] #This is the pattern that will be changed. Typically this is NIST patterns.
+UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =[] #normally to be left blank. #This is what the pattern will look more like after everything is done. Typically, this is a measured pattern.
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals'] = [] 
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =['ethane', 'ethene', 'ethyne']  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'] =[10, 2, 1]  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum concetrations must be provided
