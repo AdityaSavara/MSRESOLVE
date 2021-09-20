@@ -85,7 +85,7 @@ def bestMassFragChooser(chosenMolecules,
     #Initialize a ReferenceData class object
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
         SourceOfFragmentationPatterns, sourceOfIonizationData,
-        knownIonizationFactorsRelativeToN2, 
+        relativeIonizationEfficiencies, 
         moleculeIonizationType, mass_fragment_numbers_monitored, 
         referenceFileName, form] = MSRESOLVE.readReferenceFile(
         referenceFileName, referenceForm)
@@ -93,7 +93,7 @@ def bestMassFragChooser(chosenMolecules,
     ReferenceData = MSRESOLVE.MSReference(provided_reference_patterns, 
         electronnumbers, molecules, molecularWeights,
         SourceOfFragmentationPatterns, sourceOfIonizationData,
-        knownIonizationFactorsRelativeToN2, moleculeIonizationType, 
+        relativeIonizationEfficiencies, moleculeIonizationType, 
         mass_fragment_numbers_monitored, referenceFileName=referenceFileName, 
         form=form)
 
@@ -545,7 +545,7 @@ def bestMassFragChooser(chosenMolecules,
             if minimizeDependencies == False: #below are only populated if we are using the full MRESOLVE
                 electronHeader=numpy.append('Electron Numbers',truncatedReferenceData.electronnumbers)
                 knownMoleculeIonizationTypeHeader = numpy.append('moleculeIonizationType',truncatedReferenceData.moleculeIonizationType)
-                knownIonizationFactorsRelativeToN2Header = numpy.append('knownIonizationFactorsRelativeToN2',truncatedReferenceData.knownIonizationFactorsRelativeToN2)
+                relativeIonizationEfficienciesHeader = numpy.append('relativeIonizationEfficiencies',truncatedReferenceData.relativeIonizationEfficiencies)
                 fragmentationSourceHeader = numpy.append('SourceOfFragmentationPatterns',truncatedReferenceData.SourceOfFragmentationPatterns)
                 ionizationSourceHeader = numpy.append("sourceOfIonizationData",truncatedReferenceData.sourceOfIonizationData)        
                 massHeader=numpy.append('Molecular Mass', truncatedReferenceData.molecularWeights)
@@ -555,7 +555,7 @@ def bestMassFragChooser(chosenMolecules,
                 fullHeaderArray=numpy.array([
                     commentsHeader, moleculesHeader, electronHeader,
                     knownMoleculeIonizationTypeHeader,
-                    knownIonizationFactorsRelativeToN2Header, fragmentationSourceHeader,
+                    relativeIonizationEfficienciesHeader, fragmentationSourceHeader,
                     ionizationSourceHeader, massHeader])
             if minimizeDependencies == True:
                 fullHeaderArray=numpy.array([

@@ -2,7 +2,7 @@
 Molecules,Acetaldehyde,Acetaldehyde_Easy_To_Ionize,Acetaldehyde_Copy
 Electron Numbers,24,24,24
 moleculeIonizationType,Aldehyde,Aldehyde,Aldehyde
-knownIonizationFactorsRelativeToN2,1,2,1
+relativeIonizationEfficiencies,1,2,1
 SourceOfFragmentationPatterns,NIST Webbook,NIST Webbook,NIST Webbook
 SourceOfIonizationData,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  ,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  ,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
 Molecular Mass,44.05,44.05,44.05

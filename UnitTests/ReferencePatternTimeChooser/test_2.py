@@ -30,8 +30,8 @@ MSRESOLVE.G = test_2_input
 MSRESOLVE.main()
 
 #Create an MSReference object for the hand created Reference Data
-[provided_reference_intensities, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, knownIonizationFactorsRelativeToN2, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=MSRESOLVE.readReferenceFile('HandInterpolatedReferenceData.csv','xyyy')
-HandInterpolatedData = [MSRESOLVE.MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, knownIonizationFactorsRelativeToN2, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
+[provided_reference_intensities, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=MSRESOLVE.readReferenceFile('HandInterpolatedReferenceData.csv','xyyy')
+HandInterpolatedData = [MSRESOLVE.MSReference(provided_reference_intensities, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form)]
 #save each global variable into the class objects 
 HandInterpolatedData[0].ExportAtEachStep = MSRESOLVE.G.ExportAtEachStep
 HandInterpolatedData[0].iterationSuffix = MSRESOLVE.G.iterationSuffix
