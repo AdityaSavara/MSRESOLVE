@@ -86,14 +86,14 @@ def bestMassFragChooser(chosenMolecules,
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
         SourceOfFragmentationPatterns, sourceOfIonizationData,
         knownIonizationFactorsRelativeToN2, 
-        knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, 
+        moleculeIonizationType, mass_fragment_numbers_monitored, 
         referenceFileName, form] = MSRESOLVE.readReferenceFile(
         referenceFileName, referenceForm)
         
     ReferenceData = MSRESOLVE.MSReference(provided_reference_patterns, 
         electronnumbers, molecules, molecularWeights,
         SourceOfFragmentationPatterns, sourceOfIonizationData,
-        knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, 
+        knownIonizationFactorsRelativeToN2, moleculeIonizationType, 
         mass_fragment_numbers_monitored, referenceFileName=referenceFileName, 
         form=form)
 
@@ -544,7 +544,7 @@ def bestMassFragChooser(chosenMolecules,
             moleculesHeader=numpy.append('Molecules',truncatedReferenceData.molecules)
             if minimizeDependencies == False: #below are only populated if we are using the full MRESOLVE
                 electronHeader=numpy.append('Electron Numbers',truncatedReferenceData.electronnumbers)
-                knownMoleculeIonizationTypeHeader = numpy.append('knownMoleculesIonizationTypes',truncatedReferenceData.knownMoleculesIonizationTypes)
+                knownMoleculeIonizationTypeHeader = numpy.append('moleculeIonizationType',truncatedReferenceData.moleculeIonizationType)
                 knownIonizationFactorsRelativeToN2Header = numpy.append('knownIonizationFactorsRelativeToN2',truncatedReferenceData.knownIonizationFactorsRelativeToN2)
                 fragmentationSourceHeader = numpy.append('SourceOfFragmentationPatterns',truncatedReferenceData.SourceOfFragmentationPatterns)
                 ionizationSourceHeader = numpy.append("sourceOfIonizationData",truncatedReferenceData.sourceOfIonizationData)        

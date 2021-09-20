@@ -1,7 +1,7 @@
 #ComentsLine,,,
 Molecules,Ethylene (Ethene),Ethanol,Crotyl Alcohol
 Electron Numbers,16,26,40
-knownMoleculesIonizationTypes,unknown,unknown,unknown
+moleculeIonizationType,unknown,unknown,unknown
 knownIonizationFactorsRelativeToN2,unknown,unknown,unknown
 SourceOfFragmentationPatterns,NIST,NIST,NIST
 SourceOfIonizationData,,,

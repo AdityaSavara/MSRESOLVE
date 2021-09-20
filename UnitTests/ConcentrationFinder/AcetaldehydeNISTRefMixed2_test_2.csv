@@ -1,7 +1,7 @@
 #CommentsLine:,
 Molecules,Acetaldehyde
 Electron Numbers,24
-knownMoleculesIonizationTypes,Aldehyde
+moleculeIonizationType,Aldehyde
 knownIonizationFactorsRelativeToN2,1
 SourceOfFragmentationPatterns,NIST Webbook
 SourceOfIonizationData,UHV-24/UHV-24p Ionization Gauge Instruction Manual - Table A1 - https://www.mksinst.com/docs/ur/GaugeGasCorrection.aspx  
