@@ -1453,18 +1453,9 @@ def ImportAnalyzedData(concentrationsOutputName):
     
     return analyzedData
 
-
-'''
-Performs some manipulations related to the reference pattern
-'''
-def ReferenceInputPreProcessing(ReferenceData, verbose=True):
-    print("line 1444", numpy.shape(ReferenceData.standardized_reference_patterns))
+'''Makes a mixed reference pattern from two reference patterns, including tuning correction.'''
+def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
     # standardize the reference data columns such that the maximum intensity value per molecules 100 and everything else is
-    # scaled to those values
-    
-    #The below line is commented out on purpose. We now have occasions where ReferenceInputPreProcessing might be run on an already standardized reference object, so we need to operate on the standardized patterns directly.
-    #However, we now standardize the reference pattern when it is initailized, so this particular standardizing of provided_reference_patterns is not needed anymore.
-    #ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
     print("line 1448", numpy.shape(ReferenceData.standardized_reference_patterns))
     if G.calculateUncertaintiesInConcentrations == True: 
@@ -1521,8 +1512,15 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
         ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
         ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
         ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
+    return ReferenceData
 
-    
+'''
+Performs some manipulations related to the reference pattern
+'''
+def ReferenceInputPreProcessing(ReferenceData, verbose=True):
+    ReferenceData = createReferencePatternWithTuningCorrection(ReferenceData, verbose=verbose)   
+
+    print("line 1444", numpy.shape(ReferenceData.standardized_reference_patterns))
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
     #TODO: option 2: Or we can below assign to preprocessed_reference_pattern rather than standardized_reference_patterns and then use that in data analysis (Note that interpolate would continue to use standardized_reference_patterns as well as preprocess the output)
