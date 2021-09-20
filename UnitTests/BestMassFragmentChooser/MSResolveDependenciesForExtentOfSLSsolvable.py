@@ -49,8 +49,8 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
     return trimmedExperimentData
 
 class MSReference (object):
-    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2=None, knownMoleculesIonizationTypes=None, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
-        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.SourceOfFragmentationPatterns, self.SourceOfIonizationData, self.knownIonizationFactorsRelativeToN2, self.knownMoleculesIonizationTypes, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
+    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, knownIonizationFactorsRelativeToN2=None, knownMoleculesIonizationTypes=None, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
+        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.SourceOfFragmentationPatterns, self.sourceOfIonizationData, self.knownIonizationFactorsRelativeToN2, self.knownMoleculesIonizationTypes, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         self.iterationSuffix = ''
@@ -315,10 +315,10 @@ def readReferenceFile(referenceFileName, form):
                     dfSourceOfFragmentationPatterns = dataFrame.iloc[rowIndex][1:] #select the row of names
                     SourceOfFragmentationPatterns = dfSourceOfFragmentationPatterns.values #convert to matrix
                     SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(numpy.str) #save as class object with type string
-                elif dataFrame.iloc[rowIndex][0] == 'SourceOfIonizationData':
-                    dfSourceOfIonizationData = dataFrame.iloc[rowIndex][1:] #Select the row of names
-                    SourceOfIonizationData = dfSourceOfIonizationData.values #convert to matrix
-                    SourceOfIonizationData = SourceOfIonizationData.astype(numpy.str) #save as class object with type string
+                elif dataFrame.iloc[rowIndex][0] == 'sourceOfIonizationData':
+                    dfsourceOfIonizationData = dataFrame.iloc[rowIndex][1:] #Select the row of names
+                    sourceOfIonizationData = dfsourceOfIonizationData.values #convert to matrix
+                    sourceOfIonizationData = sourceOfIonizationData.astype(numpy.str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Molecules': #if the abscissa titles the molecule names
                     dfmolecules = dataFrame.iloc[rowIndex][1:] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
@@ -346,7 +346,7 @@ def readReferenceFile(referenceFileName, form):
 #                    knownIonizationFactorsRelativeToN2 = knownIonizationFactorsRelativeToN2.astype(numpy.float) #save as class object with type float
         
         
-        SourceOfIonizationData = None #To remove MSRESOLVE dependencies.
+        sourceOfIonizationData = None #To remove MSRESOLVE dependencies.
         knownIonizationFactorsRelativeToN2 = None  #To remove MSRESOLVE dependencies.
         knownMoleculesIonizationTypes = None
         '''
@@ -366,11 +366,11 @@ def readReferenceFile(referenceFileName, form):
             knownMoleculesIonizationTypes = numpy.array(knownMoleculesIonizationTypes) #convert to matrix
         
         try: #If using an older reference file, it will not have SourceOfIonizationInfo so the elif statement never gets entered meaning the variable does not exist
-            SourceOfIonizationData #try calling the variable, if it exists there will be no error
+            sourceOfIonizationData #try calling the variable, if it exists there will be no error
         except: #If it does not exist, populate with empty strings
-            SourceOfIonizationData = [''] #initialize as a list of len(1)
-            SourceOfIonizationData = parse.parallelVectorize(SourceOfIonizationData,len(molecules)) #parallel vectorize to length of molecules
-            SourceOfIonizationData = numpy.array(SourceOfIonizationData) #convert to matrix
+            sourceOfIonizationData = [''] #initialize as a list of len(1)
+            sourceOfIonizationData = parse.parallelVectorize(sourceOfIonizationData,len(molecules)) #parallel vectorize to length of molecules
+            sourceOfIonizationData = numpy.array(sourceOfIonizationData) #convert to matrix
         '''  
                 
 #        ''' generate reference matrix'''
@@ -494,7 +494,7 @@ def readReferenceFile(referenceFileName, form):
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
         
-    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
+    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
 
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
@@ -526,7 +526,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.knownMoleculesIonizationTypes, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownMoleculesIonizationTypes, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.knownIonizationFactorsRelativeToN2, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownIonizationFactorsRelativeToN2, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfFragmentationPatterns, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfFragmentationPatterns, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
-    trimmedRefererenceData.SourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
+    trimmedRefererenceData.sourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.sourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     
     trimmedRefererenceData.molecules = trimmedMoleculesList
     

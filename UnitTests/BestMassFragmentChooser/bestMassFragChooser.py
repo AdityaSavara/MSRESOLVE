@@ -84,7 +84,7 @@ def bestMassFragChooser(chosenMolecules,
         G.excludeMoleculesIfSignificantFragmentNotObserved=G.rawSignalThresholdMethod
     #Initialize a ReferenceData class object
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
-        SourceOfFragmentationPatterns, SourceOfIonizationData,
+        SourceOfFragmentationPatterns, sourceOfIonizationData,
         knownIonizationFactorsRelativeToN2, 
         knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, 
         referenceFileName, form] = MSRESOLVE.readReferenceFile(
@@ -92,7 +92,7 @@ def bestMassFragChooser(chosenMolecules,
         
     ReferenceData = MSRESOLVE.MSReference(provided_reference_patterns, 
         electronnumbers, molecules, molecularWeights,
-        SourceOfFragmentationPatterns, SourceOfIonizationData,
+        SourceOfFragmentationPatterns, sourceOfIonizationData,
         knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, 
         mass_fragment_numbers_monitored, referenceFileName=referenceFileName, 
         form=form)
@@ -547,7 +547,7 @@ def bestMassFragChooser(chosenMolecules,
                 knownMoleculeIonizationTypeHeader = numpy.append('knownMoleculesIonizationTypes',truncatedReferenceData.knownMoleculesIonizationTypes)
                 knownIonizationFactorsRelativeToN2Header = numpy.append('knownIonizationFactorsRelativeToN2',truncatedReferenceData.knownIonizationFactorsRelativeToN2)
                 fragmentationSourceHeader = numpy.append('SourceOfFragmentationPatterns',truncatedReferenceData.SourceOfFragmentationPatterns)
-                ionizationSourceHeader = numpy.append("SourceOfIonizationData",truncatedReferenceData.SourceOfIonizationData)        
+                ionizationSourceHeader = numpy.append("sourceOfIonizationData",truncatedReferenceData.sourceOfIonizationData)        
                 massHeader=numpy.append('Molecular Mass', truncatedReferenceData.molecularWeights)
                 #The header will be stacked before saving the data array. 
                 #In order to get the multiple headers present, an array will be used 
