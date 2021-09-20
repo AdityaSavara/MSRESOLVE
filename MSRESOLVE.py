@@ -2287,7 +2287,8 @@ def readReferenceFile(referenceFileName, form):
 
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
-        
+    else:
+        print("Form of reference pattern not recognized. Only XYYY or XYXY allowed."); sys.exit
     return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form
 
 '''
@@ -2367,6 +2368,7 @@ def populateAllMID_ObjectsDict(ionizationDataFileName):
     try:
         AllMID_ObjectsDict = getIE_Data(ionizationDataFileName) #Read the ionization data and put the information into a dictionary
     except: #If the ionization file does not exist in the main directory, leave as an empty dictionary
+    print('Warning: ionizationDataFileName was not found. Simple heuristics will be used for ionization efficiencies.')
         AllMID_ObjectsDict = {}
         
     return AllMID_ObjectsDict
@@ -2456,7 +2458,9 @@ class MSReference (object):
         if self.moleculeIonizationType == []:
             self.moleculeIonizationType = ['unknown']* len(self.molecules)
         self.provided_mass_fragments = self.provided_reference_patterns[:,0]
+        #clear ClearZeroRowsFromProvidedReferenceIntensities                                                            
         self.ClearZeroRowsFromProvidedReferenceIntensities()
+        #initialize the standardized_reference_patterns                                               
         #self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules)) #TODO: This line breaks extractReferencePatternFromData unit test. I am not sure why.
             
         #Initializing Export Collector Variables
@@ -2473,10 +2477,64 @@ class MSReference (object):
         #Get ionization efficiencies and export their values and what method was used to obtain them
         self.populateIonizationEfficiencies(AllMID_ObjectsDict)
         self.exportIonizationInfo()
-    #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
+
+    #This function allows adding molecules to an existing reference patterns. When using TuningCorrector it is used to create MixedReference patterns.
+    #Though these variable names are plural, they are expected to be lists of one. "molecules" is supposed to be a list of variable names.
+    #provided_reference_patterns should be in an XYYY format.  If starting with XYXY data, is okay to feed a single "XY" at a time and to do so repeatedly in a loop.
+    def addMolecules(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], sourceOfIonizationData=[], relativeIonizationEfficiencies=[], moleculeIonizationType=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):      
+        print("line 2509", sourceOfIonizationData, relativeIonizationEfficiencies)
+        #In case somebody decides to try to feed single molecule's name directly.
+        if type(molecules) == type("string"):
+            molecules = [molecules]
+        #Initializing some list variables with defaults.
+        if SourceOfFragmentationPatterns == []:
+           SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
+        if sourceOfIonizationData == []:
+           sourceOfIonizationData = ['unknown']* len(self.molecules)       
+        if relativeIonizationEfficiencies == []:
+           relativeIonizationEfficiencies = ['unknown']* len(self.molecules)
+        if moleculeIonizationType == []:
+           moleculeIonizationType = ['unknown']* len(self.molecules)
+           
+        #Now to concatenate to the existing reference objects. Can't use ".extend" because that modifies the original list while returning "None."
+        self.electronnumbers = list(self.electronnumbers) + (list(electronnumbers))
+        self.molecules = list(self.molecules) + (list(molecules))
+        self.molecularWeights = list(self.molecularWeights) + (list(molecularWeights))
+        self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns) + (list(SourceOfFragmentationPatterns))
+        print("line 2647", self.sourceOfIonizationData)
+        print("line 2647", self.relativeIonizationEfficiencies)
+        self.sourceOfIonizationData = list(self.sourceOfIonizationData) + (list(sourceOfIonizationData))
+        self.relativeIonizationEfficiencies = list(self.relativeIonizationEfficiencies) + (list(relativeIonizationEfficiencies))
+        self.moleculeIonizationType = list(self.moleculeIonizationType) + (list(moleculeIonizationType))
+        print("line 2651", self.sourceOfIonizationData)
+        print("line 2651", self.relativeIonizationEfficiencies)
+        
+        #Will to standardize the molecules reference patterns before adding. This is important because the addXYYYtoXYYY function drops values that are small like 1E-8.
+        standardized_reference_patterns=StandardizeReferencePattern(provided_reference_patterns,len(molecules))
+        #Will add to both self.provided_reference_patterns  and self.standardized_reference_patterns
+        self.provided_reference_patterns = DataFunctions.addXYYYtoXYYY(self.provided_reference_patterns, standardized_reference_patterns)
+        self.standardized_reference_patterns = DataFunctions.addXYYYtoXYYY(self.standardized_reference_patterns, standardized_reference_patterns)
+        #Rather than adding to the standarized reference patterns separately, will just go ahead and restandardize.
+        self.standardized_reference_patterns=StandardizeReferencePattern(self.standardized_reference_patterns,len(self.molecules))
+        return self
+
+    #For removing molecules we will use an external function trimDataMoleculesToMatchChosenMolecules
+    #Note that this actually makes a new reference object!
+    def removeMolecules(self, listOfMoleculesToRemove):
+        if type(listOfMoleculesToRemove) == type("string"):
+            listOfMoleculesToRemove = [listOfMoleculesToRemove]
+
+        moleculesToKeep = list(copy.deepcopy(self.molecules)) #make a copy of molecules.
+        #now go through the original list of molecules and pop unwanted molecules from moleculesToKeep
+        for moleculeName in self.molecules:
+            if moleculeName in listOfMoleculesToRemove:
+                moleculesToKeep.remove(moleculeName)
+        trimmedRefererenceData = trimDataMoleculesToMatchChosenMolecules(self, moleculesToKeep)        
+        return trimmedRefererenceData
+        #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
-    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_matching_correction_value = False, export_uncertainties = False, export_standard_uncertainties=False, export_tuning_uncertainties=False):
+    def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_matching_correction_value = False, export_uncertainties = False, export_standard_uncertainties=False, export_tuning_uncertainties=False, export_relative_uncertainties=False):
         #record current time
         currentTime = timeit.default_timer()
         #add net time to list of run times
@@ -2498,6 +2556,8 @@ class MSReference (object):
                 self.dataToExport.append(self.standardized_reference_patterns_tuning_uncertainties.copy())
             elif export_standard_uncertainties:
                 self.dataToExport.append(self.absolute_standard_uncertainties.copy())
+            elif export_relative_uncertainties:
+                self.dataToExport.append(self.relative_standard_uncertainties.copy())               
             elif use_provided_reference_patterns:
                 self.dataToExport.append(self.provided_reference_patterns.copy())
             elif callingFunction == 'UnnecessaryMoleculesDeleter':
@@ -2505,7 +2565,7 @@ class MSReference (object):
             elif not use_provided_reference_patterns:
                 self.dataToExport.append(self.standardized_reference_patterns.copy())
             
-          
+    #this function exports only an XYYY file. To export a full referenceData file, use the function exportReferencePattern
     def ExportFragmentationPatterns(self, verbose=True):
         #Only print if not called from interpolating reference objects
         if verbose:
@@ -2529,6 +2589,7 @@ class MSReference (object):
     #The logic in the below funtion is badly written, in terms of efficiency. But it seems to work at present.
     #TODO: This is not a good practice, because provided_reference_patterns is getting changed, no longer "Provided".
     #TODO: (continued from previous line) It's more like "zero_trimmed" reference intensities after this.
+    #TODO: it's better to clear zero rows from the standardized_reference_patterns
     def ClearZeroRowsFromProvidedReferenceIntensities(self):
         #initial a counter for the row index, which will be updated during the loop
         currentRowIndexAccountingForDeletions = 0
