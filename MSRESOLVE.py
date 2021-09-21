@@ -788,11 +788,12 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #repeat the process for the standardized_reference_patterns
-    standardized_reference_patterns_mass_fragments = trimmedRefererenceData.standardized_reference_patterns[:,0] 
-    trimmedReferenceStandardizedIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.standardized_reference_patterns[:,1:],
-                                                                                                                    allMoleculesList, chosenMolecules, header_dtype_casting=str) 
-    trimmedReferenceMF = numpy.reshape(standardized_reference_patterns_mass_fragments,(-1,1))
-    trimmedRefererenceData.standardized_reference_patterns =numpy.hstack((trimmedReferenceMF,trimmedReferenceStandardizedIntensities))
+    if hasattr(trimmedRefererenceData, 'standardized_reference_patterns'):
+        standardized_reference_patterns_mass_fragments = trimmedRefererenceData.standardized_reference_patterns[:,0] 
+        trimmedReferenceStandardizedIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.standardized_reference_patterns[:,1:],
+                                                                                                                        allMoleculesList, chosenMolecules, header_dtype_casting=str) 
+        trimmedReferenceMF = numpy.reshape(standardized_reference_patterns_mass_fragments,(-1,1))
+        trimmedRefererenceData.standardized_reference_patterns =numpy.hstack((trimmedReferenceMF,trimmedReferenceStandardizedIntensities))
     
     #TODO: The below line works with provided_reference_patterns. This is because trimDataMoleculesToMatchChosenMolecules
     #TODO continued: is currently working prior to standardized Reference patterns existing, and also because it is occurring
@@ -817,12 +818,17 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
         trimmedRefererenceData.absolute_standard_uncertainties = numpy.hstack((trimmedReferenceMF,trimmedAbsoluteUncertainties))
 
     trimmedRefererenceData.molecules = trimmedMoleculesList
+    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)    
     
     #remove any zero rows that may have been created #this should not be here. Zero rows can be cleared outside of this function. There are applications where this removing of zero rows causes problems.
     #trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
+    if hasattr(trimmedRefererenceData, 'standardized_reference_patterns'):
+        trimmedRefererenceData.standardized_reference_patterns=StandardizeReferencePattern(trimmedRefererenceData.standardized_reference_patterns,len(trimmedRefererenceData.molecules))
+        trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=False)    
     
-    trimmedRefererenceData.standardized_reference_patterns=StandardizeReferencePattern(trimmedRefererenceData.standardized_reference_patterns,len(trimmedRefererenceData.molecules))
-    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)    
+    
+
+    
     return trimmedRefererenceData
 '''
 trimDataMassesToMatchChosenMassFragments() and trimDataMassesToMatchReference() are just a wrapper functions for calls to DataFunctions.KeepOnlySelectedYYYYColumns(). 
@@ -1170,7 +1176,7 @@ greatest number is 100 within the array
 
 def StandardizeTo100(a1DArray,n):
     maxNumber=float(numpy.max(a1DArray))
-    multiplier=100/maxNumber
+    multiplier=100.0/maxNumber
     for index2 in range(0,len(a1DArray)):
         a1DArray[index2]=(a1DArray[index2]*multiplier)
     return a1DArray
@@ -1608,7 +1614,7 @@ def DataInputPreProcessing(ExperimentData):
     return ExperimentData
 
 '''
-PrepareReferenceOjbectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
+PrepareReferenceObjectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
 '''
 #TODO: remove the argument "extractReferencePatternFromDataOption" from this function. That feature has been moved outside of this function..
 def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[], ExperimentData=None, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
@@ -2615,7 +2621,7 @@ class MSReference (object):
                 moleculesToKeep.remove(moleculeName)
         trimmedRefererenceData = trimDataMoleculesToMatchChosenMolecules(self, moleculesToKeep)        
         return trimmedRefererenceData
-        #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
+    #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
     def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_matching_correction_value = False, export_uncertainties = False, export_standard_uncertainties=False, export_tuning_uncertainties=False, export_relative_uncertainties=False):
@@ -5398,7 +5404,7 @@ def main():
     #Then prepare AllMoleculesReferenceDataList to get matching_correction_values, this value is fed into RatioFinder
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
         AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
-        PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],  AllMassFragmentsExperimentData.mass_fragment_numbers, AllMassFragmentsExperimentData)
+        PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],AllMassFragmentsExperimentData.mass_fragment_numbers, AllMassFragmentsExperimentData)
         
     #Read in the molecules used before parsing the user input file    
     G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
@@ -5545,15 +5551,17 @@ def main():
         #TODO continued: If it matches (as a set, not an equal comparison of lists), then no trimming occurs. Else, trimming occurs.
         #TODO continued: but the above changes would probably also require trimDataMassesToMatchReference to occur on Experimental data, again, after prepare reference patterns, including on ExperimentDataCopy.
         if G.specificMolecules == 'yes' or G.iterativeAnalysis:
-           if G.specificMolecules == 'no': #This should really be in user input validation.
-               print("WARNING: You have chosenMolecules / specificMolecules set to no, but iterativeAnalysis is set to True and requires chosenMolecules. ChosenMolecules will be used as part of iterative. If you did not fill out the chosenMolecules list correctly, you must do so and run again (you may also need to delete the directory for the next iteration).")
-           for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
+            if G.specificMolecules == 'no': #This should really be in user input validation.
+                print("WARNING: You have chosenMolecules / specificMolecules set to no, but iterativeAnalysis is set to True and requires chosenMolecules. ChosenMolecules will be used as part of iterative. If you did not fill out the chosenMolecules list correctly, you must do so and run again (you may also need to delete the directory for the next iteration).")
+            for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
                 ReferenceDataList[RefObjectIndex] = trimDataMoleculesToMatchChosenMolecules(RefObject, G.chosenMoleculesNames)
                 ReferenceDataList[RefObjectIndex].ClearZeroRowsFromProvidedReferenceIntensities()
-                #ReferenceDataList[RefObjectIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
-           prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMoleculesNames)
-           prototypicalReferenceData.ClearZeroRowsFromProvidedReferenceIntensities()
-           #prototypicalReferenceData.ClearZeroRowsFromStandardizedReferenceIntensities()
+                if hasattr(ReferenceDataList[RefObjectIndex], 'standardized_reference_patterns'):
+                    ReferenceDataList[RefObjectIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
+            prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMoleculesNames)
+            prototypicalReferenceData.ClearZeroRowsFromProvidedReferenceIntensities()
+            if hasattr(prototypicalReferenceData, 'standardized_reference_patterns'):
+                prototypicalReferenceData.ClearZeroRowsFromStandardizedReferenceIntensities()
 	
         if G.iterativeAnalysis:
             #make a copy of the experimental data for later use in iterative processing

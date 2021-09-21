@@ -1,4 +1,3 @@
-
 import bisect
 import copy 
 import ParsingFunctions as parse
@@ -1518,7 +1517,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
 Performs some manipulations related to the reference pattern
 '''
 def ReferenceInputPreProcessing(ReferenceData, verbose=True):
-    ReferenceData = createReferencePatternWithTuningCorrection(ReferenceData, verbose=verbose)   
+    ReferenceData = createReferencePatternWithTuningCorrection(ReferenceData, verbose=verbose)
 
     print("line 1444", numpy.shape(ReferenceData.standardized_reference_patterns))
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
@@ -1545,7 +1544,7 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
 
 '''
 GenerateReferenceDataAndFormsList takes in the list of referenceFileNamesList and the
-list of forms.  A list is generated containing MSRefe/rence objects created based
+list of forms.  A list is generated containing MSReference objects created based
 on the referenceFileName and the corresponding form
 It allows MSRESOLVE to be backwards compatible with previous user input files
 '''
@@ -1809,6 +1808,7 @@ def DataInputPreProcessing(ExperimentData):
 '''
 PrepareReferenceObjectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
 '''
+#TODO: remove the argument "extractReferencePatternFromDataOption" from this function. That feature has been moved outside of this function..                                     
 def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[], ExperimentData=None, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
     # Reference Pattern Changer
     if extractReferencePatternFromDataOption == 'yes':
@@ -5648,7 +5648,7 @@ def main():
     resultsObjects = {}
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
-    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)        
+    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
     if type(G.collectedFileUncertainties) != type(None):
@@ -5764,15 +5764,17 @@ def main():
         #TODO continued: If it matches (as a set, not an equal comparison of lists), then no trimming occurs. Else, trimming occurs.
         #TODO continued: but the above changes would probably also require trimDataMassesToMatchReference to occur on Experimental data, again, after prepare reference patterns, including on ExperimentDataCopy.
         if G.specificMolecules == 'yes' or G.iterativeAnalysis:
-           if G.specificMolecules == 'no': #This should really be in user input validation.
-               print("WARNING: You have chosenMolecules / specificMolecules set to no, but iterativeAnalysis is set to True and requires chosenMolecules. ChosenMolecules will be used as part of iterative. If you did not fill out the chosenMolecules list correctly, you must do so and run again (you may also need to delete the directory for the next iteration).")
-           for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
+            if G.specificMolecules == 'no': #This should really be in user input validation.
+                print("WARNING: You have chosenMolecules / specificMolecules set to no, but iterativeAnalysis is set to True and requires chosenMolecules. ChosenMolecules will be used as part of iterative. If you did not fill out the chosenMolecules list correctly, you must do so and run again (you may also need to delete the directory for the next iteration).")
+            for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
                 ReferenceDataList[RefObjectIndex] = trimDataMoleculesToMatchChosenMolecules(RefObject, G.chosenMoleculesNames)
                 ReferenceDataList[RefObjectIndex].ClearZeroRowsFromProvidedReferenceIntensities()
-                ReferenceDataList[RefObjectIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
-           prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMoleculesNames)
-           prototypicalReferenceData.ClearZeroRowsFromProvidedReferenceIntensities()
-           prototypicalReferenceData.ClearZeroRowsFromStandardizedReferenceIntensities()
+                if hasattr(ReferenceDataList[RefObjectIndex], 'standardized_reference_patterns'):
+                    ReferenceDataList[RefObjectIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
+            prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMoleculesNames)
+            prototypicalReferenceData.ClearZeroRowsFromProvidedReferenceIntensities()
+            if hasattr(prototypicalReferenceData, 'standardized_reference_patterns'):
+                prototypicalReferenceData.ClearZeroRowsFromStandardizedReferenceIntensities()
 
 	
         if G.iterativeAnalysis:
