@@ -1681,7 +1681,7 @@ def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRan
             currentReferenceData = InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
             #Prepare the current reference data
             extractReferencePatternFromDataOptionHere = "no" #should be extracted already.
-            currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData, extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
+            currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData.mass_fragment_numbers, ExperimentData, extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
             if G.iterativeAnalysis: #If using iterative analysis, interpolate the subtracted signals' matching correction factors between the two reference objects
                 currentReferenceData.SSmatching_correction_values = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.SSmatching_correction_values,secondReferenceObject.SSmatching_correction_values,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
         #If we are out of the first time range, not in a gap, and not in the last time range, then we are in the next time range
@@ -1824,7 +1824,7 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[
     print("line 1799", numpy.shape(ReferenceData.standardized_reference_patterns))
     # Set the ReferenceData.monitored_reference_intensities and
     # ReferenceData.matching_correction_values fields
-    # based on the massesOfInteres, which is typically the ExperimentData.mass_fragment_numbers
+    # based on the massesOfInterest, which is typically the ExperimentData.mass_fragment_numbers
     if len(massesOfInterest) > 0:
         ReferenceData = Populate_matching_correction_values(massesOfInterest,ReferenceData)
         if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 

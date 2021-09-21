@@ -36,7 +36,7 @@ HandInterpolatedData = [MSRESOLVE.MSReference(provided_reference_intensities, el
 HandInterpolatedData[0].ExportAtEachStep = MSRESOLVE.G.ExportAtEachStep
 HandInterpolatedData[0].iterationSuffix = MSRESOLVE.G.iterationSuffix
 #Prepare the handInterpolatedData
-HandInterpolatedData[0] = MSRESOLVE.PrepareReferenceObjectsAndCorrectionValues(HandInterpolatedData[0],MSRESOLVE.ExperimentData,MSRESOLVE.G.extractReferencePatternFromDataOption,MSRESOLVE.G.rpcMoleculesToChange,MSRESOLVE.G.rpcMoleculesToChangeMF,MSRESOLVE.G.rpcTimeRanges,verbose=False)
+HandInterpolatedData[0] = MSRESOLVE.PrepareReferenceObjectsAndCorrectionValues(HandInterpolatedData[0], MSRESOLVE.ExperimentData.mass_fragment_numbers, MSRESOLVE.ExperimentData,MSRESOLVE.G.extractReferencePatternFromDataOption,MSRESOLVE.G.rpcMoleculesToChange,MSRESOLVE.G.rpcMoleculesToChangeMF,MSRESOLVE.G.rpcTimeRanges,verbose=False)
 
 #Get reference intensities
 HandInterpolatedDataIntensities = HandInterpolatedData[0].standardized_reference_patterns
