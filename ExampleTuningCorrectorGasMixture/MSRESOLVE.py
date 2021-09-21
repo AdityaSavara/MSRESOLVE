@@ -2820,7 +2820,7 @@ class MSReference (object):
                 moleculesToKeep.remove(moleculeName)
         trimmedRefererenceData = trimDataMoleculesToMatchChosenMolecules(self, moleculesToKeep)        
         return trimmedRefererenceData
-    
+        
     #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
@@ -3051,7 +3051,7 @@ class MSReference (object):
                                              ['Method to Obtain Ionization Efficiency']]) #create the abscissa headers for the csv file
         ionizationDataToExport = numpy.hstack((ionizationDataAbsicca,ionizationData)) #use hstack to obtain a 2d array with the first column being the abscissa headers
         numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file
-    
+        
     def update_relative_standard_uncertainties(self):
         self.relative_standard_uncertainties = self.absolute_standard_uncertainties*1.0 #First make the array.
         #now populate the non-mass fragment parts by dividing.
@@ -3077,7 +3077,7 @@ class MSReference (object):
             else:
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
-        
+            
 '''
 The MolecularIonizationData class is used to generate a molecule's ionization factor based on its ionization type
 '''        
@@ -5157,8 +5157,6 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
     if dataType == 'relative_uncertainty':
         label = 'relative uncertainty' 
         formatedDataHeader = [molecule + ' ' + label for molecule in dataHeader]
-
-
     #extraLine is used to create CSV files that conform to MSRESOLVE's import requirements i.e. having a row for comments at the top
     extraLine = False
     if dataType == 'Experiment':
@@ -5778,7 +5776,6 @@ def main():
             prototypicalReferenceData.ClearZeroRowsFromProvidedReferenceIntensities()
             if hasattr(prototypicalReferenceData, 'standardized_reference_patterns'):
                 prototypicalReferenceData.ClearZeroRowsFromStandardizedReferenceIntensities()
-
 	
         if G.iterativeAnalysis:
             #make a copy of the experimental data for later use in iterative processing
@@ -5814,7 +5811,7 @@ def main():
                 ReferenceDataList[i].populateIonizationEfficiencies()
             extractReferencePatternFromDataOptionHere = 'no' #should be extracted already
             ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData.mass_fragment_numbers, ExperimentData, extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
-        
+            
     if (G.dataAnalysis == 'yes'):
         print("Entering Data Analysis")
         #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
