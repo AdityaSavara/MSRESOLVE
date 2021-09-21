@@ -486,6 +486,10 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
 def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,measuredReferenceYorN):
+    #Tuning corrector is designed to work with standardized_reference_patterns, so first we make sure standardize the data.
+    referenceDataArrayWithAbscissa=StandardizeReferencePattern(referenceDataArrayWithAbscissa)    
+    if type(referenceCorrectionCoefficients) == type({}):#check if it's a dictionary. If it is, we need to make it a list.
+        referenceCorrectionCoefficients = [referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C']]
     if measuredReferenceYorN =='yes':
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
@@ -2093,6 +2097,7 @@ def readDataFile(collectedFileName):
 #variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
 def readReferenceFile(referenceFileName, form):        
     #This function converts the XYXY data to an XYYY format
+    form = form.lower()
     def FromXYXYtoXYYY(provided_reference_patterns):
         print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
         masslists = [] #future lists must be must empty here to append in the for loops
