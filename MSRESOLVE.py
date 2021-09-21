@@ -568,27 +568,27 @@ def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThresh
 #with the first, and multiplies that number by the number in the reference sheet in 
 #order to change the second mass fragments number in the table
 #TODO: add a check to pop out or warn people if someone chooses a mass that is not in experimental data.
-def ExtractReferencePatternFromData(ExperimentData, referenceDataArray, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
-    copyOfReferenceDataArray = copy.deepcopy(referenceDataArray)    
+def ExtractReferencePatternFromData(ExperimentData, referenceData, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
+    copyOfreferenceData = copy.deepcopy(referenceData)    
     for moleculeIndex in range(len(rpcChosenMoleculesMF)):
         currentMassesList = rpcChosenMoleculesMF[moleculeIndex]
         for massChoice in currentMassesList:
             if massChoice not in ExperimentData.mass_fragment_numbers:
                 print("ERROR: You have selected to extract the reference pattern intensity of mass " + str(massChoice) + " from experimental data for one of your molecules, but this mass was not monitored. Please adjust your choices and run MSRESOLVE again."); sys.exit()
-            if massChoice not in copyOfReferenceDataArray.provided_mass_fragments:
+            if massChoice not in copyOfreferenceData.provided_mass_fragments:
                 print("ERROR: You have selected to extract the reference pattern intensity of mass " + str(massChoice) + " from experimental data for one of your molecules, but this mass did not have a value greater than 0 in in your original reference pattern. Please adjust your inputs and run MSRESOLVE again."); sys.exit()
                 
                 
     try:
-        type(copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties) #this checks if the variable exists.
+        type(copyOfreferenceData.provided_reference_patterns_absolute_uncertainties) #this checks if the variable exists.
     except: #create the variable if it does not exist.
-        copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties = copyOfReferenceDataArray.provided_reference_patterns*0.0
+        copyOfreferenceData.provided_reference_patterns_absolute_uncertainties = copyOfreferenceData.provided_reference_patterns*0.0
     for chosenmoleculescounter in range(len(rpcChosenMolecules)):#array-indexed for loop
         extractedIntensities = []
         allExtractedIntensities = []
         massfragindexerRef = [] #This is for the indices of the desired mass fragments in the reference pattern.
-        for moleculecounter in range(len(copyOfReferenceDataArray.molecules)):#array-indexed for loop
-            if copyOfReferenceDataArray.molecules[moleculecounter] == rpcChosenMolecules[chosenmoleculescounter]:#finds index of molecule
+        for moleculecounter in range(len(copyOfreferenceData.molecules)):#array-indexed for loop
+            if copyOfreferenceData.molecules[moleculecounter] == rpcChosenMolecules[chosenmoleculescounter]:#finds index of molecule
                 if len(rpcChosenMoleculesMF[chosenmoleculescounter]) == 1:#if only one number is given then we alter the list so that the function will change (extract) all the other values scaled according to this one.
                     for x in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
                         if ExperimentData.mass_fragment_numbers[x] != 0:#finds the other mass fragments and appends them. The !=0 is probably not necessary.
@@ -597,8 +597,8 @@ def ExtractReferencePatternFromData(ExperimentData, referenceDataArray, rpcChose
                                 rpcTimeRanges[chosenmoleculescounter].append(rpcTimeRanges[chosenmoleculescounter][0])
                 #For a given molecule, and a given mass fragment to be changed, the below for loop finds the index of the fragment to be changed, with respect to the reference pattern's mass fragments.
                 for eachChosenMoleculesMFIndex in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
-                    for refMFCounter in range(len(copyOfReferenceDataArray.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
-                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMFIndex] == copyOfReferenceDataArray.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
+                    for refMFCounter in range(len(copyOfreferenceData.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMFIndex] == copyOfreferenceData.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
                             massfragindexerRef.append(refMFCounter)
                 for eachChosenMoleculesMFIndex in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
                     for expMFCounter in range(len(ExperimentData.mass_fragment_numbers)):
@@ -623,14 +623,14 @@ def ExtractReferencePatternFromData(ExperimentData, referenceDataArray, rpcChose
                     allExtractedIntensitiesAveragesList.append(intensitiesAverage)
                     allExtractedIntensitiesStandardDeviationsList.append(intensitiesStandardDeviation)
                 #For loop to overwrite a chosen mass fragment's signal in the reference file with the product of the extracted ratios and the reference signal of the base mass fragment (that is, to make a reference pattern with a ratio matching the extracted ratio)
-                normalizationFactor = copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1] #The +1 is to skip the column that has mass fragment values.
+                normalizationFactor = copyOfreferenceData.provided_reference_patterns[massfragindexerRef[0],moleculecounter+1] #The +1 is to skip the column that has mass fragment values.
                 if normalizationFactor == 0: #This is just for the case that there's an 'exception' with no reasonable value provided by the line above.
                     normalizationFactor = 1
                     print("WARNING: There may be an error occurring when extracting the reference pattern. Search for normalizationFactor == 0 in the code for debugging.")
                 for eachChosenMoleculesMFIndex in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])): #The +1 below is b/c first column is mass frag
-                    copyOfReferenceDataArray.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMFIndex],moleculecounter+1] = (allExtractedIntensitiesAveragesList[eachChosenMoleculesMFIndex]/allExtractedIntensitiesAveragesList[0])*normalizationFactor
-                    copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties[massfragindexerRef[eachChosenMoleculesMFIndex],moleculecounter+1] = (allExtractedIntensitiesStandardDeviationsList[eachChosenMoleculesMFIndex]/allExtractedIntensitiesAveragesList[0])*normalizationFactor #Need to divide by the same thing and multiply by the same thing as previous line to get right scaling.
-    return copyOfReferenceDataArray.provided_reference_patterns, copyOfReferenceDataArray.provided_reference_patterns_absolute_uncertainties
+                    copyOfreferenceData.provided_reference_patterns[massfragindexerRef[eachChosenMoleculesMFIndex],moleculecounter+1] = (allExtractedIntensitiesAveragesList[eachChosenMoleculesMFIndex]/allExtractedIntensitiesAveragesList[0])*normalizationFactor
+                    copyOfreferenceData.provided_reference_patterns_absolute_uncertainties[massfragindexerRef[eachChosenMoleculesMFIndex],moleculecounter+1] = (allExtractedIntensitiesStandardDeviationsList[eachChosenMoleculesMFIndex]/allExtractedIntensitiesAveragesList[0])*normalizationFactor #Need to divide by the same thing and multiply by the same thing as previous line to get right scaling.
+    return copyOfreferenceData.provided_reference_patterns, copyOfreferenceData.provided_reference_patterns_absolute_uncertainties
 
 '''
 RemoveUnreferencedMasses() is used to prune ExperimentData.workingData and ExperimentData.mass_fragment_numbers 
