@@ -1616,7 +1616,7 @@ def DataInputPreProcessing(ExperimentData):
 '''
 PrepareReferenceObjectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
 '''
-#TODO: remove the argument "extractReferencePatternFromDataOption" from this function. That feature has been moved outside of this function..
+#TODO: remove the argument "extractReferencePatternFromDataOption" from this function. That feature has been moved outside of this function.
 def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[], ExperimentData=None, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
     # Reference Pattern Changer
     if extractReferencePatternFromDataOption == 'yes':
@@ -2544,13 +2544,13 @@ class MSReference (object):
             self.relativeIonizationEfficiencies = ['unknown']* len(self.molecules)
             self.relativeIonizationEfficiencies = numpy.array(self.relativeIonizationEfficiencies, dtype="object") #can have Strings or floats, so use dtype="object"
         else:
-            self.relativeIonizationEfficiencies = numpy.array(self.relativeIonizationEfficiencies, dtype="object") #can have Strings or floats, so use dtype="object"                                  
+            self.relativeIonizationEfficiencies = numpy.array(self.relativeIonizationEfficiencies, dtype="object") #can have Strings or floats, so use dtype="object"
         if self.moleculeIonizationType == []:
             self.moleculeIonizationType = ['unknown']* len(self.molecules)
         self.provided_mass_fragments = self.provided_reference_patterns[:,0]
-        #clear ClearZeroRowsFromProvidedReferenceIntensities                                                            
+        #clear ClearZeroRowsFromProvidedReferenceIntensities
         self.ClearZeroRowsFromProvidedReferenceIntensities()
-        #initialize the standardized_reference_patterns                                               
+        #initialize the standardized_reference_patterns
         #self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules)) #TODO: This line breaks extractReferencePatternFromData unit test. I am not sure why.
             
         #Initializing Export Collector Variables

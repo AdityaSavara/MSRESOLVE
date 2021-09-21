@@ -969,11 +969,12 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
     #repeat the process for the standardized_reference_patterns
-    standardized_reference_patterns_mass_fragments = trimmedRefererenceData.standardized_reference_patterns[:,0] 
-    trimmedReferenceStandardizedIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.standardized_reference_patterns[:,1:],
-                                                                                                                    allMoleculesList, chosenMolecules, header_dtype_casting=str) 
-    trimmedReferenceMF = numpy.reshape(standardized_reference_patterns_mass_fragments,(-1,1))
-    trimmedRefererenceData.standardized_reference_patterns =numpy.hstack((trimmedReferenceMF,trimmedReferenceStandardizedIntensities))
+    if hasattr(trimmedRefererenceData, 'standardized_reference_patterns'):
+        standardized_reference_patterns_mass_fragments = trimmedRefererenceData.standardized_reference_patterns[:,0] 
+        trimmedReferenceStandardizedIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.standardized_reference_patterns[:,1:],
+                                                                                                                        allMoleculesList, chosenMolecules, header_dtype_casting=str) 
+        trimmedReferenceMF = numpy.reshape(standardized_reference_patterns_mass_fragments,(-1,1))
+        trimmedRefererenceData.standardized_reference_patterns =numpy.hstack((trimmedReferenceMF,trimmedReferenceStandardizedIntensities))
     
     #TODO: The below line works with provided_reference_patterns. This is because trimDataMoleculesToMatchChosenMolecules
     #TODO continued: is currently working prior to standardized Reference patterns existing, and also because it is occurring
@@ -997,12 +998,14 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
         trimmedRefererenceData.absolute_standard_uncertainties = numpy.hstack((trimmedReferenceMF,trimmedAbsoluteUncertainties))
 
     trimmedRefererenceData.molecules = trimmedMoleculesList
+    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)    
     
     #remove any zero rows that may have been created #this should not be here. Zero rows can be cleared outside of this function. There are applications where this removing of zero rows causes problems.
     #trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
-    
-    trimmedRefererenceData.standardized_reference_patterns=StandardizeReferencePattern(trimmedRefererenceData.standardized_reference_patterns,len(trimmedRefererenceData.molecules))
-    trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)    
+    if hasattr(trimmedRefererenceData, 'standardized_reference_patterns'):
+        trimmedRefererenceData.standardized_reference_patterns=StandardizeReferencePattern(trimmedRefererenceData.standardized_reference_patterns,len(trimmedRefererenceData.molecules))
+        trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=False)    
+
     return trimmedRefererenceData
     
 '''
@@ -1808,7 +1811,7 @@ def DataInputPreProcessing(ExperimentData):
 '''
 PrepareReferenceObjectsAndCorrectionValues takes in ReferenceData to be prepared for data analysis 
 '''
-#TODO: remove the argument "extractReferencePatternFromDataOption" from this function. That feature has been moved outside of this function..                                     
+#TODO: remove the argument "extractReferencePatternFromDataOption" from this function. That feature has been moved outside of this function.
 def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[], ExperimentData=None, extractReferencePatternFromDataOption='no', rpcMoleculesToChange=[], rpcMoleculesToChangeMF=[[]], rpcTimeRanges=[[]], verbose=True):
     # Reference Pattern Changer
     if extractReferencePatternFromDataOption == 'yes':
