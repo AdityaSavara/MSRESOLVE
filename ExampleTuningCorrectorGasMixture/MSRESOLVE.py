@@ -5799,7 +5799,7 @@ def main():
     # and needed if G.dataAnalysis == 'load' or 'yes'  
     if (G.dataAnalysis == 'yes' or G.dataAnalysis =='load'):
         #Prepare prototypicalReferenceData which is currently the first reference object in the list
-        extractReferencePatternFromDataOptionHere = 'no' #should be extracted already
+        extractReferencePatternFromDataOptionHere = 'no' #should be extracted already.
         prototypicalReferenceData = PrepareReferenceObjectsAndCorrectionValues(prototypicalReferenceData, ExperimentData.mass_fragment_numbers, ExperimentData,extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
         #for loop to preprocess the remaining MSReference objects and match correction values
         for i in range(len(ReferenceDataList)):
@@ -5893,9 +5893,9 @@ def main():
                     uncertainties_dict['correction_values_relative_uncertainties'] = None
                 #G.collectedFileUncertainties = None
                 if (type(G.collectedFileUncertainties) != type(None)) and (str(G.collectedFileUncertainties).lower() != "none"):
-                        print("line 5715", G.collectedFileUncertainties)
-                        uncertainties_dict['rawsignals_absolute_uncertainties'] = ExperimentData.rawsignals_absolute_uncertainties #This is for *all* times.
-                        uncertainties_dict['rawsignals_absolute_uncertainties_one_time']=uncertainties_dict['rawsignals_absolute_uncertainties'][timeIndex] #This is for one time.                                                                                                                                         
+                    print("line 5715", G.collectedFileUncertainties)
+                    uncertainties_dict['rawsignals_absolute_uncertainties'] = ExperimentData.rawsignals_absolute_uncertainties #This is for *all* times.
+                    uncertainties_dict['rawsignals_absolute_uncertainties_one_time']=uncertainties_dict['rawsignals_absolute_uncertainties'][timeIndex] #This is for one time.                                                                                                                                         
                 elif type(G.collectedFileUncertainties) == type(None):
                     uncertainties_dict['rawsignals_absolute_uncertainties'] = None
                     uncertainties_dict['rawsignals_absolute_uncertainties_one_time']= ExperimentData.workingData[timeIndex]*0.0                                                                                                             

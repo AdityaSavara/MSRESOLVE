@@ -385,7 +385,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         print("Warning: The ABCDetermination will occur without threshold filtering, since that setting is off.")
         
     if G.extractReferencePatternFromDataOption == 'yes':
-        print("Warning: MSRESOLVE is set to do a tuning correction and is also set to extract the reference pattern from the data.  The tuning correction will be applied to the extracted pattern.  This is not a typical procedure. Typically, the extract pattern from dat feature is off when the tuning corrector is on.")
+        print("Warning: MSRESOLVE is set to do a tuning correction and is also set to extract the reference pattern from the data.  The tuning correction will be applied to the extracted pattern.  This is not a typical procedure. Typically, the extract pattern from data feature is off when the tuning corrector is on.")
        
     #For simplicity, we will put the items into temporary items, then into dictionaries that we can then access.
     ReferencePatternExistingTuningDict = {}
@@ -477,10 +477,26 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
     abcCoefficients, abcCoefficients_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
+    reverseRatio = 1/meanRatioPerMassFragment
+    abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],reverseRatio[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
+    
+    #Export the TuningCorrectorCoefficients as a list.
+    with open('TuningCorrectorCoefficients.txt', 'w') as the_file:
+        the_file.write(str(list(abcCoefficients))) 
+    #Export the TuningCorrectorCoefficients_cov to a csv.
+    numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+    #Do the same for the reverse relation.
+    with open('TuningCorrectorCoefficientsReverse.txt', 'w') as the_file:
+        the_file.write(str(list(abcCoefficients_reverse))) 
+    #Export the TuningCorrectorCoefficients_cov to a csv.
+    numpy.savetxt('TuningCorrectorCoefficientsReverse_cov.csv', abcCoefficients_reverse_cov, delimiter=",")
+
+
+    
     #Factor = A*X^2 + B*X + C, so C=1.0 means the factor is 1.0 and independent of molecular weight.
     #To use this with mixed patterns (meaning, some patterns taken from Literature reference like NIST) you will need to first determine the A,B,C coefficients, then you'll have to divide the Literature reference pattern by this factor. This will compensate for when the code multiplies by the factor, thus putting the mixed patterns into the same tuning.
+    print('line 504', abcCoefficients)
     return abcCoefficients, abcCoefficients_cov
-
  
 #this function either creates or gets the three coefficients for the polynomial correction (Tuning Correction) and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
@@ -491,13 +507,19 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     if type(referenceCorrectionCoefficients) == type({}):#check if it's a dictionary. If it is, we need to make it a list.
         referenceCorrectionCoefficients = [referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C']]
     if measuredReferenceYorN =='yes':
+        print("line 520!!!!!")
+        if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
+            print("line 522!!!!!")
+            referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.          
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
+        G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
         G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
+    nonZeroValueLocations = referenceDataArray > 0
     referenceDataArray_tuning_uncertainties = referenceDataArray*0.0 #just initializing.
     if list(referenceCorrectionCoefficients) != [0,0,1]:                                                                                    
         for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
@@ -512,6 +534,8 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
                     referenceDataArray_tuning_uncertainties[massfrag_counter,:]=referenceDataArray[massfrag_counter,:]*factor_uncertainty                                                                                                                  
     # referenceDataArrayWithAbscissa[:,0] = referenceabscissa
     # referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #This is actually already occuring above because it's a pointer, but this line is just to make more clear what has happened.
+    referenceDataArrayWithAbscissa[:,1:] = nonZeroValueLocations*referenceDataArray #we are setting things to zero if they were originally zero (this multiplies the nonzero locations by 1, and everything else by 0)
+    referenceDataArrayWithAbscissa[:,1:] = (referenceDataArrayWithAbscissa[:,1:] > 0)*referenceDataArrayWithAbscissa[:,1:]  #multiplying by 1 where the final value is >0, and by 0 everywhere else.
     referenceDataArrayWithAbscissa_tuning_uncertainties = referenceDataArrayWithAbscissa*1.0 #creating copy with abscissa, then will fill.
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
     return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
@@ -5513,7 +5537,11 @@ def main():
                print("WARNING: You have chosenMolecules / specificMolecules set to no, but iterativeAnalysis is set to True and requires chosenMolecules. ChosenMolecules will be used as part of iterative. If you did not fill out the chosenMolecules list correctly, you must do so and run again (you may also need to delete the directory for the next iteration).")
            for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
                 ReferenceDataList[RefObjectIndex] = trimDataMoleculesToMatchChosenMolecules(RefObject, G.chosenMoleculesNames)
+                ReferenceDataList[RefObjectIndex].ClearZeroRowsFromProvidedReferenceIntensities()
+                #ReferenceDataList[RefObjectIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
            prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMoleculesNames)
+           prototypicalReferenceData.ClearZeroRowsFromProvidedReferenceIntensities()
+           #prototypicalReferenceData.ClearZeroRowsFromStandardizedReferenceIntensities()
 	
         if G.iterativeAnalysis:
             #make a copy of the experimental data for later use in iterative processing
@@ -5547,7 +5575,7 @@ def main():
                 ReferenceDataList[i].populateIonizationEfficiencies(G.AllMID_ObjectsDict)
             except:
                 ReferenceDataList[i].populateIonizationEfficiencies()
-            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],  ExperimentData.mass_fragment_numbers, ExperimentData, extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
+            ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData.mass_fragment_numbers, ExperimentData, extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
             
     if (G.dataAnalysis == 'yes'):
         print("Entering Data Analysis")
@@ -5806,7 +5834,7 @@ def main():
             concentrations_absolute_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_absolute_uncertainties_all_times']))
             concentrations_relative_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_relative_uncertainties_all_times']))
             ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'scaled', units = None)
-            ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'percent_concentration', units = None)
+            ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
 
         
         G.generateStatistics = True #FIXME: This variable needs to be added to user Input somehow. Also does not work with iterative.
@@ -5866,7 +5894,7 @@ def main():
                 concentrations_absolute_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_absolute_uncertainties_all_times_scaled_to_unit']))
                 concentrations_relative_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_relative_uncertainties_all_times']))
                 ExportXYYYData(G.concentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
-                ExportXYYYData(G.concentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'percent_concentration', units = None)
+                ExportXYYYData(G.concentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
 
         
             #Graph the concentration/relative signal data
