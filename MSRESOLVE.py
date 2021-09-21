@@ -901,7 +901,7 @@ def CorrectionValuesObtain(ReferenceData):
     #the first for loop here gets all of the values for e- and mw and uses them to get the
     #respective values that can find the correction factor for each mass fragment of each molecule
     for column_counter in range(1,reference_width): #array-indexed for loop, skips column one b/c that is the mass fragment numbers, not relative intensities. This loops across each molecule.
-        ionization_efficiency = ReferenceData.ionizationEfficienciesList[column_counter-1]
+        ionization_efficiency = ReferenceData.relativeIonizationEfficiencies[column_counter-1]
         current_molecule_correction_factors_list = []
         quotients = numpy.zeros(len(ReferenceData.standardized_reference_patterns[:,0])) #This means the same length as the mass fragments.
         quotients_relative_uncertainties = quotients*1.0 #we make this variable but only populate it if we're going to calculate uncertainties.
@@ -2782,19 +2782,21 @@ class MSReference (object):
         for moleculeIndex, sourceString in enumerate(self.SourceOfFragmentationPatterns):
             self.SourceOfFragmentationPatterns[moleculeIndex] = sourceString + suffixString
         print("line 2676", self.SourceOfFragmentationPatterns)
-#populateIonizationEfficiencies is an MSReference function that populates a variable, ionizationEfficienciesList, that contains the ionization factors used in CorrectionValuesObtain
-#If the ionization factor is known and in the reference data, then that value is used
-#If the ionization factor is unknown the the function will look in the MID Dictionary and check if the molecule exists in the ionization data.  If it does the the ionization average of the ionization factors for that particular molecule in the data is used
-#If the ionization factor is unknown and the particular molecule does not exist in the MID Data, then the function checks the molecule's ionization type(s).  The function will take all molecules from the MID data that have the same type and will perform a linear fit on the data.  The ionization factor for this molecule is determined based on the linear fit and number of electrons
-#If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
+#populateIonizationEfficiencies is an MSReference function that populates a variable, relativeIonizationEfficiencies, that contains the ionization factors used in CorrectionValuesObtain
+    #If the ionization factor is known and in the reference data, then that value is used
+    #If the ionization factor is unknown the the function will look in the MID Dictionary and check if the molecule exists in the ionization data.  If it does the the ionization average of the ionization factors for that particular molecule in the data is used
+    #If the ionization factor is unknown and the particular molecule does not exist in the MID Data, then the function checks the molecule's ionization type(s).  The function will take all molecules from the MID data that have the same type and will perform a linear fit on the data.  The ionization factor for this molecule is determined based on the linear fit and number of electrons
+    #If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
     def populateIonizationEfficiencies(self, AllMID_ObjectsDict={}):
-        #TODO: considring changing ionizationEfficienciesList to relativeIonizationEfficiencies or something like that. The problem is that the below line would overwrite any existing relativeIonizationEfficiencies, so would need to be changed. Note that CorrectionValuesObtain currently uses ionizationEfficienciesList, and does not use the object relativeIonizationEfficiencies. 
-        self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here and used in CorrectionValuesObtain
-        self.ionizationEfficienciesSourcesList = copy.copy(self.molecules) #initialize an array to store which method was used to obtain a molecule's ionization factor
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+        #self.relativeIonizationEfficiencies = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here and used in CorrectionValuesObtain
+        #self.sourceOfIonizationData = copy.copy(self.molecules) #initialize an array to store which method was used to obtain a molecule's ionization factor
+        self.sourceOfIonizationData = list(self.sourceOfIonizationData) #Making it a list here because if it's a numpy array the strings may get cut short.
         for moleculeIndex in range(len(self.molecules)): #loop through our initialized array
             if isinstance(self.relativeIonizationEfficiencies[moleculeIndex],float): #if the knownIonizationFactor is a float, then that is the value defined by the user
-                self.ionizationEfficienciesList[moleculeIndex] = self.relativeIonizationEfficiencies[moleculeIndex]
-                self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownIonizationFactorFromReferenceFile' #the molecule's factor was known
+                self.relativeIonizationEfficiencies[moleculeIndex] = self.relativeIonizationEfficiencies[moleculeIndex]
+                self.sourceOfIonizationData[moleculeIndex] = self.sourceOfIonizationData[moleculeIndex] #the molecule's factor was known
+                print("line 2808", self.sourceOfIonizationData)
             else: #Ionization factor is not known so look at molecular ionization data from literatiure 
                 #Initialize three lists
                 MatchingMID_Objects = []
@@ -2810,10 +2812,10 @@ class MSReference (object):
                         MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[currentMoleculeKeyName].electronNumber) #append the electron number
                         matchingMolecule = True #set the flag to be true
                 if matchingMolecule == True: #If the molecule matches a molecule in the MID dictionary, use the average RS_Value
-                    self.ionizationEfficienciesList[moleculeIndex] = MatchingMID_RS_Values[0]
-                    self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownIonizationFactorFromProvidedCSV' #A molecule in the reference data is also in the ionization data
+                    self.relativeIonizationEfficiencies[moleculeIndex] = MatchingMID_RS_Values[0]
+                    self.sourceOfIonizationData[moleculeIndex] = 'knownIonizationFactorFromProvidedCSV' #A molecule in the reference data is also in the ionization data
                 elif matchingMolecule == False: #Otherwise matchingMolecule is False which means its not in the data from literature.  So we will approximate the ionization factor based on a linear fit of the data from literature that share the molecule's type or use the Madix and Ko equation
-                    if (type(self.moleculeIonizationType[moleculeIndex]) != type(None)) and (self.moleculeIonizationType[moleculeIndex] != 'unknown'): #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
+                    if type(self.moleculeIonizationType[moleculeIndex]) != type(None) and self.moleculeIonizationType[moleculeIndex] != 'unknown': #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
                         #Then get an estimate by performing a linear fit on the data in the MID Dictionary
 			#TODO:The program currently only takes in one type but it is a desired feature to allow users to put in multiple types such as type1+type2 which would make a linear fit of the combined data between the two types
 			#TODO continued:The user should also be able to put in type1;type2 and the program would find the ionization factor using a linear fit of data from type1 and using a linear fit of data from type2.  The largest of the two ionization factors would be used.
@@ -2835,21 +2837,21 @@ class MSReference (object):
                             #TODO continued: Link to do so: https://scipy-cookbook.readthedocs.io/items/FittingData.html
                             polynomialCoefficients = numpy.polyfit(MatchingMID_ElectronNumbers,MatchingMID_RS_Values,1) #Electron numbers as the independent var, RS_values as the dependent var, and 1 for 1st degree polynomial
                             poly1dObject = numpy.poly1d(polynomialCoefficients) #create the poly1d object
-                            self.ionizationEfficienciesList[moleculeIndex] = numpy.polyval(poly1dObject,self.electronnumbers[moleculeIndex]) #use polyval to calculate the ionization factor based on the current molecule's electron number
-                            self.ionizationEfficienciesSourcesList[moleculeIndex] = 'evaluatedInterpolationTypeFit' #ionization factor was determined via a linear fit based on a molecule's ionization type
+                            self.relativeIonizationEfficiencies[moleculeIndex] = numpy.polyval(poly1dObject,self.electronnumbers[moleculeIndex]) #use polyval to calculate the ionization factor based on the current molecule's electron number
+                            self.sourceOfIonizationData[moleculeIndex] = 'evaluatedInterpolationTypeFit' #ionization factor was determined via a linear fit based on a molecule's ionization type
                 if len(MatchingMID_Objects) == 0: #Otherwise use the original Madix and Ko equation
-                    self.ionizationEfficienciesList[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
-                    self.ionizationEfficienciesSourcesList[moleculeIndex] = 'MadixAndKo' #ionization efficiency obtained via Madix and Ko equation
+                    self.relativeIonizationEfficiencies[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
+                    self.sourceOfIonizationData[moleculeIndex] = 'MadixAndKo' #ionization efficiency obtained via Madix and Ko equation
+                    print("line 2583", self.sourceOfIonizationData)
 
-#Export the ionization efficiencies used and their respective method used to obtain them (known factor, known molecule, known ionization type, or Madix and Ko)    
+    #Export the ionization efficiencies used and their respective method used to obtain them (known factor, known molecule, known ionization type, or Madix and Ko)    
     def exportIonizationInfo(self):
-        ionizationData = numpy.vstack((self.molecules,self.ionizationEfficienciesList,self.ionizationEfficienciesSourcesList)) #make a 2d array containing molecule names (for the header), the ionization efficiencies, and which method was chosen
+        ionizationData = numpy.vstack((self.molecules,self.relativeIonizationEfficiencies,self.sourceOfIonizationData)) #make a 2d array containing molecule names (for the header), the ionization efficiencies, and which method was chosen
         ionizationDataAbsicca = numpy.array([['Molecule'],
                                              ['Ionization Efficiency'],
                                              ['Method to Obtain Ionization Efficiency']]) #create the abscissa headers for the csv file
         ionizationDataToExport = numpy.hstack((ionizationDataAbsicca,ionizationData)) #use hstack to obtain a 2d array with the first column being the abscissa headers
-        numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file
-                    
+        numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file                    
     def update_relative_standard_uncertainties(self):
         self.relative_standard_uncertainties = self.absolute_standard_uncertainties*1.0 #First make the array.
         #now populate the non-mass fragment parts by dividing.
