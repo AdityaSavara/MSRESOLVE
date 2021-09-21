@@ -2442,7 +2442,6 @@ class MSReference (object):
         #This loops through the molecules, and removes whitespaces from before and after the molecule's names.
         for moleculeIndex, moleculeName in enumerate(self.molecules):
             self.molecules[moleculeIndex] = moleculeName.strip()     
-        
         #Initializing some list variables with defaults.
         if self.SourceOfFragmentationPatterns == []:
             self.SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
@@ -2458,7 +2457,6 @@ class MSReference (object):
             self.relativeIonizationEfficiencies = numpy.array(self.relativeIonizationEfficiencies, dtype="object") #can have Strings or floats, so use dtype="object"                                  
         if self.moleculeIonizationType == []:
             self.moleculeIonizationType = ['unknown']* len(self.molecules)
-
         self.provided_mass_fragments = self.provided_reference_patterns[:,0]
         #clear ClearZeroRowsFromProvidedReferenceIntensities                                                            
         self.ClearZeroRowsFromProvidedReferenceIntensities()
@@ -2476,7 +2474,6 @@ class MSReference (object):
         self.moleculesToExport = []
         self.exportSuffix = ''
         #self.experimentTimes = []       
-                                                                            
         #Get ionization efficiencies and export their values and what method was used to obtain them
         self.populateIonizationEfficiencies(AllMID_ObjectsDict)
         self.exportIonizationInfo()
@@ -2534,7 +2531,6 @@ class MSReference (object):
                 moleculesToKeep.remove(moleculeName)
         trimmedRefererenceData = trimDataMoleculesToMatchChosenMolecules(self, moleculesToKeep)        
         return trimmedRefererenceData
-    
         #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
@@ -2696,21 +2692,19 @@ class MSReference (object):
         for moleculeIndex, sourceString in enumerate(self.SourceOfFragmentationPatterns):
             self.SourceOfFragmentationPatterns[moleculeIndex] = sourceString + suffixString
         print("line 2676", self.SourceOfFragmentationPatterns)
-        
 #populateIonizationEfficiencies is an MSReference function that populates a variable, ionizationEfficienciesList, that contains the ionization factors used in CorrectionValuesObtain
 #If the ionization factor is known and in the reference data, then that value is used
 #If the ionization factor is unknown the the function will look in the MID Dictionary and check if the molecule exists in the ionization data.  If it does the the ionization average of the ionization factors for that particular molecule in the data is used
 #If the ionization factor is unknown and the particular molecule does not exist in the MID Data, then the function checks the molecule's ionization type(s).  The function will take all molecules from the MID data that have the same type and will perform a linear fit on the data.  The ionization factor for this molecule is determined based on the linear fit and number of electrons
 #If the ionization factor is unknown, the molecule does not exist in the MID data, and the molecule's ionization type is unknown, then the function defaults to the Madix and Ko equation
     def populateIonizationEfficiencies(self, AllMID_ObjectsDict={}):
+        #TODO: considring changing ionizationEfficienciesList to relativeIonizationEfficiencies or something like that. The problem is that the below line would overwrite any existing relativeIonizationEfficiencies, so would need to be changed. Note that CorrectionValuesObtain currently uses ionizationEfficienciesList, and does not use the object relativeIonizationEfficiencies. 
         self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here and used in CorrectionValuesObtain
         self.ionizationEfficienciesSourcesList = copy.copy(self.molecules) #initialize an array to store which method was used to obtain a molecule's ionization factor
-                                                                                                                                                                                                 
         for moleculeIndex in range(len(self.molecules)): #loop through our initialized array
             if isinstance(self.relativeIonizationEfficiencies[moleculeIndex],float): #if the knownIonizationFactor is a float, then that is the value defined by the user
                 self.ionizationEfficienciesList[moleculeIndex] = self.relativeIonizationEfficiencies[moleculeIndex]
                 self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownIonizationFactorFromReferenceFile' #the molecule's factor was known
-                                                               
             else: #Ionization factor is not known so look at molecular ionization data from literatiure 
                 #Initialize three lists
                 MatchingMID_Objects = []
@@ -2756,7 +2750,6 @@ class MSReference (object):
                 if len(MatchingMID_Objects) == 0: #Otherwise use the original Madix and Ko equation
                     self.ionizationEfficienciesList[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
                     self.ionizationEfficienciesSourcesList[moleculeIndex] = 'MadixAndKo' #ionization efficiency obtained via Madix and Ko equation
-                                                                   
 
 #Export the ionization efficiencies used and their respective method used to obtain them (known factor, known molecule, known ionization type, or Madix and Ko)    
     def exportIonizationInfo(self):
@@ -2792,7 +2785,6 @@ class MSReference (object):
             else:
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
-        
 '''
 The MolecularIonizationData class is used to generate a molecule's ionization factor based on its ionization type
 '''        
@@ -4870,7 +4862,6 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
     if dataType == 'relative_uncertainty':
         label = 'relative uncertainty' 
         formatedDataHeader = [molecule + ' ' + label for molecule in dataHeader]
-
     #extraLine is used to create CSV files that conform to MSRESOLVE's import requirements i.e. having a row for comments at the top
     extraLine = False
     if dataType == 'Experiment':
