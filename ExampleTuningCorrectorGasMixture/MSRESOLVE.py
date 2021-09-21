@@ -1850,7 +1850,7 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[
     return ReferenceData
 
 #Will take current reference data monitored intensities and will set any molecules to zero that do not meet their reference threshold.
-def signalThresholdFilter(ReferenceDataObject, rawsignalsarrayline, ExperimentData, minimumSignalRequired, minimumStandardizedReferenceHeightToBeSignificant):
+def signalThresholdFilter(ReferenceDataObject, rawsignalsarrayline, minimumSignalRequired, minimumStandardizedReferenceHeightToBeSignificant):
     ReferenceDataObject = copy.deepcopy(ReferenceDataObject)    
     #first we flatten the rawSignalsArrayLine because we want it to be 1D.
     flattenedRawSignalsArrayLine = rawsignalsarrayline.flatten()
@@ -3854,7 +3854,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             slsReferenceDataObject.monitored_reference_intensities = remaining_reference_intensities_SLS
             slsReferenceDataObject.matching_correction_values = remaining_correction_factors_SLS
             slsReferenceDataObject.molecules = remaining_molecules_SLS
-            slsReferenceDataObject = signalThresholdFilter(slsReferenceDataObject, remaining_rawsignals_SLS, ExperimentData, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
+            slsReferenceDataObject = signalThresholdFilter(slsReferenceDataObject, remaining_rawsignals_SLS, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
             #after done, update local variables from the object that has now been changed.
             remaining_monitored_reference_intensities = slsReferenceDataObject.monitored_reference_intensities *1.0  #These are the remaining_monitored_reference_intensities after exclusion.
             remaining_reference_intensities_SLS = slsReferenceDataObject.monitored_reference_intensities *1.0 #This one will get further shortened inside the loop.
@@ -5925,7 +5925,7 @@ def main():
             G.minimumStandardizedReferenceHeightToBeSignificant = G.sensitivityThresholdValue
             if G.excludeMoleculesIfSignificantFragmentNotObserved == 'yes':
                 #FIXME: Check if this is compatible with uncertainties. I don't think it is, as of Feb 2nd 2020.                                                                                                
-                currentReferenceData = signalThresholdFilter(currentReferenceData, rawsignalsarrayline, ExperimentData, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
+                currentReferenceData = signalThresholdFilter(currentReferenceData, rawsignalsarrayline, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
                     
                     #solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.matching_correction_values,rawsignalsarrayline,
                                                          # currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
