@@ -510,7 +510,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
         print("line 520!!!!!")
         if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
             print("line 522!!!!!")
-            referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.          
+            referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
@@ -546,7 +546,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
 def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThreshold):
     numMolecules = len(referenceDataArrayWithAbscissa[0]-1)
     if numMolecules > len(list(referenceValueThreshold)):
-        referenceValueThreshold = list(referenceValueThreshold)* numMolecules 
+        referenceValueThreshold = list(referenceValueThreshold)* numMolecules
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:] #all the data except the line of abscissa- mass fragment numbers
     for columncounter in range(len(referenceDataArray[0,:])):#goes through all columns in all rows in reference (this loop is one molecule at a time)
         for rowcounter in range(len(referenceDataArray[:,0])):#goes through all rows in references (one mass fragment at a time)        
@@ -775,20 +775,31 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
-    
+    print("line 739", ReferenceData.sourceOfIonizationData)
+    print("line 740", trimmedRefererenceData.sourceOfIonizationData)
     #trim the reference fragmentation patterns to only the selected molecules 
+    
     #unused trimmed copy molecules is just a place holder to dispose of a function return that is not needed
     trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_patterns[:,1:],
                                                                                                                     allMoleculesList, chosenMolecules, header_dtype_casting=str)  
     #add a second dimension to the reference data
     trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.provided_mass_fragments,(-1,1))
+    #Add the abscissa back into the reference values
+    trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
+    
+    #repeat the process for the standardized_reference_patterns
+    standardized_reference_patterns_mass_fragments = trimmedRefererenceData.standardized_reference_patterns[:,0] 
+    trimmedReferenceStandardizedIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.standardized_reference_patterns[:,1:],
+                                                                                                                    allMoleculesList, chosenMolecules, header_dtype_casting=str) 
+    trimmedReferenceMF = numpy.reshape(standardized_reference_patterns_mass_fragments,(-1,1))
+    trimmedRefererenceData.standardized_reference_patterns =numpy.hstack((trimmedReferenceMF,trimmedReferenceStandardizedIntensities))
     
     #TODO: The below line works with provided_reference_patterns. This is because trimDataMoleculesToMatchChosenMolecules
     #TODO continued: is currently working prior to standardized Reference patterns existing, and also because it is occurring
     #TODO continued: Before we have the monitored mass fragments (which also occurs later data analysis).
     #TODO continued: The best solution is probably to do the standardization earlier and then do this trimming after that.
-    #Add the abscissa back into the reference values
-    trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
+
+    print("line 753", trimmedRefererenceData.sourceOfIonizationData, trimmedMoleculesList)
     
     #Shorten the electronnumbers to the correct values, using the full copy of molecules. Do the same for molecularWeights and sourceInfo
     trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
@@ -797,6 +808,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.relativeIonizationEfficiencies, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.relativeIonizationEfficiencies, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfFragmentationPatterns, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfFragmentationPatterns, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.sourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.sourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
+    print("line 761", trimmedRefererenceData.sourceOfIonizationData, trimmedMoleculesList)
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None): #The [:,1:] is related to the mass fragements.  Just copying the two lines syntax from above.
             trimmedAbsoluteUncertainties, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.absolute_standard_uncertainties[:,1:], 
@@ -806,12 +818,12 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
 
     trimmedRefererenceData.molecules = trimmedMoleculesList
     
-    #remove any zero rows that may have been created
-    trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
+    #remove any zero rows that may have been created #this should not be here. Zero rows can be cleared outside of this function. There are applications where this removing of zero rows causes problems.
+    #trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
     
+    trimmedRefererenceData.standardized_reference_patterns=StandardizeReferencePattern(trimmedRefererenceData.standardized_reference_patterns,len(trimmedRefererenceData.molecules))
     trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)    
     return trimmedRefererenceData
-    
 '''
 trimDataMassesToMatchChosenMassFragments() and trimDataMassesToMatchReference() are just a wrapper functions for calls to DataFunctions.KeepOnlySelectedYYYYColumns(). 
 Both of the functions trim ExperimentData.workingData and ExperimentData.mass_fragment_numbers. 
