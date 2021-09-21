@@ -1182,7 +1182,7 @@ def StandardizeTo100(a1DArray,n):
     for index2 in range(0,len(a1DArrayStandardized)):
         a1DArrayStandardized[index2]=(a1DArrayStandardized[index2]*multiplier)
     print("line 1184", a1DArray)
-    return a1DArrayStandardized                   
+    return a1DArrayStandardized
 
 
 
@@ -1281,9 +1281,17 @@ def ImportAnalyzedData(concentrationsOutputName):
 '''Makes a mixed reference pattern from two reference patterns, including tuning correction.'''
 def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
     # standardize the reference data columns such that the maximum value is 100 and everything else is
-    # linearly scaled according that the maximum value scaling
-    ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
-    ReferenceData.ExportCollector('StandardizeReferencePattern')
+    # scaled according that the maximum value, but only if it's not already done.
+    if hasattr(ReferenceData, 'standardized_reference_patterns') == False:
+        ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
+        ReferenceData.ExportCollector('StandardizeReferencePatternOriginal', use_provided_reference_patterns = False)
+    else:
+        print("line 1287", ReferenceData.standardized_reference_patterns)
+        ReferenceData.ExportCollector('StandardizeReferencePatternSecondBefore', use_provided_reference_patterns = False)
+        ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns)
+        ReferenceData.ExportCollector('StandardizeReferencePatternSecondAfter', use_provided_reference_patterns = False)
+        print("line 1293", ReferenceData.standardized_reference_patterns)
+        sys.exit()
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None):
             ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
