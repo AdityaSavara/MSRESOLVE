@@ -1,3 +1,4 @@
+
 import bisect
 import copy 
 import ParsingFunctions as parse
@@ -380,6 +381,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     Step 2: populate all variables and standardize signals by 100 
 
     '''
+                                                                                                                                                          
     
     if G.minimalReferenceValue !='yes':
         print("Warning: The ABCDetermination will occur without threshold filtering, since that setting is off.")
@@ -389,20 +391,25 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
        
     #For simplicity, we will put the items into temporary items, then into dictionaries that we can then access.
     ReferencePatternExistingTuningDict = {}
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternExistingTuning_FileNameAndForm)
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternExistingTuning_FileNameAndForm)
     ReferencePatternExistingTuningDict['molecules']=molecules
     ReferencePatternExistingTuningDict['provided_reference_patterns'] = provided_reference_patterns
     ReferencePatternExistingTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternExistingTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
+    
     if G.minimalReferenceValue =='yes':
         ReferencePatternExistingTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternExistingTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
+                                                    
+                                                                                                                                                                  
     
     ReferencePatternDesiredTuningDict = {}
-    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternDesiredTuning_FileNameAndForm)
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternDesiredTuning_FileNameAndForm)
     ReferencePatternDesiredTuningDict['molecules']=molecules
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = provided_reference_patterns
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternDesiredTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
     if G.minimalReferenceValue =='yes':
         ReferencePatternDesiredTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternDesiredTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
+                                                    
+                                                                                           
     
     '''
     Step 3a: Truncate to the molecules which match.
@@ -476,9 +483,27 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         # meanRatioPerMassFragment[meanRatioPerMassFragment==-inf] = 'nan'
     #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
+
     abcCoefficients, abcCoefficients_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
+                                             
+                                                                                                                                                                                                     
+    
+                                                      
+                                                                  
+                                                   
+                                                         
+                                                                                            
+                                          
+                                                                         
+                                                           
+                                                         
+                                                                                                                                              
+
+
+    
     #Factor = A*X^2 + B*X + C, so C=1.0 means the factor is 1.0 and independent of molecular weight.
     #To use this with mixed patterns (meaning, some patterns taken from Literature reference like NIST) you will need to first determine the A,B,C coefficients, then you'll have to divide the Literature reference pattern by this factor. This will compensate for when the code multiplies by the factor, thus putting the mixed patterns into the same tuning.
+                                      
     return abcCoefficients, abcCoefficients_cov
 
  
@@ -486,14 +511,28 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
 def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,measuredReferenceYorN):
+                                                                                                                           
+                                                                                                                                  
+    
+                                                                                                                                                                  
+                                                                                                                                                                                                
+    
     if measuredReferenceYorN =='yes':
+                              
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+                                  
+                                                                                                                                                                                                                                                                                    
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
+                                          
+                                                          
+                                                                                                                                                                                                                                                                                                                                              
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
         G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
+                                                   
     referenceDataArray_tuning_uncertainties = referenceDataArray*0.0 #just initializing.
     if list(referenceCorrectionCoefficients) != [0,0,1]:                                                                                    
         for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
@@ -508,14 +547,187 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
                     referenceDataArray_tuning_uncertainties[massfrag_counter,:]=referenceDataArray[massfrag_counter,:]*factor_uncertainty                                                                                                                  
     # referenceDataArrayWithAbscissa[:,0] = referenceabscissa
     # referenceDataArrayWithAbscissa[:,1:] = referenceDataArray #This is actually already occuring above because it's a pointer, but this line is just to make more clear what has happened.
+                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                    
     referenceDataArrayWithAbscissa_tuning_uncertainties = referenceDataArrayWithAbscissa*1.0 #creating copy with abscissa, then will fill.
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
     return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
     
+                                                                                                                                                                                                                             
+                                                                                                                                                                                                                        
+                                                                                                                                        
+                         
+                                                    
+                                                                                                                                 
+                                                                                                                                                                                                                                                      
+                                                                         
+
+                                                                                                                                                                                                                    
+                         
+                                                            
+                                                                
+                                                                                                                                                                                                        
+                                                                                                                                                                                                
+                                                                                                                                                        
+                                      
+                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                             
+                                              
+                                                                                                                                                
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                                              
+                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                      
+                                                                                                                                                      
+                                                                        
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                           
+                                                                                           
+                                                                
+                                                                                    
+                         
         
+                                                                                                                                                
+                                                                                                                                                                                                                         
+                                                                                                                               
+                                                                                                                                                                                                                             
+                         
+                                                                                                                                                       
+                                                                                                                                                    
+                                              
+                                                                                                                                                     
+                                                                                           
+                                                                                                                                                                                           
+             
+                                                                                                                                                                                                                                                       
+                                                                            
+
+                         
+                                                                                                                                                      
+                                                                                  
+                                                                                                                                                                                                                                                               
+                                                                                                                                                      
+                                                                                                                                                                                                                          
+                                                                                                                                                             
+                                                                                           
+                                                       
+                                                  
+                                                                                                                                                     
+                                                                                                                                                                                           
+                                                                                                                                                                                                                                                        
+                                       
+                                                                       
+                                                                                                                                                        
+                                             
+                                                                                                                                 
+                                                                          
+                         
+                                                                                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                            
+                                                                                                                                                         
+                                                                                                                                                                                                                                 
+                                                                                                                                                                                                   
+                                                                                                                                   
+                                                                                                                                                      
+                                                                         
+                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                                                     
+                                                                                                                                                                                                          
+                                                                                                                                                                                                                  
+                                                                                   
+                                                                                                                                     
+                         
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                                
+                                 
+                                                                                                                                                                                            
+                                                                                                                                                            
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+                                                                                                                                                    
+        
+                                                                                                                                     
+                                                                                           
+                                                                
+                    
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+                       
+                                                                                                                                                                                                                                                                                                                                                                                                                 
+                                                                                                   
+                
+                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                           
+                                                                                
+                                                                                                                                                                                                     
+                                                                                                                                                                                                                       
+                                                              
+                                                                  
+                                                                                                                                                                                                          
+                                                                                                                                                                                                   
+                                                                                                                                                          
+                                        
+                                                                                                                                                                  
+                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                                
+                                                                                                                                                  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+                                                                
+                                                                                                                                                                                                                                                                                                                                                    
+                                                                                                                                                                                                          
+                                                                                                                                                         
+                                                                          
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                                                                                                                        
+                                                                                                                                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                  
+
+                                                                                                                                                     
+                                                                              
+                                                                                                       
+                                                                
+                                                                                                                                                             
+                                                                                                                                                              
+                                                                                                                                                        
+                                                                                                                                                        
+                                                                                                                                                                                                                             
+                                                                                                                                                                
+                                                                                       
+                                                                               
+                                                                                                                                                                                                                          
+                                                                 
+                                                                    
+                                                                                                                                                                  
+                                                                                                                                                                                                                                                                                                                                                                                                         
+                                                                                                                                                                                                                                                                                                                                                                                                         
+                                                                                                                                                                                                                            
+                                                                                                                                                                                                                                                                                
+                                                                                                                                                                                                                                                                                
+                                                                                                                                                                 
+                                                                                                                                                                 
+                                                                                                                                      
+                                           
+                                                                                   
+                                                                                                                                              
+                                                                                                                                    
+                                                                                                                                                                  
+                                                                                                                                                                                                                                 
+                                                                                                                                                    
+                
+                 
+                                                                                   
+                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                             
+                                
+
+
 #this function eliminates (neglects) reference intensities that are below a certain threshold. Useful for solving 
 #data that is giving negatives or over emphasizing small mass fragments,by assuming no contribution from the molecule at that mass fragment.
 def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThreshold):
+                                                           
+                                                         
+                                                                             
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:] #all the data except the line of abscissa- mass fragment numbers
     for columncounter in range(len(referenceDataArray[0,:])):#goes through all columns in all rows in reference (this loop is one molecule at a time)
         for rowcounter in range(len(referenceDataArray[:,0])):#goes through all rows in references (one mass fragment at a time)        
@@ -704,6 +916,38 @@ def MassFragChooser (ExperimentData, chosenMassFragments):    ## DEPRECATED Repl
     #                 place_holder = place_holder + 1
                     
     #return [mass_fragment_numbers2,ExperimentData.workingData]
+
+                                                                                                                            
+                                                                                                                                
+                                                                           
+                                                                          
+                                                                         
+                                                                  
+                                                          
+                                                           
+                                                   
+                                                                                           
+                                                    
+                                                                                                                                                                                                     
+                                                                             
+                                                                     
+
+                                                                           
+                                                                       
+
+                                                                                                                                               
+                                                                           
+                                                                                   
+         
+                                                                               
+
+    
+                                                                                                                                                                                           
+                                                                                                                                          
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                                                                             
+                                                
+                                                     
     
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
@@ -715,12 +959,23 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
     
+                                                                     
     #trim the reference fragmentation patterns to only the selected molecules 
+    
     #unused trimmed copy molecules is just a place holder to dispose of a function return that is not needed
     trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_patterns[:,1:],
                                                                                                                     allMoleculesList, chosenMolecules, header_dtype_casting=str)  
     #add a second dimension to the reference data
     trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.provided_mass_fragments,(-1,1))
+                                                    
+                                                                                                                                                              
+    
+                                                               
+                                                                                                                                                      
+                                                                                                                                                                                                                     
+                                                                                                                                                                                 
+                                                                                             
+                                                                                                                                      
     
     #TODO: The below line works with provided_reference_patterns. This is because trimDataMoleculesToMatchChosenMolecules
     #TODO continued: is currently working prior to standardized Reference patterns existing, and also because it is occurring
@@ -732,10 +987,11 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     #Shorten the electronnumbers to the correct values, using the full copy of molecules. Do the same for molecularWeights and sourceInfo
     trimmedRefererenceData.electronnumbers, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.electronnumbers, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.molecularWeights, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.molecularWeights, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
-    trimmedRefererenceData.knownMoleculesIonizationTypes, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownMoleculesIonizationTypes, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
-    trimmedRefererenceData.knownIonizationFactorsRelativeToN2, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.knownIonizationFactorsRelativeToN2, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
+    trimmedRefererenceData.moleculeIonizationType, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.moleculeIonizationType, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
+    trimmedRefererenceData.relativeIonizationEfficiencies, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.relativeIonizationEfficiencies, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfFragmentationPatterns, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfFragmentationPatterns, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
-    trimmedRefererenceData.SourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
+    trimmedRefererenceData.sourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.sourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
+                                                                                          
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None): #The [:,1:] is related to the mass fragements.  Just copying the two lines syntax from above.
             trimmedAbsoluteUncertainties, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.absolute_standard_uncertainties[:,1:], 
@@ -748,8 +1004,10 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     #remove any zero rows that may have been created
     trimmedRefererenceData.ClearZeroRowsFromProvidedReferenceIntensities()
     
+                                                                                                                                                                                                                                 
     trimmedRefererenceData.ExportCollector("MoleculeChooser", use_provided_reference_patterns=True)    
     return trimmedRefererenceData
+
     
 '''
 trimDataMassesToMatchChosenMassFragments() and trimDataMassesToMatchReference() are just a wrapper functions for calls to DataFunctions.KeepOnlySelectedYYYYColumns(). 
@@ -797,6 +1055,7 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
                                                                                                         ReferenceData.provided_mass_fragments, header_dtype_casting=float)
     if G.calculateUncertaintiesInConcentrations:
         if type(G.collectedFileUncertainties) != type(None): #Note: As of Feb 5th 2020, this code has been added and tested.
+                                                                                    
             (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
                                                                                                                 trimmedExperimentData2.mass_fragment_numbers,
                                                                                                                 ReferenceData.provided_mass_fragments, header_dtype_casting=float)
@@ -1111,8 +1370,11 @@ mass framgnet numbers.
 Parameters: 
 standardizedReference -  a name chosen for the numpy array that contains reference values
 num_of_molecues-  an integer describing the number of  molecues that contributed to the reference file
+                                                                                            
 '''
 def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules):
+                           
+                                                                                           
     # preallocate new array for standardized values
     standardizedReference = copy.deepcopy(referenceUnstandardized)
     # standardize
@@ -1120,6 +1382,14 @@ def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules):
         standardizedReference[0:,moleculeIndex]=StandardizeTo100(referenceUnstandardized[0:,moleculeIndex],1) #TODO: Low priority. Change this to use amax so the loop isn't executed.
 
     return standardizedReference
+
+                                                                                           
+                                                                                                                              
+                                                                                                                                                                                                                                                                                                                                                                                                                
+                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                 
+                        
+
 
 '''The following two functions are currently not used in the program,
 but have been saved in case they are needed in the future'''
@@ -1205,6 +1475,8 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
     #Only print if not called from interpolating reference objects
     if verbose:
         print('beginning TuningCorrector')
+                                                                                                             
+                                                                                              
     if type(G.referenceCorrectionCoefficients) == type({}):#check if it's a dictionary.
         G.referenceCorrectionCoefficients = [G.referenceCorrectionCoefficients['A'],G.referenceCorrectionCoefficients['B'],G.referenceCorrectionCoefficients['C']]
     #only apply the tuning correction if the list is not 0 0 1.
@@ -1222,6 +1494,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
         ReferenceData.absolute_standard_uncertainties = (ReferenceData.absolute_standard_uncertainties**2 + ReferenceData.standardized_reference_patterns_tuning_uncertainties**2)**0.5
     except:
         ReferenceData.absolute_standard_uncertainties = ReferenceData.standardized_reference_patterns_tuning_uncertainties
+        
     ReferenceData.ExportCollector('TuningCorrector')
     ReferenceData.ExportCollector('TuningCorrector_absolute_standard_uncertainties', export_tuning_uncertainties= True) #These are not yet actually standardized. Happens below.
     if G.calculateUncertaintiesInConcentrations == True: 
@@ -1234,6 +1507,9 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
     #Note: it is assumed that the relative_standard_uncertainties correspond to original reference, so before tuning corrector, thus we do not recalculate that factor.
     ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
 
+        
+                                                                                  
+                                                                                                                                                                                                                                  
     #Now need to update the relative uncertainties again. #TODO: This should become a function.
     ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
     #now populate the non-mass fragment parts by dividing.
@@ -1242,6 +1518,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
     b_array = ReferenceData.standardized_reference_patterns[:,1:] 
     ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
     ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+                                                                                                                                         
     return ReferenceData
 
 '''
@@ -1249,6 +1526,8 @@ Performs some manipulations related to the reference pattern
 '''
 def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     ReferenceData = createReferencePatternWithTuningCorrection(ReferenceData, verbose=verbose)
+
+                                                                                  
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
     #TODO: option 2: Or we can below assign to preprocessed_reference_pattern rather than standardized_reference_patterns and then use that in data analysis (Note that interpolate would continue to use standardized_reference_patterns as well as preprocess the output)
@@ -1282,13 +1561,14 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
     ##If referenceFileNamesList is a string or if form is a string then make them lists
     if isinstance(referenceFileNamesList,str):
         referenceFileNamesList = [referenceFileNamesList]
+                                                  
     if isinstance(referenceFormsList,str):
         referenceFormsList = [referenceFormsList]
     #If referenceFileNamesList and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
     if len(referenceFormsList) == 1 and len(referenceFileNamesList) == 1:
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[0],referenceFormsList[0])
-        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[0],referenceFormsList[0])
+        ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
         #save each global variable into the class objects
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[0].iterationSuffix = G.iterationSuffix
@@ -1308,11 +1588,15 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[0].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[0])
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[0])
                     ReferenceDataList[0].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[0].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[0].absolute_standard_uncertainties[:,1:] = 100*ReferenceDataList[0].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
                     #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
+                                                                                                                                                                                                         
+                                                                                           
+                                                                
+                                                                             
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNamesList
@@ -1330,8 +1614,8 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
     ReferenceDataList = []
     #For loop to generate each MSReferenceObject and append it to a list
     for i in range(len(referenceFileNamesList)):
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[i],listOfForms[i])
-        ReferenceDataList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[i],listOfForms[i])
+        ReferenceDataList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
         #save each global variable into the class objects 
         ReferenceDataList[i].ExportAtEachStep = G.ExportAtEachStep
         ReferenceDataList[i].iterationSuffix = G.iterationSuffix
@@ -1351,11 +1635,15 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[i].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[i])
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[i])
                     ReferenceDataList[i].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[i].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[i].absolute_standard_uncertainties[:,1:] = ReferenceDataList[i].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
                     #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
+                                                                                                                                                                                                         
+                                                                                           
+                                                                
+                                                                             
     return ReferenceDataList
 
 '''
@@ -1541,9 +1829,11 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
             
     # Some initial preprocessing on the reference data
     ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose) #Note: if implicitSLScorrection is being used, G.currentReferenceDataUnfiltered gets created inside ReferenceInputPreProcessing
+                                                                                  
     # Set the ReferenceData.monitored_reference_intensities and
     # ReferenceData.matching_correction_values fields
     # based on the masses in ExperimentData.mass_fragment_numbers
+                                 
     ReferenceData = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,ReferenceData)
     if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
         G.currentReferenceDataUnfiltered = Populate_matching_correction_values(ExperimentData.mass_fragment_numbers,G.currentReferenceDataUnfiltered)
@@ -1557,6 +1847,7 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, ExperimentData, ex
     ## TODO: Consider changing this function to take the array directly i.e.
     ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
     ## like ReferenceData.standardized_reference_patterns
+                                                                                  
     ReferenceData = UnnecessaryMoleculesDeleter(ReferenceData)
     if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also.
         G.currentReferenceDataUnfiltered = UnnecessaryMoleculesDeleter(G.currentReferenceDataUnfiltered)
@@ -2051,6 +2342,7 @@ def readDataFile(collectedFileName):
 #variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
 def readReferenceFile(referenceFileName, form):        
     #This function converts the XYXY data to an XYYY format
+                       
     def FromXYXYtoXYYY(provided_reference_patterns):
         print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
         masslists = [] #future lists must be must empty here to append in the for loops
@@ -2115,10 +2407,11 @@ def readReferenceFile(referenceFileName, form):
                     dfSourceOfFragmentationPatterns = dataFrame.iloc[rowIndex][1:] #select the row of names
                     SourceOfFragmentationPatterns = dfSourceOfFragmentationPatterns.values #convert to matrix
                     SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(numpy.str) #save as class object with type string
-                elif dataFrame.iloc[rowIndex][0] == 'SourceOfIonizationData':
+                elif dataFrame.iloc[rowIndex][0] == 'sourceOfIonizationData':
                     dfSourceOfIonizationData = dataFrame.iloc[rowIndex][1:] #Select the row of names
-                    SourceOfIonizationData = dfSourceOfIonizationData.values #convert to matrix
-                    SourceOfIonizationData = SourceOfIonizationData.astype(numpy.str) #save as class object with type string
+                    sourceOfIonizationData = dfSourceOfIonizationData.values #convert to matrix
+                    sourceOfIonizationData = sourceOfIonizationData.astype(numpy.str) #save as class object with type string
+                                                                                                                                                                  
                 elif dataFrame.iloc[rowIndex][0] == 'Molecules': #if the abscissa titles the molecule names
                     dfmolecules = dataFrame.iloc[rowIndex][1:] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
@@ -2131,40 +2424,40 @@ def readReferenceFile(referenceFileName, form):
                     dfmolecularWeights = dataFrame.iloc[rowIndex][1:] #select row of names
                     molecularWeights = dfmolecularWeights.values #convert to matrix
                     molecularWeights = molecularWeights.astype(numpy.double) #save as class object with type double
-                elif dataFrame.iloc[rowIndex][0] == 'knownMoleculesIonizationTypes':
-                    dfknownMoleculesIonizationTypes = dataFrame.iloc[rowIndex][1:] #select row of names
-                    knownMoleculesIonizationTypes = dfknownMoleculesIonizationTypes.values #convert to matrix
-                    knownMoleculesIonizationTypes = knownMoleculesIonizationTypes.astype(numpy.str) #save as class object with type string
-                elif dataFrame.iloc[rowIndex][0] == 'knownIonizationFactorsRelativeToN2':
-                    dfknownIonizationFactorsRelativeToN2 = dataFrame.iloc[rowIndex][1:] #select row of names
-                    knownIonizationFactorsRelativeToN2 = dfknownIonizationFactorsRelativeToN2.values #convert to matrix
-                    for index in range(len(knownIonizationFactorsRelativeToN2)):
+                elif dataFrame.iloc[rowIndex][0] == 'moleculeIonizationType':
+                    dfmoleculeIonizationType = dataFrame.iloc[rowIndex][1:] #select row of names
+                    moleculeIonizationType = dfmoleculeIonizationType.values #convert to matrix
+                    moleculeIonizationType = moleculeIonizationType.astype(numpy.str) #save as class object with type string
+                elif dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies':
+                    dfrelativeIonizationEfficiencies = dataFrame.iloc[rowIndex][1:] #select row of names
+                    relativeIonizationEfficiencies = dfrelativeIonizationEfficiencies.values #convert to matrix
+                    for index in range(len(relativeIonizationEfficiencies)):
                         try: #try to convert to a float
-                            knownIonizationFactorsRelativeToN2[index] = float(knownIonizationFactorsRelativeToN2[index])
+                            relativeIonizationEfficiencies[index] = float(relativeIonizationEfficiencies[index])
                         except: #if not possible, the value is probably None or 'unknown' so leave as a string
                             pass
-#                    knownIonizationFactorsRelativeToN2 = knownIonizationFactorsRelativeToN2.astype(numpy.float) #save as class object with type float
+#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(numpy.float) #save as class object with type float
 
         try: #if using an older reference file, it will not have ionization factors so the elif statement never gets entered meaning knownIonizationFactors does not exist
-            knownIonizationFactorsRelativeToN2 #Try calling this variable, if it exists there will be no error
+            relativeIonizationEfficiencies #Try calling this variable, if it exists there will be no error
         except: #if it does not exist, populate it with unknown
-            knownIonizationFactorsRelativeToN2 = ['unknown'] #initialize as a list of len(1)
-            knownIonizationFactorsRelativeToN2 = parse.parallelVectorize(knownIonizationFactorsRelativeToN2,len(molecules)) #parallel vectorize to length of molecules
-            knownIonizationFactorsRelativeToN2 = numpy.array(knownIonizationFactorsRelativeToN2) #convert to matrix
+            relativeIonizationEfficiencies = ['unknown'] #initialize as a list of len(1)
+            relativeIonizationEfficiencies = parse.parallelVectorize(relativeIonizationEfficiencies,len(molecules)) #parallel vectorize to length of molecules
+            relativeIonizationEfficiencies = numpy.array(relativeIonizationEfficiencies) #convert to matrix
             
-        try: #if using an old reference file, it will not have ionization types so the elif statement never gets entered meaning knownMoleculesIonizationTypes does not exist
-            knownMoleculesIonizationTypes #Try calling this variable, if it exists there will be no error
+        try: #if using an old reference file, it will not have ionization types so the elif statement never gets entered meaning moleculeIonizationType does not exist
+            moleculeIonizationType #Try calling this variable, if it exists there will be no error
         except: #if it does not exist, populate it with unknown
-            knownMoleculesIonizationTypes = ['unknown'] #initialize as a list of len(1)
-            knownMoleculesIonizationTypes = parse.parallelVectorize(knownMoleculesIonizationTypes,len(molecules)) #parallel vectorize to length of molecules
-            knownMoleculesIonizationTypes = numpy.array(knownMoleculesIonizationTypes) #convert to matrix
+            moleculeIonizationType = ['unknown'] #initialize as a list of len(1)
+            moleculeIonizationType = parse.parallelVectorize(moleculeIonizationType,len(molecules)) #parallel vectorize to length of molecules
+            moleculeIonizationType = numpy.array(moleculeIonizationType) #convert to matrix
             
         try: #If using an older reference file, it will not have SourceOfIonizationInfo so the elif statement never gets entered meaning the variable does not exist
-            SourceOfIonizationData #try calling the variable, if it exists there will be no error
+            sourceOfIonizationData #try calling the variable, if it exists there will be no error
         except: #If it does not exist, populate with empty strings
-            SourceOfIonizationData = [''] #initialize as a list of len(1)
-            SourceOfIonizationData = parse.parallelVectorize(SourceOfIonizationData,len(molecules)) #parallel vectorize to length of molecules
-            SourceOfIonizationData = numpy.array(SourceOfIonizationData) #convert to matrix
+            sourceOfIonizationData = [''] #initialize as a list of len(1)
+            sourceOfIonizationData = parse.parallelVectorize(sourceOfIonizationData,len(molecules)) #parallel vectorize to length of molecules
+            sourceOfIonizationData = numpy.array(sourceOfIonizationData) #convert to matrix
           
                 
 #        ''' generate reference matrix'''
@@ -2288,7 +2581,8 @@ def readReferenceFile(referenceFileName, form):
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
         
-    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
+                                                                                                 
+    return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form
 
 '''
 getMoleculesFromReferenceData is a function that takes in the reference filename and just returns the molecules present
@@ -2367,6 +2661,7 @@ def populateAllMID_ObjectsDict(ionizationDataFileName):
     try:
         AllMID_ObjectsDict = getIE_Data(ionizationDataFileName) #Read the ionization data and put the information into a dictionary
     except: #If the ionization file does not exist in the main directory, leave as an empty dictionary
+                                                                                                                           
         AllMID_ObjectsDict = {}
         
     return AllMID_ObjectsDict
@@ -2432,14 +2727,36 @@ class MSData (object):
                 DataFunctions.MSDataWriterXYYY(filename, data, abscissa, colIndex, self.abscissaHeader)
                                         
 class MSReference (object):
-    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2=None, knownMoleculesIonizationTypes=None, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
-        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.SourceOfFragmentationPatterns, self.SourceOfIonizationData, self.knownIonizationFactorsRelativeToN2, self.knownMoleculesIonizationTypes, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, SourceOfIonizationData, knownIonizationFactorsRelativeToN2, knownMoleculesIonizationTypes, mass_fragment_numbers_monitored, referenceFileName, form
+    def __init__(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies=None, moleculeIonizationType=None, mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):
+        self.provided_reference_patterns, self.electronnumbers, self.molecules, self.molecularWeights, self.SourceOfFragmentationPatterns, self.sourceOfIonizationData, self.relativeIonizationEfficiencies, self.moleculeIonizationType, self.mass_fragment_numbers_monitored, self.referenceFileName, self.form = provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         self.iterationSuffix = ''
         #This loops through the molecules, and removes whitespaces from before and after the molecule's names.
         for moleculeIndex, moleculeName in enumerate(self.molecules):
             self.molecules[moleculeIndex] = moleculeName.strip()     
+        
+                                                        
+                                                    
+                                                                                 
+                                             
+                                                                                 
+                                                                                               
+             
+                                                                                               
+                                                       
+                                                                                    
+                                                                                                                                                                                                                
+               
+                                                                                                                                                                                                                
+                                               
+                                                                            
+
+                                                                            
+                                                            
+                                                            
+                                                       
+                                                                                                                              
             
         '''Initializing Export Collector Variables'''
         #start the timer function
@@ -2456,6 +2773,61 @@ class MSReference (object):
         #Get ionization efficiencies and export their values and what method was used to obtain them
         self.populateIonizationEfficiencies(AllMID_ObjectsDict)
         self.exportIonizationInfo()
+
+                                                                                                                                                      
+                                                                                                                                          
+                                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+                                                                                  
+                                                                                 
+                                             
+                                   
+                                                        
+                                               
+                                                                           
+                                        
+                                                                           
+                                                
+                                                                            
+                                        
+                                                                    
+           
+                                                                                                                                                  
+                                                                                   
+                                                                 
+                                                                                      
+                                                                                                                             
+                                                       
+                                                               
+                                                                                                                                          
+                                                                                                                                
+                                                                                                                                          
+                                                       
+                                                               
+        
+                                                                                                                                                                                                                  
+                                                                                                                                                    
+                                                                                                                                     
+                                                                                                                                         
+                                                                                                                                                                                                                                  
+                                                                                                                                                         
+                                                                                                                                  
+                   
+
+                                                                                                    
+                                                          
+                                                       
+                                                           
+                                                               
+
+                                                                                        
+                                                                                                      
+                                           
+                                                       
+                                                    
+                                                                                                                                         
+                                     
+    
     #TODO exportCollector should be updated to take in a string argument for the data type that it should record (patterns vs various intensities)
     #Additionally, it should take an optional variable to determine the headers that will be used.         
     #Basically, the logic in here is pretty bad!
@@ -2481,6 +2853,8 @@ class MSReference (object):
                 self.dataToExport.append(self.standardized_reference_patterns_tuning_uncertainties.copy())
             elif export_standard_uncertainties:
                 self.dataToExport.append(self.absolute_standard_uncertainties.copy())
+                                               
+                                                                                                                                     
             elif use_provided_reference_patterns:
                 self.dataToExport.append(self.provided_reference_patterns.copy())
             elif callingFunction == 'UnnecessaryMoleculesDeleter':
@@ -2512,6 +2886,7 @@ class MSReference (object):
     #The logic in the below funtion is badly written, in terms of efficiency. But it seems to work at present.
     #TODO: This is not a good practice, because provided_reference_patterns is getting changed, no longer "Provided".
     #TODO: (continued from previous line) It's more like "zero_trimmed" reference intensities after this.
+                                                                                  
     def ClearZeroRowsFromProvidedReferenceIntensities(self):
         #initial a counter for the row index, which will be updated during the loop
         currentRowIndexAccountingForDeletions = 0
@@ -2531,6 +2906,36 @@ class MSReference (object):
                 currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
             #whether we deleted rows or not, we increase the counter of the rows.
             currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
+
+                                                                
+                                                                                   
+                                                 
+                                                                                                     
+                                                                                             
+                                                                                                   
+                                                                             
+                                                                    
+                                                                        
+                                      
+                                                                                                                                                     
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
+                                                                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                               
+                                                                                                                                                                                                                                                                      
+                       
+                                      
+                                                                                                                                                                                                                                                                      
+                                                                                                
+                                                                                 
+                                                                                             
+                                                                                                                                
+            
+                                                         
+               
+                                                                                                                                                    
+                                                                                                                                                                
+                                                                                                                                                        
+                                                                                                                                                        
             
 #This class function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(self):
@@ -2577,6 +2982,14 @@ class MSReference (object):
                     reference_holder[:,(massListsIndex+1):(massListsIndex+2)] = numpy.vstack(numpy.array(relativeintensitieslist)) #the list is made into an array and then stacked (transposed)
         self.provided_reference_patterns = reference_holder
 
+                                                                     
+                                                                                          
+                                        
+                                                                                     
+                                                                                         
+                                                                                           
+                                                              
+        
 #populateIonizationEfficiencies is an MSReference function that populates a variable, ionizationEfficienciesList, that contains the ionization factors used in CorrectionValuesObtain
 #If the ionization factor is known and in the reference data, then that value is used
 #If the ionization factor is unknown the the function will look in the MID Dictionary and check if the molecule exists in the ionization data.  If it does the the ionization average of the ionization factors for that particular molecule in the data is used
@@ -2585,10 +2998,12 @@ class MSReference (object):
     def populateIonizationEfficiencies(self, AllMID_ObjectsDict={}):
         self.ionizationEfficienciesList = numpy.zeros(len(self.molecules)) #initialize an array the same length as the number of molecules that will be populated here and used in CorrectionValuesObtain
         self.ionizationEfficienciesSourcesList = copy.copy(self.molecules) #initialize an array to store which method was used to obtain a molecule's ionization factor
+                                                                                                                                                                                                 
         for moleculeIndex in range(len(self.molecules)): #loop through our initialized array
-            if isinstance(self.knownIonizationFactorsRelativeToN2[moleculeIndex],float): #if the knownIonizationFactor is a float, then that is the value defined by the user
-                self.ionizationEfficienciesList[moleculeIndex] = self.knownIonizationFactorsRelativeToN2[moleculeIndex]
+            if isinstance(self.relativeIonizationEfficiencies[moleculeIndex],float): #if the knownIonizationFactor is a float, then that is the value defined by the user
+                self.ionizationEfficienciesList[moleculeIndex] = self.relativeIonizationEfficiencies[moleculeIndex]
                 self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownIonizationFactorFromReferenceFile' #the molecule's factor was known
+                                                               
             else: #Ionization factor is not known so look at molecular ionization data from literatiure 
                 #Initialize three lists
                 MatchingMID_Objects = []
@@ -2596,7 +3011,7 @@ class MSReference (object):
                 MatchingMID_ElectronNumbers = []
                 #Initialize a flag to overwrite if a molecule is in both self.molecules and the MID_ObjectDict
                 matchingMolecule = False
-                if self.knownIonizationFactorsRelativeToN2[moleculeIndex] == None or self.knownIonizationFactorsRelativeToN2[moleculeIndex] == 'unknown': #the ionization factor is not known so look in the AllMID_ObjectsDict
+                if self.relativeIonizationEfficiencies[moleculeIndex] == None or self.relativeIonizationEfficiencies[moleculeIndex] == 'unknown': #the ionization factor is not known so look in the AllMID_ObjectsDict
                     currentMoleculeKeyName = self.molecules[moleculeIndex] + '_IE' #holder variable to store the current molecule name + '_IE' to match the keys of AllMID_ObjectsDict (e.g. Acetaldehyde_IE)
                     if currentMoleculeKeyName in AllMID_ObjectsDict.keys(): #If the current molecule is in the dictionary, use its RS_Value
                         MatchingMID_Objects.append(currentMoleculeKeyName) #append the key
@@ -2607,7 +3022,7 @@ class MSReference (object):
                     self.ionizationEfficienciesList[moleculeIndex] = MatchingMID_RS_Values[0]
                     self.ionizationEfficienciesSourcesList[moleculeIndex] = 'knownIonizationFactorFromProvidedCSV' #A molecule in the reference data is also in the ionization data
                 elif matchingMolecule == False: #Otherwise matchingMolecule is False which means its not in the data from literature.  So we will approximate the ionization factor based on a linear fit of the data from literature that share the molecule's type or use the Madix and Ko equation
-                    if (type(self.knownMoleculesIonizationTypes[moleculeIndex]) != type(None)) and (self.knownMoleculesIonizationTypes[moleculeIndex] != 'unknown'): #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
+                    if (type(self.moleculeIonizationType[moleculeIndex]) != type(None)) and (self.moleculeIonizationType[moleculeIndex] != 'unknown'): #IF the user did not manually input the ionization factor and none of the molecules in the MID_Dict matched the current molecule
                         #Then get an estimate by performing a linear fit on the data in the MID Dictionary
 			#TODO:The program currently only takes in one type but it is a desired feature to allow users to put in multiple types such as type1+type2 which would make a linear fit of the combined data between the two types
 			#TODO continued:The user should also be able to put in type1;type2 and the program would find the ionization factor using a linear fit of data from type1 and using a linear fit of data from type2.  The largest of the two ionization factors would be used.
@@ -2615,7 +3030,7 @@ class MSReference (object):
                         for key in AllMID_ObjectsDict: #Loop through the MID Dictionary
                             for MID_MoleculeType in AllMID_ObjectsDict[key].moleculeIonizationType: #Loop through the ionization types to get all the ionization types of a particular molecule (e.g. Ethanol is both an alcohol and a hydrogen non-metal-ide so its RS value(s) will be included if the user has a molecule that is either an alcohol or a hydrogen non-metal-ide)
                                 #Use stringCompare to check if a molecule in the MID Dictionary matches a molecule in the reference data since casing and spacing may differ between the two (e.g. reference data may have carbon dioxide while MID Dictionary may have Carbon Dioxide)
-                                if parse.stringCompare(self.knownMoleculesIonizationTypes[moleculeIndex],MID_MoleculeType): #If the knownMoleculeType matches an MID object's molecule type
+                                if parse.stringCompare(self.moleculeIonizationType[moleculeIndex],MID_MoleculeType): #If the knownMoleculeType matches an MID object's molecule type
                                     MatchingMID_Objects.append(key) #Append the key
                                     MatchingMID_RS_Values.append(numpy.mean(AllMID_ObjectsDict[key].RS_ValuesList)) #Append the average of the RS values
                                     MatchingMID_ElectronNumbers.append(AllMID_ObjectsDict[key].electronNumber) #append the electron number
@@ -2634,6 +3049,7 @@ class MSReference (object):
                 if len(MatchingMID_Objects) == 0: #Otherwise use the original Madix and Ko equation
                     self.ionizationEfficienciesList[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
                     self.ionizationEfficienciesSourcesList[moleculeIndex] = 'MadixAndKo' #ionization efficiency obtained via Madix and Ko equation
+                                                                   
 
 #Export the ionization efficiencies used and their respective method used to obtain them (known factor, known molecule, known ionization type, or Madix and Ko)    
     def exportIonizationInfo(self):
@@ -2644,6 +3060,32 @@ class MSReference (object):
         ionizationDataToExport = numpy.hstack((ionizationDataAbsicca,ionizationData)) #use hstack to obtain a 2d array with the first column being the abscissa headers
         numpy.savetxt('ExportedIonizationEfficienciesSourcesTypes.csv',ionizationDataToExport,delimiter=',',fmt='%s') #export to a csv file
                     
+                                                     
+                                                                                                                                                  
+                                                              
+                                                                                                                                                                                                                                                                                                                                                                                          
+                                                            
+                                                                                           
+                                                                                                                                                  
+                                                                                                                                                                                                         
+
+    
+                                                               
+                                                        
+                                                                
+                                    
+                                                                                                                              
+                                                                                                                                              
+                                                                                                                                                                
+                                                                                                                                                                                                                            
+                                                                                                                                                                                                                          
+                                                                                                                                                                
+                                                                
+                    
+                 
+                                                                                                                                                                                                                
+                                                                                                                                                                                                                                    
+        
 '''
 The MolecularIonizationData class is used to generate a molecule's ionization factor based on its ionization type
 '''        
@@ -3498,6 +3940,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         #Before going forward, we're going to make a variable called remaining_referenceSignificantFragmentThresholds, using a function.       
             def get_remaining_referenceSignificantFragmentThresholds(referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS):
                 remaining_referenceSignificantFragmentThresholds = list(copy.deepcopy(referenceSignificantFragmentThresholds))
+                                                                                                                                    
+                                                                                                                                                                                                                                                                                             
                 molecules_unedited_to_reduce = list(copy.deepcopy(molecules_unedited))
                 for moleculeIndex, moleculeName in enumerate(molecules_unedited):
                     if moleculeName in remaining_molecules_SLS:
@@ -4718,6 +5162,10 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
     if dataType == 'percent_concentration':
         label = 'Percent' 
         formatedDataHeader = [molecule + label for molecule in dataHeader]
+                                          
+                                       
+                                                                                
+
 
     #extraLine is used to create CSV files that conform to MSRESOLVE's import requirements i.e. having a row for comments at the top
     extraLine = False
@@ -5297,6 +5745,17 @@ def main():
             ReferenceDataList[i].ExportCollector('ExtractReferencePatternFromData_absolute_uncertainties', export_uncertainties= True)
         print('ReferencePatternChanger complete')
     
+                                                                                                                               
+                                                                                                                                         
+                                                                                           
+                                                                                                     
+                                                              
+                                                                                   
+                                                                               
+                                                              
+                                                                                   
+
+
     #Creating prototypicalReferenceData which will be interrogated later for which molecules and masses to expect in the ReferenceDataObjects.
     prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
     
@@ -5322,7 +5781,12 @@ def main():
                print("WARNING: You have chosenMolecules / specificMolecules set to no, but iterativeAnalysis is set to True and requires chosenMolecules. ChosenMolecules will be used as part of iterative. If you did not fill out the chosenMolecules list correctly, you must do so and run again (you may also need to delete the directory for the next iteration).")
            for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
                 ReferenceDataList[RefObjectIndex] = trimDataMoleculesToMatchChosenMolecules(RefObject, G.chosenMoleculesNames)
+                                                                                                                                 
+                                                                                                                                      
            prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMoleculesNames)
+                                                                                    
+                                                                                                                                                            
+
 	
         if G.iterativeAnalysis:
             #make a copy of the experimental data for later use in iterative processing
@@ -5356,6 +5820,7 @@ def main():
                 ReferenceDataList[i].populateIonizationEfficiencies(G.AllMID_ObjectsDict)
             except:
                 ReferenceDataList[i].populateIonizationEfficiencies()
+                                                                                         
             ReferenceDataList[i] = PrepareReferenceObjectsAndCorrectionValues(ReferenceDataList[i],ExperimentData, extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange,G.rpcMoleculesToChangeMF,G.rpcTimeRanges)
             
     if (G.dataAnalysis == 'yes'):
@@ -5441,6 +5906,7 @@ def main():
                     uncertainties_dict['correction_values_relative_uncertainties'] = None
                 #G.collectedFileUncertainties = None
                 if type(G.collectedFileUncertainties) != type(None):
+                                                                        
                     uncertainties_dict['rawsignals_absolute_uncertainties'] = ExperimentData.rawsignals_absolute_uncertainties #This is for *all* times.
                     uncertainties_dict['rawsignals_absolute_uncertainties_one_time']=uncertainties_dict['rawsignals_absolute_uncertainties'][timeIndex] #This is for one time.                                                                                                                                         
                 elif type(G.collectedFileUncertainties) == type(None):
