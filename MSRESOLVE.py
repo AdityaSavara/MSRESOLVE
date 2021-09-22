@@ -1625,6 +1625,7 @@ def InterpolateReferencePatterns(firstReferenceObject,secondReferenceObject,time
         #Overwrite provided_reference_patterns by interpolating the standardized_reference_patterns
         #[i,:] for every column in the ith row
         newReferenceObject.provided_reference_patterns[i,:] = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.standardized_reference_patterns[i,:],secondReferenceObject.standardized_reference_patterns[i,:],time,gapStart,gapEnd)
+        newReferenceObject.standardized_reference_patterns =StandardizeReferencePattern(newReferenceObject.provided_reference_patterns)
     return newReferenceObject
 
 '''
