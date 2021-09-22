@@ -1446,7 +1446,7 @@ def ImportAnalyzedData(concentrationsOutputName):
 '''Makes a mixed reference pattern from two reference patterns, including tuning correction.'''
 def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
     # standardize the reference data columns such that the maximum intensity value per molecule is 100 and everything else is scaled to that maximum value.
-    ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
+    #ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.provided_reference_patterns,len(ReferenceData.molecules))
     ReferenceData.ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None):
