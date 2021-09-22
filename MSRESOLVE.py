@@ -1176,12 +1176,10 @@ greatest number is 100 within the array
 
 def StandardizeTo100(a1DArray,n):
     a1DArrayStandardized = a1DArray.copy() #making a copy so original array is not changed.
-    print("line 1179", a1DArray)
     maxNumber=float(numpy.max(a1DArrayStandardized))
     multiplier=100.0/maxNumber
     for index2 in range(0,len(a1DArrayStandardized)):
         a1DArrayStandardized[index2]=(a1DArrayStandardized[index2]*multiplier)
-    print("line 1184", a1DArray)
     return a1DArrayStandardized                   
 
 

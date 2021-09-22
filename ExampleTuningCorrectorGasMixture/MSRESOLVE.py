@@ -1354,11 +1354,12 @@ greatest number is 100 within the array
 '''
 
 def StandardizeTo100(a1DArray,n):
-    maxNumber=float(numpy.max(a1DArray))
+    a1DArrayStandardized = a1DArray.copy() #making a copy so original array is not changed.
+    maxNumber=float(numpy.max(a1DArrayStandardized))
     multiplier=100.0/maxNumber
-    for index2 in range(0,len(a1DArray)):
-        a1DArray[index2]=(a1DArray[index2]*multiplier)
-    return a1DArray
+    for index2 in range(0,len(a1DArrayStandardized)):
+        a1DArrayStandardized[index2]=(a1DArrayStandardized[index2]*multiplier)
+    return a1DArrayStandardized                                        
 
 
 
