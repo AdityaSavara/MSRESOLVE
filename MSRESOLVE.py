@@ -2554,7 +2554,7 @@ class MSReference (object):
         #clear ClearZeroRowsFromProvidedReferenceIntensities
         self.ClearZeroRowsFromProvidedReferenceIntensities()
         #initialize the standardized_reference_patterns
-        #self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules)) #TODO: This line breaks extractReferencePatternFromData unit test. I am not sure why.
+        self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules)) #TODO: This line breaks extractReferencePatternFromData unit test only if trim zeros later.
             
         #Initializing Export Collector Variables
         #start the timer function
@@ -5559,13 +5559,13 @@ def main():
                 print("WARNING: You have chosenMolecules / specificMolecules set to no, but iterativeAnalysis is set to True and requires chosenMolecules. ChosenMolecules will be used as part of iterative. If you did not fill out the chosenMolecules list correctly, you must do so and run again (you may also need to delete the directory for the next iteration).")
             for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
                 ReferenceDataList[RefObjectIndex] = trimDataMoleculesToMatchChosenMolecules(RefObject, G.chosenMoleculesNames)
-                ReferenceDataList[RefObjectIndex].ClearZeroRowsFromProvidedReferenceIntensities()
+                #ReferenceDataList[RefObjectIndex].ClearZeroRowsFromProvidedReferenceIntensities()
                 if hasattr(ReferenceDataList[RefObjectIndex], 'standardized_reference_patterns'):
-                    ReferenceDataList[RefObjectIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
+                    pass#ReferenceDataList[RefObjectIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
             prototypicalReferenceData = trimDataMoleculesToMatchChosenMolecules(prototypicalReferenceData, G.chosenMoleculesNames)
-            prototypicalReferenceData.ClearZeroRowsFromProvidedReferenceIntensities()
+            #prototypicalReferenceData.ClearZeroRowsFromProvidedReferenceIntensities()
             if hasattr(prototypicalReferenceData, 'standardized_reference_patterns'):
-                prototypicalReferenceData.ClearZeroRowsFromStandardizedReferenceIntensities()
+                pass#prototypicalReferenceData.ClearZeroRowsFromStandardizedReferenceIntensities()
 	
         if G.iterativeAnalysis:
             #make a copy of the experimental data for later use in iterative processing
