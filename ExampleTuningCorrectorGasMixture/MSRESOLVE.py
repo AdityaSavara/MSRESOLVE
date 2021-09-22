@@ -5696,7 +5696,7 @@ def main():
 
     #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
-    if G.UserChoices['measuredReferenceYorN']['on'] == 'yes':
+    if G.measuredReferenceYorN == 'yes':
         if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
             ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
     #Creating prototypicalReferenceData which will be interrogated later for which molecules and masses to expect in the ReferenceDataObjects.
