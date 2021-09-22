@@ -540,7 +540,174 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
     return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
     
+#tuningCorrectorGasMixture will correct all items in the ReferenceDataList, but uses a single tuning correction that it applies to each of the ReferenceData objects in the list.
+#This function takes a measured gas mixture set of signals, then creates simulated signals (from NIST patterns, for example) to get a tuning correction for the spectrometer.
+def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there are UserInput choices that are needed for this feature.
+        print('line 557')
+        #First read in the existing tuning patterns.
+        #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
+        ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
+        ReferenceDataExistingTuning.ExportAtEachStep = G.ExportAtEachStep
+
+        #Copying what is in GenerateReferenceDataList and ReferenceInputPreProcessing, we need to add the following block of code in if we want to allow uncertainties.   
+        print('line 566')
+        if G.calculateUncertaintiesInConcentrations == True:
+            if type(G.referenceFileUncertainties) != type(None):
+                if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
+                    #TODO: Low priority. The below results in "nan" values. It could be better to change it to make zeros using a numpy "where" statement.
+                    G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Maks sure we have a float.
+                    #Get what we need.
+                    provided_reference_patterns = ReferenceDataExistingTuning.provided_reference_patterns
+                    provided_reference_patterns_without_masses = ReferenceDataExistingTuning.provided_reference_patterns[:,1:] #[:,0] is mass fragments, so we slice to remove those. 
+                    #Make our variables ready.
+                    absolute_standard_uncertainties = provided_reference_patterns*1.0 #First we make a copy.
+                    absolute_standard_uncertainties_without_masses = (provided_reference_patterns_without_masses/provided_reference_patterns_without_masses)*G.referenceFileUncertainties #We do the division to get an array of ones. Then we multiply to get an array of the same size.
+                    #now we populate our copy's non-mass area.
+                    absolute_standard_uncertainties[:,1:] = absolute_standard_uncertainties_without_masses                                        
+                    ReferenceDataExistingTuning.absolute_standard_uncertainties = absolute_standard_uncertainties
+                    #We can't convert to relative uncertainties yet because the file may not be standardized yet.
+                if type(G.referenceFileUncertainties) == type('string'):
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(G.referenceFileExistingTuning[0][:-4]+"_absolute_uncertainties.csv",G.referenceFileExistingTuning[1])
+                    ReferenceDataExistingTuning.absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
+                    maximum_absolute_intensities = numpy.amax(ReferenceDataExistingTuning.provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
+                    ReferenceDataExistingTuning.absolute_standard_uncertainties[:,1:] = 100*ReferenceDataExistingTuning.absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
+        if G.calculateUncertaintiesInConcentrations == True: 
+            if type(G.referenceFileUncertainties) != type(None):
+                ReferenceDataExistingTuning.update_relative_standard_uncertainties()
+        print('line 591')
         
+        #TODO: For above function call, Still need to put the last argument in later which is the ionization information: AllMID_ObjectsDict={})
+        #Currently, in a "regular" MSRESOLVE run, the calculation of the correction values normally occurs inside  the ReferenceInputPreProcessing. That is a problem because 
+        #the funciton ReferenceInputPreProcessing applies a tuning correction. So we need to get the CorrectionValues directly.
+        ReferenceDataExistingTuning.correction_values, ReferenceDataExistingTuning.correction_values_relative_uncertainties = CorrectionValuesObtain(ReferenceDataExistingTuning)
+        print('line 597')
+        #We don't need a desired tuning data object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
+        #By default, the regular reference data object will be considered the desired tuning, if not specified.
+        if G.referenceFileDesiredTuning == []:
+            #Take the first item from ReferenceDataList (which may have been extracted from the experiment file)
+            ReferenceDataDesiredTuning = ReferenceDataList[0]
+            ReferenceDataDesiredTuning.exportReferencePattern("ExportedDesiredTuningReferencePattern.csv") #Exported for during TuningCorrection.     
+        else:
+            ReferenceDataDesiredTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
+            ReferenceDataDesiredTuning.ExportAtEachStep = G.ExportAtEachStep
+
+        print('line 609')
+        #We need to make prepare an appropriately made list for the concentrations to use in simulating data using the ExistingTuningReferencePattern 
+        #The concentrations must match the molecular order of the literature file.
+        #  Firstly, the literature file can have molecules not part of the concentrations, so we should add concentrations of zero for those. (It's easier than removing those molecules from the literature object).
+        #  Secondly, we need to re-order the concentrations to match the those of the existing reference pattern.
+        knownConcentrationsArray = list(numpy.zeros(len(ReferenceDataExistingTuning.molecules))) #initializing to number of molecules. Making it a list so we can insert later.
+        #The desired molecules list is the one in ReferenceDataExistingTuning.molecules, so we will loop across those.
+        for moleculeIndex,moleculeName in enumerate(ReferenceDataExistingTuning.molecules):
+            desiredConcentrationIndex = moleculeIndex  
+            #Take the concentration if it's named:
+            if moleculeName in G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']:
+                currentConcentrationIndex = list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']).index(moleculeName)
+                knownConcentrationsArray[desiredConcentrationIndex] = G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'][currentConcentrationIndex]
+            else: #else set it to zero.
+                knownConcentrationsArray[desiredConcentrationIndex] = 0
+        #The first item in the concentrations array is supposed to be the time. We will simply put the integer "1" there, since we will have one point. 
+        knownConcentrationsArray.insert(0, 1)
+        #knownConcentrationsArray needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
+        knownConcentrationsArray = numpy.array([knownConcentrationsArray])
+        print('line 628')
+        #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
+        #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply an undesired "before comparisons" tuning factor correction. We will need this done before we simulate any signals.
+        ReferenceDataExistingTuningMassFragments = ReferenceDataExistingTuning.standardized_reference_patterns[:,0]
+        ReferenceDataExistingTuning = Populate_matching_correction_values(ReferenceDataExistingTuningMassFragments, ReferenceDataExistingTuning)
+        #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
+        #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
+        matching_correction_values_array = numpy.array([ReferenceDataExistingTuning.matching_correction_values]) 
+        #now need to do the actual simulation of the gas mixture signals.
+        simulateddata = RawSignalsSimulation(knownConcentrationsArray, matching_correction_values_array)
+        ExportXYYYData("TuningCorrectorGasMixtureHypotheticalSimulatedSignals.csv", simulateddata, ReferenceDataExistingTuningMassFragments, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'simulated')
+        #now need to make a fake reference file for that. We'll make an MSReferenceObject and then use the internally built exportReferencePattern class function.
+        simulateddata_intensities = simulateddata[0][1:] #The "0" is because it's a nested object. THe slicing is becuase the abscissa (time) value needs to be removed.
+        #Now to transpose the simulateddata to make the simulated_reference_pattern
+        simulated_reference_pattern = numpy.vstack((ReferenceDataExistingTuningMassFragments, simulateddata_intensities)).transpose()
+        print('line 643')
+        TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], sourceOfIonizationData=["referenceFileExistingTuning"], relativeIonizationEfficiencies=['GasMixture'], moleculeIonizationType=["GasMixture"]) #We fill some variables with the word "GasMixture" because there is no single ionization factor for the gas mixture.
+        TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
+        print('line 646')        
+        ReferenceDataExistingTuningAfterCorrection = copy.deepcopy(ReferenceDataExistingTuning) #just initializing here, then actual tuning correction occurs in next lines.                
+        #Tuning corrector does not operate on a ReferenceData object, it operates on standardized reference patterns.
+        ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns, ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceDataExistingTuning.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"], referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"], measuredReferenceYorN =G.measuredReferenceYorN)
+        # TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(ReferenceDataExistingTuning.standardized_reference_patterns, electronnumbers=ReferenceDataExistingTuning.electronnumbers, molecules=ReferenceDataExistingTuning.molecules, molecularWeights=ReferenceDataExistingTuning.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataExistingTuning.SourceOfFragmentationPatterns, sourceOfIonizationData=ReferenceDataExistingTuning.sourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataExistingTuning.relativeIonizationEfficiencies, moleculeIonizationType=ReferenceDataExistingTuning.moleculeIonizationType)
+        ReferenceDataExistingTuningAfterCorrection.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
+        
+        # #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
+        if G.calculateUncertaintiesInConcentrations == True: 
+            if type(G.referenceFileUncertainties) != type(None):
+                try:
+                    ReferenceDataExistingTuningAfterCorrection.absolute_standard_uncertainties = (ReferenceDataExistingTuningAfterCorrection.absolute_standard_uncertainties**2 + ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns_tuning_uncertainties**2)**0.5
+                except:
+                    ReferenceDataExistingTuningAfterCorrection.absolute_standard_uncertainties = ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns_tuning_uncertainties
+                ReferenceDataExistingTuningAfterCorrection.update_relative_standard_uncertainties()
+                
+        #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
+        ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns=StandardizeReferencePattern(ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns,len(ReferenceDataExistingTuningAfterCorrection.molecules))
+        if ReferenceDataExistingTuningAfterCorrection.ExportAtEachStep == 'yes':
+            ReferenceDataExistingTuningAfterCorrection.exportReferencePattern("ReferenceDataExistingTuningAfterCorrection.csv")
+        # #Copying what is in GenerateReferenceDataList and ReferenceInputPreProcessing, we need to add the following block of code in if we want to allow uncertainties.   
+        # if G.calculateUncertaintiesInConcentrations == True:
+            # if type(G.referenceFileUncertainties) != type(None):
+                # if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
+                    # #TODO: Low priority. The below results in "nan" values. It could be better to change it to make zeros using a numpy "where" statement.
+                    # G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Maks sure we have a float.
+                    # #Get what we need.
+                    # provided_reference_patterns = ReferenceDataExistingTuningAfterCorrection.provided_reference_patterns
+                    # provided_reference_patterns_without_masses = ReferenceDataExistingTuningAfterCorrection.provided_reference_patterns[:,1:] #[:,0] is mass fragments, so we slice to remove those. 
+                    # #Make our variables ready.
+                    # absolute_standard_uncertainties = provided_reference_patterns*1.0 #First we make a copy.
+                    # absolute_standard_uncertainties_without_masses = (provided_reference_patterns_without_masses/provided_reference_patterns_without_masses)*G.referenceFileUncertainties #We do the division to get an array of ones. Then we multiply to get an array of the same size.
+                    # #now we populate our copy's non-mass area.
+                    # absolute_standard_uncertainties[:,1:] = absolute_standard_uncertainties_without_masses                                        
+                    # ReferenceDataExistingTuningAfterCorrection.absolute_standard_uncertainties = absolute_standard_uncertainties
+                    # #We can't convert to relative uncertainties yet because the file may not be standardized yet.
+                # if type(G.referenceFileUncertainties) == type('string'):
+                    # provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile("ReferenceDataExistingTuningAfterCorrection.csv"[:-4]+"_absolute_uncertainties.csv","xyyy")
+                    # TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
+                    # maximum_absolute_intensities = numpy.amax(TuningCorrectorGasMixtureCorrectedReferenceDataObject.provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
+                    # TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties[:,1:] = 100*TuningCorrectorGasMixtureCorrectedReferenceDataObject.absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
+
+        #Now to make the mixed reference pattern using a function that extends one reference pattern by another.
+        #In this loop the extension occurs for each item in ReferenceDataList.
+        #The extendReferencePattern function uses existing add molecule and remove molecules functions.
+        for ReferenceDataIndex in range(len(ReferenceDataList)):
+            print("line 687", numpy.shape(ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns))
+            print("line 687c", numpy.shape(ReferenceDataExistingTuningAfterCorrection.absolute_standard_uncertainties))
+            print("line 687b", numpy.shape(ReferenceDataList[ReferenceDataIndex].standardized_reference_patterns))
+            print("line 687b", numpy.shape(ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties))
+            ReferenceDataList[ReferenceDataIndex], addedReferenceSlice = extendReferencePattern(ReferenceDataList[ReferenceDataIndex],ReferenceDataExistingTuningAfterCorrection)
+            #extendReferencePattern can't currently add the uncertainties sub-objects, so we do that in the lines below.
+            ReferenceDataList[ReferenceDataIndex].ExportAtEachStep = G.ExportAtEachStep
+            if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
+                ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
+            if G.calculateUncertaintiesInConcentrations == True: 
+                if type(G.referenceFileUncertainties) != type(None):
+                    #We need to add uncertainties for *only* the molecules which were extended by.                        
+                    ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties,addedReferenceSlice.relative_standard_uncertainties)
+                    ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties,addedReferenceSlice.absolute_standard_uncertainties)
+                    #The second of the below lines was causing a bug. I did not understand why, so I just commented out both of them for now.
+                    #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternAbsoluteUncertainties', export_standard_uncertainties=True)
+                    #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternRelativeUncertainties', export_relative_uncertainties=True)
+                    print("line 694", numpy.shape(ReferenceDataList[ReferenceDataIndex].standardized_reference_patterns))
+                    print("line 695", numpy.shape(ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties))
+            ReferenceDataList[ReferenceDataIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
+            if len(ReferenceDataList) == 1:
+                if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
+                    print("line 685", ReferenceDataList[ReferenceDataIndex].relativeIonizationEfficiencies)
+                    print("line 686", ReferenceDataList[ReferenceDataIndex].sourceOfIonizationData)
+                    print(G.UserChoices['minimalReferenceValue']['referenceValueThreshold'])
+                    ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
+                ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern.csv")
+                
+            else:
+                if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
+                    ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern' + str(ReferenceDataIndex), use_provided_reference_patterns=False)
+                ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern" + str(ReferenceDataIndex) + ".csv")
+        return ReferenceDataList
+
 #this function eliminates (neglects) reference intensities that are below a certain threshold. Useful for solving 
 #data that is giving negatives or over emphasizing small mass fragments,by assuming no contribution from the molecule at that mass fragment.
 def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThreshold):
@@ -1180,7 +1347,7 @@ def StandardizeTo100(a1DArray,n):
     multiplier=100.0/maxNumber
     for index2 in range(0,len(a1DArrayStandardized)):
         a1DArrayStandardized[index2]=(a1DArrayStandardized[index2]*multiplier)
-    return a1DArrayStandardized                   
+    return a1DArrayStandardized
 
 
 
@@ -1402,6 +1569,10 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[0].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[0].absolute_standard_uncertainties[:,1:] = 100*ReferenceDataList[0].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
                     #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
+        #The below process **normally** happened later, but because of TuningCorrectorGasMixture, this was needed earlier so has been copied to occur earlier also. It should not cause any harm.        
+        if G.calculateUncertaintiesInConcentrations == True: 
+            if type(G.referenceFileUncertainties) != type(None):
+                ReferenceDataList[0].update_relative_standard_uncertainties()
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referenceFileNamesList
@@ -1445,6 +1616,10 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[i].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[i].absolute_standard_uncertainties[:,1:] = ReferenceDataList[i].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
                     #TODO: low priority, remove nan values and/or populate them with zero using numpy divide.
+        #The below process **normally** happened later, but because of TuningCorrectorGasMixture, this was needed earlier so has been copied to occur earlier also. It should not cause any harm.        
+        if G.calculateUncertaintiesInConcentrations == True: 
+            if type(G.referenceFileUncertainties) != type(None):
+                ReferenceDataList[i].update_relative_standard_uncertainties()
     return ReferenceDataList
 
 '''
@@ -2552,7 +2727,7 @@ class MSReference (object):
         #clear ClearZeroRowsFromProvidedReferenceIntensities
         self.ClearZeroRowsFromProvidedReferenceIntensities()
         #initialize the standardized_reference_patterns
-        self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules)) #TODO: This line breaks extractReferencePatternFromData unit test only if trim zeros later.
+        self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             
         #Initializing Export Collector Variables
         #start the timer function

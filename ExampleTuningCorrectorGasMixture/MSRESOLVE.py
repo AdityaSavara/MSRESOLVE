@@ -550,7 +550,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     referenceDataArrayWithAbscissa_tuning_uncertainties = referenceDataArrayWithAbscissa*1.0 #creating copy with abscissa, then will fill.
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
     return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
-
+    
 #tuningCorrectorGasMixture will correct all items in the ReferenceDataList, but uses a single tuning correction that it applies to each of the ReferenceData objects in the list.
 #This function takes a measured gas mixture set of signals, then creates simulated signals (from NIST patterns, for example) to get a tuning correction for the spectrometer.
 def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there are UserInput choices that are needed for this feature.
@@ -1359,7 +1359,7 @@ def StandardizeTo100(a1DArray,n):
     multiplier=100.0/maxNumber
     for index2 in range(0,len(a1DArrayStandardized)):
         a1DArrayStandardized[index2]=(a1DArrayStandardized[index2]*multiplier)
-    return a1DArrayStandardized                                        
+    return a1DArrayStandardized
 
 
 
@@ -1458,7 +1458,7 @@ def ImportAnalyzedData(concentrationsOutputName):
 
 '''Makes a mixed reference pattern from two reference patterns, including tuning correction.'''
 def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
-    # standardize the reference data columns such that the maximum intensity value per molecules 100 and everything else is
+    # standardize the reference data columns such that the maximum intensity value per molecule is 100 and everything else is scaled to that maximum value.
     ReferenceData.ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
     print("line 1448", numpy.shape(ReferenceData.standardized_reference_patterns))
     if G.calculateUncertaintiesInConcentrations == True: 
@@ -1485,36 +1485,24 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True):
                                                                G.referenceCorrectionCoefficients,G.referenceCorrectionCoefficients_cov,
                                                                G.referenceFileExistingTuning, G.referenceFileDesiredTuning, 
                                                                G.measuredReferenceYorN)
+        ReferenceData.ExportCollector('TuningCorrector', use_provided_reference_patterns=False)
+        #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
+        ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.standardized_reference_patterns,len(ReferenceData.molecules))
+        ReferenceData.ExportCollector('StandardizeReferencePattern', use_provided_reference_patterns=False)
         #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
         try:
             ReferenceData.absolute_standard_uncertainties = (ReferenceData.absolute_standard_uncertainties**2 + ReferenceData.standardized_reference_patterns_tuning_uncertainties**2)**0.5
+            ReferenceData.ExportCollector('TuningCorrector_absolute_tuning_uncertainties', export_tuning_uncertainties= True) #These are not yet
+            ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
         except:
             ReferenceData.absolute_standard_uncertainties = ReferenceData.standardized_reference_patterns_tuning_uncertainties
-        
-        ReferenceData.ExportCollector('TuningCorrector')
-        ReferenceData.ExportCollector('TuningCorrector_absolute_standard_uncertainties', export_tuning_uncertainties= True) #These are not yet actually standardized. Happens below.
+            ReferenceData.ExportCollector('TuningCorrector_absolute_tuning_uncertainties', export_tuning_uncertainties= True) #These are not yet
+            ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
+
         if G.calculateUncertaintiesInConcentrations == True: 
             if type(G.referenceFileUncertainties) != type(None):                                                      
-                pass #TODO: consider to propagate TuningCorrector uncertainties into the ReferenceData.relative_standard_uncertainties
-    
-        #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
-        ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.standardized_reference_patterns,len(ReferenceData.molecules))
-        ReferenceData.ExportCollector('StandardizeReferencePattern')
-        #Note: it is assumed that the relative_standard_uncertainties correspond to original reference, so before tuning corrector, thus we do not recalculate that factor.
-        ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-        ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
-        
-    print("line 1488", numpy.shape(ReferenceData.standardized_reference_patterns))
-    if G.UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] == True:#FIXME: This is not the right way to check this variable.
-        #Now need to update the relative uncertainties again. #TODO: This should become a function.
-        ReferenceData.relative_standard_uncertainties = ReferenceData.absolute_standard_uncertainties*1.0 #First make the array.
-        #now populate the non-mass fragment parts by dividing.
-        #Note that it's possible to get a divide by zero error for the zeros, which we don't want. So we fill those with 0 with the following syntax: np.divide(a, b, out=np.zeros(a.shape, dtype=float), where=b!=0) https://stackoverflow.com/questions/26248654/how-to-return-0-with-divide-by-zero
-        a_array = ReferenceData.relative_standard_uncertainties[:,1:]
-        b_array = ReferenceData.standardized_reference_patterns[:,1:] 
-        ReferenceData.relative_standard_uncertainties[:,1:] = numpy.divide(a_array, b_array, out=numpy.zeros(a_array.shape, dtype=float), where=b_array!=0)
-        ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
-        ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
+                ReferenceData.update_relative_standard_uncertainties()
+                ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
     return ReferenceData
 
 '''
