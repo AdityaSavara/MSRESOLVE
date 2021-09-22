@@ -54,7 +54,7 @@ ut.set_expected_result(ionizationFactorsRN2,expected_result_str=str(ionizationFa
 #Calculated Output was  [2.6    4.1167 0.7668 2.0952 2.7428 3.2128 3.4905 1.407  2.1703]
 
 #set output
-output = MSRESOLVE.ReferenceDataList[0].ionizationEfficienciesList #The ionization factors list is a subobject to the MSReference object
+output = MSRESOLVE.ReferenceDataList[0].relativeIonizationEfficiencies #The ionization factors list is a subobject to the MSReference object
 #Places object in a tuple
 resultObj = (output)
 

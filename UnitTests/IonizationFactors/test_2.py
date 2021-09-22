@@ -51,7 +51,7 @@ ionizationFactorsOutput = ionizationFactorsRN2[2:4] #get an array of just the tw
 ut.set_expected_result(ionizationFactorsOutput[2:4],expected_result_str=str(ionizationFactorsRN2[2:4]),prefix=prefix,suffix=suffix)
 
 #set output
-output = MSRESOLVE.ReferenceDataList[0].ionizationEfficienciesList[2:4] #The ionization factors list is a subobject to the MSReference object, indices 2 and 3 refer to CO and CO2
+output = MSRESOLVE.ReferenceDataList[0].relativeIonizationEfficiencies[2:4] #The ionization factors list is a subobject to the MSReference object, indices 2 and 3 refer to CO and CO2
 #Places object in a tuple
 resultObj = (output)
 

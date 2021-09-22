@@ -1,4 +1,4 @@
-Sun Sep 12 23:06:16 2021
+Wed Sep 22 01:10:38 2021
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] 
 form  = ['xyyy'] 
@@ -7,11 +7,11 @@ timeRangeLimit = yes
 timeRangeStart = 176.0 
 timeRangeFinish = 178.0 
 measuredReferenceYorN = yes 
-referenceCorrectionCoefficientA = -0.0001467232749875171 
-referenceCorrectionCoefficientB = 0.004151497422855363 
-referenceCorrectionCoefficientC = 0.9982366046007577 
-referenceCorrection_abcCoefficients = [-0.0001467232749875171, 0.004151497422855363, 0.9982366046007577] 
-referenceCorrection_abcCoefficients_cov = [[6.981550481815813e-08, -5.097818072396727e-06, 8.600418245281575e-05], [-5.097818072396727e-06, 0.00038360629780275683, -0.00669836690018973], [8.600418245281582e-05, -0.006698366900189734, 0.12249469848718654]] 
+referenceCorrectionCoefficientA = -0.0001467232749875168 
+referenceCorrectionCoefficientB = 0.004151497422855332 
+referenceCorrectionCoefficientC = 0.9982366046007587 
+referenceCorrection_abcCoefficients = [-0.0001467232749875168, 0.004151497422855332, 0.9982366046007587] 
+referenceCorrection_abcCoefficients_cov = [[6.981550481815902e-08, -5.097818072396798e-06, 8.600418245281711e-05], [-5.097818072396798e-06, 0.0003836062978027626, -0.006698366900189841], [8.600418245281718e-05, -0.0066983669001898435, 0.12249469848718866]] 
 minimalReferenceValue = yes 
 referenceValueThreshold = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
 referenceSignificantFragmentThresholds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
@@ -21,5 +21,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.30559 seconds 
+Run Time 0.15889 seconds 
 ###################################################################### 

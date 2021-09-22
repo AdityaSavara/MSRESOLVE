@@ -40,7 +40,7 @@ knownIonizationFactorsRN2 = ReferenceInfo[4][1:].astype(float) #convert values t
 ut.set_expected_result(knownIonizationFactorsRN2,expected_result_str=str(knownIonizationFactorsRN2),prefix=prefix,suffix=suffix)
 
 #set output
-output = MSRESOLVE.ReferenceDataList[0].ionizationEfficienciesList #The ionization factors list is a subobject to the MSReference object
+output = MSRESOLVE.ReferenceDataList[0].relativeIonizationEfficiencies #The ionization factors list is a subobject to the MSReference object
 #Places object in a tuple
 resultObj = (output)
 
