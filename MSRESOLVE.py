@@ -2544,6 +2544,7 @@ getMoleculesFromReferenceData is a function that takes in the reference filename
 def getMoleculesFromReferenceData(ReferenceFileName):
     #Read the csv file
     #TODO Change to use numpy.gen_from_text instead of pandas
+    #TODO: add an optional argument for the form "xxxy" vs "xyxy".
     ReferenceInfo = pandas.read_csv(ReferenceFileName,header=0)
     #Convert the reference info into an array
     ReferenceInfoArray = numpy.array(ReferenceInfo)
@@ -5570,6 +5571,15 @@ def main():
     #Read in the molecules used before parsing the user input file    
     G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
     G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
+    if G.measuredReferenceYorN == True:
+        G.moleculesNamesExistingTuning = getMoleculesFromReferenceData(G.UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'][0])
+        moleculesToAddToReferencePattern = []
+        for moleculeName in G.moleculesNamesExistingTuning:
+            if moleculeNmae in G.moleculesNames:
+                pass
+            else:
+                moleculesToAddToReferencePattern.append(moleculeName)
+        G.moleculesNamesExtended = list(G.moleculesNames) + list (moleculesToAddToReferencePattern)
     #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
     
