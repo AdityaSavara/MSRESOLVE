@@ -46,9 +46,15 @@ def parseUserInput(currentUserInput):
     if currentUserInput.specificMolecules == 'yes': #if yes, use the user's chosen moleclues
         chosenMoleculesForParsing = copy.deepcopy(currentUserInput.chosenMoleculesNames)
         #If using specificMolecules, make sure all selected molecules are in the reference data
-        parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNames,'chosenMolecules','Molecules from Reference Data')
+        if currentUserInput.measuredReferenceYorN == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
+            parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNames,'chosenMolecules','Molecules from Reference Data')
+        if currentUserInput.measuredReferenceYorN == 'yes':#If using a making a reference pattern, check the extended moleculesNames list.
+            parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNamesExtended,'chosenMolecules','Molecules from Reference Data')
     elif currentUserInput.specificMolecules == 'no': #Otherwise use all molecules
-        chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNames)
+        if currentUserInput.measuredReferenceYorN == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
+            chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNames)
+        if currentUserInput.measuredReferenceYorN == 'yes':#If using a making a reference pattern, check the extended moleculesNames list.
+            chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNamesExtended)
     
     #Molecule Likelihoods and Sensitivity Values are lists with the same length as the number of molecules
     currentUserInput.moleculeLikelihoods = parse.listCast(currentUserInput.moleculeLikelihoods)

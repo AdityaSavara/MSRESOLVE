@@ -5571,11 +5571,11 @@ def main():
     #Read in the molecules used before parsing the user input file    
     G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
     G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
-    if G.measuredReferenceYorN == True:
+    if str(G.measuredReferenceYorN).lower() == 'yes':
         G.moleculesNamesExistingTuning = getMoleculesFromReferenceData(G.UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'][0])
         moleculesToAddToReferencePattern = []
         for moleculeName in G.moleculesNamesExistingTuning:
-            if moleculeNmae in G.moleculesNames:
+            if moleculeName in G.moleculesNames:
                 pass
             else:
                 moleculesToAddToReferencePattern.append(moleculeName)
