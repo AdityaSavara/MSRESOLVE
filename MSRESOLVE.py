@@ -631,17 +631,17 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         
         if G.measuredReferenceYorN =='yes':
             #we are using specific files for obtaining the tuning correction coefficients in the case of GasMixtureTuningCorrector
-            referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"] referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"]
-            
-            referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
+            referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"]
+            referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"]
             if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
                 print("line 522!!!!!")
                 referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
             abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
+            referenceCorrectionCoefficients = numpy.zeros(3)
             referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
             G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
             referenceCorrectionCoefficients_cov = abcCoefficients_cov
-            G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov        
+            G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
         ReferenceDataExistingTuningAfterCorrection = copy.deepcopy(ReferenceDataExistingTuning) #just initializing here, then actual tuning correction occurs in next lines.                
         #Tuning corrector does not operate on a ReferenceData object, it operates on standardized reference patterns.
         ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns, ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceDataExistingTuning.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov)
@@ -1476,10 +1476,12 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
     if G.measuredReferenceYorN =='yes':
         print("line 520!!!!!")
         referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
+        referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
         if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
             print("line 522!!!!!")
             referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
+        referenceCorrectionCoefficients = numpy.zeros(3)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
