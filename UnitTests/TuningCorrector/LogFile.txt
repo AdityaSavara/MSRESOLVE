@@ -1,25 +1,22 @@
-Wed Sep 22 01:10:38 2021
+Wed Sep 22 23:17:59 2021
 
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] 
+referenceFileName = ['ReferenceCollected.csv'] 
 form  = ['xyyy'] 
 collectedFileName = 2-CrotAcetExp#2.csv 
 timeRangeLimit = yes 
 timeRangeStart = 176.0 
 timeRangeFinish = 178.0 
 measuredReferenceYorN = yes 
-referenceCorrectionCoefficientA = -0.0001467232749875168 
-referenceCorrectionCoefficientB = 0.004151497422855332 
-referenceCorrectionCoefficientC = 0.9982366046007587 
-referenceCorrection_abcCoefficients = [-0.0001467232749875168, 0.004151497422855332, 0.9982366046007587] 
-referenceCorrection_abcCoefficients_cov = [[6.981550481815902e-08, -5.097818072396798e-06, 8.600418245281711e-05], [-5.097818072396798e-06, 0.0003836062978027626, -0.006698366900189841], [8.600418245281718e-05, -0.0066983669001898435, 0.12249469848718866]] 
-minimalReferenceValue = yes 
-referenceValueThreshold = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
-referenceSignificantFragmentThresholds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+referenceCorrectionCoefficientA = -0.000210414545805773 
+referenceCorrectionCoefficientB = 0.007909119113932848 
+referenceCorrectionCoefficientC = 0.9472395922014174 
+referenceCorrection_abcCoefficients = [-0.000210414545805773, 0.007909119113932848, 0.9472395922014174] 
+referenceCorrection_abcCoefficients_cov = [[2.1527203633851344e-09, -1.537988072223298e-07, 2.238919555113214e-06], [-1.5379880722232976e-07, 1.1713284428031572e-05, -0.000186315019960432], [2.2389195551132133e-06, -0.00018631501996043198, 0.0034573403856136735]] 
 answer = inverse 
 distinguished = yes 
 scaleRawDataFactor  = 1.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.15889 seconds 
+Run Time 0.23319 seconds 
 ###################################################################### 
