@@ -15,4 +15,8 @@ So the feature uses a polynomial function and applies it to *all* molecules in R
 In the test_1.py, the reference threshold filter is off.
 In  test_2.py, the reference threshold filter is on.
 
+In test_3.py, the two files are referenceFileExistingTuning = ['ReferenceLiterature.csv','xyyy'] and referenceFileDesiredTuning =['ReferenceCollected.csv','xyyy'].  The original reference file is set as ReferenceCollected.
+
+
+
 In many real applications of this feature, what is desired is to predict from an external reference what the fragmentation pattern would be on one's own spectrometer.  In that situation, the "ReferenceCollected.csv" is the desired pattern one and the "ReferenceLiterature.csv" is the existing pattern to be adjusted. These names may become further adjusted to "PatternToMatch" and "PatternToAdjust" or something like that.
