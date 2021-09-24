@@ -239,7 +239,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     #The dependencies dictionary is hardcoded.
     dependenciesDict = {}
-    #Note the form below: in right hand side, there are tuples. Each tuple must have index 0 and index 1 matching, or there is a problem.
+    #Note the form below: in right hand side, there are tuples. Foor the user's chocices, the value of the variable in index 0 must match the hardcoded value in index 1, otherwise the original feature has an incompatibility.
     dependenciesDict['SLSUniqueExport']={'yes':[(UserChoices['dataAnalysisMethods']['uniqueOrCommon'],'unique'),(UserChoices['dataAnalysisMethods']['answer'],'sls')]}
     settingsDependenciesCheck(UserChoices, dependenciesDict)
 
@@ -333,8 +333,12 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['scaleRawDataFactor']   = UserChoices['scaleRawDataYorN']['scaleRawDataFactor']
 
     SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
+    if 'createMixedTuningPattern' not in UserChoices['measuredReferenceYorN']:
+        UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = True
+    SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
     SettingsVDictionary['referenceFileExistingTuning']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuning']
     SettingsVDictionary['referenceFileDesiredTuning']    = UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning']
+
     print("line 338",SettingsVDictionary['measuredReferenceYorN'])
     print("line 338", SettingsVDictionary['referenceFileExistingTuning']   )
     print("line 338", SettingsVDictionary['referenceFileDesiredTuning']   )

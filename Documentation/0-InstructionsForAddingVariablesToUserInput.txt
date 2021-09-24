@@ -4,7 +4,7 @@ Steps For Adding New UserInput Variables
 2. Add to the __var_list__ at the bottom of UserInput.py
 3. Updated userInputValidityFunctions.py function parseUserInput   
 4. Updated userInputValidityFunctions.py function userInputValidityCheck
-5. Run the Unit Tests: two or three of the unit tests have a full user input file in them. So those will need to have the new variable and its default added.
+5. Run the Unit Tests: two or three of the unit tests have a full user input file in them. So those will need to have the new variable and its default added. --> or, the default can be added into userInputValidityFunctions.py by hardcoding a default if the variable is not inside the UserChoice dictionary.
 
 For the GUI Files we need to do some more steps:
 6. 
