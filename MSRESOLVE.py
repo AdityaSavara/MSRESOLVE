@@ -380,7 +380,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     Step 2: populate all variables and standardize signals by 100 
 
     '''
-    
+    print("line 383", ReferencePatternExistingTuning_FileNameAndForm, ReferencePatternDesiredTuning_FileNameAndForm)#; sys.exit()
     if G.minimalReferenceValue !='yes':
         print("Warning: The ABCDetermination will occur without threshold filtering, since that setting is off.")
         
@@ -463,6 +463,10 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     Find a,b,c:
     '''
     numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.
+    print("line 466", ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'])
+    
+    print("line 468", ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'])
+    
     RatioOfPatterns = ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'][:,1:]    
     #For each row, excluding the Take the mean excluding nan values.
     meanRatioPerMassFragment = numpy.nanmean(RatioOfPatterns,1) #the 1 is for over axis 1, not over axix 0.    
@@ -475,6 +479,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         # meanRatioPerMassFragment[meanRatioPerMassFragment==-inf] = 'nan'
     #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
+    print("line 478", meanRatioPerMassFragment)
     abcCoefficients, abcCoefficients_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
     reverseRatio = 1/meanRatioPerMassFragment
     abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],reverseRatio[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
@@ -524,6 +529,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
         for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
             factor = referenceCorrectionCoefficients[0]*(referenceabscissa[massfrag_counter]**2)  + referenceCorrectionCoefficients[1]*referenceabscissa[massfrag_counter]+referenceCorrectionCoefficients[2] #obtains the factor from molecular weight of abscissa
             referenceDataArray[massfrag_counter,:] = referenceDataArray[massfrag_counter,:]*factor
+            print("line 527", referenceabscissa[massfrag_counter], factor)
             if type(referenceCorrectionCoefficients_cov) != None:
                 if sum(numpy.array(referenceCorrectionCoefficients_cov)).all()!=0:
                     if len(numpy.shape(referenceCorrectionCoefficients_cov)) == 1 and (len(referenceCorrectionCoefficients_cov) > 0): #If it's a 1D array/list that is filled, we'll diagonalize it.
@@ -1458,6 +1464,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
     print("Line 1444!!!!!", G.measuredReferenceYorN)
     # standardize the reference data columns such that the maximum intensity value per molecule is 100 and everything else is scaled to that maximum value.
     ReferenceData.ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
+    ReferenceData.exportReferencePattern('ExportedReferencePatternOriginalAnalysis.csv')
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None):
             ReferenceData.update_relative_standard_uncertainties()
@@ -1477,9 +1484,12 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         print("line 520!!!!!")
         referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
         referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
+        ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
+        ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternOriginalTuning.csv')
         if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
             print("line 522!!!!!")
-            referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+            referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalTuning.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+        print("line 1489", referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients = numpy.zeros(3)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
@@ -1487,11 +1497,19 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
         G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
     
+    if returnMixedPattern== True:
+        #First read in the existing tuning patterns.
+        #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
+        ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileExistingTuning[0],G.referenceFileExistingTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
+        ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternExternalTuning.csv')
+        #ReferenceDataExistingTuning.ExportAtEachStep = G.ExportAtEachStep
+    print("line 1495", ReferenceData.standardized_reference_patterns)
     ReferenceData.standardized_reference_patterns_tuning_corrected, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
                                                            G.referenceCorrectionCoefficients,G.referenceCorrectionCoefficients_cov)
     #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
     ReferenceData.ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
     ReferenceData.standardized_reference_patterns=StandardizeReferencePattern(ReferenceData.standardized_reference_patterns_tuning_corrected,len(ReferenceData.molecules))
+    #print("line 1501", ReferenceData.standardized_reference_patterns); sys.exit()
     #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
     try:
         ReferenceData.absolute_standard_uncertainties = (ReferenceData.absolute_standard_uncertainties**2 + ReferenceData.standardized_reference_patterns_tuning_uncertainties**2)**0.5
@@ -3064,7 +3082,7 @@ class MSReference (object):
             referenceFileHeader += "ionizationEfficienciesSources," + DataFunctions.arrayLikeToCSVstring(self.sourceOfIonizationData) + "\n"
             referenceFileHeader += "Molecular Mass," + DataFunctions.arrayLikeToCSVstring(self.molecularWeights)# + "\n"
             if hasattr(self ,"standardized_reference_patterns"):
-                pass
+                self.standardized_reference_patterns=StandardizeReferencePattern(self.standardized_reference_patterns,len(self.molecules))
             else:
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
@@ -5602,7 +5620,7 @@ def main():
         print("line 5583", G.moleculesNamesExtended)
     #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
-    #print("line 5573"); sys.exit()
+    #print("line 5573", G.referenceFileNamesList); sys.exit()
 
     #Save an MSReference object containing all molecules and an MSData object containing all mass fragments
     if G.iterativeAnalysis and G.iterationNumber != 1: #If using iterative and not on the first iteration we will need to remove _iter_x from the file names

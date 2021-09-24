@@ -7,10 +7,12 @@ The way the feature works is it looks at reference patterns collected from two m
 
 #apparently need to have dataAnalysis on to use this feature (ideally should not need to, but as of Sep 2019, do need to).
 
-test_1.py takes the ReferenceCollected.csv and ReferenceLiterature.csv
+NOTE: ON SEPT 23rd 2021, THE REGULAR INPUT FILE IS CONSIDERED 'EXISTING' TUNING. THIS WILL CHANGE WITH THE MIXED REFERENCE PATTERN UPDATE.
+AFTER THAT, THE REGULAR INPUT FILE WILL BE CONSIDERED THE 'DESIRED' TUNING. IT MAY BE A GOOD TIME TO RENAME THE VARIABLES TO 'EXTERNAL' AND 'EXISTING' TUNING OR SOMETHING LIKE THAT. THIS MAY MAKE IT MORE CLEAR THAT THE EXTERNAL TUNING WILL BE CHANGED TO MATCH THE EXISTING ONE.
+WILL EXPORT FILES AS 'ExportedReferencePatternOriginal" "ExportedReferencePatternExisting" "ExportedReferencePatternExternal" "ExportedReferencePatternExternalTuningCorrected"  "ExportedReferencePatternMixed"
 
-ReferenceCollected.csv does not have as many molecules as ReferenceLiterature.csv and the higher masses have lower intensity in ReferenceCollected.csv
-So the feature uses a polynomial function and applies it to *all* molecules in ReferenceLiterature.csv to make it look more like ReferenceCollected.csv.
+test_1.py has AcetaldehydeNISTRefMixed2.csv and ReferenceLiterature.csv with the same tuning. It applies a TuningCorrection to AcetaldehydeNISTRefMixed2.csv (and also to ReferenceLiterature.csv).  The Desired tuning file is ReferenceCollected.csv.
+ReferenceCollected.csv does not have as many molecules as ReferenceLiterature.csv and the higher masses have lower intensity in ReferenceCollected.csv (for one of the molecules, crotyl alcohol). So the feature uses a polynomial function and applies it to *all* molecules in ReferenceLiterature.csv to make it look more like ReferenceCollected.csv (lowers the intensity).
 
 In the test_1.py, the reference threshold filter is off.
 In  test_2.py, the reference threshold filter is on.
