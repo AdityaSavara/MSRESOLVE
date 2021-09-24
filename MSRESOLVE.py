@@ -462,11 +462,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     '''
     Find a,b,c:
     '''
-    numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.
-    print("line 466", ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'])
-    
-    print("line 468", ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'])
-    
+    numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.    
     RatioOfPatterns = ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'][:,1:]    
     #For each row, excluding the Take the mean excluding nan values.
     meanRatioPerMassFragment = numpy.nanmean(RatioOfPatterns,1) #the 1 is for over axis 1, not over axix 0.    
@@ -548,7 +544,6 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
 
 '''Makes a mixed reference pattern from two reference patterns, including tuning correction.'''
 def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, returnMixedPattern=False):
-    print("Line 1444!!!!!", G.measuredReferenceYorN)
     # standardize the reference data columns such that the maximum intensity value per molecule is 100 and everything else is scaled to that maximum value.
     ReferenceData.ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
     ReferenceData.exportReferencePattern('ExportedReferencePatternOriginalAnalysis.csv')
@@ -567,7 +562,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         G.referenceCorrectionCoefficients_cov = None
     #Wanted to do something like "if list(G.referenceCorrectionCoefficients) != [0,0,1]:" but can't do it out here. Can do it inside function.       
 
-    returnMixedPattern = False #FIXME: This line should be deleted. It is hard coded for testing purposes.
+    returnMixedPattern = True #FIXME: This line should be deleted. It is hard coded for testing purposes.
     if returnMixedPattern== False:   
         if G.measuredReferenceYorN =='yes': #in this case, we are going to apply the external tuning to the current pattern.
             
@@ -625,12 +620,10 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         
         #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
         ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
-        print("line 624", ReferenceDataExistingTuning.standardized_reference_patterns)
         ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternExternal.csv')
         ReferenceDataDesiredTuning = createReferenceDataObject ( referenceFileDesiredTuningAndForm[0],referenceFileDesiredTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
         ReferenceDataDesiredTuning.exportReferencePattern('ExportedReferencePatternOriginal.csv')
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
-        print("line 628", abcCoefficients)
         referenceCorrectionCoefficients = numpy.zeros(3)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
@@ -2688,7 +2681,6 @@ def getMoleculesFromReferenceData(ReferenceFileName):
     #Strip the white space around the molecules
     for i in range(0,len(molecules)):
         molecules[i] = molecules[i].strip()
-    print("line 2556", ReferenceFileName, molecules)
     return molecules
 
 '''
@@ -2922,13 +2914,15 @@ class MSReference (object):
     def ExportCollector(self, callingFunction, use_provided_reference_patterns = False, export_matching_correction_value = False, export_uncertainties = False, export_standard_uncertainties=False, export_tuning_uncertainties=False, export_relative_uncertainties=False):
         #record current time
         currentTime = timeit.default_timer()
-        #add net time to list of run times
-        self.runTimeAtExport.append(currentTime - self.previousTime)
-        #record current time for next function's use
-        self.previousTime = currentTime
-        #add the name of the calling function to mark its use
-        self.labelToExport.append(callingFunction) 
+        #Don't do anything unless ExportAtEachStep is on.
         if self.ExportAtEachStep == 'yes':
+            #add net time to list of run times
+            self.runTimeAtExport.append(currentTime - self.previousTime)
+            print("line 2926", callingFunction, self.runTimeAtExport, len(self.runTimeAtExport))
+            #record current time for next function's use
+            self.previousTime = currentTime
+            #add the name of the calling function to mark its use
+            self.labelToExport.append(callingFunction) 
             ##record molecules of experiment
             self.moleculesToExport.append(self.molecules.copy())
             #record data 
@@ -2943,11 +2937,14 @@ class MSReference (object):
             elif export_relative_uncertainties:
                 self.dataToExport.append(self.relative_standard_uncertainties.copy())               
             elif use_provided_reference_patterns:
+                print("line 2929", len(self.provided_reference_patterns))
                 self.dataToExport.append(self.provided_reference_patterns.copy())
             elif callingFunction == 'UnnecessaryMoleculesDeleter':
                 self.dataToExport.append(self.monitored_reference_intensities.copy())
             elif not use_provided_reference_patterns:
+                print("line 2943", len(self.standardized_reference_patterns))
                 self.dataToExport.append(self.standardized_reference_patterns.copy())
+        print('line 2944', len(self.dataToExport), len(self.runTimeAtExport))
             
     #this function exports only an XYYY file. To export a full referenceData file, use the function exportReferencePattern
     def ExportFragmentationPatterns(self, verbose=True):
@@ -2962,6 +2959,7 @@ class MSReference (object):
             if self.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
                 filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
+                print("line 2965", savePoint, self.runTimeAtExport)
                 data = self.dataToExport[savePoint]
                 colIndex = ['%s'% y for y in self.moleculesToExport[savePoint]]
                 #colIndex = ['%s'% y for y in self.molecules]
@@ -3136,7 +3134,6 @@ class MSReference (object):
                 if len(MatchingMID_Objects) == 0: #Otherwise use the original Madix and Ko equation
                     self.relativeIonizationEfficiencies[moleculeIndex] = (0.6*self.electronnumbers[moleculeIndex]/14)+0.4        
                     self.sourceOfIonizationData[moleculeIndex] = 'MadixAndKo' #ionization efficiency obtained via Madix and Ko equation
-                    print("line 2583", self.sourceOfIonizationData)
 
     #Export the ionization efficiencies used and their respective method used to obtain them (known factor, known molecule, known ionization type, or Madix and Ko)    
     def exportIonizationInfo(self):
@@ -5685,28 +5682,20 @@ def main():
 
     #Read in the molecules used before parsing the user input file    
     G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
-    print("line 5557", list(G.referenceFileNamesList))
     G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
-    print("line 5574", list(G.moleculesNames))
-    print("Line 5577!!!!!", G.measuredReferenceYorN)
     #If a tuning correction is going to be done, we'll make a mixed reference pattern.
     #G.moleculesNamesExtended needs to be populated before the first tuning correction and before parsing of userinput.
     if str(G.measuredReferenceYorN).lower() == 'yes': 
         G.moleculesNamesExistingTuning = getMoleculesFromReferenceData(G.referenceFileExistingTuning[0])
-        print("line 5563",G.moleculesNamesExistingTuning)
         moleculesToAddToReferencePattern = []
         for moleculeName in list(G.moleculesNamesExistingTuning):
             if moleculeName in list(G.moleculesNames):
                 pass
             else:
                 moleculesToAddToReferencePattern.append(moleculeName)
-        print("line 5569", list(G.moleculesNames), list(moleculesToAddToReferencePattern))
         G.moleculesNamesExtended = list(G.moleculesNames) + list(moleculesToAddToReferencePattern)
-        print("line 5583", list(G.moleculesNames))
-        print("line 5583", G.moleculesNamesExtended)
     #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
-    #print("line 5573", G.referenceFileNamesList); sys.exit()
 
     #Save an MSReference object containing all molecules and an MSData object containing all mass fragments
     if G.iterativeAnalysis and G.iterationNumber != 1: #If using iterative and not on the first iteration we will need to remove _iter_x from the file names
@@ -5726,7 +5715,6 @@ def main():
     AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesReferenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
     #Then prepare AllMoleculesReferenceDataList to get matching_correction_values, this value is fed into RatioFinder
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
-        print("line 5570", G.measuredReferenceYorN)
         AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
         PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],AllMassFragmentsExperimentData.mass_fragment_numbers, AllMassFragmentsExperimentData)
             
