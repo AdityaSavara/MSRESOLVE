@@ -673,7 +673,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                 #ReferenceData.ExportCollector('StandardizedReferencePatternRelativeUncertainties', export_relative_uncertainties=True)
 
         #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
-        ReferenceData.exportReferencePattern("TuningCorrectorMixedPattern.csv")
+        ReferenceData.exportReferencePattern("ExportedReferencePatternMixed.csv")
                 
             # else:
                 # if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
@@ -687,6 +687,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         # ReferenceData.update_relative_standard_uncertainties()
         # ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
         # ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
+        print("line 690", ReferenceData.standardized_reference_patterns)
                                                                
     return ReferenceData
     
