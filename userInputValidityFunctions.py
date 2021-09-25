@@ -268,15 +268,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
             if UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique' or UserChoices['dataAnalysisMethods']['answer'] != 'sls':
                 UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
                 print("Incompatible choice detected: forcing implicitSLScorrection to False.")
-   
-    #Below will force specificMolecules to be on, and chosenMoleculesNames equal to tuningCorrectorGasMixtureMoleculeNames, if molecule names is added to tuningCorrectorGasMixtureMoleculeNames list         
-    if UserChoices['measuredReferenceYorN']['on'] =='yes':
-        if UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] != []:
-            if UserChoices['specificMolecules']['on'] == 'no':
-                UserChoices['specificMolecules']['on'] = 'yes'
-                print("Incompatible choice detected: forcing specificMolecules to on.")
-            UserChoices['specificMolecules']['chosenMoleculesNames'] = UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']
-           
+
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
     #The original variable names were single variables. Now, we are using a dictionary type structure (right side of equal signs) so they are being mapped to the single variables (left side of equal sign)
     #TODO: Consider if G.iterativeAnalysis = True or False should be changed to G.IterativeAnalysis_On or something like that, but will break backwards compatibility unless special care is taken.
