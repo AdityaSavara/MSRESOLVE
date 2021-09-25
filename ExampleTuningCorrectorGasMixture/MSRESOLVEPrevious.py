@@ -548,47 +548,47 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         if type(G.referenceFileUncertainties) != type(None):
             ReferenceData.update_relative_standard_uncertainties()
 
-    #Skip much of the function if using tuningCorrectorGasMixtureMoleculeNames
-    if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) == 0:
-        if verbose:
-            print('beginning TuningCorrector')
+    if verbose:
+                                                                                                  
+                   
+        print('beginning TuningCorrector')
                                                                                                              
                                                                                               
-        if type(G.referenceCorrectionCoefficients) == type({}):#check if it's a dictionary.
-            G.referenceCorrectionCoefficients = [G.referenceCorrectionCoefficients['A'],G.referenceCorrectionCoefficients['B'],G.referenceCorrectionCoefficients['C']]
-        #only apply the tuning correction if the list is not 0 0 1.
-        try:
-            type(G.referenceCorrectionCoefficients_cov)#If it doesn't exist, we'll make it a None type.
-        except:    
-            G.referenceCorrectionCoefficients_cov = None
-        #Wanted to do something like "if list(G.referenceCorrectionCoefficients) != [0,0,1]:" but can't do it out here. Can do it inside function.       
+    if type(G.referenceCorrectionCoefficients) == type({}):#check if it's a dictionary.
+        G.referenceCorrectionCoefficients = [G.referenceCorrectionCoefficients['A'],G.referenceCorrectionCoefficients['B'],G.referenceCorrectionCoefficients['C']]
+    #only apply the tuning correction if the list is not 0 0 1.
+    try:
+        type(G.referenceCorrectionCoefficients_cov)#If it doesn't exist, we'll make it a None type.
+    except:    
+        G.referenceCorrectionCoefficients_cov = None
+    #Wanted to do something like "if list(G.referenceCorrectionCoefficients) != [0,0,1]:" but can't do it out here. Can do it inside function.       
 
-        if G.measuredReferenceYorN =='no':
-           G.createMixedTuningPattern =  False #override the mixed tuning pattern choice if there is no measured reference.
+    if G.measuredReferenceYorN =='no':
+       G.createMixedTuningPattern =  False #override the mixed tuning pattern choice if there is no measured reference.
 
-        if G.createMixedTuningPattern == False:   
-            if G.measuredReferenceYorN =='yes': #in this case, we are going to apply the external tuning to the current pattern.
-                
-                    print("line 520!!!!!")
-                    referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
-                    referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
-                    ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
-                    ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternOriginalTuning.csv')
-                    if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
-                        print("line 522!!!!! TODO: NEED TO MAKE ExportedReferencePatternDesiredTuning FOR CASE OF THIS IF STATEMENT")
-                        referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
-                    print("line 1489", referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
-                    abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
-                    referenceCorrectionCoefficients = numpy.zeros(3)
-                    referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
-                    G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
-                    referenceCorrectionCoefficients_cov = abcCoefficients_cov
-                    G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
+    if G.createMixedTuningPattern == False:   
+        if G.measuredReferenceYorN =='yes': #in this case, we are going to apply the external tuning to the current pattern.
+            
+                print("line 520!!!!!")
+                referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
+                referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
+                ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
+                ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternOriginalTuning.csv')
+                if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
+                    print("line 522!!!!! TODO: NEED TO MAKE ExportedReferencePatternDesiredTuning FOR CASE OF THIS IF STATEMENT")
+                    referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+                print("line 1489", referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
+                abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
+                referenceCorrectionCoefficients = numpy.zeros(3)
+                referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
+                G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
+                referenceCorrectionCoefficients_cov = abcCoefficients_cov
+                G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
 
-                
-                            
-            #if we are not returning a mixed pattern, we are applying the tuning correction directly to the original ReferenceData object.
-            print("line 1495", ReferenceData.standardized_reference_patterns)
+            
+                        
+        #if we are not returning a mixed pattern, we are applying the tuning correction directly to the original ReferenceData object.
+        print("line 1495", ReferenceData.standardized_reference_patterns)
         ReferenceData.standardized_reference_patterns_tuning_corrected, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
                                                                G.referenceCorrectionCoefficients,G.referenceCorrectionCoefficients_cov)
 
@@ -606,12 +606,8 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
         try:
             ReferenceData.absolute_standard_uncertainties = (ReferenceData.absolute_standard_uncertainties**2 + ReferenceData.standardized_reference_patterns_tuning_uncertainties**2)**0.5
-                                                                                                                                                                                                                                 
-                                                                                                                                                                                                                            
         except:
             ReferenceData.absolute_standard_uncertainties = ReferenceData.standardized_reference_patterns_tuning_uncertainties
-                                                                                                                                                                                                                                 
-                                                                                                                                                                                                                            
 
         ReferenceData.ExportCollector('TuningCorrector_absolute_standard_uncertainties', export_tuning_uncertainties= True) #These are not yet actually standardized. Happens below.
         ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
@@ -620,7 +616,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                 ReferenceData.update_relative_standard_uncertainties()
                 ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
                                                                
-    G.createMixedTuningPattern = False
+                                                               
     if G.createMixedTuningPattern== True:  #in this case, we are going to apply the current tuning to the external pattern, and also create a mixed pattern. So the ReferenceData pointer will point to a mixed pattern by the end of this if statement.
         print("line 619!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         if G.measuredReferenceYorN =='yes':
@@ -701,6 +697,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             # ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
                                                                
     return ReferenceData
+    
 
     
 #tuningCorrectorGasMixture will correct all items in the ReferenceDataList, but uses a single tuning correction that it applies to each of the ReferenceData objects in the list.
@@ -809,7 +806,6 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         ReferenceDataExistingTuningAfterCorrection = copy.deepcopy(ReferenceDataExistingTuning) #just initializing here, then actual tuning correction occurs in next lines.                
         #Tuning corrector does not operate on a ReferenceData object, it operates on standardized reference patterns.
         ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns, ReferenceDataExistingTuningAfterCorrection.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceDataExistingTuning.standardized_reference_patterns, G.referenceCorrectionCoefficients, G.referenceCorrectionCoefficients_cov)
-        # 
         # TuningCorrectorGasMixtureCorrectedReferenceDataObject = MSReference(ReferenceDataExistingTuning.standardized_reference_patterns, electronnumbers=ReferenceDataExistingTuning.electronnumbers, molecules=ReferenceDataExistingTuning.molecules, molecularWeights=ReferenceDataExistingTuning.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataExistingTuning.SourceOfFragmentationPatterns, sourceOfIonizationData=ReferenceDataExistingTuning.sourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataExistingTuning.relativeIonizationEfficiencies, moleculeIonizationType=ReferenceDataExistingTuning.moleculeIonizationType)
         ReferenceDataExistingTuningAfterCorrection.addSuffixToSourceOfFragmentationPatterns("_TuningCorrected")
         
@@ -2685,6 +2681,7 @@ getMoleculesFromReferenceData is a function that takes in the reference filename
 def getMoleculesFromReferenceData(ReferenceFileName):
     #Read the csv file
     #TODO Change to use numpy.gen_from_text instead of pandas
+    #TODO: add an optional argument for the form "xxxy" vs "xyxy".
     ReferenceInfo = pandas.read_csv(ReferenceFileName,header=0)
     #Convert the reference info into an array
     ReferenceInfoArray = numpy.array(ReferenceInfo)
@@ -2927,11 +2924,6 @@ class MSReference (object):
         #record current time
         currentTime = timeit.default_timer()
         #Don't do anything unless ExportAtEachStep is on.
-                                                                    
-                                                    
-                                       
-                                                             
-                                                   
         if self.ExportAtEachStep == 'yes':
             #add net time to list of run times
             self.runTimeAtExport.append(currentTime - self.previousTime)
