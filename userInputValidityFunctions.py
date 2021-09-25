@@ -352,12 +352,6 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
     SettingsVDictionary['referenceFileExistingTuning']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuning']
     SettingsVDictionary['referenceFileDesiredTuning']    = UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning']
-
-    print("line 338",SettingsVDictionary['measuredReferenceYorN'])
-    print("line 338", SettingsVDictionary['referenceFileExistingTuning']   )
-    print("line 338", SettingsVDictionary['referenceFileDesiredTuning']   )
-    #sys.exit()
-    
     SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients']
 
     try: #to make sure old unit tests and analyses work.
