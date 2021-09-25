@@ -144,9 +144,9 @@ def parseUserInput(currentUserInput):
     if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
         currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
         #The length of the reference value thresholds needs to be the same length as the number of molecules
-        #currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
-        currentUserInput.referenceSignificantFragmentThresholds = parse.listCast(currentUserInput.referenceSignificantFragmentThresholds) #referenceSignificantFragmentThresholds is a list
-        #currentUserInput.referenceSignificantFragmentThresholds = parse.parallelVectorize(currentUserInput.referenceSignificantFragmentThresholds,len(chosenMoleculesForParsing))
+        currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
+                                                                                                                                                                                                                                                                            
+        currentUserInput.referenceSignificantFragmentThresholds = parse.parallelVectorize(currentUserInput.referenceSignificantFragmentThresholds,len(chosenMoleculesForParsing))
     
     #Data Threshold Filter
     parse.strCheck(currentUserInput.lowerBoundThresholdChooser,'lowerBoundThresholdChooser')
@@ -253,7 +253,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     #The dependencies dictionary is hardcoded.
     dependenciesDict = {}
-   #Note the form below: in right hand side, there are tuples. Foor the user's chocices, the value of the variable in index 0 must match the hardcoded value in index 1, otherwise the original feature has an incompatibility.
+    #Note the form below: in right hand side, there are tuples. Foor the user's chocices, the value of the variable in index 0 must match the hardcoded value in index 1, otherwise the original feature has an incompatibility.
     dependenciesDict['SLSUniqueExport']={'yes':[(UserChoices['dataAnalysisMethods']['uniqueOrCommon'],'unique'),(UserChoices['dataAnalysisMethods']['answer'],'sls')]}
     settingsDependenciesCheck(UserChoices, dependenciesDict)
 
