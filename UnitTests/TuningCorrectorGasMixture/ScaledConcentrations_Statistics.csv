@@ -1,0 +1,9 @@
+# molecules,'ethyne', 'ethene', 'ethane', '1butanal'
+ScaledConcentrations_Means,2.6902198695709076e-07,8.069807502821944e-07,1.8219970746938638e-06,1.8461686993930294e-08
+ScaledConcentrations_StdDevs,0.0,0.0,0.0,0.0
+ScaledConcentrations_StdErrs,0.0,0.0,0.0,0.0
+ScaledConcentrations_absolute_uncertainties_Means,1.0614960653141096e-07,2.553215275488877e-07,1.798241936491399e-07,1.9783315304197919e-07
+ScaledConcentrations_absolute_uncertainties_StdDevs,0.0,0.0,0.0,0.0
+ScaledConcentrations_relative_uncertainties_Means,0.394575951698483,0.31639110035723145,0.09869620327428592,10.715876241809397
+ScaledConcentrations_relative_uncertainties_StdDevs,0.0,0.0,0.0,0.0
+ScaledConcentrations_absolute_uncertainties_Total,1.0614960653141096e-07,2.553215275488877e-07,1.798241936491399e-07,1.9783315304197919e-07
