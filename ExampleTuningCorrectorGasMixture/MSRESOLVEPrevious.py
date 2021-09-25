@@ -3181,7 +3181,7 @@ class MSReference (object):
             referenceFileHeader += "ionizationEfficienciesSources," + DataFunctions.arrayLikeToCSVstring(self.sourceOfIonizationData) + "\n"
             referenceFileHeader += "Molecular Mass," + DataFunctions.arrayLikeToCSVstring(self.molecularWeights)# + "\n"
             if hasattr(self ,"standardized_reference_patterns"):
-                 self.standardized_reference_patterns=StandardizeReferencePattern(self.standardized_reference_patterns,len(self.molecules))
+                self.standardized_reference_patterns=StandardizeReferencePattern(self.standardized_reference_patterns,len(self.molecules))
             else:
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
