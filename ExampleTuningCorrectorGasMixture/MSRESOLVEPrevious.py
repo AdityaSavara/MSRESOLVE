@@ -4032,8 +4032,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
         #Before going forward, we're going to make a variable called remaining_referenceSignificantFragmentThresholds, using a function.       
             def get_remaining_referenceSignificantFragmentThresholds(referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS):
                 remaining_referenceSignificantFragmentThresholds = list(copy.deepcopy(referenceSignificantFragmentThresholds))
-                if len(molecules_unedited) > len(remaining_referenceSignificantFragmentThresholds):
-                    remaining_referenceSignificantFragmentThresholds = remaining_referenceSignificantFragmentThresholds*len(molecules_unedited)
+                # if len(molecules_unedited) > len(remaining_referenceSignificantFragmentThresholds):
+                    # remaining_referenceSignificantFragmentThresholds = remaining_referenceSignificantFragmentThresholds*len(molecules_unedited)
                 molecules_unedited_to_reduce = list(copy.deepcopy(molecules_unedited))
                 for moleculeIndex, moleculeName in enumerate(molecules_unedited):
                     if moleculeName in remaining_molecules_SLS:
