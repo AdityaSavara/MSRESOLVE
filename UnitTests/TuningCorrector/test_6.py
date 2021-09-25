@@ -23,11 +23,10 @@ suffix = ut.returnDigitFromFilename(__file__)
 #We can use the default user input, which is already in MSRESOLVE.G.
 #Need to change the "direct variable" version rather than the dictionary version.
 MSRESOLVE.G.measuredReferenceYorN = 'yes'
-MSRESOLVE.G.createMixedTuningPattern = False
-MSRESOLVE.G.referenceFileNamesList[0] = 'ReferenceLiterature.csv'
-MSRESOLVE.G.referenceFileExistingTuning = ['ReferenceCollected.csv','xyyy']
-MSRESOLVE.G.referenceFileDesiredTuning =['ReferenceLiterature.csv','xyyy']
-
+MSRESOLVE.G.createMixedTuningPattern = True
+MSRESOLVE.G.referenceFileStandardTuning = ['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileExistingTuning = []
+MSRESOLVE.G.referenceFileDesiredTuning =[]
 
 #apparently need to have dataAnalysis on to use this feature (should not need to, but as of Sep 2019, do need to.
 MSRESOLVE.G.dataAnalysis ='yes'
@@ -42,7 +41,7 @@ MSRESOLVE.G.dataSmootherYorN = 'no'
 
 #will use minimalReferenceValue (single value means it will be applied to all molecules)
 MSRESOLVE.G.minimalReferenceValue= 'no'
-MSRESOLVE.G.referenceValueThreshold = [6.0]
+MSRESOLVE.G.referenceValueThreshold = [0.0]
 MSRESOLVE.G.referenceSignificantFragmentThresholds = [0.0]
 
 #Now to get started with the test itself...

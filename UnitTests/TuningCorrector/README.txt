@@ -11,15 +11,17 @@ NOTE: ON SEPT 23rd 2021, THE REGULAR INPUT FILE IS CONSIDERED 'EXISTING' TUNING.
 AFTER THAT, THE REGULAR INPUT FILE WILL BE CONSIDERED THE 'DESIRED' TUNING. IT MAY BE A GOOD TIME TO RENAME THE VARIABLES TO 'EXTERNAL' AND 'EXISTING' TUNING OR SOMETHING LIKE THAT. THIS MAY MAKE IT MORE CLEAR THAT THE EXTERNAL TUNING WILL BE CHANGED TO MATCH THE EXISTING ONE.
 WILL EXPORT FILES AS 'ExportedReferencePatternOriginal" "ExportedReferencePatternExisting" "ExportedReferencePatternExternal" "ExportedReferencePatternExternalTuningCorrected"  "ExportedReferencePatternMixed"
 
-test_1.py has AcetaldehydeNISTRefMixed2.csv and ReferenceLiterature.csv with the same tuning. It applies a TuningCorrection to AcetaldehydeNISTRefMixed2.csv (and also to ReferenceLiterature.csv).  The Desired tuning file is ReferenceCollected.csv.
-ReferenceCollected.csv does not have as many molecules as ReferenceLiterature.csv and the higher masses have lower intensity in ReferenceCollected.csv (for one of the molecules, crotyl alcohol). So the feature uses a polynomial function and applies it to *all* molecules in ReferenceLiterature.csv to make it look more like ReferenceCollected.csv (lowers the intensity).
+test_1.py has AcetaldehydeNISTRefMixed2.csv and ReferenceCollected.csv with the same tuning. It applies a TuningCorrection to AcetaldehydeNISTRefMixed2.csv (and also to ReferenceCollected.csv).  The Desired tuning file is ReferenceLiterature.csv.
+ReferenceLiterature.csv does not have as many molecules as ReferenceCollected.csv and the higher masses have lower intensity in ReferenceLiterature.csv (for one of the molecules, crotyl alcohol). So the feature uses a polynomial function and applies it to *all* molecules in ReferenceCollected.csv to make it look more like ReferenceLiterature.csv (lowers the intensity).
 
 In the test_1.py, the reference threshold filter is off.
 In  test_2.py, the reference threshold filter is on.
 
-In test_3.py, the two files are referenceFileExistingTuning = ['ReferenceLiterature.csv','xyyy'] and referenceFileDesiredTuning =['ReferenceCollected.csv','xyyy'].  The original reference file is set as ReferenceCollected.
+In test_3.py, the two files are referenceFileExistingTuning = ['ReferenceCollected.csv','xyyy'] and referenceFileDesiredTuning =['ReferenceLiterature.csv','xyyy'].  The original reference file is set as ReferenceLiterature.
 
-test_4.py is a copy of test_1.py, only now the returnMixedPattern feature is set to true.
+test_4.py is a copy of test_1.py, only now the returnMixedPattern feature is set to true, so ReferenceLiterature is tuned to match ReferenceCollected.
+test_5.py is a copy of test_4.py, only now the desired pattern is set as blank, which should give the same output as test_4.
+test_6.py is a copy of test_5.py, only now the existing pattern is set as blank, but the new ReferencePatternStandard is populated, so that the existing pattern will be populated from that one.
 
 
 In many real applications of this feature, what is desired is to predict from an external reference what the fragmentation pattern would be on one's own spectrometer.  In that situation, the "ReferenceCollected.csv" is the desired pattern one and the "ReferenceLiterature.csv" is the existing pattern to be adjusted. These names may become further adjusted to "PatternToMatch" and "PatternToAdjust" or something like that.

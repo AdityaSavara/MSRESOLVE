@@ -380,7 +380,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     Step 2: populate all variables and standardize signals by 100 
 
     '''
-    print("line 383", ReferencePatternExistingTuning_FileNameAndForm, ReferencePatternDesiredTuning_FileNameAndForm)#; sys.exit()
+    
     if G.minimalReferenceValue !='yes':
         print("Warning: The ABCDetermination will occur without threshold filtering, since that setting is off.")
         
@@ -403,14 +403,13 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternDesiredTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
     if G.minimalReferenceValue =='yes':
         ReferencePatternDesiredTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternDesiredTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
-    
+
     '''
     Step 3a: Truncate to the molecules which match.
     '''
     OverlappingMolecules = numpy.intersect1d(ReferencePatternExistingTuningDict['molecules'],ReferencePatternDesiredTuningDict['molecules'] )
     OverlappingFragments = numpy.intersect1d(ReferencePatternExistingTuningDict['provided_reference_patterns'][:,0],ReferencePatternDesiredTuningDict['provided_reference_patterns'][:,0])    
     [OverlappingMolecules,ReferencePatternExistingTuningDict['OverlappingIndices'], ReferencePatternDesiredTuningDict['OverlappingIndices']]  = numpy.intersect1d(ReferencePatternExistingTuningDict['molecules'],ReferencePatternDesiredTuningDict['molecules'], return_indices=True)
-    
     ReferencePatternExistingTuningDict['OverlappingMolecules'] = OverlappingMolecules
     ReferencePatternDesiredTuningDict['OverlappingMolecules'] = OverlappingMolecules
     
@@ -475,7 +474,6 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         # meanRatioPerMassFragment[meanRatioPerMassFragment==-inf] = 'nan'
     #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
-    print("line 478", meanRatioPerMassFragment)
     abcCoefficients, abcCoefficients_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
     reverseRatio = 1/meanRatioPerMassFragment
     abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],reverseRatio[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
@@ -509,7 +507,6 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     if measuredReferenceYorN =='yes':
         print("line 520!!!!!")
         if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
-            print("line 522!!!!!")
             referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
@@ -525,7 +522,6 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
         for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
             factor = referenceCorrectionCoefficients[0]*(referenceabscissa[massfrag_counter]**2)  + referenceCorrectionCoefficients[1]*referenceabscissa[massfrag_counter]+referenceCorrectionCoefficients[2] #obtains the factor from molecular weight of abscissa
             referenceDataArray[massfrag_counter,:] = referenceDataArray[massfrag_counter,:]*factor
-            print("line 527", referenceabscissa[massfrag_counter], factor)
             if type(referenceCorrectionCoefficients_cov) != None:
                 if sum(numpy.array(referenceCorrectionCoefficients_cov)).all()!=0:
                     if len(numpy.shape(referenceCorrectionCoefficients_cov)) == 1 and (len(referenceCorrectionCoefficients_cov) > 0): #If it's a 1D array/list that is filled, we'll diagonalize it.
@@ -575,7 +571,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                 ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternOriginalTuning.csv')
                 if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
                     print("line 522!!!!! TODO: NEED TO MAKE ExportedReferencePatternDesiredTuning FOR CASE OF THIS IF STATEMENT")
-                    referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternDesiredTuning.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+                    referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
                 print("line 1489", referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
                 abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
                 referenceCorrectionCoefficients = numpy.zeros(3)
@@ -616,11 +612,14 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                                                                
                                                                
     if G.createMixedTuningPattern== True:  #in this case, we are going to apply the current tuning to the external pattern, and also create a mixed pattern. So the ReferenceData pointer will point to a mixed pattern by the end of this if statement.
+        print("line 619!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         if G.measuredReferenceYorN =='yes':
             #First read in the existing tuning patterns.
-            referenceFileDesiredTuningAndForm =['ReferenceLiterature.csv','xyyy'] #OriginalTuning FIXME: will be renamed later.
-            referenceFileExistingTuningAndForm= ['ReferenceCollected.csv','xyyy'] #ExternalTuning. FIXME: will be renamed later.
-            
+            referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
+            referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
+            if referenceFileDesiredTuningAndForm == []:
+                    print("line 622", G.referenceFormsList)
+                    referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
             #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
             ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
             ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternExternal.csv')
@@ -690,7 +689,6 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             # ReferenceData.update_relative_standard_uncertainties()
             # ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
             # ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
-            print("line 690", ReferenceData.standardized_reference_patterns)
                                                                
     return ReferenceData
     
@@ -2502,6 +2500,9 @@ def readReferenceFile(referenceFileName, form):
                     dfmolecules = dataFrame.iloc[rowIndex][1:] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
                     molecules = molecules.astype(numpy.str) #save as class object with type string
+                    molecules = list(molecules)
+                    for moleculeIndex in range(len(molecules)):
+                        molecules[moleculeIndex] = molecules[moleculeIndex].strip()#remove leading and trailing whitespaces.
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1:] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
@@ -5627,6 +5628,7 @@ def PopulateLogFile():
 def main():
     global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
     G.lastFigureNumber = 0
+    
     filesAndDirectories = os.listdir()
     for name in filesAndDirectories:
         if name.startswith("Exported") and name.endswith(".csv"):
@@ -5686,6 +5688,7 @@ def main():
 
     #Read in the molecules used before parsing the user input file    
     G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
+    G.referenceFormsList = parse.listCast(G.referenceFormsList)
     G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
     #If a tuning correction is going to be done, we'll make a mixed reference pattern.
     #G.moleculesNamesExtended needs to be populated before the first tuning correction and before parsing of userinput.
