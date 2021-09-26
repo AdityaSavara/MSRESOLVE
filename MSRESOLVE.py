@@ -2300,7 +2300,7 @@ def exportSimulatedSignalsSoFar(simulatedSignalsOutputName,iterationDirectoryNam
         #Loop through mass fragments in the current in this iteration and see if it is in simulatedRawSignalsSoFarIterative
         for massFragmentIndex in range(len(SS_IterativeHeader)):
             if SS_IterativeHeader[massFragmentIndex] in SS_SoFarHeader: #if the mass fragment is in both simulatedSignalsSoFar and the current iteration's simulated signals, then we need to add the columns
-                currentMFIndex = numpy.where(SS_IterativeHeader[massFragmentIndex] == SS_SoFarHeader)[0][0] #Get the column index in SS_SoFar, use [0][0] since numpy.where returns an an array in an array
+                currentMFIndex = numpy.where(numpy.array(SS_IterativeHeader[massFragmentIndex]) == numpy.array(SS_SoFarHeader))[0][0] #Get the column index in SS_SoFar, use [0][0] since numpy.where returns an an array in an array
                 SS_SoFarData[:,currentMFIndex] = SS_SoFarData[:,currentMFIndex] + SS_IterativeData[:,massFragmentIndex] #add the signals to the appropriate column
             else: #otherwise the mass fragment is not in simulatedSignalsSoFar and needs to be appended to the data
                 SS_SoFarHeader = numpy.append(SS_SoFarHeader,SS_IterativeHeader[massFragmentIndex]) #append the mass fragment to the header
@@ -2539,10 +2539,9 @@ def readReferenceFile(referenceFileName, form):
                     dfmolecules = dataFrame.iloc[rowIndex][1:] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
                     molecules = molecules.astype(numpy.str) #save as class object with type string
-                    #FIXME: the below code breaks concentrationFinder. Did not yet investigate why.
-                    # molecules = list(molecules)
-                    # for moleculeIndex in range(len(molecules)):
-                        # molecules[moleculeIndex] = molecules[moleculeIndex].strip()#remove leading and trailing whitespaces.
+                    molecules = list(molecules)
+                    for moleculeIndex in range(len(molecules)):
+                        molecules[moleculeIndex] = molecules[moleculeIndex].strip()#remove leading and trailing whitespaces.
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1:] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
@@ -4939,7 +4938,7 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                         if moleculesTSC_List[moleculeTSC_Index] == AllMoleculesReferenceDataList[0].molecules[moleculecounter]: #Gets the molecule index from all molecules
                             if massNumberTSC_List[moleculeTSC_Index] == AllMoleculesReferenceDataList[0].matching_abscissa[masscounter]: #Gets the mass fragment index from all mass fragments
                                 if moleculesTSC_List[moleculeTSC_Index] in ReferenceData[0].molecules: #If the molecule is in the trimmed reference data find the index of where it appears
-                                    ReferenceDataMoleculeIndex = numpy.where(ReferenceData[0].molecules == moleculesTSC_List[moleculeTSC_Index])[0][0] #np.where returns an array with the first element being a list of the indicies.  So using [0][0] as syntax we can pull the index out as an int assuming there are no repeats in molecule names
+                                    ReferenceDataMoleculeIndex = numpy.where(numpy.array(ReferenceData[0].molecules) == numpy.array(moleculesTSC_List[moleculeTSC_Index]))[0][0] #np.where returns an array with the first element being a list of the indicies.  So using [0][0] as syntax we can pull the index out as an int assuming there are no repeats in molecule names
                                     #Solve for the new conversion factor and place it at the index of the molecule's appearance in the trimmed reference data
                                     #index of 0 is needed because array is 2-D with 1 row and rows are indexed first
                                     correction_values_masscounter = AllMoleculesReferenceDataList[0].matching_abscissa.index(AllMoleculesReferenceDataList[0].matching_abscissa[masscounter])
