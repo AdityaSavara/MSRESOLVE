@@ -567,6 +567,8 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                 print("line 520!!!!!")
                 referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
                 referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
+                if referenceFileExistingTuningAndForm == []: #Use the standard tuning file if blank.
+                    referenceFileExistingTuningAndForm = G.referenceFileStandardTuning
                 ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
                 ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternOriginalTuning.csv')
                 if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
@@ -612,13 +614,13 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                                                                
                                                                
     if G.createMixedTuningPattern== True:  #in this case, we are going to apply the current tuning to the external pattern, and also create a mixed pattern. So the ReferenceData pointer will point to a mixed pattern by the end of this if statement.
-        print("line 619!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         if G.measuredReferenceYorN =='yes':
             #First read in the existing tuning patterns.
             referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
             referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
-            if referenceFileDesiredTuningAndForm == []:
-                    print("line 622", G.referenceFormsList)
+            if referenceFileExistingTuningAndForm == []: #Use the standard tuning file if blank.
+                    referenceFileExistingTuningAndForm = G.referenceFileStandardTuning
+            if referenceFileDesiredTuningAndForm == []: #Use the original reference pattern if blank.
                     referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
             #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
             ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
@@ -5732,6 +5734,8 @@ def main():
     #If a tuning correction is going to be done, we'll make a mixed reference pattern.
     #G.moleculesNamesExtended needs to be populated before the first tuning correction and before parsing of userinput.
     if str(G.measuredReferenceYorN).lower() == 'yes': 
+        if G.referenceFileExistingTuning == []:
+            G.referenceFileExistingTuning = G.referenceFileStandardTuning #Use the standard tuning file if blank.
         G.moleculesNamesExistingTuning = getMoleculesFromReferenceData(G.referenceFileExistingTuning[0])
         moleculesToAddToReferencePattern = []
         for moleculeName in list(G.moleculesNamesExistingTuning):
