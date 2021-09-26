@@ -1,4 +1,4 @@
-Sat Sep 25 00:17:25 2021
+Sat Sep 25 20:04:56 2021
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] 
 form  = ['xyyy'] 
@@ -7,16 +7,16 @@ timeRangeLimit = yes
 timeRangeStart = 176.0 
 timeRangeFinish = 178.0 
 measuredReferenceYorN = yes 
-referenceCorrectionCoefficientA = -2.5382511237113762e-19 
-referenceCorrectionCoefficientB = 2.1770770491149188e-17 
-referenceCorrectionCoefficientC = 0.9999999999999997 
-referenceCorrection_abcCoefficients = [-2.5382511237113762e-19, 2.1770770491149188e-17, 0.9999999999999997] 
-referenceCorrection_abcCoefficients_cov = [[1.9766476057931522e-39, -1.5648055360212141e-37, 2.3970455750365833e-36], [-1.5648055360212145e-37, 1.318659343096676e-35, -2.2148360403260576e-34], [2.3970455750365843e-36, -2.2148360403260576e-34, 4.4493712497546e-33]] 
+referenceCorrectionCoefficientA = 0.0004208290916163871 
+referenceCorrectionCoefficientB = -0.015818238228811766 
+referenceCorrectionCoefficientC = 1.1055208156134486 
+referenceCorrection_abcCoefficients = [0.0004208290916163871, -0.015818238228811766, 1.1055208156134486] 
+referenceCorrection_abcCoefficients_cov = [[8.610881452638681e-09, -6.15195228824887e-07, 8.955678219514888e-06], [-6.151952288248869e-07, 4.685313770721915e-05, -0.0007452600797636735], [8.955678219514885e-06, -0.0007452600797636735, 0.013829361541006283]] 
 answer = inverse 
 distinguished = yes 
 scaleRawDataFactor  = 1.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.25813 seconds 
+Run Time 0.35327 seconds 
 ###################################################################### 
