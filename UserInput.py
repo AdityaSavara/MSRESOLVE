@@ -267,7 +267,7 @@ UserChoices['concentrationFinder'] = {} #initialize the concentrationFinder cont
 #TODO Note: Concentration Finder is not compatible with simultaneous use of multiple reference files AND separate molecules' factors as of 181022. Currently, it a user may use either one or the other.
 UserChoices['concentrationFinder']['on'] = 'no'
 UserChoices['concentrationFinder']['TSC_List_Type'] = 'MultipleReferencePatterns' #Options are 'MultipleReferencePatterns' or 'SeparateMolecularFactors'
-UserChoices['concentrationFinder']['moleculesTSC_List'] = 'Acetaldehyde'
+UserChoices['concentrationFinder']['moleculesTSC_List'] = 'Acetaldehyde' #Default concentration factors will be calculated for each molecule to match the first moleculeTSC input
 UserChoices['concentrationFinder']['massNumberTSC_List'] = 29
 UserChoices['concentrationFinder']['moleculeSignalTSC_List'] = 1.66945 #This is the list of intensity values that correspond to a known concentration to scale with for the same mass fragments
 UserChoices['concentrationFinder']['moleculeConcentrationTSC_List'] = 0.05	#this is the concentration/pressure associated with the signal.
