@@ -773,6 +773,8 @@ def tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData=None): #makin
         #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
         #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply an undesired "before comparisons" tuning factor correction. We will need this done before we simulate any signals.
         ReferenceDataExistingTuningMassFragments = ReferenceDataExistingTuning.standardized_reference_patterns[:,0]
+        print("line 776", ReferenceDataExistingTuningMassFragments)
+        print("line 777", ReferenceDataExistingTuning.provided_reference_patterns[:,0])
         ReferenceDataExistingTuning = Populate_matching_correction_values(ReferenceDataExistingTuningMassFragments, ReferenceDataExistingTuning)
         #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
         #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
@@ -789,16 +791,35 @@ def tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData=None): #makin
         ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical.exportReferencePattern("ExportedReferencePatternGasMixtureSimulatedHypothetical.csv")
         print('line 646')        
         
-        
+        if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals']) == 0: #if the length is zero, we will populate this with the max and min of the times.
+            G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals'] = [ min(ExperimentData.times), max(ExperimentData.times)]
         if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals']) == 2: #We assume in this case that we have a pair of times.
-            ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical = ExtractReferencePatternFromData(ExperimentData, ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical,["GasMixture"],ReferenceDataExistingTuningMassFragments,G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals'])
-        if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals']) == 0:
-            pass
+            ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical = copy.deepcopy(ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical) #just initializing.
+            ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical.SourceOfFragmentationPatterns = ["measured"]
+            #Get the mass fragments we need.
+            expectedMassFragments = ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical.standardized_reference_patterns[:,0]
+            
+            #need to get the masses in common between the experiment data and ReferenceDataExistingTuningMassFragments            
+            commonMF = []
+            for massValue in numpy.array(ExperimentData.mass_fragment_numbers, dtype=float):
+                if massValue in numpy.array(expectedMassFragments, dtype=float): #the 0 is because this object is nested.
+                    commonMF.append(massValue)
+
+            #Fill all of the fragments intensities with ones, this will make the extraction easier.
+            ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical.provided_reference_patterns[:,1:] = numpy.ones(numpy.shape(ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical.provided_reference_patterns[:,1:]))
+            ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical.provided_mass_fragments = ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical.provided_reference_patterns[:,0]
+            print("line 795", ReferenceDataExistingTuningMassFragments)
+            print("line 803", commonMF)
+            print("line 806", ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical.provided_mass_fragments)
+            #note that the last two arguments need to be further nested.
+            ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical.standardized_reference_patterns,ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical_uncertainties  = ExtractReferencePatternFromData(ExperimentData=ExperimentData, referenceData=ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical,rpcChosenMolecules=["GasMixture"],rpcChosenMoleculesMF=[commonMF],rpcTimeRanges=[G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals']])
+            ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical.exportReferencePattern("ExportedReferencePatternGasMixtureMeasuredHypothetical.csv")
+
         
         if G.measuredReferenceYorN =='yes':
             #we are using specific files for obtaining the tuning correction coefficients in the case of GasMixtureTuningCorrector
             referenceFileExistingTuningAndForm=["ExportedReferencePatternGasMixtureSimulatedHypothetical.csv","XYYY"]
-            referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"]
+            referenceFileDesiredTuningAndForm=["ExportedReferencePatternGasMixtureMeasuredHypothetical.csv", "XYYY"]
             abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
             referenceCorrectionCoefficients = numpy.zeros(3)
             referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
@@ -915,6 +936,9 @@ def ReferenceThresholdFilter(referenceDataArrayWithAbscissa,referenceValueThresh
 #TODO: add a check to pop out or warn people if someone chooses a mass that is not in experimental data.
 def ExtractReferencePatternFromData(ExperimentData, referenceData, rpcChosenMolecules,rpcChosenMoleculesMF,rpcTimeRanges):
     copyOfreferenceData = copy.deepcopy(referenceData)    
+    ExperimentData.mass_fragment_numbers = numpy.array(ExperimentData.mass_fragment_numbers, dtype=float)
+    for moleculeIndex in range(len(rpcChosenMoleculesMF)):
+        rpcChosenMoleculesMF[moleculeIndex] = numpy.array(rpcChosenMoleculesMF[moleculeIndex], dtype=float)
     for moleculeIndex in range(len(rpcChosenMoleculesMF)):
         currentMassesList = rpcChosenMoleculesMF[moleculeIndex]
         for massChoice in currentMassesList:
@@ -1625,7 +1649,10 @@ Performs some manipulations related to the reference pattern
 '''
 def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #We will skip the regular createReferencePatternWithTuningCorrection if using the gas mixture feature.
-    if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) == 0:
+    try:
+        if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) == 0:
+            ReferenceData = createReferencePatternWithTuningCorrection(ReferenceData, verbose=verbose)
+    except: #This try and except is so that iterative can work correctly.
         ReferenceData = createReferencePatternWithTuningCorrection(ReferenceData, verbose=verbose)
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
