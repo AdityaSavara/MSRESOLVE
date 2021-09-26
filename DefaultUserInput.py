@@ -160,6 +160,8 @@ UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =['Reference
 UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =['ReferenceLiterature.csv','xyyy'] #This is what the pattern will look more like after everything is done.
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =[]         #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'] =[]        #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum concetrations must be provided
+UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals'] = []  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum, tuningCorrectorGasMixtureSignals must be provided or will be used to extract from the data. Leaving this unchanged will take the average of all of the data. If a pair of times is provided, that will be used to extract from the measured data. Alternatively, a single filename with an MSRESOLVE reference file and molecule name "GaxMixture".
+
 #The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten and a new reference pattern is also generated to look more like the "Literature" case.
 UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients'] = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0.   Used as.... Factor = A*X^2 + B*X + C, so A=0,B=0,C=1.0 means the final factor is 1.0 and independent of molecular weight.

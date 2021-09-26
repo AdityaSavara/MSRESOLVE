@@ -2539,9 +2539,10 @@ def readReferenceFile(referenceFileName, form):
                     dfmolecules = dataFrame.iloc[rowIndex][1:] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
                     molecules = molecules.astype(numpy.str) #save as class object with type string
-                    molecules = list(molecules)
-                    for moleculeIndex in range(len(molecules)):
-                        molecules[moleculeIndex] = molecules[moleculeIndex].strip()#remove leading and trailing whitespaces.
+                    #FIXME: the below code breaks concentrationFinder. Did not yet investigate why.
+                    # molecules = list(molecules)
+                    # for moleculeIndex in range(len(molecules)):
+                        # molecules[moleculeIndex] = molecules[moleculeIndex].strip()#remove leading and trailing whitespaces.
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1:] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
