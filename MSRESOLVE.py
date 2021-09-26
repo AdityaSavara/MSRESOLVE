@@ -696,7 +696,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
     
 #tuningCorrectorGasMixture will correct all items in the ReferenceDataList, but uses a single tuning correction that it applies to each of the ReferenceData objects in the list.
 #This function takes a measured gas mixture set of signals, then creates simulated signals (from NIST patterns, for example) to get a tuning correction for the spectrometer.
-def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there are UserInput choices that are needed for this feature.
+def tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData=None): #making it clear that there are UserInput choices that are needed for this feature.
         print('line 557')
         ReferenceDataList[0].exportReferencePattern('ExportedReferencePatternOriginalAnalysis.csv')
         
@@ -748,6 +748,8 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
             ReferenceDataDesiredTuning = createReferenceDataObject ( G.referenceFileDesiredTuning[0],G.referenceFileDesiredTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
             ReferenceDataDesiredTuning.ExportAtEachStep = G.ExportAtEachStep
 
+        #We are going to make the simulated gas mixture first, because that turns out to be easier (for data structure reasons) when we want to extract the gas mixture signals from the data.
+        
         print('line 609')
         #We need to make prepare an appropriately made list for the concentrations to use in simulating data using the ExistingTuningReferencePattern 
         #The concentrations must match the molecular order of the literature file.
@@ -786,6 +788,12 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], sourceOfIonizationData=["referenceFileExistingTuning"], relativeIonizationEfficiencies=['GasMixture'], moleculeIonizationType=["GasMixture"]) #We fill some variables with the word "GasMixture" because there is no single ionization factor for the gas mixture.
         ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical.exportReferencePattern("ExportedReferencePatternGasMixtureSimulatedHypothetical.csv")
         print('line 646')        
+        
+        
+        if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals']) == 2: #We assume in this case that we have a pair of times.
+            ReferenceDataTuningCorrectorGasMixtureMeasuredHypothetical = ExtractReferencePatternFromData(ExperimentData, ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical,["GasMixture"],ReferenceDataExistingTuningMassFragments,G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals'])
+        if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals']) == 0:
+            pass
         
         if G.measuredReferenceYorN =='yes':
             #we are using specific files for obtaining the tuning correction coefficients in the case of GasMixtureTuningCorrector
@@ -5849,7 +5857,7 @@ def main():
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
     if G.measuredReferenceYorN == 'yes':
         if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
-            ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
+            ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData)
     #Creating prototypicalReferenceData which will be interrogated later for which molecules and masses to expect in the ReferenceDataObjects.
     prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
     #TODO make a variable allMoleculesAnalyzed that is a list containing all the molecules analyzed so far
