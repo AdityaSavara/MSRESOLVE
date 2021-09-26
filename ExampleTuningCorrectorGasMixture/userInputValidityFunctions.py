@@ -9,10 +9,13 @@ This function is designed to serve as a standard for parsing particular variable
 def parseUserInput(currentUserInput):
     #Input Files
     currentUserInput.referenceFileNamesList = parse.listCast(currentUserInput.referenceFileNamesList) #referenceFileName needs to be a list
+    currentUserInput.referenceFileNamesList = parse.stripListOfStrings(currentUserInput.referenceFileNamesList)
     currentUserInput.referenceFormsList = parse.listCast(currentUserInput.referenceFormsList) #form needs to be a list
+    currentUserInput.referenceFormsList = parse.stripListOfStrings(currentUserInput.referenceFormsList)
     currentUserInput.referenceFormsList = parse.parallelVectorize(currentUserInput.referenceFormsList,len(currentUserInput.referenceFileNamesList)) #form needs to be a list of the same length as referenceFileName
     currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
     parse.strCheck(currentUserInput.collectedFileName,'collectedFileName') #collectedFileName must be a string
+    currentUserInput.collectedFileName = currentUserInput.collectedFileName.strip()
  
     
     #preProcessing, dataAnalysis, dataSimulation, grapher
@@ -34,6 +37,9 @@ def parseUserInput(currentUserInput):
     #Chosen Molecules and Mass Fragments are both lists
     currentUserInput.chosenMoleculesNames = parse.listCast(currentUserInput.chosenMoleculesNames)
     currentUserInput.chosenMassFragments = parse.listCast(currentUserInput.chosenMassFragments)
+    
+    #chosenMoleculesNames should have leading and trailing whitespaces removed.
+    currentUserInput.chosenMoleculesNames = parse.stripListOfStrings(currentUserInput.chosenMoleculesNames)
     #currentUserInput.exp_mass_fragment_numbers and currentUserInput.moleculesNames are the molecules and the mass fragments from the referece data and collected data, respectively
     #Populate chosenMassFragmentsForParsing based on user input option to get a list of mass fragments
     if currentUserInput.specificMassFragments == 'yes': #if yes, use the user's chosen mass fragments
@@ -46,9 +52,18 @@ def parseUserInput(currentUserInput):
     if currentUserInput.specificMolecules == 'yes': #if yes, use the user's chosen moleclues
         chosenMoleculesForParsing = copy.deepcopy(currentUserInput.chosenMoleculesNames)
         #If using specificMolecules, make sure all selected molecules are in the reference data
-        parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNames,'chosenMolecules','Molecules from Reference Data')
+        if currentUserInput.measuredReferenceYorN == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
+            parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNames,'chosenMolecules','Molecules from Reference Data')
+        if currentUserInput.measuredReferenceYorN == 'yes':#If using a making a reference pattern, check the extended moleculesNames list.
+            currentUserInput.moleculesNamesExtended = parse.stripListOfStrings(currentUserInput.moleculesNamesExtended)
+            parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNamesExtended,'chosenMolecules','Molecules from Reference Data')
     elif currentUserInput.specificMolecules == 'no': #Otherwise use all molecules
-        chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNames)
+        if currentUserInput.measuredReferenceYorN == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
+            currentUserInput.moleculesNames = parse.stripListOfStrings(list(currentUserInput.moleculesNames))
+            chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNames)
+        if currentUserInput.measuredReferenceYorN == 'yes':#If using a making a reference pattern, check the extended moleculesNames list.
+            currentUserInput.moleculesNamesExtended = parse.stripListOfStrings(currentUserInput.moleculesNamesExtended)
+            chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNamesExtended)
     
     #Molecule Likelihoods and Sensitivity Values are lists with the same length as the number of molecules
     currentUserInput.moleculeLikelihoods = parse.listCast(currentUserInput.moleculeLikelihoods)
@@ -89,6 +104,7 @@ def parseUserInput(currentUserInput):
     currentUserInput.dataUpperBound = parse.listCast(currentUserInput.dataUpperBound)
     currentUserInput.bruteIncrements = parse.listCast(currentUserInput.bruteIncrements) #increments is a list
     currentUserInput.moleculesToRestrict = parse.listCast(currentUserInput.moleculesToRestrict) #Molecules range is a list    
+    currentUserInput.moleculesToRestrict = parse.stripListOfStrings(currentUserInput.moleculesToRestrict)
     #if using signal range, then data lower/upper bound and increments needs to be the same length as the number of chosenMassFragments
     #if using concentration range, then they need to be the the same length as number of chosenMolecules
     if currentUserInput.signalOrConcentrationRange == 'signal': #So set lenOfParallelVectorizingBruteSolvingRestrictionVars to be the length of chosenMassFragments if using signal
@@ -117,6 +133,7 @@ def parseUserInput(currentUserInput):
     if currentUserInput.extractReferencePatternFromDataOption == 'yes':
         #The molecules to change, their mass fragments, and time ranges are all lists
         currentUserInput.rpcMoleculesToChange = parse.listCast(currentUserInput.rpcMoleculesToChange)
+        currentUserInput.rpcMoleculesToChange = parse.stripListOfStrings(currentUserInput.rpcMoleculesToChange)
         currentUserInput.rpcTimeRanges = parse.listCast(currentUserInput.rpcTimeRanges)
         currentUserInput.rpcTimeRanges = parse.parallelVectorize(currentUserInput.rpcTimeRanges,len(currentUserInput.rpcMoleculesToChange)) #rpcTimeRanges needs to have the same number of time ranges as moleculesToChange
         currentUserInput.rpcMoleculesToChangeMF = parse.listCast(currentUserInput.rpcMoleculesToChangeMF) #rpcMoleculesToChangeMF also needs to be of the same length but the mass fragments to change need to be hard coded in the user input so parallel vectorize is not feasible
@@ -127,9 +144,9 @@ def parseUserInput(currentUserInput):
     if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
         currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
         #The length of the reference value thresholds needs to be the same length as the number of molecules
-        #currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
-        currentUserInput.referenceSignificantFragmentThresholds = parse.listCast(currentUserInput.referenceSignificantFragmentThresholds) #referenceSignificantFragmentThresholds is a list
-        #currentUserInput.referenceSignificantFragmentThresholds = parse.parallelVectorize(currentUserInput.referenceSignificantFragmentThresholds,len(chosenMoleculesForParsing))
+        currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
+                                                                                                                                                                                                                                                                            
+        currentUserInput.referenceSignificantFragmentThresholds = parse.parallelVectorize(currentUserInput.referenceSignificantFragmentThresholds,len(chosenMoleculesForParsing))
     
     #Data Threshold Filter
     parse.strCheck(currentUserInput.lowerBoundThresholdChooser,'lowerBoundThresholdChooser')
@@ -153,6 +170,7 @@ def parseUserInput(currentUserInput):
     if currentUserInput.dataSmootherYorN == 'yes': #If using dataSmoother
         #The headers to confine to in data smoother is a list
         currentUserInput.dataSmootherHeadersToConfineTo = parse.listCast(currentUserInput.dataSmootherHeadersToConfineTo)        
+        currentUserInput.dataSmootherHeadersToConfineTo = parse.stripListOfStrings(currentUserInput.dataSmootherHeadersToConfineTo)
         #mass fragments in headers to confine to must be included in chosenMassFragments
         parse.compareElementsBetweenLists(currentUserInput.dataSmootherHeadersToConfineTo,chosenMassFragmentsForParsing,'dataSmootherHeadersToConfineTo','chosenMolecules')
     
@@ -197,6 +215,7 @@ def parseUserInput(currentUserInput):
     if currentUserInput.concentrationFinder == 'yes':
         #First cast the concentrationFinder variables as lists
         currentUserInput.moleculesTSC_List = parse.listCast(currentUserInput.moleculesTSC_List)
+        currentUserInput.moleculesTSC_List = parse.stripListOfStrings(currentUserInput.moleculesTSC_List)
         currentUserInput.moleculeSignalTSC_List = parse.listCast(currentUserInput.moleculeSignalTSC_List)
         currentUserInput.massNumberTSC_List = parse.listCast(currentUserInput.massNumberTSC_List)
         currentUserInput.moleculeConcentrationTSC_List = parse.listCast(currentUserInput.moleculeConcentrationTSC_List)
@@ -234,7 +253,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     #The dependencies dictionary is hardcoded.
     dependenciesDict = {}
-    #Note the form below: in right hand side, there are tuples. Each tuple must have index 0 and index 1 matching, or there is a problem.
+    #Note the form below: in right hand side, there are tuples. Foor the user's chocices, the value of the variable in index 0 must match the hardcoded value in index 1, otherwise the original feature has an incompatibility.
     dependenciesDict['SLSUniqueExport']={'yes':[(UserChoices['dataAnalysisMethods']['uniqueOrCommon'],'unique'),(UserChoices['dataAnalysisMethods']['answer'],'sls')]}
     settingsDependenciesCheck(UserChoices, dependenciesDict)
 
@@ -243,7 +262,13 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
         if UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique' or UserChoices['dataAnalysisMethods']['answer'] != 'sls':
             UserChoices['dataAnalysisMethods']['SLSUniqueExport'] = 'no'
             print("Incompatible choice detected: forcing SLSUniqueExport to no.")
-            
+ 
+    if 'implicitSLScorrection' in UserChoices['dataAnalysisMethods']:
+        if UserChoices['dataAnalysisMethods']['implicitSLScorrection'] == True:
+            if UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique' or UserChoices['dataAnalysisMethods']['answer'] != 'sls':
+                UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
+                print("Incompatible choice detected: forcing implicitSLScorrection to False.")
+   
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
     #The original variable names were single variables. Now, we are using a dictionary type structure (right side of equal signs) so they are being mapped to the single variables (left side of equal sign)
     #TODO: Consider if G.iterativeAnalysis = True or False should be changed to G.IterativeAnalysis_On or something like that, but will break backwards compatibility unless special care is taken.
@@ -314,9 +339,19 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['scaleRawDataFactor']   = UserChoices['scaleRawDataYorN']['scaleRawDataFactor']
 
     SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
+    if 'createMixedTuningPattern' not in UserChoices['measuredReferenceYorN']:
+        UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = True
+    SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
     SettingsVDictionary['referenceFileExistingTuning']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuning']
     SettingsVDictionary['referenceFileDesiredTuning']    = UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning']
     SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients']
+
+    try: #to make sure old unit tests and analyses work.
+        #if 'tuningCorrectorGasMixtureMoleculeNames' in UserChoices['measuredReferenceYorN'].keys():
+        SettingsVDictionary['tuningCorrectorGasMixtureMoleculeNames'] = UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']
+    except: #to make sure old unit tests work.
+        SettingsVDictionary['tuningCorrectorGasMixtureMoleculeNames'] = [] 
+        UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] = []
     try:
         SettingsVDictionary['referenceCorrectionCoefficients_cov']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients_cov']
     except:

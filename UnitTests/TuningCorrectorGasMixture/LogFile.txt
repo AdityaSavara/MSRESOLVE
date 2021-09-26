@@ -1,0 +1,27 @@
+Sat Sep 25 22:03:23 2021
+
+referenceFileName = ['ExtractedReferencePattern.csv'] 
+form  = ['xyyy'] 
+collectedFileName = Collected_Data.csv 
+timeRangeLimit = yes 
+timeRangeStart = 176.0 
+timeRangeFinish = 900.0 
+measuredReferenceYorN = yes 
+referenceCorrectionCoefficientA = -0.006486881698506962 
+referenceCorrectionCoefficientB = 0.25062935187811997 
+referenceCorrectionCoefficientC = -0.953313975878883 
+referenceCorrection_abcCoefficients = [-0.006486881698506962, 0.25062935187811997, -0.953313975878883] 
+referenceCorrection_abcCoefficients_cov = [[6.210441332505578e-06, -0.00026708328912830636, 0.002613875252542958], [-0.00026708328912830614, 0.011550460147204528, -0.11397285273190345], [0.0026138752525429543, -0.11397285273190334, 1.1401969524299298]] 
+minimalReferenceValue = yes 
+referenceValueThreshold = [2.0, 2.0, 2.0, 2.0] 
+referenceSignificantFragmentThresholds = [6.0, 6.0, 6.0, 6.0] 
+answer = sls 
+uniqueOrCommon = unique 
+slsFinish = inverse 
+distinguished = yes 
+scaleRawDataFactor  = 1.0 
+resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
+concentrationsOutputName = ResolvedConcentrations.csv 
+simulatedSignalsOutputName = SimulatedRawSignals.csv 
+Run Time 4.91432 seconds 
+###################################################################### 
