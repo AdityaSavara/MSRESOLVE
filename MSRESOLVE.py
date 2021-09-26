@@ -461,7 +461,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     '''
     Find a,b,c:
     '''
-    numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.    
+    numpy.seterr(divide='ignore', invalid='ignore') #This is to prevent some unexpected (but not at the moment concerning) warnings in the below lines from the nan values.
     RatioOfPatterns = ReferencePatternDesiredTuningDict['overlapping_provided_reference_patterns'][:,1:]/ReferencePatternExistingTuningDict['overlapping_provided_reference_patterns'][:,1:]    
     #For each row, excluding the Take the mean excluding nan values.
     meanRatioPerMassFragment = numpy.nanmean(RatioOfPatterns,1) #the 1 is for over axis 1, not over axix 0.    
@@ -1614,7 +1614,9 @@ def ImportAnalyzedData(concentrationsOutputName):
 Performs some manipulations related to the reference pattern
 '''
 def ReferenceInputPreProcessing(ReferenceData, verbose=True):
-    ReferenceData = createReferencePatternWithTuningCorrection(ReferenceData, verbose=verbose)
+    #We will skip the regular createReferencePatternWithTuningCorrection if using the gas mixture feature.
+    if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) == 0:
+        ReferenceData = createReferencePatternWithTuningCorrection(ReferenceData, verbose=verbose)
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
     #TODO: option 2: Or we can below assign to preprocessed_reference_pattern rather than standardized_reference_patterns and then use that in data analysis (Note that interpolate would continue to use standardized_reference_patterns as well as preprocess the output)
