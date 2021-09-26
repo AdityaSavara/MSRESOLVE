@@ -95,3 +95,11 @@ def stringCompare(firstString,secondString):
         return True
     else: #Otherwise return false
         return False
+
+def stripListOfStrings(listOfStrings):
+    import copy
+    #make a new item so the original is not harmed.
+    listOfStringsCopy = copy.deepcopy(listOfStrings)
+    for itemIndex in range(len(listOfStringsCopy)):
+        listOfStringsCopy[itemIndex] = listOfStringsCopy[itemIndex].strip()#remove leading and trailing whitespaces.
+    return listOfStringsCopy

@@ -31,7 +31,7 @@ def arrayLikeToCSVstring(inputArray):
     if stringObjects == True:
         CSVstring= CSVstring.replace("'","")
     return CSVstring
-    
+        
 def AppendColumnsToCSV(CSVName, YYYYData, columnheaders, rowIndex = [], rowIndexHeader = []):
     #rowIndex and rowIndexHeader are only used if there is not already a file with the specified name. 
    

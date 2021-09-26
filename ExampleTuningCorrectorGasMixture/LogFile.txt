@@ -1,4 +1,4 @@
-Wed Sep 22 01:27:56 2021
+Sat Sep 25 20:00:41 2021
 
 referenceFileName = ['ExtractedReferencePattern.csv'] 
 form  = ['xyyy'] 
@@ -13,8 +13,8 @@ referenceCorrectionCoefficientC = -0.9533139758788823
 referenceCorrection_abcCoefficients = [-0.006486881698506962, 0.25062935187812, -0.9533139758788823] 
 referenceCorrection_abcCoefficients_cov = [[6.210441332505573e-06, -0.00026708328912830614, 0.002613875252542956], [-0.0002670832891283059, 0.01155046014720452, -0.11397285273190337], [0.0026138752525429526, -0.11397285273190326, 1.140196952429929]] 
 minimalReferenceValue = yes 
-referenceValueThreshold = [2.0] 
-referenceSignificantFragmentThresholds = [6.0] 
+referenceValueThreshold = [2.0, 2.0, 2.0, 2.0] 
+referenceSignificantFragmentThresholds = [6.0, 6.0, 6.0, 6.0] 
 answer = sls 
 uniqueOrCommon = unique 
 slsFinish = inverse 
@@ -23,5 +23,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 4.46487 seconds 
+Run Time 4.94421 seconds 
 ###################################################################### 
