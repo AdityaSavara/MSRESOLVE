@@ -157,7 +157,7 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 UserChoices['measuredReferenceYorN']['on'] ='yes'
 UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] = ['LiteratureReference.csv','xyyy'] #This is the pattern that will be changed. Typically this is NIST patterns.
 UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =[] #normally to be left blank. #This is what the pattern will look more like after everything is done. Typically, this is a measured pattern.
-UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals'] = [] 
+UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals'] = [] #left blank to extract from the full dataset.
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =['ethane', 'ethene', 'ethyne']  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'] =[10, 2, 1]  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum concetrations must be provided
 #The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten and a new reference pattern is also generated to look more like the "Literature" case.
