@@ -346,6 +346,12 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['referenceFileDesiredTuning']    = UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning']
     SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients']
 
+    #to make sure old unit tests and analyses work.
+    if 'referenceFileStandardTuning' in UserChoices['measuredReferenceYorN']:
+        SettingsVDictionary['referenceFileStandardTuning']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuning']
+    else:
+        SettingsVDictionary['referenceFileStandardTuning'] = []
+
     try: #to make sure old unit tests and analyses work.
         #if 'tuningCorrectorGasMixtureMoleculeNames' in UserChoices['measuredReferenceYorN'].keys():
         SettingsVDictionary['tuningCorrectorGasMixtureMoleculeNames'] = UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']
