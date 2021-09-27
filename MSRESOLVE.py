@@ -373,7 +373,7 @@ def MatchingNumbers(Array1, Array2):
 THis function determines and returns the ABC correction coefficients for Tuning Correction based off 
 of a literature (NIST) reference pattern and a measured (Experimental)reference pattern
 '''
-def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePatternDesiredTuning_FileNameAndForm):
+def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePatternDesiredTuning_FileNameAndForm, exportCoefficients=True):
     #The two arguments are actually lists containing strings of the name and form type: (["FileNameOne.csv","xyyy"],["FileNameTwo.csv", "xyyy"])
     '''
     Step 1: Read in all neccessary information from fragment patterns
@@ -478,16 +478,17 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     reverseRatio = 1/meanRatioPerMassFragment
     abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],reverseRatio[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
     
-    #Export the TuningCorrectorCoefficients as a list.
-    with open('TuningCorrectorCoefficients.txt', 'w') as the_file:
-        the_file.write(str(list(abcCoefficients))) 
-    #Export the TuningCorrectorCoefficients_cov to a csv.
-    numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
-    #Do the same for the reverse relation.
-    with open('TuningCorrectorCoefficientsReverse.txt', 'w') as the_file:
-        the_file.write(str(list(abcCoefficients_reverse))) 
-    #Export the TuningCorrectorCoefficients_cov to a csv.
-    numpy.savetxt('TuningCorrectorCoefficientsReverse_cov.csv', abcCoefficients_reverse_cov, delimiter=",")
+    if exportCoefficients == True:
+        #Export the TuningCorrectorCoefficients as a list.
+        with open('TuningCorrectorCoefficients.txt', 'w') as the_file:
+            the_file.write(str(list(abcCoefficients))) 
+        #Export the TuningCorrectorCoefficients_cov to a csv.
+        numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+        #Do the same for the reverse relation.
+        with open('TuningCorrectorCoefficientsReverse.txt', 'w') as the_file:
+            the_file.write(str(list(abcCoefficients_reverse))) 
+        #Export the TuningCorrectorCoefficients_cov to a csv.
+        numpy.savetxt('TuningCorrectorCoefficientsReverse_cov.csv', abcCoefficients_reverse_cov, delimiter=",")
 
 
     
@@ -1231,6 +1232,24 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
 #Then it gets the sum of each molecules frag pattern and uses all these values to get each moleule's correction value via the
 #system created by Madix and Ko and puts this in an answers array
 def CorrectionValuesObtain(ReferenceData):
+    ReferenceData.ExportCollector("ReferencePatternForCorrectionValues.csv",use_provided_reference_patterns=False)
+    if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
+        referenceFileStandardTuning = G.referenceFileStandardTuning
+        ReferenceData.exportReferencePattern("ReferencePatternForCorrectionValues.csv")
+        abcCoefficients, abcCoefficients_covmat = ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm=["ReferencePatternForCorrectionValues.csv", "xyyy"], ReferencePatternDesiredTuning_FileNameAndForm = G.referenceFileStandardTuning, exportCoefficients=False) #We will separately export the coefficents for our usage.
+        #The above abcCoefficients and abcCoefficients_covmat are for the direction that if we multiply the existing tuning we will get the standard tuning. This factor is actually the same as what we want for our tuning factor intensity correction: if the "existing" pattern is low, that means that the actual amount of the ion is "higher".  The second question is whether the correctionValues should be multiplied by or divided by this factor.  In general, the equation is that "signals*correctionValue = concentration".  So to bring a small signal up, this is already in the right direction.
+        #Export the TuningCorrectorCoefficients as a list.
+        with open('TuningCorrectorIntensityCoefficients.txt', 'w') as the_file:
+            the_file.write(str(list(abcCoefficients))) 
+        #Export the TuningCorrectorCoefficients_cov to a csv.
+        numpy.savetxt('TuningCorrectorIntensityCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+        #Do the same for the reverse relation.
+        with open('TuningCorrectorIntensityCoefficientsReverse.txt', 'w') as the_file:
+            the_file.write(str(list(abcCoefficients_reverse))) 
+        #Export the TuningCorrectorCoefficients_cov to a csv.
+        numpy.savetxt('TuningCorrectorIntensityCoefficientsReverse_covmat.csv', abcCoefficients_reverse_cov, delimiter=",")
+
+        
     reference_width = len(ReferenceData.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
     reference_height = len(ReferenceData.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
     correction_values_direct = ReferenceData.standardized_reference_patterns*1.0 #just initializing as same size, but note that this has the mass fragments column.
@@ -1239,6 +1258,9 @@ def CorrectionValuesObtain(ReferenceData):
         ReferenceData.relative_correction_uncertainties = ReferenceData.relative_standard_uncertainties[:,1:]*0.0 #make an array with the same shape, without the mass fragments.
     else: 
         correction_values_relative_uncertainties = None #If uncertainties are not going to be calculated, we'll use none here and just return that.
+    #If we are using the tuningCorrectorIntensity feature, then we would want to calculate uncertainites when they are desired.
+    if (G.calculateUncertaintiesInConcentrations == True) and len(G.referenceFileStandardTuning) > 0: 
+        correction_values_relative_uncertainties = True
     
     #the first for loop here gets all of the values for e- and mw and uses them to get the
     #respective values that can find the correction factor for each mass fragment of each molecule
