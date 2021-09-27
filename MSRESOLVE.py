@@ -1242,12 +1242,12 @@ def CorrectionValuesObtain(ReferenceData):
         with open('TuningCorrectorIntensityCoefficients.txt', 'w') as the_file:
             the_file.write(str(list(abcCoefficients))) 
         #Export the TuningCorrectorCoefficients_cov to a csv.
-        numpy.savetxt('TuningCorrectorIntensityCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
-        #Do the same for the reverse relation.
-        with open('TuningCorrectorIntensityCoefficientsReverse.txt', 'w') as the_file:
-            the_file.write(str(list(abcCoefficients_reverse))) 
-        #Export the TuningCorrectorCoefficients_cov to a csv.
-        numpy.savetxt('TuningCorrectorIntensityCoefficientsReverse_covmat.csv', abcCoefficients_reverse_cov, delimiter=",")
+        numpy.savetxt('TuningCorrectorIntensityCoefficients_cov.csv', abcCoefficients_covmat, delimiter=",")
+        #In principle, we could do the same for the reverse relation, but we did not retrieve them.
+        # with open('TuningCorrectorIntensityCoefficientsReverse.txt', 'w') as the_file:
+            # the_file.write(str(list(abcCoefficients_reverse))) 
+        # #Export the TuningCorrectorCoefficients_cov to a csv.
+        # numpy.savetxt('TuningCorrectorIntensityCoefficientsReverse_covmat.csv', abcCoefficients_reverse_cov, delimiter=",")
 
         
     reference_width = len(ReferenceData.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.

@@ -49,6 +49,7 @@ maxPermutations = 100001
 scaleRawDataOption = 'manual'
 scaleRawDataFactor = 1
 measuredReferenceYorN = 'no'
+referenceFileStandardTuning =[]
 referenceFileExistingTuning = 'AcetaldehydeMeasuredRef.csv'
 referenceFileDesiredTuning = 'AcetaldehydeOnlyNISTRef.csv'
 referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}
