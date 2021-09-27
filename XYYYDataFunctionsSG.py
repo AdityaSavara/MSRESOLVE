@@ -10,7 +10,21 @@ import math
 import copy
 import pandas 
 
-#Basically, give x values, A, B, C coefficients (from 
+
+#Function to retrieve Y values and Y Value uncertainties given  A, B, C coefficients and covMatrixOfParameters
+#list of Parameters is "A,B,C"
+def returnPolyvalEstimatesAndUncertainties(x_values, abcCoefficients, abcCoefficients_covMat):
+    n = len(abcCoefficients) - 1
+    x_values = numpy.array(x_values)
+    TT = numpy.vstack([x_values**(n-i) for i in range(n+1)]).T
+    y_predicted = numpy.dot(TT, abcCoefficients)  # matrix multiplication calculates the polynomial values
+    Cov_y = numpy.dot(TT, numpy.dot(abcCoefficients_covMat, TT.T)) # Cov_y = TT*C_z*TT.T
+    y_predicted_uncertainties = numpy.sqrt(numpy.diag(Cov_y))  # Standard deviations are sqrt of diagonal
+    return y_predicted, y_predicted_uncertainties
+
+
+#Function to retrieve Y values uncertainties given  A, B, C coefficients and covMatrixOfParameters
+#list of Parameters is "A,B,C"
 def returnPolyvalEstimatedUncertainties(arrayOfAbscissaValues, listOfParameters, covMatrixOfParameters):
     n = len(listOfParameters) - 1
     TT = numpy.vstack([arrayOfAbscissaValues**(n-i) for i in range(n+1)]).T

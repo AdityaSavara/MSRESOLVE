@@ -1305,10 +1305,17 @@ def CorrectionValuesObtain(ReferenceData):
         #Fm/(Gm*Tm) has to be found first, but then the loop gets each mass fragment's correction
         #value by dividing the sum by that relative intensity and ionization efficiency for the 
         #molecule, then creating an correction_values of correction values
+        #First calculate any tuning correction intensity factors and their uncertainties.
+        if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
+            tuningCorrectionIntensityFactors, tuningCorrectionIntensityFactors_absolute_uncertainties = DataFunctions.returnPolyvalEstimatesAndUncertainties(x_values=ReferenceData.standardized_reference_patterns[:,0].flatten(), abcCoefficients=abcCoefficients, abcCoefficients_covMat= abcCoefficients_covmat)
+            tuningCorrectionIntensityFactors_relative_uncertainties = tuningCorrectionIntensityFactors_absolute_uncertainties/tuningCorrectionIntensityFactors
+        #The row_counter below is the mass fragment index.        
         for row_counter in range(0,reference_height):#array-indexed for loop, there is a second loop for each column, because the first only gets the sum of (Fm)/(Gm*Tm)
             fragment_intensity = ReferenceData.standardized_reference_patterns[row_counter,column_counter] 
             if fragment_intensity != 0: #once again, if the relative intensity is zero, then the correction value will be zero as well, this is done by the else statement
                 correction = a/(ionization_efficiency*fragment_intensity)
+                if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
+                    correction = correction*tuningCorrectionIntensityFactors[row_counter]
                 current_molecule_correction_factors_list.append(correction)
                 correction_values_direct[row_counter,column_counter] = correction
             else: 
@@ -1321,12 +1328,16 @@ def CorrectionValuesObtain(ReferenceData):
             #Note that there is no difference between how we propagate for multiplication and division in this formula: they can be done in the same propagation step.
             if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)): #if uncertainties are going to be calculated.
                 if fragment_intensity != 0:
-                    #For uncertainty associatesd with correction = a/(ionization_efficiency*fragment_intensity) we first gather the three uncertainties.
+                    #For uncertainty associatesd with correction = a/(ionization_efficiency*fragment_intensity) we first gather the various separate uncertainties.
                     #We already have a_absolute_uncertainty but we need a_relative_uncertainty
                     a_relative_uncertainty = a_absolute_uncertainty/a                    
                     ionization_efficiency_relative_uncertainty = 0 #For now we make it 0. #TODO add in effects of ionization_efficiency_relative_uncertainty
                     fragment_intensity_relative_uncertainty = ReferenceData.relative_standard_uncertainties[row_counter,column_counter] #this is just reproduced from above.
-                    correction_relative_uncertainty = (a_relative_uncertainty**2 + ionization_efficiency_relative_uncertainty**2 + fragment_intensity_relative_uncertainty**2)**0.5
+                    if len(G.referenceFileStandardTuning) > 0:
+                        tuningCorrectionIntensityFactor_relative_uncertainty = tuningCorrectionIntensityFactors_relative_uncertainties[row_counter] #This is already in relative uncertainties. When the equation is written out, the factor is multplied against the correction factor, such that the relative uncertainty of tuningCorrectionIntensityFactors propagates to a relative uncertainty in the correction factors.
+                    else:
+                        tuningCorrectionIntensityFactor_relative_uncertainty = 0
+                    correction_relative_uncertainty = (a_relative_uncertainty**2 + ionization_efficiency_relative_uncertainty**2 + fragment_intensity_relative_uncertainty**2 + tuningCorrectionIntensityFactor_relative_uncertainty**2)**0.5
                     correction_values_direct_relative_uncertainty[row_counter,column_counter] = correction_relative_uncertainty
                 else:
                     correction_relative_uncertainty = 0 #There is no correction factor so we use a relative uncertainty is 0.
