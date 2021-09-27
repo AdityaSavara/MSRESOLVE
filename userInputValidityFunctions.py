@@ -259,13 +259,13 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     #Forcing of choices:
     if UserChoices['dataAnalysisMethods']['SLSUniqueExport'] == 'yes':
-        if UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique' or UserChoices['dataAnalysisMethods']['answer'] != 'sls':
+        if (UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique') or (UserChoices['dataAnalysisMethods']['answer'] != 'sls'):
             UserChoices['dataAnalysisMethods']['SLSUniqueExport'] = 'no'
             print("Incompatible choice detected: forcing SLSUniqueExport to no.")
             
     if 'implicitSLScorrection' in UserChoices['dataAnalysisMethods']:
         if UserChoices['dataAnalysisMethods']['implicitSLScorrection'] == True:
-            if UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique' or UserChoices['dataAnalysisMethods']['answer'] != 'sls':
+            if (UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique') or (UserChoices['dataAnalysisMethods']['answer'] != 'sls'):
                 UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
                 print("Incompatible choice detected: forcing implicitSLScorrection to False.")
 

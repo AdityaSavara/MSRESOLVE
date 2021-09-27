@@ -21,7 +21,16 @@ In test_3.py, the two files are referenceFileExistingTuning = ['ReferenceCollect
 
 test_4.py is a copy of test_1.py, only now the returnMixedPattern feature is set to true, so ReferenceLiterature is tuned to match ReferenceCollected.
 test_5.py is a copy of test_4.py, only now the desired pattern is set as blank, which should give the same output as test_4.
-test_6.py is a copy of test_5.py, only now the existing pattern is set as blank, but the new ReferencePatternStandard is populated, so that the existing pattern will be populated from that one.
+test_6.py is a copy of test_5.py, only now the existing pattern is set as blank, but the new ReferencePatternStandard is populated, so that the existing pattern will be populated from that one. This also means that there is a tuningCorrectionIntensity feature usage. This test had output that matched test_5.py exactly before the tuningCorrectionIntensity feature was implemented.
+
+test_7.py is a copy of test_6.py but uses referenceThreshold filtering , specific mass fragments, and also SLSUniqueExport so that mass 70 ends up being used. We see that ExportedSLSUniqueMoleculesAndChosenMassFragments indicates the below, so that we know Crotonaldehyde is solved with mass 70.
+
+2	H2
+18	H2O
+45	Ethanol
+70	(E) 2-Butenal (Crotonaldehyde
+31	Crotyl Alcohol
+
 
 
 In many real applications of this feature, what is desired is to predict from an external reference what the fragmentation pattern would be on one's own spectrometer.  In that situation, the "ReferenceCollected.csv" is the desired pattern one and the "ReferenceLiterature.csv" is the existing pattern to be adjusted. These names may become further adjusted to "PatternToMatch" and "PatternToAdjust" or something like that.

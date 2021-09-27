@@ -868,14 +868,9 @@ def tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData=None): #makin
                     #The second of the below lines was causing a bug. I did not understand why, so I just commented out both of them for now.
                     #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternAbsoluteUncertainties', export_standard_uncertainties=True)
                     #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternRelativeUncertainties', export_relative_uncertainties=True)
-                    print("line 694", numpy.shape(ReferenceDataList[ReferenceDataIndex].standardized_reference_patterns))
-                    print("line 695", numpy.shape(ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties))
             ReferenceDataList[ReferenceDataIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
             if len(ReferenceDataList) == 1:
                 if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
-                    print("line 685", ReferenceDataList[ReferenceDataIndex].relativeIonizationEfficiencies)
-                    print("line 686", ReferenceDataList[ReferenceDataIndex].sourceOfIonizationData)
-                    print(G.UserChoices['minimalReferenceValue']['referenceValueThreshold'])
                     ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
                 ReferenceDataList[ReferenceDataIndex].exportReferencePattern('ExportedReferencePatternMixed.csv')
             else:
@@ -1094,12 +1089,6 @@ def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
         else: #implies not in OriginalReferenceData.molecules
             moleculesToExtendBy.append(moleculeName)
     ReferenceDataToExtendBy = ReferenceDataToExtendBy.removeMolecules(duplicateMolecules) #this removes the duplicates and makes a new object. It does not affect the original reference data object.
-    print("line 818", ReferenceDataToExtendBy.relativeIonizationEfficiencies)
-    print("line 818", ReferenceDataToExtendBy.sourceOfIonizationData)
-
-    print("line 821", OriginalReferenceData.relativeIonizationEfficiencies)
-    print("line 822", OriginalReferenceData.sourceOfIonizationData)    
-
     #we will assume that the pattern that we're going to use is the standardized_reference_patterns rather than the provided_reference_patterns
     if hasattr(ReferenceDataToExtendBy, 'standardized_reference_patterns'):
         patternToExtendBy = ReferenceDataToExtendBy.standardized_reference_patterns
@@ -1123,8 +1112,6 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     
     #initializing object that will become the trimmed copy of ReferenceData
     trimmedRefererenceData = copy.deepcopy(ReferenceData)
-    print("line 739", ReferenceData.sourceOfIonizationData)
-    print("line 740", trimmedRefererenceData.sourceOfIonizationData)
     #trim the reference fragmentation patterns to only the selected molecules 
     
     #unused trimmed copy molecules is just a place holder to dispose of a function return that is not needed
@@ -1155,7 +1142,6 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedRefererenceData.relativeIonizationEfficiencies, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.relativeIonizationEfficiencies, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.SourceOfFragmentationPatterns, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.SourceOfFragmentationPatterns, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
     trimmedRefererenceData.sourceOfIonizationData, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.sourceOfIonizationData, allMoleculesList, chosenMolecules, Array1D = True, header_dtype_casting=str)
-    print("line 761", trimmedRefererenceData.sourceOfIonizationData, trimmedMoleculesList)
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None): #The [:,1:] is related to the mass fragements.  Just copying the two lines syntax from above.
             trimmedAbsoluteUncertainties, trimmedMoleculesList  = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.absolute_standard_uncertainties[:,1:], 
@@ -1232,7 +1218,7 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
 #Then it gets the sum of each molecules frag pattern and uses all these values to get each moleule's correction value via the
 #system created by Madix and Ko and puts this in an answers array
 def CorrectionValuesObtain(ReferenceData):
-    ReferenceData.ExportCollector("ReferencePatternForCorrectionValues.csv",use_provided_reference_patterns=False)
+    ReferenceData.ExportCollector("ReferencePatternForCorrectionValues",use_provided_reference_patterns=False)
     if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
         referenceFileStandardTuning = G.referenceFileStandardTuning
         ReferenceData.exportReferencePattern("ReferencePatternForCorrectionValues.csv")
@@ -1316,6 +1302,7 @@ def CorrectionValuesObtain(ReferenceData):
                 correction = a/(ionization_efficiency*fragment_intensity)
                 if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
                     correction = correction*tuningCorrectionIntensityFactors[row_counter]
+                    print("line 1305", ReferenceData.standardized_reference_patterns[row_counter,0], tuningCorrectionIntensityFactors[row_counter])
                 current_molecule_correction_factors_list.append(correction)
                 correction_values_direct[row_counter,column_counter] = correction
             else: 
@@ -1581,7 +1568,6 @@ def StandardizeReferencePattern(referenceUnstandardized,num_of_molecules=0):
 '''This function is just a helper function to create a ReferenceData object from a file.'''
 def createReferenceDataObject(referenceDataFileName = "ReferenceData.csv", referenceDataForm = "xyyy", AllMID_ObjectsDict={}):
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceDataFileName,referenceDataForm)
-    print("line 1248", referenceDataFileName, sourceOfIonizationData)
     ReferenceData = MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)
     return ReferenceData
     
@@ -2908,7 +2894,6 @@ class MSReference (object):
     #Though these variable names are plural, they are expected to be lists of one. "molecules" is supposed to be a list of variable names.
     #provided_reference_patterns should be in an XYYY format.  If starting with XYXY data, is okay to feed a single "XY" at a time and to do so repeatedly in a loop.
     def addMolecules(self, provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns=[], sourceOfIonizationData=[], relativeIonizationEfficiencies=[], moleculeIonizationType=[], mass_fragment_numbers_monitored=None, referenceFileName=None, form=None, AllMID_ObjectsDict={}):      
-        print("line 2509", sourceOfIonizationData, relativeIonizationEfficiencies)
         #In case somebody decides to try to feed single molecule's name directly.
         if type(molecules) == type("string"):
             molecules = [molecules]
@@ -2927,13 +2912,9 @@ class MSReference (object):
         self.molecules = list(self.molecules) + (list(molecules))
         self.molecularWeights = list(self.molecularWeights) + (list(molecularWeights))
         self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns) + (list(SourceOfFragmentationPatterns))
-        print("line 2647", self.sourceOfIonizationData)
-        print("line 2647", self.relativeIonizationEfficiencies)
         self.sourceOfIonizationData = list(self.sourceOfIonizationData) + (list(sourceOfIonizationData))
         self.relativeIonizationEfficiencies = list(self.relativeIonizationEfficiencies) + (list(relativeIonizationEfficiencies))
         self.moleculeIonizationType = list(self.moleculeIonizationType) + (list(moleculeIonizationType))
-        print("line 2651", self.sourceOfIonizationData)
-        print("line 2651", self.relativeIonizationEfficiencies)
         
         #Will to standardize the molecules reference patterns before adding. This is important because the addXYYYtoXYYY function drops values that are small like 1E-8.
         standardized_reference_patterns=StandardizeReferencePattern(provided_reference_patterns,len(molecules))
@@ -3053,12 +3034,11 @@ class MSReference (object):
                 try: #Under normal situations, this try is a bit like an implied if G.calculateuncertaintiesInConcentrations != None:
                     self.absolute_standard_uncertainties = numpy.delete(self.absolute_standard_uncertainties, currentRowIndexAccountingForDeletions, axis=0 )
                 except:
-                    print("line 2892")
+                    print("Debugging line 2892") #This hardcoded print statement should not be removed.
                     pass                                                                                                                                     
                 currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
             #whether we deleted rows or not, we increase the counter of the rows.
             currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
-        print("line 2897", numpy.shape(self.standardized_reference_patterns), numpy.shape(self.absolute_standard_uncertainties))
         try:
             self.update_relative_standard_uncertainties()
         except:
@@ -3114,11 +3094,9 @@ class MSReference (object):
 
     def addSuffixToSourceOfFragmentationPatterns(self, suffixString):
         #this modifies the original object so that it is not necessary to return anything.
-        print("line 2674", suffixString)
         self.SourceOfFragmentationPatterns = list(self.SourceOfFragmentationPatterns)
         for moleculeIndex, sourceString in enumerate(self.SourceOfFragmentationPatterns):
             self.SourceOfFragmentationPatterns[moleculeIndex] = sourceString + suffixString
-        print("line 2676", self.SourceOfFragmentationPatterns)
         
     #populateIonizationEfficiencies is an MSReference function that populates a variable, relativeIonizationEfficiencies, that contains the ionization factors used in CorrectionValuesObtain
     #If the ionization factor is known and in the reference data, then that value is used
@@ -3924,6 +3902,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     # This is creating a local copy of 'molecules' which will become
     # truncated as the molecules are solved and masses are removed
     remaining_molecules_SLS = copy.deepcopy(molecules)
+    print("line 3905", remaining_molecules_SLS)
     molecules_unedited = copy.deepcopy(molecules) #old variable, but being kept to prevent need to change things.
     
     if len(uncertainties_dict) > 0: #This means that the uncertainties_dict argument has been passed in with values to use.
@@ -3979,6 +3958,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     #and all the columns, but they do this as many times as there are rows, so that all
     #the values that can be found using this method will be. The values for remaining_num_MassFragments and
     #remaining_num_molecules are re-evaluted every cycle.
+    print("line 3960", listFor_remaining_num_molecules_during_loop, remaining_reference_intensities_SLS)
     for molNumIndex in listFor_remaining_num_molecules_during_loop:#array-indexed for loop. Ideally, we'll do SLS once for each molecule.     
     
         remaining_num_MassFragments = len(remaining_correction_factors_SLS[:,0])
@@ -4231,6 +4211,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = sqrt_term**0.5
                 
             #Since it's done, we'll update the solved molecules array etc.
+            print("line 4214", chosenMolecule_original_molecular_index, G.SLSUniqueExport)
             solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
             solvedmolecules[chosenMolecule_original_molecular_index] = 1 #This updates a list that keeps track of which molecules have been used up.
 
@@ -5673,7 +5654,6 @@ def main():
         if name.startswith("Exported") and name.endswith(".csv"):
             print("Previous run Exported file detected. Deleting file", name)
             os.remove(name)
-    print("Line 5500!!!!!", G.measuredReferenceYorN)
     # #The below try statement is to check the user input dictionary's existence. Older MSRESOLVE did not use a dictionary.
     # for now, these types of lines are at the bottom of the UserInput and DefaultUserInput files. I'm considering keeping there permanently and then deleting these commented out lines.
     #from userInputValidityFunctions import parseUserInput, userInputValidityCheck, settingsCompatibilityCheck, #settingsDependenciesCheck,populateModuleVariablesFromDictionary,populateModuleVariablesFromNestedDictionary
