@@ -3902,7 +3902,6 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     # This is creating a local copy of 'molecules' which will become
     # truncated as the molecules are solved and masses are removed
     remaining_molecules_SLS = copy.deepcopy(molecules)
-    print("line 3905", remaining_molecules_SLS)
     molecules_unedited = copy.deepcopy(molecules) #old variable, but being kept to prevent need to change things.
     
     if len(uncertainties_dict) > 0: #This means that the uncertainties_dict argument has been passed in with values to use.
@@ -3958,7 +3957,6 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     #and all the columns, but they do this as many times as there are rows, so that all
     #the values that can be found using this method will be. The values for remaining_num_MassFragments and
     #remaining_num_molecules are re-evaluted every cycle.
-    print("line 3960", listFor_remaining_num_molecules_during_loop, remaining_reference_intensities_SLS)
     for molNumIndex in listFor_remaining_num_molecules_during_loop:#array-indexed for loop. Ideally, we'll do SLS once for each molecule.     
     
         remaining_num_MassFragments = len(remaining_correction_factors_SLS[:,0])
@@ -4211,7 +4209,6 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = sqrt_term**0.5
                 
             #Since it's done, we'll update the solved molecules array etc.
-            print("line 4214", chosenMolecule_original_molecular_index, G.SLSUniqueExport)
             solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
             solvedmolecules[chosenMolecule_original_molecular_index] = 1 #This updates a list that keeps track of which molecules have been used up.
 

@@ -1,4 +1,4 @@
-Sun Sep 26 11:37:00 2021
+Mon Sep 27 21:16:48 2021
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] 
 form  = ['xyyy'] 
@@ -7,16 +7,23 @@ timeRangeLimit = yes
 timeRangeStart = 176.0 
 timeRangeFinish = 178.0 
 measuredReferenceYorN = yes 
-referenceCorrectionCoefficientA = 0.0004208290916163871 
-referenceCorrectionCoefficientB = -0.015818238228811766 
-referenceCorrectionCoefficientC = 1.1055208156134486 
-referenceCorrection_abcCoefficients = [0.0004208290916163871, -0.015818238228811766, 1.1055208156134486] 
-referenceCorrection_abcCoefficients_cov = [[8.610881452638681e-09, -6.15195228824887e-07, 8.955678219514888e-06], [-6.151952288248869e-07, 4.685313770721915e-05, -0.0007452600797636735], [8.955678219514885e-06, -0.0007452600797636735, 0.013829361541006283]] 
-answer = inverse 
+referenceCorrectionCoefficientA = 0.00041154151447065387 
+referenceCorrectionCoefficientB = -0.0200083957021084 
+referenceCorrectionCoefficientC = 1.2192131558273835 
+referenceCorrection_abcCoefficients = [0.00041154151447065387, -0.0200083957021084, 1.2192131558273835] 
+referenceCorrection_abcCoefficients_cov = [[1.6745077041967374e-07, -1.2256016522854983e-05, 0.00020694004752915527], [-1.225601652285498e-05, 0.0009248854589718302, -0.016160488458714865], [0.0002069400475291552, -0.016160488458714862, 0.2955588432116031]] 
+specificMassFragments = yes 
+chosenMassFragments = [2, 18, 26, 27, 28, 29, 31, 44, 45, 70] 
+minimalReferenceValue = yes 
+referenceValueThreshold = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
+referenceSignificantFragmentThresholds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+answer = sls 
+uniqueOrCommon = unique 
+slsFinish = inverse 
 distinguished = yes 
 scaleRawDataFactor  = 1.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.33656 seconds 
+Run Time 0.22674 seconds 
 ###################################################################### 
