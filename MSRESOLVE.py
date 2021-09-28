@@ -533,8 +533,9 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     referenceDataArrayWithAbscissa[:,1:] = nonZeroValueLocations*referenceDataArray #we are setting things to zero if they were originally zero (this multiplies the nonzero locations by 1, and everything else by 0)
     referenceDataArrayWithAbscissa[:,1:] = (referenceDataArrayWithAbscissa[:,1:] > 0)*referenceDataArrayWithAbscissa[:,1:]  #multiplying by 1 where the final value is >0, and by 0 everywhere else.
     referenceDataArrayWithAbscissa_tuning_uncertainties = referenceDataArrayWithAbscissa*1.0 #creating copy with abscissa, then will fill.
+    #The referenceDataArray_tuning_uncertainties are absolute uncertainties (note that above the factor_uncertainty is multiplied by the actual value)
     referenceDataArrayWithAbscissa_tuning_uncertainties[:,1:] = referenceDataArray_tuning_uncertainties
-    return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties
+    return referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties 
 
 
 '''Makes a mixed reference pattern from two reference patterns, including tuning correction.'''
@@ -1218,23 +1219,60 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
 #Then it gets the sum of each molecules frag pattern and uses all these values to get each moleule's correction value via the
 #system created by Madix and Ko and puts this in an answers array
 def CorrectionValuesObtain(ReferenceData):
-    ReferenceData.ExportCollector("ReferencePatternForCorrectionValues",use_provided_reference_patterns=False)
+    ReferenceData.ExportCollector("ReferencePatternOriginalForCorrectionValues",use_provided_reference_patterns=False)
+    ReferenceDataForCorrectionValues = copy.deepcopy(ReferenceData)  #This is mainly needed for G.referenceFileStandardTuning
     if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
         referenceFileStandardTuning = G.referenceFileStandardTuning
-        ReferenceData.exportReferencePattern("ReferencePatternForCorrectionValues.csv")
-        abcCoefficients, abcCoefficients_covmat = ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm=["ReferencePatternForCorrectionValues.csv", "xyyy"], ReferencePatternDesiredTuning_FileNameAndForm = G.referenceFileStandardTuning, exportCoefficients=False) #We will separately export the coefficents for our usage.
+        ReferenceData.exportReferencePattern("ReferencePatternOriginalForCorrectionValues.csv") #Separate file, outside of export collector.
+        #Below, we are going to get the tuningCorrector coefficients for Desired towards Standard tuning. We need to **intentionally** reverse the arguments below, because are going to be making a mixed reference pattern which has some molecules from the Standard Tuning and also some where where the Original Tuning is changed to Standard Tuning.
+        
+        #NEED AN IF STATEMENT TO DETERMINE THESE COEFFICENTS FROM GAS MIXTURE IF USING THAT.
+        if str(G.referenceFileStandardTuning[0]).lower() != 'gaxmixture':
+            abcCoefficients, abcCoefficients_covmat = ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm=G.referenceFileDesiredTuning, ReferencePatternDesiredTuning_FileNameAndForm = G.referenceFileStandardTuning, exportCoefficients=False) #We will separately export the coefficents for this usage.
         #The above abcCoefficients and abcCoefficients_covmat are for the direction that if we multiply the existing tuning we will get the standard tuning. This factor is actually the same as what we want for our tuning factor intensity correction: if the "existing" pattern is low, that means that the actual amount of the ion is "higher".  The second question is whether the correctionValues should be multiplied by or divided by this factor.  In general, the equation is that "signals*correctionValue = concentration".  So to bring a small signal up, this is already in the right direction.
+        #We will also use this to create a mixed pattern for getting the standard tuning correction values.
         #Export the TuningCorrectorCoefficients as a list.
         with open('TuningCorrectorIntensityCoefficients.txt', 'w') as the_file:
             the_file.write(str(list(abcCoefficients))) 
         #Export the TuningCorrectorCoefficients_cov to a csv.
-        numpy.savetxt('TuningCorrectorIntensityCoefficients_cov.csv', abcCoefficients_covmat, delimiter=",")
-        #In principle, we could do the same for the reverse relation, but we did not retrieve them.
-        # with open('TuningCorrectorIntensityCoefficientsReverse.txt', 'w') as the_file:
-            # the_file.write(str(list(abcCoefficients_reverse))) 
-        # #Export the TuningCorrectorCoefficients_cov to a csv.
-        # numpy.savetxt('TuningCorrectorIntensityCoefficientsReverse_covmat.csv', abcCoefficients_reverse_cov, delimiter=",")
-
+        numpy.savetxt('TuningCorrectorIntensityCoefficients_covmat.csv', abcCoefficients_covmat, delimiter=",")
+        #We are going to make a standard tuning type reference pattern in ReferenceDataForCorrectionValues.
+        ##Start block of making mixed tuning##
+        listOfNeededMolecules = ReferenceData.molecules
+        ReferenceDataStandardTuning = createReferenceDataObject ( G.referenceFileStandardTuning[0], G.referenceFileStandardTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
+        listOfStandardTuningMoleculePatternsAvailable = copy.deepcopy(ReferenceDataStandardTuning.molecules)
+        #get a list of molecules to remove from the ReferenceDataStandardTuning file.
+        listOfMoleculesToRemove = []
+        for moleculeName in listOfStandardTuningMoleculePatternsAvailable:
+            if moleculeName not in listOfNeededMolecules:
+                listOfMoleculesToRemove.append(moleculeName)
+        ReferenceDataStandardTuning.removeMolecules(listOfMoleculesToRemove)
+        #Now have to convert the original reference data for anlaysis to standard tuning to make the mixed pattern.
+        referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataForCorrectionValues.standardized_reference_patterns,abcCoefficients, abcCoefficients_covmat, referenceFileExistingTuningAndForm=None,referenceFileDesiredTuningAndForm=None,measuredReferenceYorN="no")
+        #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
+        ReferenceDataForCorrectionValues.standardized_reference_pattern = Standardize(referenceDataArrayWithAbscissa)
+        ReferenceDataForCorrectionValues.standardized_reference_patterns_tuning_uncertainties = referenceDataArrayWithAbscissa_tuning_uncertainties
+        #add "TuningCorrected" to SourceOfFragmentationPatterns
+        ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns = list(ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns)
+        for sourceIndex in range(len(ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns)):
+            ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns[sourceIndex] = ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns[sourceIndex] + '-TuningCorrected'
+        #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
+        #We don't export these uncertainties since this is just an intermediate step.
+        try:
+            ReferenceDataForCorrectionValues.absolute_standard_uncertainties = (ReferenceDataForCorrectionValues.absolute_standard_uncertainties**2 + ReferenceDataForCorrectionValues.standardized_reference_patterns_tuning_uncertainties**2)**0.5
+        except:
+            ReferenceDataForCorrectionValues.absolute_standard_uncertainties = ReferenceDataForCorrectionValues.standardized_reference_patterns_tuning_uncertainties
+        #Export (won't be needed).
+        ReferenceDataForCorrectionValues.exportReferencePattern("ReferencePatternOriginalForCorrectionValuesStandardTuning.csv")
+        #Now create the mixed reference pattern.  The pattern for ReferenceDataStandardTuning will be extended by ReferenceDataForCorrectionValues.
+        ReferenceDataStandardTuning.addMolecules(provided_reference_patterns=ReferenceDataForCorrectionValues.standardized_reference_patterns, electronnumbers=ReferenceDataForCorrectionValues.electronnumbers, molecules=ReferenceDataForCorrectionValues.molecules, molecularWeights=ReferenceDataForCorrectionValues.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns, sourceOfIonizationData=ReferenceDataForCorrectionValues.sourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataForCorrectionValues.relativeIonizationEfficiencies, moleculeIonizationType=ReferenceDataForCorrectionValues.moleculeIonizationType)
+        ReferenceDataStandardTuning.exportReferencePattern("ReferencePatternStandardForCorrectionValuesStandardTuning.csv")
+        
+        
+        
+        
+        
+        
         
     reference_width = len(ReferenceData.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
     reference_height = len(ReferenceData.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
