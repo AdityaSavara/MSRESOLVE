@@ -12,7 +12,9 @@ b)TuningCorrectorIntensity which changes the sensitivityCorrectionValues as a fu
 
 Note: Before approximately Sept 23rd-30th 2021, the regular input file was listed in the unit tests as the existing tuning. After Sept 30th 2021, the 'existing' tuning is the external (NIST/Literature) tuning.  The following files now get exported to try to bring clarity: 'ExportedReferencePatternOriginal" "ExportedReferencePatternExisting" "ExportedReferencePatternExternal" "ExportedReferencePatternExternalTuningCorrected"  "ExportedReferencePatternMixed"
 
-test_1.py has AcetaldehydeNISTRefMixed2.csv and ReferenceCollected.csv with the same tuning. It applies a TuningCorrection to AcetaldehydeNISTRefMixed2.csv (and also to ReferenceCollected.csv).  The Desired tuning file is ReferenceLiterature.csv.
+The file AcetaldehydeMeasured.csv is actually a mixed reference pattern. However, the columns source fields have been renamed to say "Measured". The tuning correction tests here are just a 'toy' model reference pattern to check the feature. In real life, the measured reference pattern will have more difference than the literature reference.
+
+test_1.py has AcetaldehydeMeasured.csv and ReferenceCollected.csv with the same tuning. It applies a TuningCorrection to AcetaldehydeMeasured.csv (and also to ReferenceCollected.csv).  The Desired tuning file is ReferenceLiterature.csv.
 ReferenceLiterature.csv does not have as many molecules as ReferenceCollected.csv and the higher masses have lower intensity in ReferenceLiterature.csv (for one of the molecules, crotyl alcohol). So the feature uses a polynomial function and applies it to *all* molecules in ReferenceCollected.csv to make it look more like ReferenceLiterature.csv (lowers the intensity).
 
 In the test_1.py, the reference threshold filter is off.

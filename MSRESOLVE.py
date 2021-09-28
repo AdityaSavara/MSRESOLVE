@@ -1252,15 +1252,10 @@ def CorrectionValuesObtain(ReferenceData):
         #get a list of molecules to remove from the ReferenceDataStandardTuning file.
         listOfMoleculesToRemove = []
         for moleculeName in listOfStandardTuningMoleculePatternsAvailable:
-            print("line 1255", moleculeName,listOfNeededMolecules)
             if moleculeName not in listOfNeededMolecules:
                 listOfMoleculesToRemove.append(moleculeName)
-        print("line 1257", ReferenceDataStandardTuning.molecules)
-        print("line 1258", listOfMoleculesToRemove)
         ReferenceDataStandardTuning.removeMolecules(listOfMoleculesToRemove)
-        print("line 1260", ReferenceDataStandardTuning.molecules)
         #Now have to convert the original reference data for anlaysis to standard tuning to make the mixed pattern.
-        print("line 1263", ReferenceDataOriginalStandardTuning.standardized_reference_patterns)
         referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataOriginalStandardTuning.standardized_reference_patterns,abcCoefficients, abcCoefficients_covmat, referenceFileExistingTuningAndForm=None,referenceFileDesiredTuningAndForm=None,measuredReferenceYorN="no")
         #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
         ReferenceDataOriginalStandardTuning.standardized_reference_patterns = StandardizeReferencePattern(referenceDataArrayWithAbscissa)

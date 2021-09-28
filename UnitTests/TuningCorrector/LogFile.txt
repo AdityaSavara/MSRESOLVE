@@ -1,6 +1,6 @@
-Tue Sep 28 02:46:06 2021
+Tue Sep 28 10:40:04 2021
 
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] 
+referenceFileName = ['AcetaldehydeMeasured.csv'] 
 form  = ['xyyy'] 
 collectedFileName = 2-CrotAcetExp#2.csv 
 timeRangeLimit = yes 
@@ -25,5 +25,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.45656 seconds 
+Run Time 0.54003 seconds 
 ###################################################################### 

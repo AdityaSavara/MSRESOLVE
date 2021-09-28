@@ -20,6 +20,8 @@ import numpy as np
 #Get the suffix argument for check_results
 suffix = ut.returnDigitFromFilename(__file__)
 
+
+MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasured.csv']
 #We can use the default user input, which is already in MSRESOLVE.G.
 #Need to change the "direct variable" version rather than the dictionary version.
 MSRESOLVE.G.measuredReferenceYorN = 'yes'
