@@ -1087,7 +1087,7 @@ def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
     for moleculeName in ReferenceDataToExtendBy.molecules:
         if moleculeName in OriginalReferenceData.molecules:
             duplicateMolecules.append(moleculeName)
-        else: #implies not in OriginalReferenceData.molecules
+        else: #implies not in OriginalReferenceData.molecules)
             moleculesToExtendBy.append(moleculeName)
     ReferenceDataToExtendBy = ReferenceDataToExtendBy.removeMolecules(duplicateMolecules) #this removes the duplicates and makes a new object. It does not affect the original reference data object.
     #we will assume that the pattern that we're going to use is the standardized_reference_patterns rather than the provided_reference_patterns
@@ -1220,66 +1220,76 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
 #system created by Madix and Ko and puts this in an answers array
 def CorrectionValuesObtain(ReferenceData):
     ReferenceData.ExportCollector("ReferencePatternOriginalForCorrectionValues",use_provided_reference_patterns=False)
-    ReferenceDataForCorrectionValues = copy.deepcopy(ReferenceData)  #This is mainly needed for G.referenceFileStandardTuning
+    if len(G.referenceFileStandardTuning) == 0: #This is the simple case, if there is no tuningCorrectionIntensity feature being used.
+        ReferenceDataForCorrectionValues = copy.deepcopy(ReferenceData)
     if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
         referenceFileStandardTuning = G.referenceFileStandardTuning
-        ReferenceData.exportReferencePattern("ReferencePatternOriginalForCorrectionValues.csv") #Separate file, outside of export collector.
+        ReferenceData.exportReferencePattern("ExportedReferencePatternOriginalForCorrectionValues.csv") #Separate file, outside of export collector.
         #Below, we are going to get the tuningCorrector coefficients for Desired towards Standard tuning. We need to **intentionally** reverse the arguments below, because are going to be making a mixed reference pattern which has some molecules from the Standard Tuning and also some where where the Original Tuning is changed to Standard Tuning.
         
         #NEED AN IF STATEMENT TO DETERMINE THESE COEFFICENTS FROM GAS MIXTURE IF USING THAT.
         if str(G.referenceFileStandardTuning[0]).lower() != 'gaxmixture':
-            abcCoefficients, abcCoefficients_covmat = ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm=G.referenceFileDesiredTuning, ReferencePatternDesiredTuning_FileNameAndForm = G.referenceFileStandardTuning, exportCoefficients=False) #We will separately export the coefficents for this usage.
+            if G.referenceFileDesiredTuning == []: #Use the original reference pattern if blank.
+                referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+            else:
+                referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
+            print("line 1231", G.referenceFileDesiredTuning, G.referenceFileStandardTuning)
+            abcCoefficients, abcCoefficients_covmat = ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm=referenceFileDesiredTuningAndForm, ReferencePatternDesiredTuning_FileNameAndForm = G.referenceFileStandardTuning, exportCoefficients=False) #We will separately export the coefficents for this usage.
         #The above abcCoefficients and abcCoefficients_covmat are for the direction that if we multiply the existing tuning we will get the standard tuning. This factor is actually the same as what we want for our tuning factor intensity correction: if the "existing" pattern is low, that means that the actual amount of the ion is "higher".  The second question is whether the correctionValues should be multiplied by or divided by this factor.  In general, the equation is that "signals*correctionValue = concentration".  So to bring a small signal up, this is already in the right direction.
         #We will also use this to create a mixed pattern for getting the standard tuning correction values.
         #Export the TuningCorrectorCoefficients as a list.
-        with open('TuningCorrectorIntensityCoefficients.txt', 'w') as the_file:
+        with open('ExportedTuningCorrectorIntensityCoefficients.txt', 'w') as the_file:
             the_file.write(str(list(abcCoefficients))) 
         #Export the TuningCorrectorCoefficients_cov to a csv.
-        numpy.savetxt('TuningCorrectorIntensityCoefficients_covmat.csv', abcCoefficients_covmat, delimiter=",")
-        #We are going to make a standard tuning type reference pattern in ReferenceDataForCorrectionValues.
+        numpy.savetxt('ExportedTuningCorrectorIntensityCoefficients_covmat.csv', abcCoefficients_covmat, delimiter=",")
+        
+        #We are going to make a standard tuning type reference pattern in ReferenceDataOriginalStandardTuning.
         ##Start block of making mixed tuning##
-        listOfNeededMolecules = ReferenceData.molecules
+        listOfNeededMolecules = ReferenceData.molecules #intentionally grab molecule list from the original data object fed in.
+        ReferenceDataOriginalStandardTuning = copy.deepcopy(ReferenceData)  #This is mainly needed for G.referenceFileStandardTuning
         ReferenceDataStandardTuning = createReferenceDataObject ( G.referenceFileStandardTuning[0], G.referenceFileStandardTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
         listOfStandardTuningMoleculePatternsAvailable = copy.deepcopy(ReferenceDataStandardTuning.molecules)
         #get a list of molecules to remove from the ReferenceDataStandardTuning file.
         listOfMoleculesToRemove = []
         for moleculeName in listOfStandardTuningMoleculePatternsAvailable:
+            print("line 1255", moleculeName,listOfNeededMolecules)
             if moleculeName not in listOfNeededMolecules:
                 listOfMoleculesToRemove.append(moleculeName)
+        print("line 1257", ReferenceDataStandardTuning.molecules)
+        print("line 1258", listOfMoleculesToRemove)
         ReferenceDataStandardTuning.removeMolecules(listOfMoleculesToRemove)
+        print("line 1260", ReferenceDataStandardTuning.molecules)
         #Now have to convert the original reference data for anlaysis to standard tuning to make the mixed pattern.
-        referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataForCorrectionValues.standardized_reference_patterns,abcCoefficients, abcCoefficients_covmat, referenceFileExistingTuningAndForm=None,referenceFileDesiredTuningAndForm=None,measuredReferenceYorN="no")
+        print("line 1263", ReferenceDataOriginalStandardTuning.standardized_reference_patterns)
+        referenceDataArrayWithAbscissa, referenceDataArrayWithAbscissa_tuning_uncertainties = TuningCorrector(ReferenceDataOriginalStandardTuning.standardized_reference_patterns,abcCoefficients, abcCoefficients_covmat, referenceFileExistingTuningAndForm=None,referenceFileDesiredTuningAndForm=None,measuredReferenceYorN="no")
         #TuningCorrector un-standardizes the patterns, so the patterns have to be standardized again.
-        ReferenceDataForCorrectionValues.standardized_reference_pattern = Standardize(referenceDataArrayWithAbscissa)
-        ReferenceDataForCorrectionValues.standardized_reference_patterns_tuning_uncertainties = referenceDataArrayWithAbscissa_tuning_uncertainties
+        ReferenceDataOriginalStandardTuning.standardized_reference_patterns = StandardizeReferencePattern(referenceDataArrayWithAbscissa)
+        ReferenceDataOriginalStandardTuning.standardized_reference_patterns_tuning_uncertainties = referenceDataArrayWithAbscissa_tuning_uncertainties
         #add "TuningCorrected" to SourceOfFragmentationPatterns
-        ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns = list(ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns)
-        for sourceIndex in range(len(ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns)):
-            ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns[sourceIndex] = ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns[sourceIndex] + '-TuningCorrected'
+        ReferenceDataOriginalStandardTuning.SourceOfFragmentationPatterns = list(ReferenceDataOriginalStandardTuning.SourceOfFragmentationPatterns)
+        for sourceIndex in range(len(ReferenceDataOriginalStandardTuning.SourceOfFragmentationPatterns)):
+            ReferenceDataOriginalStandardTuning.SourceOfFragmentationPatterns[sourceIndex] = ReferenceDataOriginalStandardTuning.SourceOfFragmentationPatterns[sourceIndex] + '-TuningCorrected'
         #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
         #We don't export these uncertainties since this is just an intermediate step.
         try:
-            ReferenceDataForCorrectionValues.absolute_standard_uncertainties = (ReferenceDataForCorrectionValues.absolute_standard_uncertainties**2 + ReferenceDataForCorrectionValues.standardized_reference_patterns_tuning_uncertainties**2)**0.5
+            ReferenceDataOriginalStandardTuning.absolute_standard_uncertainties = (ReferenceDataOriginalStandardTuning.absolute_standard_uncertainties**2 + ReferenceDataOriginalStandardTuning.standardized_reference_patterns_tuning_uncertainties**2)**0.5
         except:
-            ReferenceDataForCorrectionValues.absolute_standard_uncertainties = ReferenceDataForCorrectionValues.standardized_reference_patterns_tuning_uncertainties
+            ReferenceDataOriginalStandardTuning.absolute_standard_uncertainties = ReferenceDataOriginalStandardTuning.standardized_reference_patterns_tuning_uncertainties
         #Export (won't be needed).
-        ReferenceDataForCorrectionValues.exportReferencePattern("ReferencePatternOriginalForCorrectionValuesStandardTuning.csv")
-        #Now create the mixed reference pattern.  The pattern for ReferenceDataStandardTuning will be extended by ReferenceDataForCorrectionValues.
-        ReferenceDataStandardTuning.addMolecules(provided_reference_patterns=ReferenceDataForCorrectionValues.standardized_reference_patterns, electronnumbers=ReferenceDataForCorrectionValues.electronnumbers, molecules=ReferenceDataForCorrectionValues.molecules, molecularWeights=ReferenceDataForCorrectionValues.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataForCorrectionValues.SourceOfFragmentationPatterns, sourceOfIonizationData=ReferenceDataForCorrectionValues.sourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataForCorrectionValues.relativeIonizationEfficiencies, moleculeIonizationType=ReferenceDataForCorrectionValues.moleculeIonizationType)
-        ReferenceDataStandardTuning.exportReferencePattern("ReferencePatternStandardForCorrectionValuesStandardTuning.csv")
+        ReferenceDataOriginalStandardTuning.exportReferencePattern("ExportedReferencePatternOriginalForCorrectionValuesStandardTuning.csv")
+        #Now create the mixed reference pattern.  The pattern for ReferenceDataStandardTuning will be extended by ReferenceDataOriginalStandardTuning.
+        ReferenceDataStandardTuning, addedReferenceSlice = extendReferencePattern(ReferenceDataStandardTuning, ReferenceDataOriginalStandardTuning)
+        #This is the ReferenceDataObject to carry forward.
+        ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuning.csv")
+        ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
         
-        
-        
-        
-        
-        
-        
-    reference_width = len(ReferenceData.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
-    reference_height = len(ReferenceData.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
-    correction_values_direct = ReferenceData.standardized_reference_patterns*1.0 #just initializing as same size, but note that this has the mass fragments column.
+    print('line 1282', ReferenceData.molecules, ReferenceDataForCorrectionValues.molecules)
+    reference_width = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
+    reference_height = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
+    correction_values_direct = ReferenceDataForCorrectionValues.standardized_reference_patterns*1.0 #just initializing as same size, but note that this has the mass fragments column.
     correction_values_direct_relative_uncertainty = correction_values_direct*1.0
     if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)):  #This means we'll need uncertainties on each correction value.
-        ReferenceData.relative_correction_uncertainties = ReferenceData.relative_standard_uncertainties[:,1:]*0.0 #make an array with the same shape, without the mass fragments.
+        ReferenceDataForCorrectionValues.relative_correction_uncertainties = ReferenceDataForCorrectionValues.relative_standard_uncertainties[:,1:]*0.0 #make an array with the same shape, without the mass fragments.
     else: 
         correction_values_relative_uncertainties = None #If uncertainties are not going to be calculated, we'll use none here and just return that.
     #If we are using the tuningCorrectorIntensity feature, then we would want to calculate uncertainites when they are desired.
@@ -1289,29 +1299,29 @@ def CorrectionValuesObtain(ReferenceData):
     #the first for loop here gets all of the values for e- and mw and uses them to get the
     #respective values that can find the correction factor for each mass fragment of each molecule
     for column_counter in range(1,reference_width): #array-indexed for loop, skips column one b/c that is the mass fragment numbers, not relative intensities. This loops across each molecule.
-        ionization_efficiency = ReferenceData.relativeIonizationEfficiencies[column_counter-1]
+        ionization_efficiency = ReferenceDataForCorrectionValues.relativeIonizationEfficiencies[column_counter-1]
         current_molecule_correction_factors_list = []
-        quotients = numpy.zeros(len(ReferenceData.standardized_reference_patterns[:,0])) #This means the same length as the mass fragments.
+        quotients = numpy.zeros(len(ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0])) #This means the same length as the mass fragments.
         quotients_relative_uncertainties = quotients*1.0 #we make this variable but only populate it if we're going to calculate uncertainties.
         
         #This first loop goes through the row and gets all of the mass fragment's Tms and Gms
         #and then uses those along with the relative intensity of the mass fragment itself to
         #calculate the sum of each column's Fm/(Gm*Tm)
         for row_counter in range(0,reference_height):  #array-indexed for loop
-            fragment_intensity = ReferenceData.standardized_reference_patterns[row_counter,column_counter] #This is actually the fragment's intensity in the standardized reference pattern.
+            fragment_intensity = ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,column_counter] #This is actually the fragment's intensity in the standardized reference pattern.
             if fragment_intensity != 0: #only gets the Gm and Tm if relative intensity is not equal to zero
-                electron_multiplier_gain = (28/ReferenceData.standardized_reference_patterns[row_counter,0])**0.5 
-                if (ReferenceData.standardized_reference_patterns[row_counter,0] < 30): #transmission gain depends on the mass fragment mass
+                electron_multiplier_gain = (28/ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,0])**0.5 
+                if (ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,0] < 30): #transmission gain depends on the mass fragment mass
                     transmission_gain = 1
                 else:
-                    transmission_gain = 10**((30-ReferenceData.standardized_reference_patterns[row_counter,0])/155)
+                    transmission_gain = 10**((30-ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,0])/155)
                 quotient = fragment_intensity/(transmission_gain*electron_multiplier_gain)
                 quotients[row_counter] = quotient
 
             #calculation of uncertainties is being separated from above if statement to avoid making the code harder to read.
             if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)):    
                 if fragment_intensity != 0: #We only get the Gm and Tm if relative intensity is not equal to zero, so we only need uncertainties for those values.
-                    fragment_intensity_relative_uncertainty = ReferenceData.relative_standard_uncertainties[row_counter,column_counter] #row_counter and column_counter already skip the mass fragments.
+                    fragment_intensity_relative_uncertainty = ReferenceDataForCorrectionValues.relative_standard_uncertainties[row_counter,column_counter] #row_counter and column_counter already skip the mass fragments.
                     quotient_relative_uncertainty = abs(fragment_intensity_relative_uncertainty*1.0) #there is no change since this is relative uncertainty divided by some constants (the two gains are dependent on molecular weight, but not on intensity).
                     quotients_relative_uncertainties[row_counter] = quotient_relative_uncertainty
                     
@@ -1329,8 +1339,11 @@ def CorrectionValuesObtain(ReferenceData):
         #Fm/(Gm*Tm) has to be found first, but then the loop gets each mass fragment's correction
         #value by dividing the sum by that relative intensity and ionization efficiency for the 
         #molecule, then creating an correction_values of correction values
+        #Before starting the below loop, we can now trim the ReferenceDataForCorrectionValues (and the associated other arrays) if it has too many masses.
+        #ReferenceData.ClearZeroRowsFromStandardizedReferenceIntensities()
+        
         #First calculate any tuning correction intensity factors and their uncertainties.
-        if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
+        if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used. These factors could be calculated one at a time inside the for loop below, but due to how the function works and to make the code somewhat more efficient we are calculating this uncertainty array ahead of time and then will popualte other variables with them in the loop below.
             tuningCorrectionIntensityFactors, tuningCorrectionIntensityFactors_absolute_uncertainties = DataFunctions.returnPolyvalEstimatesAndUncertainties(x_values=ReferenceData.standardized_reference_patterns[:,0].flatten(), abcCoefficients=abcCoefficients, abcCoefficients_covMat= abcCoefficients_covmat)
             tuningCorrectionIntensityFactors_relative_uncertainties = tuningCorrectionIntensityFactors_absolute_uncertainties/tuningCorrectionIntensityFactors
         #The row_counter below is the mass fragment index.        
@@ -3078,12 +3091,14 @@ class MSReference (object):
             #whether we deleted rows or not, we increase the counter of the rows.
             currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
         try:
+            self.ExportCollector("ClearZeroRowsFromAbsoluteStandardUncertainties", export_standard_uncertainties=True)
             self.update_relative_standard_uncertainties()
+            self.ExportCollector("ClearZeroRowsFromRelativeStandardUncertainties", export_relative_uncertainties=True)
         except:
             print("Warning: line 2897 was unable to update the relative uncertainties of a reference pattern.")
         self.ExportCollector("ClearZeroRowsFromStandardizedReferenceIntensities", use_provided_reference_patterns=False)
-        self.ExportCollector("ClearZeroRowsFromAbsoluteStandardUncertainties", export_standard_uncertainties=True)
-        self.ExportCollector("ClearZeroRowsFromRelativeStandardUncertainties", export_relative_uncertainties=True)
+        
+        
             
     #This class function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(self):
@@ -3226,6 +3241,7 @@ class MSReference (object):
             referenceFileHeader += "Molecular Mass," + DataFunctions.arrayLikeToCSVstring(self.molecularWeights)# + "\n"
             if hasattr(self ,"standardized_reference_patterns"):
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.standardized_reference_patterns,len(self.molecules))
+                print("line 3245", self.standardized_reference_patterns)
             else:
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
