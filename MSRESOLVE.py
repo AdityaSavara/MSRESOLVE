@@ -1105,6 +1105,7 @@ def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
 
 #desiredMoleculesOrder should be a list of strings of molecule names.
 def rearrangeReferenceData(ReferenceData, desiredMoleculesOrder):
+    print("line 1108", desiredMoleculesOrder)
     #We are going to make separte ReferenceData objects for each molecule, and then 'concatenate' those objects to make the rearranged molecular object.
     #This function can thus also be used for truncating a ReferenceData object.
     #We will first make a list where we will place ReferenceData object copy for each of the desiredMolecules.
@@ -1114,14 +1115,15 @@ def rearrangeReferenceData(ReferenceData, desiredMoleculesOrder):
         #make a list of the other molecules so we can remove them.
         otherMolecules = copy.deepcopy(list(desiredMoleculesOrder)) #initializing.
         otherMolecules.remove(moleculeName) #remove modifies the original ilst.
-        print("Line 1115",moleculeName, otherMolecules)
         #Below creates the individualMoleculeReferenceData and then appends it with the same moleculeIndex to the individualMoleculeReferenceDataList
+        print("line 1119", moleculeName, otherMolecules)
         individualMoleculeReferenceData = ReferenceData.removeMolecules(otherMolecules)
         individualMoleculeReferenceDataList.append(individualMoleculeReferenceData)
     #Now having a list of all the desired molecules individual ReferenceData objects, we just need to put them together.
     combinedReferenceData  = individualMoleculeReferenceDataList[0] #initialize with the first molecule.
     for individualMoleculeReferenceData in individualMoleculeReferenceDataList[1:]:#note that we are skipping index 0.
         combinedReferenceData, addedReferenceSlice = extendReferencePattern(OriginalReferenceData= combinedReferenceData, ReferenceDataToExtendBy= individualMoleculeReferenceData)
+    print("line 1125", combinedReferenceData.molecules)
     return combinedReferenceData
     
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
@@ -1240,6 +1242,7 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
 #system created by Madix and Ko and puts this in an answers array
 def CorrectionValuesObtain(ReferenceData):
     ReferenceData.ExportCollector("ReferencePatternOriginalForCorrectionValues",use_provided_reference_patterns=False)
+    #G.referenceFileStandardTuning = [] #FIXME: Testing purposes only.
     if len(G.referenceFileStandardTuning) == 0: #This is the simple case, if there is no tuningCorrectionIntensity feature being used.
         ReferenceDataForCorrectionValues = copy.deepcopy(ReferenceData)
     if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
@@ -1296,9 +1299,11 @@ def CorrectionValuesObtain(ReferenceData):
         ReferenceDataStandardTuning, addedReferenceSlice = extendReferencePattern(ReferenceDataStandardTuning, ReferenceDataOriginalStandardTuning)
         #This is the ReferenceDataObject to carry forward.
         ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuning.csv")
-        ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
         #rearrange the molecules to the right order.
-        ReferenceDataForCorrectionValues = rearrangeReferenceData(ReferenceData=ReferenceDataForCorrectionValues, desiredMoleculesOrder=ReferenceData.molecules)
+        ReferenceDataStandardTuning = rearrangeReferenceData(ReferenceData=ReferenceDataStandardTuning, desiredMoleculesOrder=ReferenceData.molecules)
+        ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuningRearranged.csv")
+        #move the pointer.
+        ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
         
         
     print('line 1282', ReferenceData.molecules, ReferenceDataForCorrectionValues.molecules)
@@ -1317,17 +1322,19 @@ def CorrectionValuesObtain(ReferenceData):
     #the first for loop here gets all of the values for e- and mw and uses them to get the
     #respective values that can find the correction factor for each mass fragment of each molecule
     for column_counter in range(1,reference_width): #array-indexed for loop, skips column one b/c that is the mass fragment numbers, not relative intensities. This loops across each molecule.
+        print("line 1324", column_counter, ReferenceDataForCorrectionValues.molecules)
+        moleculeName = ReferenceDataForCorrectionValues.molecules[column_counter-1]
         ionization_efficiency = ReferenceDataForCorrectionValues.relativeIonizationEfficiencies[column_counter-1]
         current_molecule_correction_factors_list = []
         quotients = numpy.zeros(len(ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0])) #This means the same length as the mass fragments.
         quotients_relative_uncertainties = quotients*1.0 #we make this variable but only populate it if we're going to calculate uncertainties.
-        
         #This first loop goes through the row and gets all of the mass fragment's Tms and Gms
         #and then uses those along with the relative intensity of the mass fragment itself to
         #calculate the sum of each column's Fm/(Gm*Tm)
         for row_counter in range(0,reference_height):  #array-indexed for loop
             fragment_intensity = ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,column_counter] #This is actually the fragment's intensity in the standardized reference pattern.
             if fragment_intensity != 0: #only gets the Gm and Tm if relative intensity is not equal to zero
+                print("line 1334", ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,0], fragment_intensity)
                 electron_multiplier_gain = (28/ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,0])**0.5 
                 if (ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,0] < 30): #transmission gain depends on the mass fragment mass
                     transmission_gain = 1
@@ -1344,6 +1351,7 @@ def CorrectionValuesObtain(ReferenceData):
                     quotients_relative_uncertainties[row_counter] = quotient_relative_uncertainty
                     
         a = sum(quotients)
+        print("line 1354", moleculeName, a)
         if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)): #if uncertainties are going to be calculated.
             quotients_absolute_uncertainties = quotients*quotients_relative_uncertainties #We will need the absolute uncertainties because now there is a summation.
             #now to calculate the a_uncertainty, we we will use a_uncertainty = sqrt( uncertainty_1^2 + uncertainty_2^2 + uncertainty_3^2)
@@ -1371,7 +1379,7 @@ def CorrectionValuesObtain(ReferenceData):
                 correction = a/(ionization_efficiency*fragment_intensity)
                 if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
                     correction = correction*tuningCorrectionIntensityFactors[row_counter]
-                    print("line 1305", ReferenceData.standardized_reference_patterns[row_counter,0], tuningCorrectionIntensityFactors[row_counter])
+                    #print("line 1305", ReferenceData.standardized_reference_patterns[row_counter,0], tuningCorrectionIntensityFactors[row_counter])
                 current_molecule_correction_factors_list.append(correction)
                 correction_values_direct[row_counter,column_counter] = correction
             else: 
@@ -3260,7 +3268,6 @@ class MSReference (object):
             referenceFileHeader += "Molecular Mass," + DataFunctions.arrayLikeToCSVstring(self.molecularWeights)# + "\n"
             if hasattr(self ,"standardized_reference_patterns"):
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.standardized_reference_patterns,len(self.molecules))
-                print("line 3245", self.standardized_reference_patterns)
             else:
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
