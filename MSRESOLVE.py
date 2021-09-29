@@ -1105,7 +1105,6 @@ def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
 
 #desiredMoleculesOrder should be a list of strings of molecule names.
 def rearrangeReferenceData(ReferenceData, desiredMoleculesOrder):
-    print("line 1108", desiredMoleculesOrder)
     #We are going to make separte ReferenceData objects for each molecule, and then 'concatenate' those objects to make the rearranged molecular object.
     #This function can thus also be used for truncating a ReferenceData object.
     #We will first make a list where we will place ReferenceData object copy for each of the desiredMolecules.
@@ -1242,7 +1241,6 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
 #system created by Madix and Ko and puts this in an answers array
 def CorrectionValuesObtain(ReferenceData):
     ReferenceData.ExportCollector("ReferencePatternOriginalForCorrectionValues",use_provided_reference_patterns=False)
-    #G.referenceFileStandardTuning = [] #FIXME: Testing purposes only.
     if len(G.referenceFileStandardTuning) == 0: #This is the simple case, if there is no tuningCorrectionIntensity feature being used.
         ReferenceDataForCorrectionValues = copy.deepcopy(ReferenceData)
     if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
@@ -1305,7 +1303,7 @@ def CorrectionValuesObtain(ReferenceData):
         #move the pointer.
         ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
         
-        
+    ReferenceDataForCorrectionValues =  ReferenceData #FIXME: Temporary for testing purposes.
     print('line 1282', ReferenceData.molecules, ReferenceDataForCorrectionValues.molecules)
     reference_width = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
     reference_height = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
@@ -1322,7 +1320,6 @@ def CorrectionValuesObtain(ReferenceData):
     #the first for loop here gets all of the values for e- and mw and uses them to get the
     #respective values that can find the correction factor for each mass fragment of each molecule
     for column_counter in range(1,reference_width): #array-indexed for loop, skips column one b/c that is the mass fragment numbers, not relative intensities. This loops across each molecule.
-        print("line 1324", column_counter, ReferenceDataForCorrectionValues.molecules)
         moleculeName = ReferenceDataForCorrectionValues.molecules[column_counter-1]
         ionization_efficiency = ReferenceDataForCorrectionValues.relativeIonizationEfficiencies[column_counter-1]
         current_molecule_correction_factors_list = []
