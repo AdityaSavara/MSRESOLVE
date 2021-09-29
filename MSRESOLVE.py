@@ -1095,14 +1095,34 @@ def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
         patternToExtendBy = ReferenceDataToExtendBy.standardized_reference_patterns
     else:
         patternToExtendBy = ReferenceDataToExtendBy.provided_reference_patterns
-
-    
     extendedReferenceData = copy.deepcopy(OriginalReferenceData)  #We need to make a copy so we don't change anything in the original reference data object, since that may not be desired.
     #The below command will modify the  extendedReferenceData, so we don't need to return anything from the function though we will do so.
     extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.standardized_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, sourceOfIonizationData=ReferenceDataToExtendBy.sourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataToExtendBy.relativeIonizationEfficiencies, moleculeIonizationType=ReferenceDataToExtendBy.moleculeIonizationType)
     addedReferenceSlice = ReferenceDataToExtendBy #the addition has finished.
     extendedReferenceData.exportIonizationInfo()
     return extendedReferenceData, addedReferenceSlice
+
+
+#desiredMoleculesOrder should be a list of strings of molecule names.
+def rearrangeReferenceData(ReferenceData, desiredMoleculesOrder):
+    #We are going to make separte ReferenceData objects for each molecule, and then 'concatenate' those objects to make the rearranged molecular object.
+    #This function can thus also be used for truncating a ReferenceData object.
+    #We will first make a list where we will place ReferenceData object copy for each of the desiredMolecules.
+    individualMoleculeReferenceDataList = []
+    for moleculeIndex,moleculeName in enumerate(desiredMoleculesOrder):
+        #we are going to make ReferenceData object with only moleculeName.
+        #make a list of the other molecules so we can remove them.
+        otherMolecules = copy.deepcopy(list(desiredMoleculesOrder)) #initializing.
+        otherMolecules.remove(moleculeName) #remove modifies the original ilst.
+        print("Line 1115",moleculeName, otherMolecules)
+        #Below creates the individualMoleculeReferenceData and then appends it with the same moleculeIndex to the individualMoleculeReferenceDataList
+        individualMoleculeReferenceData = ReferenceData.removeMolecules(otherMolecules)
+        individualMoleculeReferenceDataList.append(individualMoleculeReferenceData)
+    #Now having a list of all the desired molecules individual ReferenceData objects, we just need to put them together.
+    combinedReferenceData  = individualMoleculeReferenceDataList[0] #initialize with the first molecule.
+    for individualMoleculeReferenceData in individualMoleculeReferenceDataList[1:]:#note that we are skipping index 0.
+        combinedReferenceData, addedReferenceSlice = extendReferencePattern(OriginalReferenceData= combinedReferenceData, ReferenceDataToExtendBy= individualMoleculeReferenceData)
+    return combinedReferenceData
     
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
 def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
@@ -1119,7 +1139,7 @@ def trimDataMoleculesToMatchChosenMolecules(ReferenceData, chosenMolecules):
     trimmedReferenceIntensities, trimmedMoleculesList = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedRefererenceData.provided_reference_patterns[:,1:],
                                                                                                                     allMoleculesList, chosenMolecules, header_dtype_casting=str)  
     #add a second dimension to the reference data
-    trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.provided_mass_fragments,(-1,1))
+    trimmedReferenceMF = numpy.reshape(trimmedRefererenceData.standardized_reference_patterns[:,0],(-1,1))
     #Add the abscissa back into the reference values
     trimmedRefererenceData.provided_reference_patterns = numpy.hstack((trimmedReferenceMF,trimmedReferenceIntensities))
     
@@ -1277,6 +1297,9 @@ def CorrectionValuesObtain(ReferenceData):
         #This is the ReferenceDataObject to carry forward.
         ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuning.csv")
         ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
+        #rearrange the molecules to the right order.
+        ReferenceDataForCorrectionValues = rearrangeReferenceData(ReferenceData=ReferenceDataForCorrectionValues, desiredMoleculesOrder=ReferenceData.molecules)
+        
         
     print('line 1282', ReferenceData.molecules, ReferenceDataForCorrectionValues.molecules)
     reference_width = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
@@ -2982,6 +3005,7 @@ class MSReference (object):
         for moleculeName in self.molecules:
             if moleculeName in listOfMoleculesToRemove:
                 moleculesToKeep.remove(moleculeName)
+        print("line 3008", moleculesToKeep, listOfMoleculesToRemove)
         trimmedRefererenceData = trimDataMoleculesToMatchChosenMolecules(self, moleculesToKeep)        
         return trimmedRefererenceData
         
