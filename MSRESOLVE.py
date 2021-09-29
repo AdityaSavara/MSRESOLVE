@@ -5621,7 +5621,6 @@ def PopulateLogFile():
             strVersionOf_abcCoefficients_cov = str(G.referenceCorrectionCoefficients_cov)
         if type(G.referenceCorrectionCoefficients_cov) != type(None):
             listVersionOf_abcCoefficients_cov = list(G.referenceCorrectionCoefficients_cov) #make the outer structure a list.
-            print(listVersionOf_abcCoefficients_cov)
             for elementIndex in range(len(listVersionOf_abcCoefficients_cov)): #make the inner structures lists, also.
                 listVersionOf_abcCoefficients_cov[elementIndex] = list(listVersionOf_abcCoefficients_cov[elementIndex])
             strVersionOf_abcCoefficients_cov = str(listVersionOf_abcCoefficients_cov)
