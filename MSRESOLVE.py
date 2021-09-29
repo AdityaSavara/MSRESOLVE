@@ -917,7 +917,7 @@ def ExtractReferencePatternFromData(ExperimentData, referenceData, rpcChosenMole
         for massChoice in currentMassesList:
             if massChoice not in ExperimentData.mass_fragment_numbers:
                 print("ERROR: You have selected to extract the reference pattern intensity of mass " + str(massChoice) + " from experimental data for one of your molecules, but this mass was not monitored. Please adjust your choices and run MSRESOLVE again."); sys.exit()
-            if massChoice not in copyOfreferenceData.provided_mass_fragments:
+            if massChoice not in copyOfreferenceData.standardized_reference_patterns[:,0]:
                 print("ERROR: You have selected to extract the reference pattern intensity of mass " + str(massChoice) + " from experimental data for one of your molecules, but this mass did not have a value greater than 0 in in your original reference pattern. Please adjust your inputs and run MSRESOLVE again."); sys.exit()
                 
                 
@@ -939,8 +939,8 @@ def ExtractReferencePatternFromData(ExperimentData, referenceData, rpcChosenMole
                                 rpcTimeRanges[chosenmoleculescounter].append(rpcTimeRanges[chosenmoleculescounter][0])
                 #For a given molecule, and a given mass fragment to be changed, the below for loop finds the index of the fragment to be changed, with respect to the reference pattern's mass fragments.
                 for eachChosenMoleculesMFIndex in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):#array-indexed for loop
-                    for refMFCounter in range(len(copyOfreferenceData.provided_mass_fragments)): #checks whole input list (or list that was made by previous loop)
-                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMFIndex] == copyOfreferenceData.provided_mass_fragments[refMFCounter]:#gets index of mass fragment number
+                    for refMFCounter in range(len(copyOfreferenceData.standardized_reference_patterns[:,0])): #checks whole input list (or list that was made by previous loop)
+                        if rpcChosenMoleculesMF[chosenmoleculescounter][eachChosenMoleculesMFIndex] == copyOfreferenceData.standardized_reference_patterns[:,0][refMFCounter]:#gets index of mass fragment number
                             massfragindexerRef.append(refMFCounter)
                 for eachChosenMoleculesMFIndex in range(len(rpcChosenMoleculesMF[chosenmoleculescounter])):
                     for expMFCounter in range(len(ExperimentData.mass_fragment_numbers)):
@@ -1223,13 +1223,13 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
     # Also remove the corresponding mass data column from Experiment.workingData.
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                         trimmedExperimentData.mass_fragment_numbers,
-                                                                                                        ReferenceData.provided_mass_fragments, header_dtype_casting=float)
+                                                                                                        ReferenceData.standardized_reference_patterns[:,0], header_dtype_casting=float)
     if G.calculateUncertaintiesInConcentrations:
         if (type(G.collectedFileUncertainties) != type(None)) and (str(G.collectedFileUncertainties).lower() != str('None').lower()): #Note: As of Feb 5th 2020, this code has been added and tested.
             if hasattr(trimmedExperimentData2, 'rawsignals_absolute_uncertainties'):
                 (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
                                                                                                                     trimmedExperimentData2.mass_fragment_numbers,
-                                                                                                                    ReferenceData.provided_mass_fragments, header_dtype_casting=float)
+                                                                                                                    ReferenceData.standardized_reference_patterns[:,0], header_dtype_casting=float)
                 trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
                                                                                                             
     return trimmedExperimentData
@@ -2542,7 +2542,7 @@ def readReferenceFile(referenceFileName, form):
         masslist = [] #future list
         #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
         #'nan's or empty spaces after the numbers
-        provided_mass_fragments = provided_reference_patterns[:,0] 
+        provided_mass_fragments = standardized_reference_patterns[:,0]
         for referenceIndex in range(len(provided_mass_fragments)): #array-indexed for loop
             if str(masslists[0][referenceIndex]) != 'nan': #we do not want nan's in our array, the genfromtxt function calls empty boxes in excel (might be in .csv as well)'nan'.
                 masslist.append(masslists[0][referenceIndex])
@@ -3133,14 +3133,14 @@ class MSReference (object):
         masslist = [] #future list
         #This for loop gets all of the mass fragments from the first index of the list, basically by not adding the 
         #'nan's or empty spaces after the numbers
-        for referenceIndex in range(len(self.provided_mass_fragments)): #array-indexed for loop
+        for referenceIndex in range(len(self.standardized_reference_patterns[:,0])): #array-indexed for loop
             if str(masslists[0][referenceIndex]) != 'nan': #we do not want nan's in our array, the genfromtxt function calls empty boxes in excel (might be in .csv as well)'nan'.
                 masslist.append(masslists[0][referenceIndex])
         #this second nested for loop gathers all the other mass fragment numbers that have not already been added to
         #the masslist, basically obtaining all the masses in the reference data and then after the loop they are sorted
         #using .sort, then an empty array of zeros is made to accommodate the output array
         for masslistIndex in range(1,len(masslists)):#array-indexed for loop, starts at one because it's checking against all arrays besides itself
-            for referenceIndex in range(len(self.provided_mass_fragments)):#array-indexed for loop
+            for referenceIndex in range(len(self.standardized_reference_patterns[:,0])):#array-indexed for loop
                 if str(masslists[masslistIndex][referenceIndex]) != 'nan':
                     if sum(masslists[masslistIndex][referenceIndex] == numpy.array(masslist)) == 0:#if the value being looked at is not equal to anything in our masslist already
                         masslist.append(masslists[masslistIndex][referenceIndex])
