@@ -1115,14 +1115,12 @@ def rearrangeReferenceData(ReferenceData, desiredMoleculesOrder):
         otherMolecules = copy.deepcopy(list(desiredMoleculesOrder)) #initializing.
         otherMolecules.remove(moleculeName) #remove modifies the original ilst.
         #Below creates the individualMoleculeReferenceData and then appends it with the same moleculeIndex to the individualMoleculeReferenceDataList
-        print("line 1119", moleculeName, otherMolecules)
         individualMoleculeReferenceData = ReferenceData.removeMolecules(otherMolecules)
         individualMoleculeReferenceDataList.append(individualMoleculeReferenceData)
     #Now having a list of all the desired molecules individual ReferenceData objects, we just need to put them together.
     combinedReferenceData  = individualMoleculeReferenceDataList[0] #initialize with the first molecule.
     for individualMoleculeReferenceData in individualMoleculeReferenceDataList[1:]:#note that we are skipping index 0.
         combinedReferenceData, addedReferenceSlice = extendReferencePattern(OriginalReferenceData= combinedReferenceData, ReferenceDataToExtendBy= individualMoleculeReferenceData)
-    print("line 1125", combinedReferenceData.molecules)
     return combinedReferenceData
     
 #This function operates in a parallel way to trimDataMasses, but it operates on the reference data and all of it's constituent variables  
@@ -1254,7 +1252,6 @@ def CorrectionValuesObtain(ReferenceData):
                 referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
             else:
                 referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
-            print("line 1231", G.referenceFileDesiredTuning, G.referenceFileStandardTuning)
             abcCoefficients, abcCoefficients_covmat = ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm=referenceFileDesiredTuningAndForm, ReferencePatternDesiredTuning_FileNameAndForm = G.referenceFileStandardTuning, exportCoefficients=False) #We will separately export the coefficents for this usage.
         #The above abcCoefficients and abcCoefficients_covmat are for the direction that if we multiply the existing tuning we will get the standard tuning. This factor is actually the same as what we want for our tuning factor intensity correction: if the "existing" pattern is low, that means that the actual amount of the ion is "higher".  The second question is whether the correctionValues should be multiplied by or divided by this factor.  In general, the equation is that "signals*correctionValue = concentration".  So to bring a small signal up, this is already in the right direction.
         #We will also use this to create a mixed pattern for getting the standard tuning correction values.
@@ -1303,8 +1300,6 @@ def CorrectionValuesObtain(ReferenceData):
         #move the pointer.
         ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
         
-    ReferenceDataForCorrectionValues =  ReferenceData #FIXME: Temporary for testing purposes.
-    print('line 1282', ReferenceData.molecules, ReferenceDataForCorrectionValues.molecules)
     reference_width = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
     reference_height = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
     correction_values_direct = ReferenceDataForCorrectionValues.standardized_reference_patterns*1.0 #just initializing as same size, but note that this has the mass fragments column.
@@ -1331,7 +1326,6 @@ def CorrectionValuesObtain(ReferenceData):
         for row_counter in range(0,reference_height):  #array-indexed for loop
             fragment_intensity = ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,column_counter] #This is actually the fragment's intensity in the standardized reference pattern.
             if fragment_intensity != 0: #only gets the Gm and Tm if relative intensity is not equal to zero
-                print("line 1334", ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,0], fragment_intensity)
                 electron_multiplier_gain = (28/ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,0])**0.5 
                 if (ReferenceDataForCorrectionValues.standardized_reference_patterns[row_counter,0] < 30): #transmission gain depends on the mass fragment mass
                     transmission_gain = 1
@@ -1348,7 +1342,6 @@ def CorrectionValuesObtain(ReferenceData):
                     quotients_relative_uncertainties[row_counter] = quotient_relative_uncertainty
                     
         a = sum(quotients)
-        print("line 1354", moleculeName, a)
         if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)): #if uncertainties are going to be calculated.
             quotients_absolute_uncertainties = quotients*quotients_relative_uncertainties #We will need the absolute uncertainties because now there is a summation.
             #now to calculate the a_uncertainty, we we will use a_uncertainty = sqrt( uncertainty_1^2 + uncertainty_2^2 + uncertainty_3^2)
@@ -1376,7 +1369,6 @@ def CorrectionValuesObtain(ReferenceData):
                 correction = a/(ionization_efficiency*fragment_intensity)
                 if len(G.referenceFileStandardTuning) > 0: #if referenceFileStandardTuning is provided, that means that the tuningCorrectorIntensity feature will be used.
                     correction = correction*tuningCorrectionIntensityFactors[row_counter]
-                    #print("line 1305", ReferenceData.standardized_reference_patterns[row_counter,0], tuningCorrectionIntensityFactors[row_counter])
                 current_molecule_correction_factors_list.append(correction)
                 correction_values_direct[row_counter,column_counter] = correction
             else: 
@@ -3010,7 +3002,6 @@ class MSReference (object):
         for moleculeName in self.molecules:
             if moleculeName in listOfMoleculesToRemove:
                 moleculesToKeep.remove(moleculeName)
-        print("line 3008", moleculesToKeep, listOfMoleculesToRemove)
         trimmedRefererenceData = trimDataMoleculesToMatchChosenMolecules(self, moleculesToKeep)        
         return trimmedRefererenceData
         
