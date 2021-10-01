@@ -3268,11 +3268,11 @@ The MolecularIonizationData class is used to generate a molecule's ionization fa
 class MolecularIonizationData (object):
     def __init__(self,moleculeName,RS_Value,electronNumber,moleculeIonizationType='unknown',sourceOfIonizationData='unknown'):
         #Store the MID variables
-        self.moleculeName = moleculeName.strip()
-        self.RS_ValuesList = [float(RS_Value)] #Since we can have slightly different RS_values for a molecule, make a list so a molecule with more than one RS_Value can contain all the info provided
-        self.electronNumber = float(electronNumber)
+        self.moleculeName = moleculeName.strip() #TODO: consider making this a list to be consistent with the other objects.
+        self.RS_ValuesList = parse.listCast(float(RS_Value)) #Since we can have slightly different RS_values for a molecule, make a list so a molecule with more than one RS_Value can contain all the info provided
+        self.electronNumber = float(electronNumber) #TODO: consider making this a list to be consistent with the other objects.
         self.moleculeIonizationType = parse.listCast(moleculeIonizationType)
-        self.sourceOfIonizationData = [sourceOfIonizationData] #Different RS values can come from different sources so make a list that will be parallel to RS_ValuesList containing the source of each RS Value at the same index
+        self.sourceOfIonizationData = parse.listCast(sourceOfIonizationData) #Different RS values can come from different sources so make a list that will be parallel to RS_ValuesList containing the source of each RS Value at the same index
         
     def addData(self,RS_Value,sourceOfIonizationData):
         #if we have more than one RS_Value, then append to the list
