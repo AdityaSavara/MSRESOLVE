@@ -1452,7 +1452,7 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
 #data this is done so that there will not be errors in the code later (as other molecules may also have 0 signal 
 #relative to CO) It does this by looking at the matching mass fragments and deleting any columns which contain only
 #zeros, and then also deletes that molecule form the molecules array and the correction values array.
-def  UnnecessaryMoleculesDeleter(ReferenceData):
+def UnnecessaryMoleculesDeleter(ReferenceData):
     try:
         width = len(ReferenceData.monitored_reference_intensities[0,:])
     except:
@@ -1478,7 +1478,7 @@ def  UnnecessaryMoleculesDeleter(ReferenceData):
 #this little function lets you choose your own times range, the inputs are the start of the range,
 #the end of the range, a 'yes' or 'no' (timerangelimit), and the times and collected arrays
 #the collected data will be shortened to the length of the new chosen times abscissa
-def  TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
+def TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
     #due to an uncommon numpy error "DeprecationWarning: in the future the special handling of scalars will be removed from delete and raise an error"  we will check if the rawsignals_absolute_uncertainties is really present or not. If it is present, we will need to operate on it as well.
     rawsignals_absolute_uncertainties_present = False #just initiailzing.
     if hasattr(ExperimentData,'rawsignals_absolute_uncertainties'):
@@ -1518,6 +1518,7 @@ def ScaleDown(a1DArray, multiplier = None, Cap = 100, ScalesOf10 = False):
         maxNumber = float(max(a1DArray))
         # Confirm that the array needs scaling
         if maxNumber < Cap:
+            multiplier = 1
             return a1DArray, multiplier
         #calculate multiplier
         multiplier = Cap/maxNumber
@@ -1550,6 +1551,7 @@ def ScaleUp(a1DArray, multiplier = None, Base = 1, ScalesOf10 = False):
         minNumber = float(numpy.min(a1DArray[numpy.nonzero(a1DArray)]>0))  #This first gets the nonzero values, then takes the ones greater than 0, then finds the minimum.
         # Confirm that the array needs scaling
         if minNumber > Base:
+            multiplier = 1
             return a1DArray, multiplier
         # calculate multiplier
         multiplier = Base/minNumber
