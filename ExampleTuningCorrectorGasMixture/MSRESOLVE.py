@@ -1253,7 +1253,7 @@ def ScaleDown(a1DArray, multiplier = None, Cap = 100, ScalesOf10 = False):
         maxNumber = float(max(a1DArray))
         # Confirm that the array needs scaling
         if maxNumber < Cap:
-            return a1DArray
+            return a1DArray, multiplier
         #calculate multiplier
         multiplier = Cap/maxNumber
         # if neccessary, scale multiplier 
@@ -1285,7 +1285,7 @@ def ScaleUp(a1DArray, multiplier = None, Base = 1, ScalesOf10 = False):
         minNumber = float(numpy.min(a1DArray[numpy.nonzero(a1DArray)]>0))  #This first gets the nonzero values, then takes the ones greater than 0, then finds the minimum.
         # Confirm that the array needs scaling
         if minNumber > Base:
-            return a1DArray
+            return a1DArray, multiplier
         # calculate multiplier
         multiplier = Base/minNumber
         # if neccessary, scale multiplier 
