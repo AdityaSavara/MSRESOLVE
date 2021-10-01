@@ -1,4 +1,4 @@
-Fri Sep 24 02:41:03 2021
+Fri Oct  1 19:24:42 2021
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] 
 form  = ['xyyy'] 
@@ -10,7 +10,7 @@ specificMassFragments = yes
 chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] 
 extractReferencePatternFromDataOption = yes 
 rpcMoleculesToChange = ['Crotyl Alcohol', 'CO2'] 
-rpcMoleculesToChangeMF = [[57, 70, 44], [28, 44]] 
+rpcMoleculesToChangeMF = [array([57., 70., 44.]), array([28., 44.])] 
 rpcTimeRanges = [[300, 600], [300, 600]] 
 dataSmootherYorN = yes 
 dataSmootherChoice = timerange 
@@ -27,5 +27,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 4.29956 seconds 
+Run Time 3.57678 seconds 
 ###################################################################### 

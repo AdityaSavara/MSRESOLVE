@@ -1452,7 +1452,7 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
 #data this is done so that there will not be errors in the code later (as other molecules may also have 0 signal 
 #relative to CO) It does this by looking at the matching mass fragments and deleting any columns which contain only
 #zeros, and then also deletes that molecule form the molecules array and the correction values array.
-def  UnnecessaryMoleculesDeleter(ReferenceData):
+def UnnecessaryMoleculesDeleter(ReferenceData):
     try:
         width = len(ReferenceData.monitored_reference_intensities[0,:])
     except:
@@ -1478,7 +1478,7 @@ def  UnnecessaryMoleculesDeleter(ReferenceData):
 #this little function lets you choose your own times range, the inputs are the start of the range,
 #the end of the range, a 'yes' or 'no' (timerangelimit), and the times and collected arrays
 #the collected data will be shortened to the length of the new chosen times abscissa
-def  TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
+def TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
     #due to an uncommon numpy error "DeprecationWarning: in the future the special handling of scalars will be removed from delete and raise an error"  we will check if the rawsignals_absolute_uncertainties is really present or not. If it is present, we will need to operate on it as well.
     rawsignals_absolute_uncertainties_present = False #just initiailzing.
     if hasattr(ExperimentData,'rawsignals_absolute_uncertainties'):
@@ -1518,6 +1518,7 @@ def ScaleDown(a1DArray, multiplier = None, Cap = 100, ScalesOf10 = False):
         maxNumber = float(max(a1DArray))
         # Confirm that the array needs scaling
         if maxNumber < Cap:
+            multiplier = 1
             return a1DArray, multiplier
         #calculate multiplier
         multiplier = Cap/maxNumber
@@ -1550,6 +1551,7 @@ def ScaleUp(a1DArray, multiplier = None, Base = 1, ScalesOf10 = False):
         minNumber = float(numpy.min(a1DArray[numpy.nonzero(a1DArray)]>0))  #This first gets the nonzero values, then takes the ones greater than 0, then finds the minimum.
         # Confirm that the array needs scaling
         if minNumber > Base:
+            multiplier = 1
             return a1DArray, multiplier
         # calculate multiplier
         multiplier = Base/minNumber
@@ -2612,7 +2614,7 @@ def readReferenceFile(referenceFileName, form):
                     dfmoleculeIonizationType = dataFrame.iloc[rowIndex][1:] #select row of names
                     moleculeIonizationType = dfmoleculeIonizationType.values #convert to matrix
                     moleculeIonizationType = moleculeIonizationType.astype(numpy.str) #save as class object with type string
-                elif (dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies') or (dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies'):
+                elif (dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies') or (dataFrame.iloc[rowIndex][0] == 'knownIonizationFactorsRelativeToN2'):
                     dfrelativeIonizationEfficiencies = dataFrame.iloc[rowIndex][1:] #select row of names
                     relativeIonizationEfficiencies = dfrelativeIonizationEfficiencies.values #convert to matrix
                     for index in range(len(relativeIonizationEfficiencies)):
@@ -3266,11 +3268,11 @@ The MolecularIonizationData class is used to generate a molecule's ionization fa
 class MolecularIonizationData (object):
     def __init__(self,moleculeName,RS_Value,electronNumber,moleculeIonizationType='unknown',sourceOfIonizationData='unknown'):
         #Store the MID variables
-        self.moleculeName = moleculeName.strip()
-        self.RS_ValuesList = [float(RS_Value)] #Since we can have slightly different RS_values for a molecule, make a list so a molecule with more than one RS_Value can contain all the info provided
-        self.electronNumber = float(electronNumber)
+        self.moleculeName = moleculeName.strip() #TODO: consider making this a list to be consistent with the other objects.
+        self.RS_ValuesList = parse.listCast(float(RS_Value)) #Since we can have slightly different RS_values for a molecule, make a list so a molecule with more than one RS_Value can contain all the info provided
+        self.electronNumber = float(electronNumber) #TODO: consider making this a list to be consistent with the other objects.
         self.moleculeIonizationType = parse.listCast(moleculeIonizationType)
-        self.sourceOfIonizationData = [sourceOfIonizationData] #Different RS values can come from different sources so make a list that will be parallel to RS_ValuesList containing the source of each RS Value at the same index
+        self.sourceOfIonizationData = parse.listCast(sourceOfIonizationData) #Different RS values can come from different sources so make a list that will be parallel to RS_ValuesList containing the source of each RS Value at the same index
         
     def addData(self,RS_Value,sourceOfIonizationData):
         #if we have more than one RS_Value, then append to the list

@@ -1,4 +1,4 @@
-Fri Sep 24 02:42:01 2021
+Fri Oct  1 19:25:36 2021
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2_iter_1.csv'] 
 form  = ['xyyy'] 
@@ -26,5 +26,5 @@ scaleRawDataFactor  = 1000.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.67799 seconds 
+Run Time 0.43372 seconds 
 ###################################################################### 
