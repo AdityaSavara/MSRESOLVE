@@ -5687,7 +5687,7 @@ def PopulateLogFile():
             f6.write('uniqueOrCommon = %s \n'%(G.uniqueOrCommon))
             f6.write('slsFinish = %s \n'%(G.slsFinish))
             if G.slsFinish == 'brute':
-                f6.write('bruteOption = %s \n'%(G.bruteOption))
+                f6.write('objectiveFunctionType = %s \n'%(G.objectiveFunctionType))
             if G.slsFinish == 'inverse':
                 f6.write('distinguished = %s \n'%(G.distinguished))
         if G.answer == 'inverse':
@@ -6119,7 +6119,7 @@ def main():
                     #solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.matching_correction_values,rawsignalsarrayline,
                                                          # currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
                                                          # ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
-                                                         # DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption, G.maxPermutations)           
+                                                         # DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType, G.maxPermutations)           
             if G.answer == 'inverse':#user input, the inverse method
                 if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
                     solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, uncertainties_dict)
@@ -6129,12 +6129,12 @@ def main():
             elif G.answer == 'sls' or G.answer == 'autosolver':#user input, the SLS method is chosen)
                 #FIXME: should be passing uncertainties_dict into SLSMethod, but when I try I get some kind of solutions error. Comes out as []. Since I am having trouble, I am just passing it through globals.
                 G.uncertainties_dict = uncertainties_dict
-                solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
+                solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType,ExperimentData.times[timeIndex],G.maxPermutations)
                 if G.answer == 'autosolver':
                     if solutions.any() == None:
                         if SLSChoices[0] == "unique":
                             print("SLS Unique has failed, trying SLS common.")
-                            solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,["common", G.slsFinish, G.distinguished],ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.bruteOption,ExperimentData.times[timeIndex],G.maxPermutations)
+                            solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,["common", G.slsFinish, G.distinguished],ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType,ExperimentData.times[timeIndex],G.maxPermutations)
                             if solutions.any() == None:
                                 print("The SLS method failed to solve this problem even with SLS common. Attempting an inverse method solution. To solve without inverse, consider raising the Reference Mass Fragmentation Threshold.")
                                 if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
@@ -6150,12 +6150,12 @@ def main():
             arrayline = numpy.array(arrayline)
 #            if G.fullBrute == 'yes':
 #                specifications = 
-#                arrayline = OptimizingFinisher(ReferenceData.molecules,  G.bruteOption)
+#                arrayline = OptimizingFinisher(ReferenceData.molecules,  G.objectiveFunctionType)
             try:
                 if G.UserChoices['dataAnalysisMethods']['finalOptimization'] != 'None':
                     optimizer = G.UserChoices['dataAnalysisMethods']['finalOptimization']
                     specifications=[solutions]
-                    concentrationsFromFinisher = OptimizingFinisher(currentReferenceData.molecules,specifications,currentReferenceData.matching_correction_values,rawsignalsarrayline,G.UserChoices['dataAnalysisMethods']['bruteOption'],G.maxPermutations, optimizer=optimizer)
+                    concentrationsFromFinisher = OptimizingFinisher(currentReferenceData.molecules,specifications,currentReferenceData.matching_correction_values,rawsignalsarrayline,G.UserChoices['dataAnalysisMethods']['objectiveFunctionType'],G.maxPermutations, optimizer=optimizer)
                     solutions = concentrationsFromFinisher
             except:
                 pass
@@ -6171,7 +6171,7 @@ def main():
                     f.write( str(list(G.massesUsedInSolvingMoleculesForThisPoint))[1:-1] + "\n" )                    
             
             if G.negativeAnalyzerYorN == 'yes':
-                arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.bruteOption, G.maxPermutations, G.NegativeAnalyzerTopNContributors, G.NegativeAnalyzerBaseNumberOfGridIntervals)
+                arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.objectiveFunctionType, G.maxPermutations, G.NegativeAnalyzerTopNContributors, G.NegativeAnalyzerBaseNumberOfGridIntervals)
 
             if G.implicitSLScorrection == True: #Note: Not compatibile with iterative. Needs to be executed before the concentrations (arrayline) are stacked.
             #TODO: May 17 2020. Right now, we only take the LARGEST correction for each sls when deciding which sls mass to correct, then we apply that correction. But maybe we should take a single recursion of all molecules affecting? Then apply all molecules to that sls mass before moving to the next one?

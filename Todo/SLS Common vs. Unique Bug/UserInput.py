@@ -196,7 +196,7 @@ negativeAnalyzerYorN = 'no'
 answer = 'sls'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
 slsFinish = 'inverse'	#'brute' or 'inverse'; brute is suggested
-bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
+objectiveFunctionType = 'ssr'	#objectiveFunctionType = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
 SLSUniquePrint = 'yes'
@@ -250,6 +250,6 @@ __var_list__ = ['referenceFileName','form','collectedFileName','referencePattern
 				'rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod',
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
-				'uniqueOrCommon','slsFinish','bruteOption','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
+				'uniqueOrCommon','slsFinish','objectiveFunctionType','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
 				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
 				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']
