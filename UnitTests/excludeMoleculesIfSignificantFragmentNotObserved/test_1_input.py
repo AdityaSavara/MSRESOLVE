@@ -196,7 +196,7 @@ negativeAnalyzerYorN = 'no'
 answer = 'sls'	#'inverse' or 'sls'; sls is suggested
 uniqueOrCommon = 'common'	#'unique' or 'common'; common is suggested
 slsFinish = 'brute'	#'brute' or 'inverse'; brute is suggested
-bruteOption = 'ssr'	#bruteOption = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
+objectiveFunctionType = 'ssr'	#objectiveFunctionType = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 
 distinguished = 'yes'
 fullBrute = 'yes'
 SLSUniquePrint = 'yes'

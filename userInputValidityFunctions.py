@@ -204,7 +204,7 @@ def parseUserInput(currentUserInput):
     parse.strCheck(currentUserInput.answer,'answer')
     parse.strCheck(currentUserInput.uniqueOrCommon,'uniqueOrCommon')
     parse.strCheck(currentUserInput.slsFinish,'slsFinish')
-    parse.strCheck(currentUserInput.bruteOption,'bruteOption')
+    parse.strCheck(currentUserInput.objectiveFunctionType,'objectiveFunctionType')
     parse.strCheck(currentUserInput.distinguished,'distinguished')
     parse.strCheck(currentUserInput.fullBrute,'fullBrute')
     parse.strCheck(currentUserInput.SLSUniqueExport,'SLSUniqueExport')
@@ -409,7 +409,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['slsWeighting']= UserChoices['dataAnalysisMethods']['slsWeighting']
     SettingsVDictionary['slsFinish']   = UserChoices['dataAnalysisMethods']['slsFinish']
     SettingsVDictionary['slsUniquePositiveConcentrationsOnly']   = UserChoices['dataAnalysisMethods']['slsUniquePositiveConcentrationsOnly']
-    SettingsVDictionary['bruteOption']   = UserChoices['dataAnalysisMethods']['bruteOption']
+    SettingsVDictionary['objectiveFunctionType']   = UserChoices['dataAnalysisMethods']['objectiveFunctionType']
     SettingsVDictionary['distinguished']   = UserChoices['dataAnalysisMethods']['distinguished']
     SettingsVDictionary['fullBrute']   = UserChoices['dataAnalysisMethods']['fullBrute']
     SettingsVDictionary['SLSUniqueExport']   = UserChoices['dataAnalysisMethods']['SLSUniqueExport']
