@@ -2800,8 +2800,11 @@ def getMassFragmentsFromCollectedData(CollectedFileName):
     massFragments = DataInfoArray[0,1:] #First row, all but the first column
     #Remove the 'm' from each fragment and convert to float (i.e. 'm28' now becomes 28.)
     for i in range(0,len(massFragments)):
-        if type(massFragments[i]) == type("string"):
-            massFragments[i] = float(massFragments[i][1:])
+        massFragments[i] == str(massFragments[i])
+        massFragments[i] = massFragments[i].replace("mass",'')
+        massFragments[i] = massFragments[i].replace("m",'')
+        massFragments[i] = massFragments[i].strip()
+        massFragments[i] = float(massFragments[i])
     return massFragments
 
 '''
