@@ -5,6 +5,7 @@ For this example, we have created a fictional case of a gas mixture by multiplyi
 This is in the file TuningCorrectorGasMixtureHypotheticalReferenceMeasuredSignals.csv
 
 
+The reference pattern listed for analysis has internally collected spectra which are retained in the final pattern (ethyne, ethene, and ethane). This example takes an external 1butanal pattern (from NIST) and corrects it to match the collected spectra's spectrometer.
 
 Proc Doc type things:
  -- First added at line 5351 
