@@ -1299,7 +1299,6 @@ def CorrectionValuesObtain(ReferenceData):
         ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuningRearranged.csv")
         #move the pointer.
         ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
-    print("Line 1302", ReferenceDataForCorrectionValues.standardized_reference_patterns[0,:]) 
     reference_width = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
     reference_height = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
     correction_values_direct = ReferenceDataForCorrectionValues.standardized_reference_patterns*1.0 #just initializing as same size, but note that this has the mass fragments column.
@@ -1315,7 +1314,6 @@ def CorrectionValuesObtain(ReferenceData):
     #the first for loop here gets all of the values for e- and mw and uses them to get the
     #respective values that can find the correction factor for each mass fragment of each molecule
     for column_counter in range(1,reference_width): #array-indexed for loop, skips column one b/c that is the mass fragment numbers, not relative intensities. This loops across each molecule.
-        print("Line 1318", column_counter, ReferenceDataForCorrectionValues.molecules)
         moleculeName = ReferenceDataForCorrectionValues.molecules[column_counter-1]
         ionization_efficiency = ReferenceDataForCorrectionValues.relativeIonizationEfficiencies[column_counter-1]
         current_molecule_correction_factors_list = []
@@ -2696,20 +2694,13 @@ def readReferenceFile(referenceFileName, form):
         breakLoop = False 
         for rowIndex in range(len(dataFrame)): #Loop through each row and check the abscissa value
             try: #rowIndex == 4: #Try to convert the abscissa title to a float
-                print("line 2698", rowIndex)
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
-                print("line 2700")
                 dfreference = dataFrame.iloc[rowIndex:][:] #remove the rows of headers
-                print("line 2702")
                 reference = dfreference.values #convert to matrix
-                print("line 2704")
                 provided_reference_patterns = reference.astype(numpy.float) #convert the matrix to floats
-                print("line 2706")
                 #print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
                 provided_reference_patterns = FromXYXYtoXYYY(provided_reference_patterns) #convert reference from XYXY to XYYY
-                print("Line 2710", provided_reference_patterns)
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
-                print("Line 2712", provided_reference_patterns)
                 break #exit the for loop
                 
             except: #rowIndex < 4: #Otherwise the row consists of other information
@@ -2820,34 +2811,23 @@ def readReferenceFile(referenceFileName, form):
         print("Form of reference pattern not recognized. Only XYYY or XYXY allowed."); sys.exit()
     return provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form
 
-
-#G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
-#G.referenceFormsList = parse.listCast(G.referenceFormsList)
-
-#G.moleculesNames = readReferenceFile(G.referenceFileNamesList[0], G.referenceFormsList[0])
-
-
-#print("line 2817", G.moleculesNames)
-
-
-
-
 '''
 getMoleculesFromReferenceData is a function that takes in the reference filename and just returns the molecules present
+This function is written for XYYY data and does not work with XYXY data. Use of this function is discouraged. The readReferenceFile function should be used to pull the molecule names instead. 
 '''
-def getMoleculesFromReferenceData(ReferenceFileName):
-    #Read the csv file
-    #TODO Change to use numpy.gen_from_text instead of pandas
-    #TODO: add an optional argument for the form "xxxy" vs "xyxy".
-    ReferenceInfo = pandas.read_csv(ReferenceFileName,header=0)
-    #Convert the reference info into an array
-    ReferenceInfoArray = numpy.array(ReferenceInfo)
-    #Get the names of molecules in reference data
-    molecules = ReferenceInfoArray[0,1:] #First row, all but the first column
-    #Strip the white space around the molecules
-    for i in range(0,len(molecules)):
-        molecules[i] = molecules[i].strip()
-    return molecules
+#def getMoleculesFromReferenceData(ReferenceFileName):
+#    #Read the csv file
+#    #TODO Change to use numpy.gen_from_text instead of pandas
+#    #TODO: add an optional argument for the form "xxxy" vs "xyxy".
+#    ReferenceInfo = pandas.read_csv(ReferenceFileName,header=0)
+#    #Convert the reference info into an array
+#    ReferenceInfoArray = numpy.array(ReferenceInfo)
+#    #Get the names of molecules in reference data
+#    molecules = ReferenceInfoArray[0,1:] #First row, all but the first column
+#    #Strip the white space around the molecules
+#    for i in range(0,len(molecules)):
+#        molecules[i] = molecules[i].strip()
+#    return molecules
 
 '''
 getMassFragmentsFromCollectedData is a function that takes in the collected filename and returns the mass fragments present in the data
@@ -5840,7 +5820,13 @@ def main():
     #Read in the molecules used before parsing the user input file    
     G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
     G.referenceFormsList = parse.listCast(G.referenceFormsList)
-    G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
+    
+    [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
+        SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType,
+        mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileNamesList[0], G.referenceFormsList[0])
+    G.moleculesNames = molecules
+
+    
     #If a tuning correction is going to be done, we'll make a mixed reference pattern.
     #G.moleculesNamesExtended needs to be populated before the first tuning correction and before parsing of userinput.
     if str(G.measuredReferenceYorN).lower() == 'yes': 
@@ -5855,7 +5841,10 @@ def main():
                 moleculesToAddToReferencePattern.append(moleculeName)
         G.moleculesNamesExtended = list(G.moleculesNames) + list(moleculesToAddToReferencePattern)
     #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
+    
+    
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
+
 
     #Save an MSReference object containing all molecules and an MSData object containing all mass fragments
     if G.iterativeAnalysis and G.iterationNumber != 1: #If using iterative and not on the first iteration we will need to remove _iter_x from the file names
