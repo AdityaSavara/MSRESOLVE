@@ -2775,7 +2775,7 @@ def readReferenceFile(referenceFileName, form):
 #    
 #        '''generate electron number list'''
 #        #select row of electron numbers
-#        dfelectronnumbers = dataFrame.iloc[2][1:]
+#        dfelectronnumbers = dataFrame.iloc[2][1::2]
 #        #convert to matrix
 #        electronnumbers = dfelectronnumbers.values
 #        #save as class object with type int
@@ -2783,7 +2783,7 @@ def readReferenceFile(referenceFileName, form):
 #   
 #        '''generate list of molecule names'''
 #        #select row of names
-#        dfmolecules = dataFrame.iloc[1][1:]
+#        dfmolecules = dataFrame.iloc[1][1::2]
 #        #convert to matrix
 #        molecules = dfmolecules.values
 #        #save as class object with type string
@@ -2791,7 +2791,7 @@ def readReferenceFile(referenceFileName, form):
 #        
 #        '''generate list of molecular weights'''
 #        #select row of names
-#        dfmolecularWeights = dataFrame.iloc[3][1:]
+#        dfmolecularWeights = dataFrame.iloc[3][1::2]
 #        #convert to matrix
 #        molecularWeights = dfmolecularWeights.values
 #        #save as class object with type float
@@ -2799,7 +2799,7 @@ def readReferenceFile(referenceFileName, form):
 #        
 #        '''generate list of source information'''
 #        #select row of names
-#        dfsourceInfo = dataFrame.iloc[0][1:]
+#        dfsourceInfo = dataFrame.iloc[0][1::2]
 #        #convert to matrix
 #        sourceInfo = dfsourceInfo.values
 #        #save as class object with type string
@@ -5832,7 +5832,7 @@ def main():
     if str(G.measuredReferenceYorN).lower() == 'yes': 
         if G.referenceFileExistingTuning == []:
             G.referenceFileExistingTuning = G.referenceFileStandardTuning #Use the standard tuning file if blank.
-        G.moleculesNamesExistingTuning = getMoleculesFromReferenceData(G.referenceFileExistingTuning[0])
+        G.moleculesNamesExistingTuning = molecules
         moleculesToAddToReferencePattern = []
         for moleculeName in list(G.moleculesNamesExistingTuning):
             if moleculeName in list(G.moleculesNames):

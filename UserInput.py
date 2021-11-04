@@ -155,7 +155,7 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 UserChoices['measuredReferenceYorN']['on'] ='no'
-UserChoices['measuredReferenceYorN']['referenceFileStandardTuning'] = [] #optional: provides tuningCorrectionIntensity feature. Will automatically be used for ReferenceFileExistingTuning if that variable is blank and if createMixedTuningPattern=True.
+UserChoices['measuredReferenceYorN']['referenceFileStandardTuning'] = [] #optional: Provides tuningCorrectionIntensity feature. Must include csv file and form. Example: ['AcetaldehydeNISTRefMixed2.csv', 'xyxy'] .     Will automatically be used for ReferenceFileExistingTuning if that variable is blank and if createMixedTuningPattern=True.
 UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = True #Users should normally never change this.  If True, the external pattern gets changed, and a mixed reference pattern gets changded. If False, the *internal* pattern gets changed. 
 UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =[] #This is the pattern that will be changed. Should be blank by default.
 UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] =[] #This is what the pattern will look more like after everything is done. Should be blank by default.
