@@ -42,17 +42,13 @@ MSRESOLVE.main()
 scaledConcentrationsB = pandas.read_csv('ScaledConcentrations.csv',header = 0)
 scaledConcentrationsXYXYArray = np.array(scaledConcentrationsB)
 
-#Set the expected results to be the first 3 rows in A, and last 3 rows in B
-#The second slice of :-1 removes all 'Nan' from arrays
-expected_results = (scaledConcentrationsXYYYArray)
+#Set the expected results
+expected_results = scaledConcentrationsXYYYArray
 ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
 
-#Output should be the first three rows of C which are scaled concentrations found using reference pattern A
-#and the last 3 rows of C which are scaled concentrations found using reference pattern B
-#The second slice of :-1 removes all 'Nan' from arrays
-#Places object in a tuple
-output = (scaledConcentrationsXYXYArray)
-resultObj = (output)
+#Set the output
+output = scaledConcentrationsXYXYArray
+resultObj = output
 #String is provided
 resultStr = str(resultObj)
 
