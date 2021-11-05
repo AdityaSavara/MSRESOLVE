@@ -5834,10 +5834,9 @@ def main():
     if str(G.measuredReferenceYorN).lower() == 'yes': 
         if G.referenceFileExistingTuning == []:
             G.referenceFileExistingTuning = G.referenceFileStandardTuning #Use the standard tuning file if blank.
-
-    	[provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
         SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType,
-        mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])
+        mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])
         G.moleculesNamesExistingTuning = molecules
         moleculesToAddToReferencePattern = []
         for moleculeName in list(G.moleculesNamesExistingTuning):
