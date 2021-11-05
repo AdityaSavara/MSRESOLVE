@@ -2849,7 +2849,6 @@ def getMassFragmentsFromCollectedData(CollectedFileName):
         massFragments[i] = massFragments[i].replace("m",'')
         massFragments[i] = massFragments[i].strip()
         massFragments[i] = float(massFragments[i])
-            
     return massFragments
 
 '''
