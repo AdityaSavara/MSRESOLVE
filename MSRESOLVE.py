@@ -5838,7 +5838,7 @@ def main():
     	[provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
         SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType,
         mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])
-	G.moleculesNamesExistingTuning = molecules
+        G.moleculesNamesExistingTuning = molecules
         moleculesToAddToReferencePattern = []
         for moleculeName in list(G.moleculesNamesExistingTuning):
             if moleculeName in list(G.moleculesNames):
