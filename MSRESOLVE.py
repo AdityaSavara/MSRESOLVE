@@ -2770,9 +2770,11 @@ def readReferenceFile(referenceFileName, form):
 #        reference = dfreference.values
 #        #convert the matrix to floats
 #        provided_reference_patterns = reference.astype(numpy.float)
+#        #convert reference from XYXY to XYYY
+#        provided_reference_patterns=FromXYXYtoXYYY(provided_reference_patterns)
 #        #clear rows of zeros
 #        provided_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1)
-#    
+#
 #        '''generate electron number list'''
 #        #select row of electron numbers
 #        dfelectronnumbers = dataFrame.iloc[2][1::2]
@@ -5832,7 +5834,11 @@ def main():
     if str(G.measuredReferenceYorN).lower() == 'yes': 
         if G.referenceFileExistingTuning == []:
             G.referenceFileExistingTuning = G.referenceFileStandardTuning #Use the standard tuning file if blank.
-        G.moleculesNamesExistingTuning = molecules
+
+    	[provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
+        SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType,
+        mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])
+	G.moleculesNamesExistingTuning = molecules
         moleculesToAddToReferencePattern = []
         for moleculeName in list(G.moleculesNamesExistingTuning):
             if moleculeName in list(G.moleculesNames):
