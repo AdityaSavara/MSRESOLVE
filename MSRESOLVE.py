@@ -474,21 +474,31 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         # meanRatioPerMassFragment[meanRatioPerMassFragment==-inf] = 'nan'
     #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
-    abcCoefficients, abcCoefficients_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
-    reverseRatio = 1/meanRatioPerMassFragment
-    abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],reverseRatio[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
+    #But changing the next lines to add in temporary variables.
+    FiniteOverlappingFragments = OverlappingFragments[FiniteValueIndices]
+    FiniteMeanRatioPerMassFragment = meanRatioPerMassFragment[FiniteValueIndices]
+    abcCoefficients, abcCoefficients_cov =numpy.polyfit(FiniteOverlappingFragments,FiniteMeanRatioPerMassFragment,2, cov=True) #The two is for 2nd degree polynomial.
+    FiniteMeanReverseRatioPerMassFragment = 1/FiniteMeanRatioPerMassFragment
+    abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(FiniteOverlappingFragments,FiniteMeanReverseRatioPerMassFragment,2, cov=True) #The two is for 2nd degree polynomial.
     
     if exportCoefficients == True:
+        numpy.savetxt('TuningCorrectorPattern_FiniteMeanRatioPerMassFragment.csv', FiniteMeanRatioPerMassFragment, delimiter=",")
         #Export the TuningCorrectorCoefficients as a list.
         with open('TuningCorrectorCoefficients.txt', 'w') as the_file:
             the_file.write(str(list(abcCoefficients))) 
-        #Export the TuningCorrectorCoefficients_cov to a csv.
-        numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+        try:         #Export the TuningCorrectorCoefficients_cov to a csv.
+            numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+        except:
+            print("Could not save to file TuningCorrectorCoefficients_cov")
         #Do the same for the reverse relation.
+        numpy.savetxt('TuningCorrectorPattern_FiniteMeanReverseRatioPerMassFragment.csv', FiniteMeanReverseRatioPerMassFragment, delimiter=",")
         with open('TuningCorrectorCoefficientsReverse.txt', 'w') as the_file:
             the_file.write(str(list(abcCoefficients_reverse))) 
         #Export the TuningCorrectorCoefficients_cov to a csv.
-        numpy.savetxt('TuningCorrectorCoefficientsReverse_cov.csv', abcCoefficients_reverse_cov, delimiter=",")
+        try:
+            numpy.savetxt('TuningCorrectorCoefficientsReverse_cov.csv', abcCoefficients_reverse_cov, delimiter=",")
+        except:
+            print("Could not save to file TuningCorrectorCoefficientsReverse_cov")
 
 
     
@@ -1668,7 +1678,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     for i in range(0,len(masses)):
         masses[i] = str(masses[i]).replace('m','')
     #convert the matrix to floats if they aren't already 
-    mass_fragment_numbers = masses.astype(numpy.float)
+    mass_fragment_numbers = masses.astype(float)
     
     '''generate time list'''
     #select column of times
@@ -1676,7 +1686,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     #convert to matrix
     times = dftimes.values
     #save with type float
-    fulltimes = times.astype(numpy.float)
+    fulltimes = times.astype(float)
     
     '''collect preprocessed data'''
     #select matrix of signals
@@ -1684,7 +1694,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     #convert to matrix
     preprocessed = dfpreprocessed.values
     #save  with type float
-    preprocessedData = preprocessed.astype(numpy.float)
+    preprocessedData = preprocessed.astype(float)
 
     
     '''create data set to work on'''
@@ -1703,7 +1713,7 @@ def ImportAnalyzedData(concentrationsOutputName):
     analyzed = dfanalyzed.values
     analyzed = numpy.delete(analyzed, -1, 1)
     #save  with type float
-    analyzedData = analyzed.astype(numpy.float)
+    analyzedData = analyzed.astype(float)
     
     return analyzedData
 
@@ -2502,7 +2512,7 @@ def readDataFile(collectedFileName):
     #convert to matrix
     times = dftimes.values
     #save as class object with type float
-    times = times.astype(numpy.float)
+    times = times.astype(float)
     #if the user wants to analyze one point, the data is doubled in length
     #to prevent future index problems
     if len(times) == 1:
@@ -2515,7 +2525,7 @@ def readDataFile(collectedFileName):
     #convert to matrix
     collected = dfcollected.values
     #save as class object with type float
-    rawCollectedData = collected.astype(numpy.float)
+    rawCollectedData = collected.astype(float)
     #if the user wants to analyze one point, the data is doubled in length
     #to prevent future index problems
     if len(rawCollectedData) == 1:
@@ -2585,7 +2595,7 @@ def readReferenceFile(referenceFileName, form):
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
                 dfreference = dataFrame.iloc[rowIndex:][:] #remove the rows of headers
                 reference = dfreference.values #convert to matrix
-                provided_reference_patterns = reference.astype(numpy.float) #convert the matrix to floats
+                provided_reference_patterns = reference.astype(float) #convert the matrix to floats
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
                 break #exit the for loop
             except: #Otherwise the row consists of other information
@@ -2607,7 +2617,7 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1:] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
-                    electronnumbers = electronnumbers.astype(numpy.int) #save as class object with type int
+                    electronnumbers = electronnumbers.astype(int) #save as class object with type int
                 elif dataFrame.iloc[rowIndex][0] == 'Molecular Mass': #if the abscissa titles the molecular weights
                     dfmolecularWeights = dataFrame.iloc[rowIndex][1:] #select row of names
                     molecularWeights = dfmolecularWeights.values #convert to matrix
@@ -2624,7 +2634,7 @@ def readReferenceFile(referenceFileName, form):
                             relativeIonizationEfficiencies[index] = float(relativeIonizationEfficiencies[index])
                         except: #if not possible, the value is probably None or 'unknown' so leave as a string
                             pass
-#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(numpy.float) #save as class object with type float
+#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(float) #save as class object with type float
 
         try: #if using an older reference file, it will not have ionization factors so the elif statement never gets entered meaning knownIonizationFactors does not exist
             relativeIonizationEfficiencies #Try calling this variable, if it exists there will be no error
@@ -2654,7 +2664,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        reference = dfreference.values
 #        #convert the matrix to floats
-#        provided_reference_patterns = reference.astype(numpy.float)
+#        provided_reference_patterns = reference.astype(float)
 #        #clear rows of zeros
 #        provided_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1)
 #    
@@ -2664,7 +2674,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        electronnumbers = dfelectronnumbers.values
 #        #save as class object with type int
-#        electronnumbers = electronnumbers.astype(numpy.int32)
+#        electronnumbers = electronnumbers.astype(int)
 #   
 #        '''generate list of molecule names'''
 #        #select row of names
@@ -2680,7 +2690,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecularWeights = dfmolecularWeights.values
 #        #save as class object with type float
-#        molecularWeights = molecularWeights.astype(numpy.float)
+#        molecularWeights = molecularWeights.astype(float)
 #        
 #        '''generate list of source information'''
 #        #select row of names
@@ -2700,7 +2710,7 @@ def readReferenceFile(referenceFileName, form):
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
                 dfreference = dataFrame.iloc[rowIndex:][:] #remove the rows of headers
                 reference = dfreference.values #convert to matrix
-                provided_reference_patterns = reference.astype(numpy.float) #convert the matrix to floats
+                provided_reference_patterns = reference.astype(float) #convert the matrix to floats
                 #print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
                 provided_reference_patterns = FromXYXYtoXYYY(provided_reference_patterns) #convert reference from XYXY to XYYY
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
@@ -2725,7 +2735,7 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1::2] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
-                    electronnumbers = electronnumbers.astype(numpy.int) #save as class object with type int
+                    electronnumbers = electronnumbers.astype(int) #save as class object with type int
                 elif dataFrame.iloc[rowIndex][0] == 'Molecular Mass': #if the abscissa titles the molecular weights
                     dfmolecularWeights = dataFrame.iloc[rowIndex][1::2] #select row of names
                     molecularWeights = dfmolecularWeights.values #convert to matrix
@@ -2742,7 +2752,7 @@ def readReferenceFile(referenceFileName, form):
                             relativeIonizationEfficiencies[index] = float(relativeIonizationEfficiencies[index])
                         except: #if not possible, the value is probably None or 'unknown' so leave as a string
                             pass
-#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(numpy.float) #save as class object with type float
+#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(float) #save as class object with type float
 
         try: #if using an older reference file, it will not have ionization factors so the elif statement never gets entered meaning knownIonizationFactors does not exist
             relativeIonizationEfficiencies #Try calling this variable, if it exists there will be no error
@@ -2772,7 +2782,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        reference = dfreference.values
 #        #convert the matrix to floats
-#        provided_reference_patterns = reference.astype(numpy.float)
+#        provided_reference_patterns = reference.astype(float)
 #        #convert reference from XYXY to XYYY
 #        provided_reference_patterns=FromXYXYtoXYYY(provided_reference_patterns)
 #        #clear rows of zeros
@@ -2784,7 +2794,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        electronnumbers = dfelectronnumbers.values
 #        #save as class object with type int
-#        electronnumbers = electronnumbers.astype(numpy.int32)
+#        electronnumbers = electronnumbers.astype(int)
 #   
 #        '''generate list of molecule names'''
 #        #select row of names
@@ -2800,7 +2810,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecularWeights = dfmolecularWeights.values
 #        #save as class object with type float
-#        molecularWeights = molecularWeights.astype(numpy.float)
+#        molecularWeights = molecularWeights.astype(float)
 #        
 #        '''generate list of source information'''
 #        #select row of names
