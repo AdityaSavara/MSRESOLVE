@@ -474,21 +474,31 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         # meanRatioPerMassFragment[meanRatioPerMassFragment==-inf] = 'nan'
     #Following this post.. https://stackoverflow.com/questions/28647172/numpy-polyfit-doesnt-handle-nan-values
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
-    abcCoefficients, abcCoefficients_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],meanRatioPerMassFragment[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
-    reverseRatio = 1/meanRatioPerMassFragment
-    abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(OverlappingFragments[FiniteValueIndices],reverseRatio[FiniteValueIndices],2, cov=True) #The two is for 2nd degree polynomial.
+    #But changing the next lines to add in temporary variables.
+    FiniteOverlappingFragments = OverlappingFragments[FiniteValueIndices]
+    FiniteMeanRatioPerMassFragment = meanRatioPerMassFragment[FiniteValueIndices]
+    abcCoefficients, abcCoefficients_cov =numpy.polyfit(FiniteOverlappingFragments,FiniteMeanRatioPerMassFragment,2, cov=True) #The two is for 2nd degree polynomial.
+    FiniteMeanReverseRatioPerMassFragment = 1/FiniteMeanRatioPerMassFragment
+    abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(FiniteOverlappingFragments,FiniteMeanReverseRatioPerMassFragment,2, cov=True) #The two is for 2nd degree polynomial.
     
     if exportCoefficients == True:
+        numpy.savetxt('TuningCorrectorPattern_FiniteMeanRatioPerMassFragment.csv', FiniteMeanRatioPerMassFragment, delimiter=",")
         #Export the TuningCorrectorCoefficients as a list.
         with open('TuningCorrectorCoefficients.txt', 'w') as the_file:
             the_file.write(str(list(abcCoefficients))) 
-        #Export the TuningCorrectorCoefficients_cov to a csv.
-        numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+        try:         #Export the TuningCorrectorCoefficients_cov to a csv.
+            numpy.savetxt('TuningCorrectorCoefficients_cov.csv', abcCoefficients_cov, delimiter=",")
+        except:
+            print("Could not save to file TuningCorrectorCoefficients_cov")
         #Do the same for the reverse relation.
+        numpy.savetxt('TuningCorrectorPattern_FiniteMeanReverseRatioPerMassFragment.csv', FiniteMeanReverseRatioPerMassFragment, delimiter=",")
         with open('TuningCorrectorCoefficientsReverse.txt', 'w') as the_file:
             the_file.write(str(list(abcCoefficients_reverse))) 
         #Export the TuningCorrectorCoefficients_cov to a csv.
-        numpy.savetxt('TuningCorrectorCoefficientsReverse_cov.csv', abcCoefficients_reverse_cov, delimiter=",")
+        try:
+            numpy.savetxt('TuningCorrectorCoefficientsReverse_cov.csv', abcCoefficients_reverse_cov, delimiter=",")
+        except:
+            print("Could not save to file TuningCorrectorCoefficientsReverse_cov")
 
 
     
@@ -515,7 +525,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
-    nonZeroValueLocations = referenceDataArray > 0
+    nonZeroValueLocations = referenceDataArray > 0 #this returns booleans of "True" and "False", which are the same as 0 and 1 during multiplication.
     referenceDataArray_tuning_uncertainties = referenceDataArray*0.0 #just initializing.
     if list(referenceCorrectionCoefficients) != [0,0,1]:                                                                                    
         for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
@@ -1478,6 +1488,8 @@ def UnnecessaryMoleculesDeleter(ReferenceData):
 #the end of the range, a 'yes' or 'no' (timerangelimit), and the times and collected arrays
 #the collected data will be shortened to the length of the new chosen times abscissa
 def TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
+    if timeRangeStart > timeRangeFinish:
+        print("ERROR: MSRESOLVE TimesChooser has received a timeRangeStart greater than timeRangeFinish. Fix your input and run again."); sys.exit
     #due to an uncommon numpy error "DeprecationWarning: in the future the special handling of scalars will be removed from delete and raise an error"  we will check if the rawsignals_absolute_uncertainties is really present or not. If it is present, we will need to operate on it as well.
     rawsignals_absolute_uncertainties_present = False #just initiailzing.
     if hasattr(ExperimentData,'rawsignals_absolute_uncertainties'):
@@ -1487,19 +1499,20 @@ def TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
         #else: #don't need to do the else explicitly since we intialized this as false.
             #rawsignals_absolute_uncertainties_present = False
     place_holder = 0 #enables indexing when parts of the array are being deleted
+    deletePoint = False #just initializing.
     for timescounter in range(len(ExperimentData.times)): #array indexed for loop
         if ExperimentData.times[timescounter-place_holder] < timeRangeStart: #all rows that are before the time range are deleted from the collected data and times abscissa
+            deletePoint = True
+        if ExperimentData.times[timescounter-place_holder] > timeRangeFinish: #once the time is greater than the time range finish, all values after are deleted
+            deletePoint = True
+        print("line 1501", timeRangeStart, timeRangeFinish, ExperimentData.times[timescounter-place_holder], deletePoint)
+        if deletePoint == True:
             ExperimentData.times = numpy.delete(ExperimentData.times,timescounter-place_holder) #place holder subtracts from the for loop so that the correct index is maintained
             ExperimentData.workingData = numpy.delete(ExperimentData.workingData,timescounter-place_holder,axis = 0)
             if rawsignals_absolute_uncertainties_present == True: #copying the line from above.
                 ExperimentData.rawsignals_absolute_uncertainties = numpy.delete(ExperimentData.rawsignals_absolute_uncertainties,timescounter-place_holder,axis = 0) 
+            deletePoint = False #set back to the default after deleting.
             place_holder = place_holder + 1 #the place holder increased by one with every deleted row to maintain array indexing
-        if ExperimentData.times[timescounter-place_holder] > timeRangeFinish: #once the time is greater than the time range finish, all values after are deleted
-            ExperimentData.times = numpy.delete(ExperimentData.times,timescounter-place_holder)
-            ExperimentData.workingData = numpy.delete(ExperimentData.workingData,timescounter-place_holder,axis = 0)
-            if rawsignals_absolute_uncertainties_present == True: #copying the line from above.
-                ExperimentData.rawsignals_absolute_uncertainties = numpy.delete(ExperimentData.rawsignals_absolute_uncertainties,timescounter-place_holder,axis = 0) 
-            place_holder = place_holder + 1
     return None
 
 ''' ScaleDown takes an array and scales every value by the same factor so that
@@ -1665,7 +1678,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     for i in range(0,len(masses)):
         masses[i] = str(masses[i]).replace('m','')
     #convert the matrix to floats if they aren't already 
-    mass_fragment_numbers = masses.astype(numpy.float)
+    mass_fragment_numbers = masses.astype(float)
     
     '''generate time list'''
     #select column of times
@@ -1673,7 +1686,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     #convert to matrix
     times = dftimes.values
     #save with type float
-    fulltimes = times.astype(numpy.float)
+    fulltimes = times.astype(float)
     
     '''collect preprocessed data'''
     #select matrix of signals
@@ -1681,7 +1694,7 @@ def ImportWorkingData(preProcessedDataOutputName):
     #convert to matrix
     preprocessed = dfpreprocessed.values
     #save  with type float
-    preprocessedData = preprocessed.astype(numpy.float)
+    preprocessedData = preprocessed.astype(float)
 
     
     '''create data set to work on'''
@@ -1700,7 +1713,7 @@ def ImportAnalyzedData(concentrationsOutputName):
     analyzed = dfanalyzed.values
     analyzed = numpy.delete(analyzed, -1, 1)
     #save  with type float
-    analyzedData = analyzed.astype(numpy.float)
+    analyzedData = analyzed.astype(float)
     
     return analyzedData
 
@@ -2499,7 +2512,7 @@ def readDataFile(collectedFileName):
     #convert to matrix
     times = dftimes.values
     #save as class object with type float
-    times = times.astype(numpy.float)
+    times = times.astype(float)
     #if the user wants to analyze one point, the data is doubled in length
     #to prevent future index problems
     if len(times) == 1:
@@ -2512,7 +2525,7 @@ def readDataFile(collectedFileName):
     #convert to matrix
     collected = dfcollected.values
     #save as class object with type float
-    rawCollectedData = collected.astype(numpy.float)
+    rawCollectedData = collected.astype(float)
     #if the user wants to analyze one point, the data is doubled in length
     #to prevent future index problems
     if len(rawCollectedData) == 1:
@@ -2582,7 +2595,7 @@ def readReferenceFile(referenceFileName, form):
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
                 dfreference = dataFrame.iloc[rowIndex:][:] #remove the rows of headers
                 reference = dfreference.values #convert to matrix
-                provided_reference_patterns = reference.astype(numpy.float) #convert the matrix to floats
+                provided_reference_patterns = reference.astype(float) #convert the matrix to floats
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
                 break #exit the for loop
             except: #Otherwise the row consists of other information
@@ -2604,7 +2617,7 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1:] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
-                    electronnumbers = electronnumbers.astype(numpy.int) #save as class object with type int
+                    electronnumbers = electronnumbers.astype(int) #save as class object with type int
                 elif dataFrame.iloc[rowIndex][0] == 'Molecular Mass': #if the abscissa titles the molecular weights
                     dfmolecularWeights = dataFrame.iloc[rowIndex][1:] #select row of names
                     molecularWeights = dfmolecularWeights.values #convert to matrix
@@ -2621,7 +2634,7 @@ def readReferenceFile(referenceFileName, form):
                             relativeIonizationEfficiencies[index] = float(relativeIonizationEfficiencies[index])
                         except: #if not possible, the value is probably None or 'unknown' so leave as a string
                             pass
-#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(numpy.float) #save as class object with type float
+#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(float) #save as class object with type float
 
         try: #if using an older reference file, it will not have ionization factors so the elif statement never gets entered meaning knownIonizationFactors does not exist
             relativeIonizationEfficiencies #Try calling this variable, if it exists there will be no error
@@ -2651,7 +2664,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        reference = dfreference.values
 #        #convert the matrix to floats
-#        provided_reference_patterns = reference.astype(numpy.float)
+#        provided_reference_patterns = reference.astype(float)
 #        #clear rows of zeros
 #        provided_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1)
 #    
@@ -2661,7 +2674,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        electronnumbers = dfelectronnumbers.values
 #        #save as class object with type int
-#        electronnumbers = electronnumbers.astype(numpy.int32)
+#        electronnumbers = electronnumbers.astype(int)
 #   
 #        '''generate list of molecule names'''
 #        #select row of names
@@ -2677,7 +2690,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecularWeights = dfmolecularWeights.values
 #        #save as class object with type float
-#        molecularWeights = molecularWeights.astype(numpy.float)
+#        molecularWeights = molecularWeights.astype(float)
 #        
 #        '''generate list of source information'''
 #        #select row of names
@@ -2697,7 +2710,7 @@ def readReferenceFile(referenceFileName, form):
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
                 dfreference = dataFrame.iloc[rowIndex:][:] #remove the rows of headers
                 reference = dfreference.values #convert to matrix
-                provided_reference_patterns = reference.astype(numpy.float) #convert the matrix to floats
+                provided_reference_patterns = reference.astype(float) #convert the matrix to floats
                 #print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
                 provided_reference_patterns = FromXYXYtoXYYY(provided_reference_patterns) #convert reference from XYXY to XYYY
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
@@ -2722,7 +2735,7 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1::2] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
-                    electronnumbers = electronnumbers.astype(numpy.int) #save as class object with type int
+                    electronnumbers = electronnumbers.astype(int) #save as class object with type int
                 elif dataFrame.iloc[rowIndex][0] == 'Molecular Mass': #if the abscissa titles the molecular weights
                     dfmolecularWeights = dataFrame.iloc[rowIndex][1::2] #select row of names
                     molecularWeights = dfmolecularWeights.values #convert to matrix
@@ -2739,7 +2752,7 @@ def readReferenceFile(referenceFileName, form):
                             relativeIonizationEfficiencies[index] = float(relativeIonizationEfficiencies[index])
                         except: #if not possible, the value is probably None or 'unknown' so leave as a string
                             pass
-#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(numpy.float) #save as class object with type float
+#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(float) #save as class object with type float
 
         try: #if using an older reference file, it will not have ionization factors so the elif statement never gets entered meaning knownIonizationFactors does not exist
             relativeIonizationEfficiencies #Try calling this variable, if it exists there will be no error
@@ -2769,7 +2782,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        reference = dfreference.values
 #        #convert the matrix to floats
-#        provided_reference_patterns = reference.astype(numpy.float)
+#        provided_reference_patterns = reference.astype(float)
 #        #convert reference from XYXY to XYYY
 #        provided_reference_patterns=FromXYXYtoXYYY(provided_reference_patterns)
 #        #clear rows of zeros
@@ -2781,7 +2794,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        electronnumbers = dfelectronnumbers.values
 #        #save as class object with type int
-#        electronnumbers = electronnumbers.astype(numpy.int32)
+#        electronnumbers = electronnumbers.astype(int)
 #   
 #        '''generate list of molecule names'''
 #        #select row of names
@@ -2797,7 +2810,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecularWeights = dfmolecularWeights.values
 #        #save as class object with type float
-#        molecularWeights = molecularWeights.astype(numpy.float)
+#        molecularWeights = molecularWeights.astype(float)
 #        
 #        '''generate list of source information'''
 #        #select row of names
