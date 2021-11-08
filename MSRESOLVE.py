@@ -525,7 +525,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     
     referenceabscissa = referenceDataArrayWithAbscissa[:,0] #gets arrays of just data and abscissa
     referenceDataArray = referenceDataArrayWithAbscissa[:,1:]
-    nonZeroValueLocations = referenceDataArray > 0
+    nonZeroValueLocations = referenceDataArray > 0 #this returns booleans of "True" and "False", which are the same as 0 and 1 during multiplication.
     referenceDataArray_tuning_uncertainties = referenceDataArray*0.0 #just initializing.
     if list(referenceCorrectionCoefficients) != [0,0,1]:                                                                                    
         for massfrag_counter in range(len(referenceabscissa)):#array-indexed for loop, only the data is altered, based on the abscissa (mass-dependent correction factors)
