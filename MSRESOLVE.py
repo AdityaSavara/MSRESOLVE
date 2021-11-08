@@ -1478,6 +1478,8 @@ def UnnecessaryMoleculesDeleter(ReferenceData):
 #the end of the range, a 'yes' or 'no' (timerangelimit), and the times and collected arrays
 #the collected data will be shortened to the length of the new chosen times abscissa
 def TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
+    if timeRangeStart > timeRangeFinish:
+        print("ERROR: MSRESOLVE TimesChooser has received a timeRangeStart greater than timeRangeFinish. Fix your input and run again."); sys.exit
     #due to an uncommon numpy error "DeprecationWarning: in the future the special handling of scalars will be removed from delete and raise an error"  we will check if the rawsignals_absolute_uncertainties is really present or not. If it is present, we will need to operate on it as well.
     rawsignals_absolute_uncertainties_present = False #just initiailzing.
     if hasattr(ExperimentData,'rawsignals_absolute_uncertainties'):
@@ -1487,19 +1489,20 @@ def TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
         #else: #don't need to do the else explicitly since we intialized this as false.
             #rawsignals_absolute_uncertainties_present = False
     place_holder = 0 #enables indexing when parts of the array are being deleted
+    deletePoint = False #just initializing.
     for timescounter in range(len(ExperimentData.times)): #array indexed for loop
         if ExperimentData.times[timescounter-place_holder] < timeRangeStart: #all rows that are before the time range are deleted from the collected data and times abscissa
+            deletePoint = True
+        if ExperimentData.times[timescounter-place_holder] > timeRangeFinish: #once the time is greater than the time range finish, all values after are deleted
+            deletePoint = True
+        print("line 1501", timeRangeStart, timeRangeFinish, ExperimentData.times[timescounter-place_holder], deletePoint)
+        if deletePoint == True:
             ExperimentData.times = numpy.delete(ExperimentData.times,timescounter-place_holder) #place holder subtracts from the for loop so that the correct index is maintained
             ExperimentData.workingData = numpy.delete(ExperimentData.workingData,timescounter-place_holder,axis = 0)
             if rawsignals_absolute_uncertainties_present == True: #copying the line from above.
                 ExperimentData.rawsignals_absolute_uncertainties = numpy.delete(ExperimentData.rawsignals_absolute_uncertainties,timescounter-place_holder,axis = 0) 
+            deletePoint = False #set back to the default after deleting.
             place_holder = place_holder + 1 #the place holder increased by one with every deleted row to maintain array indexing
-        if ExperimentData.times[timescounter-place_holder] > timeRangeFinish: #once the time is greater than the time range finish, all values after are deleted
-            ExperimentData.times = numpy.delete(ExperimentData.times,timescounter-place_holder)
-            ExperimentData.workingData = numpy.delete(ExperimentData.workingData,timescounter-place_holder,axis = 0)
-            if rawsignals_absolute_uncertainties_present == True: #copying the line from above.
-                ExperimentData.rawsignals_absolute_uncertainties = numpy.delete(ExperimentData.rawsignals_absolute_uncertainties,timescounter-place_holder,axis = 0) 
-            place_holder = place_holder + 1
     return None
 
 ''' ScaleDown takes an array and scales every value by the same factor so that
