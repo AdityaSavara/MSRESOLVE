@@ -23,3 +23,9 @@ Proc Doc type things:
 
 
 Creation of the fictional gas mixture was performed in FictionalGasMixtureCreationFile, Because only the ratio matters for TuningCorrectorGasMixture.
+
+
+***
+
+Test_2.py adds in the tuning correction intensity feature by use of the Standard Reference pattern (but has uncertainties off)
+Test_3.py adds in the tuning correction intensity feature by use of the Standard Reference pattern (and has uncertainties on)
