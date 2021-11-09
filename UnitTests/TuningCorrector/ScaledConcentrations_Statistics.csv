@@ -1,4 +1,4 @@
-# molecules,'Crotyl Alcohol'
-ScaledConcentrations_Means,0.025401362393306173
-ScaledConcentrations_StdDevs,0.040253211162864164
-ScaledConcentrations_StdErrs,0.004291006727768147
+# molecules,'Acetaldehyde', '(E) 2-Butenal (Crotonaldehyde', 'CO', 'CO2', 'Ethylene (Ethene)', 'Ethanol', 'Crotyl Alcohol', 'H2', 'H2O'
+ScaledConcentrations_Means,0.0,0.0,0.0,0.0,0.0,0.10966361629654407,0.025401362393306173,0.9963747606131623,0.21350073142161022
+ScaledConcentrations_StdDevs,0.0,0.0,0.0,0.0,0.0,0.031224248079343618,0.040253211162864164,0.03725351450055903,0.014973143946191193
+ScaledConcentrations_StdErrs,0.0,0.0,0.0,0.0,0.0,0.003328516029090676,0.004291006727768147,0.003971237989141653,0.0015961425077118169
