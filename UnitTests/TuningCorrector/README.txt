@@ -37,9 +37,14 @@ test_7.py and test_8.py are copies of test_6.py but uses referenceThreshold filt
 In test_7.py, only the ExternalTuningCorrection feature is used.
 In test_8.py, the tuningCorrectionIntensity feature is used by populating the variable referenceFileStandardTuning.
 
-In both test_7 and test_8, the butenal is solved or using mass 70.
+In both test_7 and test_8, the butenal is solved for using mass 70.
+test_7 and test_8 should have the same reference pattern at the end: they do.
+test_7 and test_8 should have different concentrations at the end: they do.
+The test_8 scaled concentrations has a lower butenal concentration.
 
 By embedding a print statement inside MSRESOLVE, this 'manual' printing showed that the intensity correction factor for mass 70 is 0.4085935090718888 (because The Reference Collected file is a little higher at mass 70 than the Reference Literature). When only the second step of the tuningCorrectionIntensity feature was implemented, we could see that test_8.py had Butenal of 0.017563494273429126 in comparison to the test_7.py butenal of 0.042985250336757, which is consistent with the same 0.408 factor. This example is not a realistic real world example because normally there will be many molecules showing the same trend in tuning. Here, just one molecule was adjusted between the patterns such that the "average" tuning correction does not really work well on average. This is just a unit test, it is not really an example case.  After the implementation of tuningCorrectionIntensity the value at mass 70 changes to 0.015542924457281676.  more significantly, the CO solved value as well as some of the other small molecules increase in concentration quite a bit. 
+
+#FIXME: test_9.py is with createMixedTuningPattern turned off and also uses a shortened measured pattern (this test is not realistic and was made just to check that MSRESOLVE would lengthen arrays as needed). Test_9.py was not checked to see what the outcomes were on the resolved concentrations, just that a mixed pattern was not made and that the analysis ran to completion.  However, inspection of the scaled concentrations that come out for test_9.py show only one molecule, which is not the expected behavior.
 
 ***
 In many real applications of this feature, what is desired is to predict from an external reference what the fragmentation pattern would be on one's own spectrometer.  In that situation, the "ReferenceCollected.csv" is the desired pattern one and the "ReferenceLiterature.csv" is the existing pattern to be adjusted. These names may become further adjusted to "PatternToMatch" and "PatternToAdjust" or something like that.
