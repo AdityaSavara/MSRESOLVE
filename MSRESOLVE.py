@@ -1347,7 +1347,7 @@ def CorrectionValuesObtain(ReferenceData):
         ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuningRearranged.csv")
         #move the pointer.
         ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
-                                                                                                                            #Before the below, ReferenceDataForCorrectionValues and ReferenceData must be made the same size and width. To do that, we will extend each to have any rows missing that the other has.
+    #Before the below, ReferenceDataForCorrectionValues and ReferenceData must be made the same size and width. To do that, we will extend each to have any rows missing that the other has.
     ReferenceDataMassFragments = ReferenceData.standardized_reference_patterns[:,0]
     ReferenceDataForCorrectionValuesMassFragments = ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0]
     ReferenceData.extendMassFragments(ReferenceDataForCorrectionValuesMassFragments)
