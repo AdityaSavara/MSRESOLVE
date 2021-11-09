@@ -1289,7 +1289,25 @@ def CorrectionValuesObtain(ReferenceData):
         listOfNeededMolecules = ReferenceData.molecules #intentionally grab molecule list from the original data object fed in.
         ReferenceDataOriginalStandardTuning = copy.deepcopy(ReferenceData)  #This is mainly needed for G.referenceFileStandardTuning
         ReferenceDataStandardTuning = createReferenceDataObject ( G.referenceFileStandardTuning[0], G.referenceFileStandardTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
-        listOfStandardTuningMoleculePatternsAvailable = copy.deepcopy(ReferenceDataStandardTuning.molecules)
+        #TODO: Make the below block of code a function. This block is actually the copy of a block from tuning correction.
+        if type(G.referenceFileUncertainties) != type(None):
+            if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
+                #TODO: Low priority. The below results in "nan" values. It could be better to change it to make zeros using a numpy "where" statement.
+                G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Make sure we have a float.
+                #Get what we need.
+                provided_reference_patterns = ReferenceDataStandardTuning.provided_reference_patterns
+                provided_reference_patterns_without_masses = ReferenceDataStandardTuning.provided_reference_patterns[:,1:] #[:,0] is mass fragments, so we slice to remove those. 
+                #Make our variables ready.
+                absolute_standard_uncertainties = provided_reference_patterns*1.0 #First we make a copy.
+                absolute_standard_uncertainties_without_masses = (provided_reference_patterns_without_masses/provided_reference_patterns_without_masses)*G.referenceFileUncertainties #We do the division to get an array of ones. Then we multiply to get an array of the same size.
+                #now we populate our copy's non-mass area.
+                absolute_standard_uncertainties[:,1:] = absolute_standard_uncertainties_without_masses                                        
+                ReferenceDataStandardTuning.absolute_standard_uncertainties = absolute_standard_uncertainties
+                #We can't convert to relative uncertainties yet because the file may not be standardized yet.
+            else:
+                print("WARNING: Line 1325 of MSRESOLVE.py else statement has not been programmed. ReferenceDataStandardTuning currently only receives uncertainties if there is an integer in the referenceFileUncertainties.")
+                ReferenceDataStandardTuning.absolute_standard_uncertainties = ReferenceDataStandardTuning.provided_reference_patterns*1.0 #First we make a copy.
+                ReferenceDataStandardTuning.absolute_standard_uncertainties[:,1:] = copy.deepcopy(ReferenceDataStandardTuning.molecules)
         #get a list of molecules to remove from the ReferenceDataStandardTuning file.
         listOfMoleculesToRemove = []
         for moleculeName in listOfStandardTuningMoleculePatternsAvailable:
