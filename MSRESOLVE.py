@@ -3012,7 +3012,7 @@ class MSReference (object):
             self.moleculeIonizationType = ['unknown']* len(self.molecules)
         self.provided_mass_fragments = self.provided_reference_patterns[:,0]
         #clear ClearZeroRowsFromProvidedReferenceIntensities
-        self.ClearZeroRowsFromProvidedReferenceIntensities()
+        #self.ClearZeroRowsFromProvidedReferenceIntensities()  #commenting this out to avoid problems for now.
         #initialize the standardized_reference_patterns
         self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             
@@ -3189,7 +3189,19 @@ class MSReference (object):
             print("Warning: line 2897 was unable to update the relative uncertainties of a reference pattern.")
         self.ExportCollector("ClearZeroRowsFromStandardizedReferenceIntensities", use_provided_reference_patterns=False)
         
-        
+    def extendMassFragments(self, massFragmentsToExtendBy):
+        #This will add in rows of zeros to the standardized_reference_patterns and also the uncertainties arrays.
+        self.standardized_reference_patterns_mass_fragments = self.standardized_reference_patterns[:,0]*1.0
+        self.standardized_reference_patterns = DataFunctions.extendXYYYtoZYYY(self.standardized_reference_patterns, massFragmentsToExtendBy)
+        #Check if the absolute_standard_uncertainties is the right length. If it is, we will be extending it also.
+        if hasattr(self, "absolute_standard_uncertainties"):
+            print("line 3270", self.standardized_reference_patterns[:,0], numpy.shape(self.standardized_reference_patterns))
+            print("line 3270", self.absolute_standard_uncertainties[:,0], numpy.shape(self.absolute_standard_uncertainties))
+            if len(self.absolute_standard_uncertainties[:,0] ==  self.standardized_reference_patterns_mass_fragments):
+                self.absolute_standard_uncertainties = DataFunctions.extendXYYYtoZYYY(self.absolute_standard_uncertainties, massFragmentsToExtendBy)
+                #For the relative uncertainties, we will use the built in function.
+                print('line 3275', numpy.shape(self.absolute_standard_uncertainties), numpy.shape(self.standardized_reference_patterns))
+                self.update_relative_standard_uncertainties()
             
     #This class function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(self):
