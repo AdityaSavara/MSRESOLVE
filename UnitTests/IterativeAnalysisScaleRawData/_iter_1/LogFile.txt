@@ -1,4 +1,4 @@
-Fri Oct  1 19:25:36 2021
+Tue Nov  9 16:06:10 2021
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2_iter_1.csv'] 
 form  = ['xyyy'] 
@@ -21,10 +21,10 @@ dataSmootherHeadersToConfineTo = []
 answer = sls 
 uniqueOrCommon = unique 
 slsFinish = brute 
-bruteOption = ssr 
+objectiveFunctionType = ssr 
 scaleRawDataFactor  = 1000.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.43372 seconds 
+Run Time 0.50493 seconds 
 ###################################################################### 

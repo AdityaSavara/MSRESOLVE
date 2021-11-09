@@ -1,4 +1,4 @@
-Fri Oct  1 19:25:22 2021
+Tue Nov  9 16:05:56 2021
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2_iter_6.csv', 'AcetaldehydeNISTRefMixed2Edit_iter_6.csv'] 
 form  = ['xyyy', 'xyyy'] 
@@ -13,10 +13,10 @@ chosenMassFragments = [27]
 answer = sls 
 uniqueOrCommon = common 
 slsFinish = brute 
-bruteOption = ssr 
+objectiveFunctionType = ssr 
 scaleRawDataFactor  = 1.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.35548 seconds 
+Run Time 0.37394 seconds 
 ###################################################################### 

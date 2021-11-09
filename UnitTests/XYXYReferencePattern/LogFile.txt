@@ -1,18 +1,21 @@
-Fri Oct  1 19:25:53 2021
+Tue Nov  9 16:07:47 2021
 
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv', 'AcetaldehydeNISTRefMixed2Edit.csv'] 
-form  = ['xyyy', 'xyyy'] 
+referenceFileName = ['AcetaldehydeNISTRefMixed2XYXY.csv'] 
+form  = ['xyxy'] 
 collectedFileName = 2-CrotAcetExp#2.csv 
 timeRangeLimit = yes 
-timeRangeStart = 300.0 
-timeRangeFinish = 309.0 
-specificMassFragments = yes 
-chosenMassFragments = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70] 
+timeRangeStart = 176.0 
+timeRangeFinish = 900.0 
+dataSmootherYorN = yes 
+dataSmootherChoice = timerange 
+dataSmootherTimeRadius = 7 
+dataSmootherPointRadius = 5 
+dataSmootherHeadersToConfineTo = [] 
 answer = inverse 
 distinguished = yes 
 scaleRawDataFactor  = 1.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.33324 seconds 
+Run Time 0.19827 seconds 
 ###################################################################### 
