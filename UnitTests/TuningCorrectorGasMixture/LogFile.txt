@@ -1,4 +1,4 @@
-Tue Nov  9 16:42:43 2021
+Tue Nov  9 17:21:02 2021
 
 referenceFileName = ['ExtractedReferencePattern.csv'] 
 form  = ['xyyy'] 
@@ -7,11 +7,11 @@ timeRangeLimit = yes
 timeRangeStart = 176.0 
 timeRangeFinish = 900.0 
 measuredReferenceYorN = yes 
-referenceCorrectionCoefficientA = -0.006486881698506961 
-referenceCorrectionCoefficientB = 0.25062935187811985 
-referenceCorrectionCoefficientC = -0.9533139758788831 
-referenceCorrection_abcCoefficients = [-0.006486881698506961, 0.25062935187811985, -0.9533139758788831] 
-referenceCorrection_abcCoefficients_cov = [[6.210441332502772e-06, -0.0002670832891281844, 0.002613875252541746], [-0.0002670832891281844, 0.011550460147199237, -0.11397285273185088], [0.002613875252541746, -0.11397285273185088, 1.1401969524294082]] 
+referenceCorrectionCoefficientA = -0.004659259118192583 
+referenceCorrectionCoefficientB = 0.21253817708200598 
+referenceCorrectionCoefficientC = -1.3372660094754438 
+referenceCorrection_abcCoefficients = [-0.004659259118192583, 0.21253817708200598, -1.3372660094754438] 
+referenceCorrection_abcCoefficients_cov = [[4.586361719467735e-06, -0.00019355879694191213, 0.0018299822133682577], [-0.00019355879694191218, 0.008209539703246017, -0.07816830092286531], [0.0018299822133682581, -0.07816830092286532, 0.7534699095621411]] 
 minimalReferenceValue = yes 
 referenceValueThreshold = [2.0, 2.0, 2.0, 2.0] 
 referenceSignificantFragmentThresholds = [6.0, 6.0, 6.0, 6.0] 
@@ -23,5 +23,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.26010 seconds 
+Run Time 0.34049 seconds 
 ###################################################################### 
