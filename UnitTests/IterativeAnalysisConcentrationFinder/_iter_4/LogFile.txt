@@ -1,4 +1,4 @@
-Fri Oct  1 19:25:15 2021
+Tue Nov  9 16:05:46 2021
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2_iter_4.csv'] 
 form  = ['xyyy'] 
@@ -13,7 +13,7 @@ chosenMassFragments = [18]
 answer = sls 
 uniqueOrCommon = common 
 slsFinish = brute 
-bruteOption = ssr 
+objectiveFunctionType = ssr 
 concentrationFinder = yes 
 molecule = ['Acetaldehyde', 'CO', 'Ethanol'] 
 moleculeSignal = [1.66945, 1.2, 1.1] 
@@ -24,5 +24,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.23793 seconds 
+Run Time 0.38224 seconds 
 ###################################################################### 

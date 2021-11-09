@@ -1,4 +1,4 @@
-Fri Oct  1 19:25:36 2021
+Tue Nov  9 16:06:10 2021
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] 
 form  = ['xyyy'] 
@@ -14,10 +14,10 @@ referenceSignificantFragmentThresholds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
 answer = sls 
 uniqueOrCommon = unique 
 slsFinish = brute 
-bruteOption = ssr 
+objectiveFunctionType = ssr 
 scaleRawDataFactor  = 1000.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 1.95020 seconds 
+Run Time 2.03514 seconds 
 ###################################################################### 

@@ -1,4 +1,4 @@
-Fri Oct  1 19:26:10 2021
+Tue Nov  9 16:06:44 2021
 
 referenceFileName = ['ConvertedSpectra.csv'] 
 form  = ['xyyy'] 
@@ -15,10 +15,10 @@ negativeAnalyzerYorN = yes
 answer = sls 
 uniqueOrCommon = unique 
 slsFinish = brute 
-bruteOption = ssr 
+objectiveFunctionType = ssr 
 scaleRawDataFactor  = 1.0 
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 1.78371 seconds 
+Run Time 1.80088 seconds 
 ###################################################################### 
