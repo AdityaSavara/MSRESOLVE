@@ -871,14 +871,15 @@ def tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData=None): #makin
             ReferenceDataList[ReferenceDataIndex].ExportAtEachStep = G.ExportAtEachStep
             if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
                 ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
-            if G.calculateUncertaintiesInConcentrations == True: 
-                if type(G.referenceFileUncertainties) != type(None):
-                    #We need to add uncertainties for *only* the molecules which were extended by.                        
-                    ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties,addedReferenceSlice.absolute_standard_uncertainties)
-                    ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties,addedReferenceSlice.relative_standard_uncertainties)
-                    #The second of the below lines was causing a bug. I did not understand why, so I just commented out both of them for now.
-                    #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternAbsoluteUncertainties', export_standard_uncertainties=True)
-                    #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternRelativeUncertainties', export_relative_uncertainties=True)
+            # ###Below is deprecated: now the extendReferencePattern adds the uncertainties columns as needed.
+            # if G.calculateUncertaintiesInConcentrations == True: 
+                # if type(G.referenceFileUncertainties) != type(None):
+                    # #We need to add uncertainties for *only* the molecules which were extended by.                        
+                    # ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties,addedReferenceSlice.absolute_standard_uncertainties)
+                    # ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties,addedReferenceSlice.relative_standard_uncertainties)
+                    # #The second of the below lines was causing a bug. I did not understand why, so I just commented out both of them for now.
+                    # #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternAbsoluteUncertainties', export_standard_uncertainties=True)
+                    # #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternRelativeUncertainties', export_relative_uncertainties=True)
             ReferenceDataList[ReferenceDataIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
             if len(ReferenceDataList) == 1:
                 if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
@@ -1110,7 +1111,14 @@ def extendReferencePattern(OriginalReferenceData, ReferenceDataToExtendBy):
     extendedReferenceData = copy.deepcopy(OriginalReferenceData)  #We need to make a copy so we don't change anything in the original reference data object, since that may not be desired.
     #The below command will modify the  extendedReferenceData, so we don't need to return anything from the function though we will do so.
     extendedReferenceData = extendedReferenceData.addMolecules(provided_reference_patterns=ReferenceDataToExtendBy.standardized_reference_patterns, electronnumbers=ReferenceDataToExtendBy.electronnumbers, molecules=ReferenceDataToExtendBy.molecules, molecularWeights=ReferenceDataToExtendBy.molecularWeights, SourceOfFragmentationPatterns=ReferenceDataToExtendBy.SourceOfFragmentationPatterns, sourceOfIonizationData=ReferenceDataToExtendBy.sourceOfIonizationData, relativeIonizationEfficiencies=ReferenceDataToExtendBy.relativeIonizationEfficiencies, moleculeIonizationType=ReferenceDataToExtendBy.moleculeIonizationType)
+    ##TODO: Currently, the addMolecules feature does not extend the absolute_standard_uncertainties. This should probably be changed with an additoinal argument. For now, we extend the absolute_standard_uncertainties in a separate line.
+    #print("line 1114", extendedReferenceData.absolute_standard_uncertainties, ReferenceDataToExtendBy.absolute_standard_uncertainties)
+    if hasattr(extendedReferenceData, "absolute_standard_uncertainties"):
+        extendedReferenceData.absolute_standard_uncertainties = DataFunctions.addXYYYtoXYYY(extendedReferenceData.absolute_standard_uncertainties, ReferenceDataToExtendBy.absolute_standard_uncertainties)
+        extendedReferenceData.update_relative_standard_uncertainties()
+    #print("line 1115", extendedReferenceData.absolute_standard_uncertainties); sys.exit()
     addedReferenceSlice = ReferenceDataToExtendBy #the addition has finished.
+    extendedReferenceData.populateIonizationEfficiencies(extendedReferenceData.AllMID_ObjectsDict)
     extendedReferenceData.exportIonizationInfo()
     return extendedReferenceData, addedReferenceSlice
 
