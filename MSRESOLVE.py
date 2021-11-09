@@ -3173,11 +3173,11 @@ class MSReference (object):
                 currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions -1
             #whether we deleted rows or not, we increase the counter of the rows.
             currentRowIndexAccountingForDeletions = currentRowIndexAccountingForDeletions + 1
-        try:
+        if hasattr(self, 'absolute_standard_uncertainties'):
             self.ExportCollector("ClearZeroRowsFromAbsoluteStandardUncertainties", export_standard_uncertainties=True)
             self.update_relative_standard_uncertainties()
             self.ExportCollector("ClearZeroRowsFromRelativeStandardUncertainties", export_relative_uncertainties=True)
-        except:
+        else:
             print("Warning: line 2897 was unable to update the relative uncertainties of a reference pattern.")
         self.ExportCollector("ClearZeroRowsFromStandardizedReferenceIntensities", use_provided_reference_patterns=False)
         
