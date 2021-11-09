@@ -1290,7 +1290,7 @@ def CorrectionValuesObtain(ReferenceData):
         ReferenceDataOriginalStandardTuning = copy.deepcopy(ReferenceData)  #This is mainly needed for G.referenceFileStandardTuning
         ReferenceDataStandardTuning = createReferenceDataObject ( G.referenceFileStandardTuning[0], G.referenceFileStandardTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
         #TODO: Make the below block of code a function. This block is actually the copy of a block from tuning correction.
-        if type(G.referenceFileUncertainties) != type(None):
+        if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)):
             if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
                 #TODO: Low priority. The below results in "nan" values. It could be better to change it to make zeros using a numpy "where" statement.
                 G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Make sure we have a float.
