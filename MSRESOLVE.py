@@ -1336,11 +1336,22 @@ def CorrectionValuesObtain(ReferenceData):
         ReferenceDataStandardTuning, addedReferenceSlice = extendReferencePattern(ReferenceDataStandardTuning, ReferenceDataOriginalStandardTuning)
         #This is the ReferenceDataObject to carry forward.
         ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuning.csv")
+        if G.createMixedTuningPattern == False:
+            listOfMoleculesToRemove = []
+            for moleculeName in ReferenceDataStandardTuning.molecules:
+                if moleculeName not in ReferenceData.molecules:
+                    listOfMoleculesToRemove.append(moleculeName)
+            ReferenceDataStandardTuning = ReferenceDataStandardTuning.removeMolecules(listOfMoleculesToRemove)
         #rearrange the molecules to the right order.
         ReferenceDataStandardTuning = rearrangeReferenceData(ReferenceData=ReferenceDataStandardTuning, desiredMoleculesOrder=ReferenceData.molecules)
         ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuningRearranged.csv")
         #move the pointer.
         ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
+                                                                                                                            #Before the below, ReferenceDataForCorrectionValues and ReferenceData must be made the same size and width. To do that, we will extend each to have any rows missing that the other has.
+    ReferenceDataMassFragments = ReferenceData.standardized_reference_patterns[:,0]
+    ReferenceDataForCorrectionValuesMassFragments = ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0]
+    ReferenceData.extendMassFragments(ReferenceDataForCorrectionValuesMassFragments)
+    ReferenceDataForCorrectionValues.extendMassFragments(ReferenceDataMassFragments)   
     reference_width = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
     reference_height = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
     correction_values_direct = ReferenceDataForCorrectionValues.standardized_reference_patterns*1.0 #just initializing as same size, but note that this has the mass fragments column.
