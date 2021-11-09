@@ -1224,7 +1224,9 @@ def addXYYYtoXYYY(XYYYarray1, XYYYarray2, defaultValue=0):
     numOrdinatesArray2 = int(len(XYYYarray2[0]) - 1) #subtract 1 for abscissa  #number of ordinated values in array.
     #Make the combined abscissa.
     abscissaCombined = set(abscissa1)|set(abscissa2) #This combines the two sets.
-    abscissaCombined = numpy.array(list(abscissaCombined), dtype='float') #convert to list, then to numpy array.
+    abscissaCombined = list(abscissaCombined)
+    abscissaCombined.sort() #This function returns a None type but sorts the list.
+    abscissaCombined = numpy.array(abscissaCombined, dtype='float') #convert to list, then to numpy array.
     abscissaCombinedLength = len(abscissaCombined)
     #for each of the existing XYYY datasets, we will make an extended version (only extended in rows) where the blanks are filled.
     XYYYarray1extended = numpy.full((abscissaCombinedLength ,numOrdinatesArray1+1), defaultValue, dtype="float")
@@ -1252,5 +1254,43 @@ def addXYYYtoXYYY(XYYYarray1, XYYYarray2, defaultValue=0):
     combinedArray[:,numOrdinatesArray1+1:numOrdinatesArray1+numOrdinatesArray2+1] = XYYYarray2extended[:,1:]
     return combinedArray
     
+    
+'''Takes an XYYY array and a second abscissa (Z), then adds any rows to the first array that were not there.
+#TODO: If abscissa2 is not provided, then all integer valuees between the max and min of the first X axis will be filled in.
+We assume that the abscissa are floats and then use the == comparison to check if they are the same.
+With small values  and large values (e.g. 1E-8 and 1E9) there can be problems.'''
+def extendXYYYtoZYYY(XYYYarray1, abscissa2=None, defaultValue=0):
+    abscissa1 = numpy.array(XYYYarray1[:,0], dtype='float')
+    if type(abscissa2) != type(None):
+        abscissa2 = numpy.array(abscissa2, dtype='float')
+    #TODO: add an else statement for when abscissa2 is not provided.
+    numOrdinatesArray1 = int(len(XYYYarray1[0]) - 1) #subtract 1 for abscissa. #number of ordinated values in array.
+    
+    #Get a list of new absicssa values to insert.
+    valuesToExtendOriginalAbscissaBy = [] #just initializing.
+    for abscissa2value in abscissa2:
+        if abscissa2value not in abscissa1:
+            valuesToExtendOriginalAbscissaBy.append(abscissa2value)
+
+    #Now find the abscissa combined.
+    abscissaCombined = set(abscissa1)|set(valuesToExtendOriginalAbscissaBy) #This combines the two sets.
+    abscissaCombined = list(abscissaCombined)
+    abscissaCombined.sort() #This function returns a None type but sorts the list.
+    abscissaCombined = numpy.array(abscissaCombined, dtype='float') #convert to list, then to numpy array.
+    abscissaCombinedLength = len(abscissaCombined)
+    
+    #Now need to extend the new array.
+    #for each of the existing XYYY datasets, we will make an extended version (only extended in rows) where the blanks are filled.
+    XYYYarray1extended = numpy.full((abscissaCombinedLength ,numOrdinatesArray1+1), defaultValue, dtype="float")
+    XYYYarray1extended[:,0] = abscissaCombined*1.0
+    for newAbscissaIndex,newAbscissaValue in enumerate(abscissaCombined):
+        #Now check if newAbscissaValue occurs in abscissa1. Originaly tried using numpy.where, but it did not work. I did not understand why, but switched to using a loop.
+        for oldAbscissaIndex, oldAbscissaValue in enumerate(abscissa1):
+            if newAbscissaValue == oldAbscissaValue: #This means the value exists in abscissa1
+                XYYYarray1extended[newAbscissaIndex][1:] =  XYYYarray1[oldAbscissaIndex][1:]*1.0#skip first column because it has the abscissa values in it.
+            #else: #This else is implied because the array was initialized with the default value.
+            #    XYYYarray1extended[newAbscissaIndex,1:] =  defaultValue
+    return XYYYarray1extended
+
     
     
