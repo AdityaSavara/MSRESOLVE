@@ -1307,7 +1307,8 @@ def CorrectionValuesObtain(ReferenceData):
             else:
                 print("WARNING: Line 1325 of MSRESOLVE.py else statement has not been programmed. ReferenceDataStandardTuning currently only receives uncertainties if there is an integer in the referenceFileUncertainties.")
                 ReferenceDataStandardTuning.absolute_standard_uncertainties = ReferenceDataStandardTuning.provided_reference_patterns*1.0 #First we make a copy.
-                ReferenceDataStandardTuning.absolute_standard_uncertainties[:,1:] = copy.deepcopy(ReferenceDataStandardTuning.molecules)
+                ReferenceDataStandardTuning.absolute_standard_uncertainties[:,1:] = 0
+        listOfStandardTuningMoleculePatternsAvailable = copy.deepcopy(ReferenceDataStandardTuning.molecules)
         #get a list of molecules to remove from the ReferenceDataStandardTuning file.
         listOfMoleculesToRemove = []
         for moleculeName in listOfStandardTuningMoleculePatternsAvailable:
