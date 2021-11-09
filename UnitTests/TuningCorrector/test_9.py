@@ -47,7 +47,7 @@ MSRESOLVE.G.referenceValueThreshold = [6.0]
 MSRESOLVE.G.referenceSignificantFragmentThresholds = [0.0]
 
 MSRESOLVE.G.specificMassFragments = 'yes'
-MSRESOLVE.G.chosenMassFragments = [2,	18,	26,	27,	28,	29,	31,	44	,45 ,70]
+#MSRESOLVE.G.chosenMassFragments = [2,	18,	26,	27,	28,	29,	31,	44	,45 ,70]
 MSRESOLVE.G.answer = 'sls'
 MSRESOLVE.G.slsFinish = 'inverse'
 #MSRESOLVE.G.permutationNum = 5000
