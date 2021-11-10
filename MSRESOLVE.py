@@ -1289,6 +1289,25 @@ def CorrectionValuesObtain(ReferenceData):
         listOfNeededMolecules = ReferenceData.molecules #intentionally grab molecule list from the original data object fed in.
         ReferenceDataOriginalStandardTuning = copy.deepcopy(ReferenceData)  #This is mainly needed for G.referenceFileStandardTuning
         ReferenceDataStandardTuning = createReferenceDataObject ( G.referenceFileStandardTuning[0], G.referenceFileStandardTuning[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
+        #TODO: Make the below block of code a function. This block is actually the copy of a block from tuning correction.
+        if (G.calculateUncertaintiesInConcentrations == True) and (type(G.referenceFileUncertainties) != type(None)):
+            if type(G.referenceFileUncertainties) == type(float(5)) or  type(G.referenceFileUncertainties) == type(int(5)) :
+                #TODO: Low priority. The below results in "nan" values. It could be better to change it to make zeros using a numpy "where" statement.
+                G.referenceFileUncertainties = float(G.referenceFileUncertainties) #Make sure we have a float.
+                #Get what we need.
+                provided_reference_patterns = ReferenceDataStandardTuning.provided_reference_patterns
+                provided_reference_patterns_without_masses = ReferenceDataStandardTuning.provided_reference_patterns[:,1:] #[:,0] is mass fragments, so we slice to remove those. 
+                #Make our variables ready.
+                absolute_standard_uncertainties = provided_reference_patterns*1.0 #First we make a copy.
+                absolute_standard_uncertainties_without_masses = (provided_reference_patterns_without_masses/provided_reference_patterns_without_masses)*G.referenceFileUncertainties #We do the division to get an array of ones. Then we multiply to get an array of the same size.
+                #now we populate our copy's non-mass area.
+                absolute_standard_uncertainties[:,1:] = absolute_standard_uncertainties_without_masses                                        
+                ReferenceDataStandardTuning.absolute_standard_uncertainties = absolute_standard_uncertainties
+                #We can't convert to relative uncertainties yet because the file may not be standardized yet.
+            else:
+                print("WARNING: Line 1325 of MSRESOLVE.py else statement has not been programmed. ReferenceDataStandardTuning currently only receives uncertainties if there is an integer in the referenceFileUncertainties.")
+                ReferenceDataStandardTuning.absolute_standard_uncertainties = ReferenceDataStandardTuning.provided_reference_patterns*1.0 #First we make a copy.
+                ReferenceDataStandardTuning.absolute_standard_uncertainties[:,1:] = 0
         listOfStandardTuningMoleculePatternsAvailable = copy.deepcopy(ReferenceDataStandardTuning.molecules)
         #get a list of molecules to remove from the ReferenceDataStandardTuning file.
         listOfMoleculesToRemove = []
@@ -1317,11 +1336,22 @@ def CorrectionValuesObtain(ReferenceData):
         ReferenceDataStandardTuning, addedReferenceSlice = extendReferencePattern(ReferenceDataStandardTuning, ReferenceDataOriginalStandardTuning)
         #This is the ReferenceDataObject to carry forward.
         ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuning.csv")
+        if G.createMixedTuningPattern == False:
+            listOfMoleculesToRemove = []
+            for moleculeName in ReferenceDataStandardTuning.molecules:
+                if moleculeName not in ReferenceData.molecules:
+                    listOfMoleculesToRemove.append(moleculeName)
+            ReferenceDataStandardTuning = ReferenceDataStandardTuning.removeMolecules(listOfMoleculesToRemove)
         #rearrange the molecules to the right order.
         ReferenceDataStandardTuning = rearrangeReferenceData(ReferenceData=ReferenceDataStandardTuning, desiredMoleculesOrder=ReferenceData.molecules)
         ReferenceDataStandardTuning.exportReferencePattern("ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuningRearranged.csv")
         #move the pointer.
         ReferenceDataForCorrectionValues = ReferenceDataStandardTuning
+    #Before the below, ReferenceDataForCorrectionValues and ReferenceData must be made the same size and width. To do that, we will extend each to have any rows missing that the other has.
+    ReferenceDataMassFragments = ReferenceData.standardized_reference_patterns[:,0]
+    ReferenceDataForCorrectionValuesMassFragments = ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0]
+    ReferenceData.extendMassFragments(ReferenceDataForCorrectionValuesMassFragments)
+    ReferenceDataForCorrectionValues.extendMassFragments(ReferenceDataMassFragments)   
     reference_width = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[0,:])  #This is number of molecules plus 1 because of the mass fragments column.
     reference_height = len(ReferenceDataForCorrectionValues.standardized_reference_patterns[:,0]) #this is the number of mass fragments.
     correction_values_direct = ReferenceDataForCorrectionValues.standardized_reference_patterns*1.0 #just initializing as same size, but note that this has the mass fragments column.
@@ -3012,7 +3042,7 @@ class MSReference (object):
             self.moleculeIonizationType = ['unknown']* len(self.molecules)
         self.provided_mass_fragments = self.provided_reference_patterns[:,0]
         #clear ClearZeroRowsFromProvidedReferenceIntensities
-        self.ClearZeroRowsFromProvidedReferenceIntensities()
+        #self.ClearZeroRowsFromProvidedReferenceIntensities()  #commenting this out to avoid problems for now.
         #initialize the standardized_reference_patterns
         self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
             
@@ -3189,7 +3219,19 @@ class MSReference (object):
             print("Warning: line 2897 was unable to update the relative uncertainties of a reference pattern.")
         self.ExportCollector("ClearZeroRowsFromStandardizedReferenceIntensities", use_provided_reference_patterns=False)
         
-        
+    def extendMassFragments(self, massFragmentsToExtendBy):
+        #This will add in rows of zeros to the standardized_reference_patterns and also the uncertainties arrays.
+        self.standardized_reference_patterns_mass_fragments = self.standardized_reference_patterns[:,0]*1.0
+        self.standardized_reference_patterns = DataFunctions.extendXYYYtoZYYY(self.standardized_reference_patterns, massFragmentsToExtendBy)
+        #Check if the absolute_standard_uncertainties is the right length. If it is, we will be extending it also.
+        if hasattr(self, "absolute_standard_uncertainties"):
+            print("line 3270", self.standardized_reference_patterns[:,0], numpy.shape(self.standardized_reference_patterns))
+            print("line 3270", self.absolute_standard_uncertainties[:,0], numpy.shape(self.absolute_standard_uncertainties))
+            if len(self.absolute_standard_uncertainties[:,0] ==  self.standardized_reference_patterns_mass_fragments):
+                self.absolute_standard_uncertainties = DataFunctions.extendXYYYtoZYYY(self.absolute_standard_uncertainties, massFragmentsToExtendBy)
+                #For the relative uncertainties, we will use the built in function.
+                print('line 3275', numpy.shape(self.absolute_standard_uncertainties), numpy.shape(self.standardized_reference_patterns))
+                self.update_relative_standard_uncertainties()
             
     #This class function converts the XYXY data to an XYYY format
     def FromXYXYtoXYYY(self):
