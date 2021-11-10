@@ -29,3 +29,9 @@ Creation of the fictional gas mixture was performed in FictionalGasMixtureCreati
 
 Test_2.py adds in the tuning correction intensity feature by use of the Standard Reference pattern (but has uncertainties off)
 Test_3.py adds in the tuning correction intensity feature by use of the Standard Reference pattern (and has uncertainties on)
+
+Test_2.py and Test_3.py outputs have identical concentrations for ethene, ethane, and 1butanal.
+Test_2.py and Test_3.py outputs have differing concentrations for ethyne.
+
+If we look at the SLSUniqueMoleculesAndChosenMassFragments, we see that the reason is that test_3.py switches to using m24 for ethyne rather than m26.
+Test_4.py is a copy of test_3.py, but the SLS solving has been changed to focus on largest reference fragment. Accordingly, test_4.py has solving and output that matches test_2.py
