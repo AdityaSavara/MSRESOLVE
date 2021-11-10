@@ -676,16 +676,16 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             #extendReferencePattern can't currently add the uncertainties sub-objects, so we do that in the lines below.
             ReferenceData.ExportAtEachStep = G.ExportAtEachStep
             ReferenceData.exportReferencePattern('ExportedReferencePatternMixed.csv')
-            if G.calculateUncertaintiesInConcentrations == True: 
-                if type(G.referenceFileUncertainties) != type(None):
-                    #We need to add uncertainties for *only* the molecules which were extended by.                        
-                    ReferenceData.absolute_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceData.absolute_standard_uncertainties,addedReferenceSlice.absolute_standard_uncertainties)
-                    ReferenceData.relative_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceData.relative_standard_uncertainties,addedReferenceSlice.relative_standard_uncertainties)
-                    
-                    #The second of the below lines was causing a bug. I did not understand why, so I just commented out both of them for now.
-                    #ReferenceData.ExportCollector('StandardizedReferencePatternAbsoluteUncertainties', export_standard_uncertainties=True)
-                    #ReferenceData.ExportCollector('StandardizedReferencePatternRelativeUncertainties', export_relative_uncertainties=True)
-
+            
+            #If specific molecules is on, then we need to potentially remove molecules from the mixed reference pattern.
+            if G.specificMolecules.lower() == "yes":
+                moleculesToRemove = []
+                for moleculeName in ReferenceData.molecules:
+                    if moleculeName not in G.chosenMoleculesNames:
+                        moleculesToRemove.append(moleculeName)
+                if len(moleculesToRemove) > 0:
+                    ReferenceData = ReferenceData.removeMolecules(moleculesToRemove)
+                        
             #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
             ReferenceData.exportReferencePattern("ExportedReferencePatternMixed.csv")
                     
@@ -874,19 +874,20 @@ def tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData=None): #makin
         #The extendReferencePattern function uses existing add molecule and remove molecules functions.
         for ReferenceDataIndex in range(len(ReferenceDataList)):
             ReferenceDataList[ReferenceDataIndex], addedReferenceSlice = extendReferencePattern(ReferenceDataList[ReferenceDataIndex],ReferenceDataExistingTuningAfterCorrection)
-            #extendReferencePattern can't currently add the uncertainties sub-objects, so we do that in the lines below.
+            #extendReferencePattern also does add the uncertainties to the subobjects.
+            
+            #If specific molecules is on, we need to remove any molecules that were added that should not be added.
+            if G.specificMolecules.lower() == "yes":
+                moleculesToRemove = []
+                for moleculeName in ReferenceDataList[ReferenceDataIndex].molecules:
+                    if moleculeName not in G.chosenMoleculesNames:
+                        moleculesToRemove.append(moleculeName)
+                if len(moleculesToRemove) > 0:
+                    ReferenceDataList[ReferenceDataIndex] = ReferenceDataList[ReferenceDataIndex].removeMolecules(moleculesToRemove)
+            
             ReferenceDataList[ReferenceDataIndex].ExportAtEachStep = G.ExportAtEachStep
             if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
                 ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
-            # ###Below is deprecated: now the extendReferencePattern adds the uncertainties columns as needed.
-            # if G.calculateUncertaintiesInConcentrations == True: 
-                # if type(G.referenceFileUncertainties) != type(None):
-                    # #We need to add uncertainties for *only* the molecules which were extended by.                        
-                    # ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].absolute_standard_uncertainties,addedReferenceSlice.absolute_standard_uncertainties)
-                    # ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties = DataFunctions.addXYYYtoXYYY(ReferenceDataList[ReferenceDataIndex].relative_standard_uncertainties,addedReferenceSlice.relative_standard_uncertainties)
-                    # #The second of the below lines was causing a bug. I did not understand why, so I just commented out both of them for now.
-                    # #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternAbsoluteUncertainties', export_standard_uncertainties=True)
-                    # #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePatternRelativeUncertainties', export_relative_uncertainties=True)
             ReferenceDataList[ReferenceDataIndex].ClearZeroRowsFromStandardizedReferenceIntensities()
             if len(ReferenceDataList) == 1:
                 if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
@@ -6086,7 +6087,7 @@ def main():
         #TODO: Ashi thinks this can be moved into PrepareReferenceObjectsAndCorrectionValues. But care of not messing up iterativeAnalysis would be needed.
         #TODO continued: In that case, we could change the trimming function to work on the standardized reference patterns.
         #TODO continued: This would leave provided_reference_intensities unchanged, which is an additional bonus.
-        #TODO continued: If we parse chosenMOlecules appropriately ahead of time, we can just pass that as an argument to prepare function.
+        #TODO continued: If we parse chosenMolecules appropriately ahead of time, we can just pass that as an argument to prepare function.
         #TODO continued: If it matches (as a set, not an equal comparison of lists), then no trimming occurs. Else, trimming occurs.
         #TODO continued: but the above changes would probably also require trimDataMassesToMatchReference to occur on Experimental data, again, after prepare reference patterns, including on ExperimentDataCopy.
         if G.specificMolecules == 'yes' or G.iterativeAnalysis:
