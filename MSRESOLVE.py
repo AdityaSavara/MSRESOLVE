@@ -411,6 +411,8 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     if len(OverlappingMolecules) == 0:
         return [0,0,1], [[0,0,0],[0,0,0],[0,0,0]]    
     OverlappingFragments = numpy.intersect1d(ReferencePatternExistingTuningDict['provided_reference_patterns'][:,0],ReferencePatternDesiredTuningDict['provided_reference_patterns'][:,0])    
+    if len(OverlappingFragments) == 0:
+        return [0,0,1], [[0,0,0],[0,0,0],[0,0,0]]                                          
     [OverlappingMolecules,ReferencePatternExistingTuningDict['OverlappingIndices'], ReferencePatternDesiredTuningDict['OverlappingIndices']]  = numpy.intersect1d(ReferencePatternExistingTuningDict['molecules'],ReferencePatternDesiredTuningDict['molecules'], return_indices=True)
     ReferencePatternExistingTuningDict['OverlappingMolecules'] = OverlappingMolecules
     ReferencePatternDesiredTuningDict['OverlappingMolecules'] = OverlappingMolecules
@@ -478,6 +480,8 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     FiniteValueIndices = numpy.isfinite(OverlappingFragments) & numpy.isfinite(meanRatioPerMassFragment)
     #But changing the next lines to add in temporary variables.
     FiniteOverlappingFragments = OverlappingFragments[FiniteValueIndices]
+    if len(FiniteOverlappingFragments) == 0:
+        return [0,0,1], [[0,0,0],[0,0,0],[0,0,0]]                                       
     FiniteMeanRatioPerMassFragment = meanRatioPerMassFragment[FiniteValueIndices]
     abcCoefficients, abcCoefficients_cov =numpy.polyfit(FiniteOverlappingFragments,FiniteMeanRatioPerMassFragment,2, cov=True) #The two is for 2nd degree polynomial.
     FiniteMeanReverseRatioPerMassFragment = 1/FiniteMeanRatioPerMassFragment
