@@ -1563,6 +1563,8 @@ def TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
                 ExperimentData.rawsignals_absolute_uncertainties = numpy.delete(ExperimentData.rawsignals_absolute_uncertainties,timescounter-place_holder,axis = 0) 
             deletePoint = False #set back to the default after deleting.
             place_holder = place_holder + 1 #the place holder increased by one with every deleted row to maintain array indexing
+    if len(ExperimentData.times) == 0:
+        print("ERROR: TimesChooser received a timeRangeStart and timeRangeFinish that resulted in no times remaining for the Experimental data. Change the userinput and run your program again."); sys.exit()
     return None
 
 ''' ScaleDown takes an array and scales every value by the same factor so that
