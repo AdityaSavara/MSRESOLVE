@@ -1,4 +1,4 @@
-Tue Nov  9 20:01:40 2021
+Tue Nov  9 20:10:25 2021
 
 referenceFileName = ['ExtractedReferencePattern.csv'] 
 form  = ['xyyy'] 
@@ -23,5 +23,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.46803 seconds 
+Run Time 0.47268 seconds 
 ###################################################################### 

@@ -35,3 +35,16 @@ Test_2.py and Test_3.py outputs have differing concentrations for ethyne.
 
 If we look at the SLSUniqueMoleculesAndChosenMassFragments, we see that the reason is that test_3.py switches to using m24 for ethyne rather than m26.
 Test_4.py is a copy of test_3.py, but the SLS solving has been changed to focus on largest reference fragment. Accordingly, test_4.py has solving and output that matches test_2.py
+
+***
+To evaluate whether the tuning corrector intensity feature is working correctly, we note:
+
+In 1, 2, and 4 the concentrations are solved based on:
+
+30	ethane
+15	1butanal
+28	ethene
+26	ethyne
+
+From the file TuningCorrectorGasMixtureHypotheticalReferenceMeasuredVsSimulated.xlsx, we see that at mass 15 the measured ratio is much higher than the literature.  That means that the tuning correction for the pattern will push the tuning corrected 1butanal m15 to be higher.
+Comparing ExportedReferencePatternMixed.csv and ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuning.csv, we see that m15 relative intensity has gone from 5.4 in Standard Tuning to 7.32 in the "ExportedReferencePatternMixed" where it is tuning corrected.  The tuning corrector intensity feature should move in the opposite direction. That means it should bring the ScaledConcentration of 1butanal down in test_2.py relative to test_1.py. Test_4.py has the same scaled concentrations as test_2.py.  That is the trend observed, but test_4.py and test_2.py have negative concentrations for 1butanal, which is a bit surprising.  To look at a more clear example, we can look at the first molecule solved by SLS which is ethane, solved by m30. Based on what is in  TuningCorrectorGasMixtureHypotheticalReferenceMeasuredVsSimulated.xlsx, the pattern should go down at m30 from standard tuning to tuning corrected (and it does, in ExportedReferencePatternStandardForCorrectionValuesMixedStandardTuning.csv and ExportedReferencePatternExternalTuningCorrected.csv) : Thus we would expect the concentration to go up for ethane, when going from test_1.py to test_2.py. It does. Test_4.py has the same scaled concentrations as test_2.py.
