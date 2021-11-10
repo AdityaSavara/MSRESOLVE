@@ -484,6 +484,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     abcCoefficients_reverse, abcCoefficients_reverse_cov =numpy.polyfit(FiniteOverlappingFragments,FiniteMeanReverseRatioPerMassFragment,2, cov=True) #The two is for 2nd degree polynomial.
     
     if exportCoefficients == True:
+        numpy.savetxt('TuningCorrectorPattern_FiniteOverlappingFragments.csv', FiniteOverlappingFragments, delimiter=",")
         numpy.savetxt('TuningCorrectorPattern_FiniteMeanRatioPerMassFragment.csv', FiniteMeanRatioPerMassFragment, delimiter=",")
         #Export the TuningCorrectorCoefficients as a list.
         with open('TuningCorrectorCoefficients.txt', 'w') as the_file:
