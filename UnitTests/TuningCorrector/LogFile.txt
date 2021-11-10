@@ -1,4 +1,4 @@
-Tue Nov  9 18:56:47 2021
+Tue Nov  9 20:25:44 2021
 
 referenceFileName = ['AcetaldehydeMeasuredShortened.csv'] 
 form  = ['xyyy'] 
@@ -23,5 +23,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 1.43039 seconds 
+Run Time 0.86958 seconds 
 ###################################################################### 
