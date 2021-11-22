@@ -677,17 +677,16 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             ReferenceData.ExportAtEachStep = G.ExportAtEachStep
             ReferenceData.exportReferencePattern('ExportedReferencePatternMixed.csv')
             
-            #If specific molecules is on, then we need to potentially remove molecules from the mixed reference pattern.
-            if G.specificMolecules.lower() == "yes":
-                moleculesToRemove = []
-                for moleculeName in ReferenceData.molecules:
-                    if moleculeName not in G.chosenMoleculesNames:
-                        moleculesToRemove.append(moleculeName)
-                if len(moleculesToRemove) > 0:
-                    ReferenceData = ReferenceData.removeMolecules(moleculesToRemove)
-                        
-            #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
-            ReferenceData.exportReferencePattern("ExportedReferencePatternMixed.csv")
+            #If specific molecules is on, then we need to potentially remove molecules from the mixed reference pattern, unless PreparingAllMoleculesReferenceDataList.
+            if PreparingAllMoleculesReferenceDataList == False: #THIS IS A GLOBAL FLAG. IT IS AN IMPLIED ARGUMENT.
+                if G.specificMolecules.lower() == "yes":
+                    moleculesToRemove = []
+                    for moleculeName in ReferenceData.molecules:
+                        if moleculeName not in G.chosenMoleculesNames:
+                            moleculesToRemove.append(moleculeName)
+                    if len(moleculesToRemove) > 0:
+                        ReferenceData = ReferenceData.removeMolecules(moleculesToRemove)
+                    ReferenceData.exportReferencePattern("ExportedReferencePatternMixedChosenMolecules.csv")
                     
                 # else:
                     # if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
@@ -5946,10 +5945,12 @@ def main():
     AllMassFragmentsExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)        
     AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesReferenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
     #Then prepare AllMoleculesReferenceDataList to get matching_correction_values, this value is fed into RatioFinder
+    global PreparingAllMoleculesReferenceDataList; PreparingAllMoleculesReferenceDataList = False #initializing this flag          
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
+        PreparingAllMoleculesReferenceDataList = True #Set flag to true before doing each preparation.  
         AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
         PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],AllMassFragmentsExperimentData.mass_fragment_numbers, AllMassFragmentsExperimentData)
-            
+        PreparingAllMoleculesReferenceDataList = False #Set flag to false after doing each preparation.                                 
     #beforeParsedGDict this will be needed for iterative. This actually contains "UserChoices" when that's available, but we won't use that.
     beforeParsedGDict = {}
     if len(G.__dict__.items())>0:       
