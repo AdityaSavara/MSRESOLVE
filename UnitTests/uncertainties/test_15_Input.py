@@ -157,9 +157,10 @@ UserChoices['scaleRawDataYorN']['scaleRawDataFactor'] = 1
 #TODO Reference Correction Coefficients feature should be upgraded to enable separate coefficients for each molecule to allow mixing and matching of reference patterns
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
-UserChoices['measuredReferenceYorN']['on'] ='no'
-UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] ='AcetaldehydeMeasuredRef.csv'
+UserChoices['measuredReferenceYorN']['on'] ='yes'
+UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] =[]
 UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning'] ='AcetaldehydeOnlyNISTRef.csv'
+UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
 #The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten (Ashi thinks it will generate a new reference pattern)
 UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients'] = [0.00041154151447065387, -0.0200083957021084, 1.2192131558273835] 
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0

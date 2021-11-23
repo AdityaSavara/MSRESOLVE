@@ -585,7 +585,10 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
 
     resetReferenceFileDesiredTuningAndForm = False   #initializing. At end, will reset G.referenceFileDesiredTuning if it was originally blank.
     if G.createMixedTuningPattern == False:   
-        if G.measuredReferenceYorN =='yes': #in this case, we are going to apply the external tuning to the current pattern.
+        if ((G.referenceFileExistingTuning ==[]) and (G.referenceFileStandardTuning==[])): #if no external pattern provided, we will use the coefficients provided directly.
+            G.referenceCorrectionCoefficients = G.referenceCorrectionCoefficients
+            G.referenceCorrectionCoefficients_cov = G.referenceCorrectionCoefficients_cov
+        elif ((G.referenceFileExistingTuning !=[]) or (G.referenceFileStandardTuning!=[])) : #in this case, we are going to overwrite any coefficients provided in order to apply the desired tuning to the external pattern.
             referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
             referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
             if referenceFileExistingTuningAndForm == []: #Use the standard tuning file if blank.
@@ -5756,7 +5759,9 @@ def PopulateLogFile():
         if type(G.referenceCorrectionCoefficients_cov) == type(None):
             strVersionOf_abcCoefficients_cov = str(G.referenceCorrectionCoefficients_cov)
         if type(G.referenceCorrectionCoefficients_cov) != type(None):
-            listVersionOf_abcCoefficients_cov = list(G.referenceCorrectionCoefficients_cov) #make the outer structure a list.
+            if numpy.sum(numpy.array(G.referenceCorrectionCoefficients_cov)) == 0:
+                listVersionOf_abcCoefficients_cov = [[0,0,0],[0,0,0],[0,0,0]]
+            else: listVersionOf_abcCoefficients_cov = list(G.referenceCorrectionCoefficients_cov) #make the outer structure a list.
             for elementIndex in range(len(listVersionOf_abcCoefficients_cov)): #make the inner structures lists, also.
                 listVersionOf_abcCoefficients_cov[elementIndex] = list(listVersionOf_abcCoefficients_cov[elementIndex])
             strVersionOf_abcCoefficients_cov = str(listVersionOf_abcCoefficients_cov)
@@ -5915,23 +5920,24 @@ def main():
     G.moleculesNames = molecules
 
     
-    #If a tuning correction is going to be done, we'll make a mixed reference pattern.
+    #If a tuning correction is going to be done, and if requested, we'll make a mixed reference pattern.
     #G.moleculesNamesExtended needs to be populated before the first tuning correction and before parsing of userinput.
     if str(G.measuredReferenceYorN).lower() == 'yes': 
-        if G.referenceFileExistingTuning == []:
-            G.referenceFileExistingTuning = G.referenceFileStandardTuning #Use the standard tuning file if blank.
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
-        SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType,
-        mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])
-        G.moleculesNamesExistingTuning = molecules
-        moleculesToAddToReferencePattern = []
-        for moleculeName in list(G.moleculesNamesExistingTuning):
-            if moleculeName in list(G.moleculesNames):
-                pass
-            else:
-                moleculesToAddToReferencePattern.append(moleculeName)
-        G.moleculesNamesExtended = list(G.moleculesNames) + list(moleculesToAddToReferencePattern)
-    #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
+        if G.createMixedTuningPattern == True:
+            if G.referenceFileExistingTuning == []:
+                G.referenceFileExistingTuning = G.referenceFileStandardTuning #Use the standard tuning file if blank.
+            [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
+            SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType,
+            mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])
+            G.moleculesNamesExistingTuning = molecules
+            moleculesToAddToReferencePattern = []
+            for moleculeName in list(G.moleculesNamesExistingTuning):
+                if moleculeName in list(G.moleculesNames):
+                    pass
+                else:
+                    moleculesToAddToReferencePattern.append(moleculeName)
+            G.moleculesNamesExtended = list(G.moleculesNames) + list(moleculesToAddToReferencePattern)
+        #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
     
     
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
