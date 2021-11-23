@@ -557,6 +557,11 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
 
 '''Makes a mixed reference pattern from two reference patterns, including tuning correction.'''
 def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, returnMixedPattern=False):
+    #If tuning corrector is off (as of Nov 2021, variable measuredReferenceYorN), then we return ReferenceData unchanged.
+    if G.measuredReferenceYorN =='no': 
+        return ReferenceData
+    
+    
     # standardize the reference data columns such that the maximum intensity value per molecule is 100 and everything else is scaled to that maximum value.
     ReferenceData.ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
     ReferenceData.exportReferencePattern('ExportedReferencePatternOriginalAnalysis.csv')
