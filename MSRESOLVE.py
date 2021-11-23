@@ -584,8 +584,13 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
        G.createMixedTuningPattern =  False #override the mixed tuning pattern choice if there is no measured reference.
 
     resetReferenceFileDesiredTuningAndForm = False   #initializing. At end, will reset G.referenceFileDesiredTuning if it was originally blank.
-    if G.createMixedTuningPattern == False:   
-        if ((G.referenceFileExistingTuning ==[]) and (G.referenceFileStandardTuning==[])): #if no external pattern provided, we will use the coefficients provided directly.
+    if hasattr(G, 'tuningCorrectPatternInternalVsExternal') == False: #Check if the tuningCorrectPatternInternalVsExternal attribute has been filled. If not, then fill it with the default which is 'External'
+        G.tuningCorrectPatternInternalVsExternal = 'External' 
+    if ((G.createMixedTuningPattern == False) or (G.tuningCorrectPatternInternalVsExternal == 'Internal')):   
+        if G.tuningCorrectPatternInternalVsExternal == 'Internal': #this applies the correction coefficient manually to the reference analysis pattern.
+            G.referenceCorrectionCoefficients = G.referenceCorrectionCoefficients
+            G.referenceCorrectionCoefficients_cov = G.referenceCorrectionCoefficients_cov
+        elif ((G.referenceFileExistingTuning ==[]) and (G.referenceFileStandardTuning==[])): #if no external pattern provided, we will use the coefficients provided directly.
             G.referenceCorrectionCoefficients = G.referenceCorrectionCoefficients
             G.referenceCorrectionCoefficients_cov = G.referenceCorrectionCoefficients_cov
         elif ((G.referenceFileExistingTuning !=[]) or (G.referenceFileStandardTuning!=[])) : #in this case, we are going to overwrite any coefficients provided in order to apply the desired tuning to the external pattern.
