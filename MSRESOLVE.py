@@ -557,6 +557,11 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
 
 '''Makes a mixed reference pattern from two reference patterns, including tuning correction.'''
 def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, returnMixedPattern=False):
+    #If tuning corrector is off (as of Nov 2021, variable measuredReferenceYorN), then we return ReferenceData unchanged.
+    if G.measuredReferenceYorN =='no': 
+        return ReferenceData
+    
+    
     # standardize the reference data columns such that the maximum intensity value per molecule is 100 and everything else is scaled to that maximum value.
     ReferenceData.ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
     ReferenceData.exportReferencePattern('ExportedReferencePatternOriginalAnalysis.csv')
@@ -578,22 +583,27 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
     if G.measuredReferenceYorN =='no':
        G.createMixedTuningPattern =  False #override the mixed tuning pattern choice if there is no measured reference.
 
+    resetReferenceFileDesiredTuningAndForm = False   #initializing. At end, will reset G.referenceFileDesiredTuning if it was originally blank.
     if G.createMixedTuningPattern == False:   
-        if G.measuredReferenceYorN =='yes': #in this case, we are going to apply the external tuning to the current pattern.
-                referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
-                referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
-                if referenceFileExistingTuningAndForm == []: #Use the standard tuning file if blank.
-                    referenceFileExistingTuningAndForm = G.referenceFileStandardTuning
-                ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
-                ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternOriginalTuning.csv')
-                if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
-                    referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
-                abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
-                referenceCorrectionCoefficients = numpy.zeros(3)
-                referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
-                G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
-                referenceCorrectionCoefficients_cov = abcCoefficients_cov
-                G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
+        if ((G.referenceFileExistingTuning ==[]) and (G.referenceFileStandardTuning==[])): #if no external pattern provided, we will use the coefficients provided directly.
+            G.referenceCorrectionCoefficients = G.referenceCorrectionCoefficients
+            G.referenceCorrectionCoefficients_cov = G.referenceCorrectionCoefficients_cov
+        elif ((G.referenceFileExistingTuning !=[]) or (G.referenceFileStandardTuning!=[])) : #in this case, we are going to overwrite any coefficients provided in order to apply the desired tuning to the external pattern.
+            referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
+            referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
+            if referenceFileExistingTuningAndForm == []: #Use the standard tuning file if blank.
+                referenceFileExistingTuningAndForm = G.referenceFileStandardTuning
+            ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
+            ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternOriginalExisting.csv')
+            if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
+                resetReferenceFileDesiredTuningAndForm = True 
+                referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+            abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
+            referenceCorrectionCoefficients = numpy.zeros(3)
+            referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
+            G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
+            referenceCorrectionCoefficients_cov = abcCoefficients_cov
+            G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
 
             
                         
@@ -632,6 +642,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             if referenceFileExistingTuningAndForm == []: #Use the standard tuning file if blank.
                     referenceFileExistingTuningAndForm = G.referenceFileStandardTuning
             if referenceFileDesiredTuningAndForm == []: #Use the original reference pattern if blank.
+                    resetReferenceFileDesiredTuningAndForm = True
                     referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
             #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
             ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
@@ -677,17 +688,16 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             ReferenceData.ExportAtEachStep = G.ExportAtEachStep
             ReferenceData.exportReferencePattern('ExportedReferencePatternMixed.csv')
             
-            #If specific molecules is on, then we need to potentially remove molecules from the mixed reference pattern.
-            if G.specificMolecules.lower() == "yes":
-                moleculesToRemove = []
-                for moleculeName in ReferenceData.molecules:
-                    if moleculeName not in G.chosenMoleculesNames:
-                        moleculesToRemove.append(moleculeName)
-                if len(moleculesToRemove) > 0:
-                    ReferenceData = ReferenceData.removeMolecules(moleculesToRemove)
-                        
-            #ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
-            ReferenceData.exportReferencePattern("ExportedReferencePatternMixed.csv")
+            #If specific molecules is on, then we need to potentially remove molecules from the mixed reference pattern, unless PreparingAllMoleculesReferenceDataList.
+            if PreparingAllMoleculesReferenceDataList == False: #THIS IS A GLOBAL FLAG. IT IS AN IMPLIED ARGUMENT.
+                if G.specificMolecules.lower() == "yes":
+                    moleculesToRemove = []
+                    for moleculeName in ReferenceData.molecules:
+                        if moleculeName not in G.chosenMoleculesNames:
+                            moleculesToRemove.append(moleculeName)
+                    if len(moleculesToRemove) > 0:
+                        ReferenceData = ReferenceData.removeMolecules(moleculesToRemove)
+                    ReferenceData.exportReferencePattern("ExportedReferencePatternMixedChosenMolecules.csv")
                     
                 # else:
                     # if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
@@ -702,6 +712,8 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             # ReferenceData.ExportCollector('StandardizeReferencePattern_absolute_standard_uncertainties', export_standard_uncertainties= True)
             # ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
                                                                
+    if resetReferenceFileDesiredTuningAndForm == True: #Reset this variable if needed.
+        G.referenceFileDesiredTuning = []               
     return ReferenceData
     
 
@@ -5747,7 +5759,9 @@ def PopulateLogFile():
         if type(G.referenceCorrectionCoefficients_cov) == type(None):
             strVersionOf_abcCoefficients_cov = str(G.referenceCorrectionCoefficients_cov)
         if type(G.referenceCorrectionCoefficients_cov) != type(None):
-            listVersionOf_abcCoefficients_cov = list(G.referenceCorrectionCoefficients_cov) #make the outer structure a list.
+            if numpy.sum(numpy.array(G.referenceCorrectionCoefficients_cov)) == 0:
+                listVersionOf_abcCoefficients_cov = [[0,0,0],[0,0,0],[0,0,0]]
+            else: listVersionOf_abcCoefficients_cov = list(G.referenceCorrectionCoefficients_cov) #make the outer structure a list.
             for elementIndex in range(len(listVersionOf_abcCoefficients_cov)): #make the inner structures lists, also.
                 listVersionOf_abcCoefficients_cov[elementIndex] = list(listVersionOf_abcCoefficients_cov[elementIndex])
             strVersionOf_abcCoefficients_cov = str(listVersionOf_abcCoefficients_cov)
@@ -5906,23 +5920,24 @@ def main():
     G.moleculesNames = molecules
 
     
-    #If a tuning correction is going to be done, we'll make a mixed reference pattern.
+    #If a tuning correction is going to be done, and if requested, we'll make a mixed reference pattern.
     #G.moleculesNamesExtended needs to be populated before the first tuning correction and before parsing of userinput.
     if str(G.measuredReferenceYorN).lower() == 'yes': 
-        if G.referenceFileExistingTuning == []:
-            G.referenceFileExistingTuning = G.referenceFileStandardTuning #Use the standard tuning file if blank.
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
-        SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType,
-        mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])
-        G.moleculesNamesExistingTuning = molecules
-        moleculesToAddToReferencePattern = []
-        for moleculeName in list(G.moleculesNamesExistingTuning):
-            if moleculeName in list(G.moleculesNames):
-                pass
-            else:
-                moleculesToAddToReferencePattern.append(moleculeName)
-        G.moleculesNamesExtended = list(G.moleculesNames) + list(moleculesToAddToReferencePattern)
-    #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
+        if G.createMixedTuningPattern == True:
+            if G.referenceFileExistingTuning == []:
+                G.referenceFileExistingTuning = G.referenceFileStandardTuning #Use the standard tuning file if blank.
+            [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
+            SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType,
+            mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(G.referenceFileExistingTuning[0], G.referenceFileExistingTuning[1])
+            G.moleculesNamesExistingTuning = molecules
+            moleculesToAddToReferencePattern = []
+            for moleculeName in list(G.moleculesNamesExistingTuning):
+                if moleculeName in list(G.moleculesNames):
+                    pass
+                else:
+                    moleculesToAddToReferencePattern.append(moleculeName)
+            G.moleculesNamesExtended = list(G.moleculesNames) + list(moleculesToAddToReferencePattern)
+        #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
     
     
     G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
@@ -5945,10 +5960,12 @@ def main():
     AllMassFragmentsExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)        
     AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesReferenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
     #Then prepare AllMoleculesReferenceDataList to get matching_correction_values, this value is fed into RatioFinder
+    global PreparingAllMoleculesReferenceDataList; PreparingAllMoleculesReferenceDataList = False #initializing this flag          
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
+        PreparingAllMoleculesReferenceDataList = True #Set flag to true before doing each preparation.  
         AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
         PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],AllMassFragmentsExperimentData.mass_fragment_numbers, AllMassFragmentsExperimentData)
-            
+        PreparingAllMoleculesReferenceDataList = False #Set flag to false after doing each preparation.                                 
     #beforeParsedGDict this will be needed for iterative. This actually contains "UserChoices" when that's available, but we won't use that.
     beforeParsedGDict = {}
     if len(G.__dict__.items())>0:       

@@ -55,16 +55,20 @@ def parseUserInput(currentUserInput):
         #If using specificMolecules, make sure all selected molecules are in the reference data
         if currentUserInput.measuredReferenceYorN == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
             parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNames,'chosenMolecules','Molecules from Reference Data')
-        if currentUserInput.measuredReferenceYorN == 'yes':#If using a making a reference pattern, check the extended moleculesNames list.
+        if (currentUserInput.measuredReferenceYorN == 'yes') and (currentUserInput.createMixedTuningPattern == True):#If using a making a mixed reference pattern, check the extended moleculesNames list.
             currentUserInput.moleculesNamesExtended = parse.stripListOfStrings(currentUserInput.moleculesNamesExtended)
             parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNamesExtended,'chosenMolecules','Molecules from Reference Data')
     elif currentUserInput.specificMolecules == 'no': #Otherwise use all molecules
         if currentUserInput.measuredReferenceYorN == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
             currentUserInput.moleculesNames = parse.stripListOfStrings(list(currentUserInput.moleculesNames))
             chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNames)
-        if currentUserInput.measuredReferenceYorN == 'yes':#If using a making a reference pattern, check the extended moleculesNames list.
+        if (currentUserInput.measuredReferenceYorN == 'yes') and (currentUserInput.createMixedTuningPattern == False):#If using tuning corrector and not making a mixed reference pattern, then we make the same chosenMoleculesForParsing as the normal case.
+            chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNames)
+        if (currentUserInput.measuredReferenceYorN == 'yes') and (currentUserInput.createMixedTuningPattern == True):#If using a making a mixed reference pattern, check the extended moleculesNames list.
             currentUserInput.moleculesNamesExtended = parse.stripListOfStrings(currentUserInput.moleculesNamesExtended)
             chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNamesExtended)
+        
+            
     
     #Molecule Likelihoods and Sensitivity Values are lists with the same length as the number of molecules
     currentUserInput.moleculeLikelihoods = parse.listCast(currentUserInput.moleculeLikelihoods)
