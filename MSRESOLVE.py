@@ -1560,7 +1560,6 @@ def TimesChooser (ExperimentData,timeRangeStart,timeRangeFinish):
             deletePoint = True
         if ExperimentData.times[timescounter-place_holder] > timeRangeFinish: #once the time is greater than the time range finish, all values after are deleted
             deletePoint = True
-        print("line 1501", timeRangeStart, timeRangeFinish, ExperimentData.times[timescounter-place_holder], deletePoint)
         if deletePoint == True:
             ExperimentData.times = numpy.delete(ExperimentData.times,timescounter-place_holder) #place holder subtracts from the for loop so that the correct index is maintained
             ExperimentData.workingData = numpy.delete(ExperimentData.workingData,timescounter-place_holder,axis = 0)
