@@ -343,6 +343,10 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['scaleRawDataFactor']   = UserChoices['scaleRawDataYorN']['scaleRawDataFactor']
 
     SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
+    if 'tuningCorrectPatternInternalVsExternal' in UserChoices['measuredReferenceYorN']:
+        SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal']
+    else: #If not provided, then populate with the default for backwards compatibility.
+        SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = 'External'
     if 'createMixedTuningPattern' not in UserChoices['measuredReferenceYorN']:
         UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = True
     SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
