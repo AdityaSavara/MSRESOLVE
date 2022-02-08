@@ -840,15 +840,15 @@ def tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData=None): #makin
         knownConcentrationsArray.insert(0, 1)
         #knownConcentrationsArray needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
         knownConcentrationsArray = numpy.array([knownConcentrationsArray])
-        #Before simulation, we also need the matching_correction_values array. In order to make the matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
-        #Below we directly call Populate_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply an undesired "before comparisons" tuning factor correction. We will need this done before we simulate any signals.
+        #Before simulation, we also need the reciprocal_matching_correction_values array. In order to make the reciprocal_matching_correction_values array, we need to know which masses we need. We can actually just simulate all of the masses from the existingReferencePattern, and then let tuning corrector use whichever masses are useful
+        #Below we directly call Populate_reciprocal_matching_correction_values because PrepareReferenceObjectsAndCorrectionValues could potentially apply an undesired "before comparisons" tuning factor correction. We will need this done before we simulate any signals.
         ReferenceDataExistingTuningMassFragments = ReferenceDataExistingTuning.standardized_reference_patterns[:,0]
-        ReferenceDataExistingTuning = Populate_matching_correction_values(ReferenceDataExistingTuningMassFragments, ReferenceDataExistingTuning)
-        #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted matching_correction_values.
-        #matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
-        matching_correction_values_array = numpy.array([ReferenceDataExistingTuning.matching_correction_values]) 
+        ReferenceDataExistingTuning = Populate_reciprocal_matching_correction_values(ReferenceDataExistingTuningMassFragments, ReferenceDataExistingTuning)
+        #Now need to make the inputs for simulating raw signals of the gas mixture. A properly ordered and formatted concentration array, as well as properly formatted reciprocal_matching_correction_values.
+        #reciprocal_matching_correction_values needs to be nested in a numpy array for expected dimensionality when using RawSignalsSimulation
+        reciprocal_matching_correction_values_array = numpy.array([ReferenceDataExistingTuning.reciprocal_matching_correction_values]) 
         #now need to do the actual simulation of the gas mixture signals.
-        simulateddata = RawSignalsSimulation(knownConcentrationsArray, matching_correction_values_array)
+        simulateddata = RawSignalsSimulation(knownConcentrationsArray, reciprocal_matching_correction_values_array)
         ExportXYYYData("TuningCorrectorGasMixtureHypotheticalSimulatedSignals.csv", simulateddata, ReferenceDataExistingTuningMassFragments, abscissaHeader = "Time", fileSuffix = G.iterationSuffix, dataType = 'simulated')
         #now need to make a fake reference file for that. We'll make an MSReferenceObject and then use the internally built exportReferencePattern class function.
         simulateddata_intensities = simulateddata[0][1:] #The "0" is because it's a nested object. THe slicing is becuase the abscissa (time) value needs to be removed.
@@ -1526,11 +1526,11 @@ def CorrectionValuesObtain(ReferenceData):
     return correction_values, correction_values_relative_uncertainties
 
 
-#Populate_matching_correction_values-> for loops that build the matching_correction_values and raw signals into multiple arrays, inside of lists
+#Populate_reciprocal_matching_correction_values-> for loops that build the reciprocal_matching_correction_values and raw signals into multiple arrays, inside of lists
 #that are ready to be solved in the next section. It does this by using a itertools combination function in order
 #to create all the combinations of row and thereby creating all the possible answer arrays for the data given
 #need these indexes for later
-def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
+def Populate_reciprocal_matching_correction_values(mass_fragment_numbers, ReferenceData):
     ReferenceData.referenceabscissa = ReferenceData.standardized_reference_patterns[:,0]
     referenceDataArray = ReferenceData.standardized_reference_patterns[:,1:]
     correction_values = numpy.array(list(zip(*ReferenceData.correction_values)))
@@ -1557,18 +1557,19 @@ def Populate_matching_correction_values(mass_fragment_numbers, ReferenceData):
     #this more simply, but there are zeros here and we cannot have inf as our value, so the else statement simply
     #skips the zeros and inverse all others
     def ArrayElementsInverser(matching_correction_values):  #TODO: use numpy.divide for this (it is used for a similar task elsewhere in the program already, just search in program for example)
+        reciprocal_matching_correction_values = copy.deepcopy(matching_correction_values)#we mean element reciprical 1/X. Not inverse Matrix
         for x in range(len(matching_correction_values[:,0])): #array-indexed for loop, these two loops go through all the values in the array
             for y in range(len(matching_correction_values[0,:])):#array-indexed for loop
                 if matching_correction_values[x][y] != 0: #when a number is zero using **-1 gives a divide by zero error- so all these are skipped
-                    matching_correction_values[x][y] = matching_correction_values[x][y]**float(-1)
-        return matching_correction_values
-    #here the main function, Populate_matching_correction_values, calls all of its sub-functions 
+                    reciprocal_matching_correction_values[x][y] = matching_correction_values[x][y]**float(-1)
+        return reciprocal_matching_correction_values
+    #here the main function, Populate_reciprocal_matching_correction_values, calls all of its sub-functions 
     ReferenceData.matching_correction_values, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
     ReferenceData.monitored_reference_intensities, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referenceDataArray)
     if G.calculateUncertaintiesInConcentrations == True:
         if type(G.referenceFileUncertainties) != type(None): #Just mimicing the above lines.
-            ReferenceData.matching_correction_values_relative_uncertainties, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values_relative_uncertainties)
-    ReferenceData.matching_correction_values = ArrayElementsInverser(ReferenceData.matching_correction_values)
+            ReferenceData.reciprocal_matching_correction_values_relative_uncertainties, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values_relative_uncertainties)
+    ReferenceData.reciprocal_matching_correction_values = ArrayElementsInverser(ReferenceData.matching_correction_values)
     return ReferenceData
     
     
@@ -1590,11 +1591,11 @@ def UnnecessaryMoleculesDeleter(ReferenceData):
             if rowcounter == height-1: #at the end of the loop
                 if sum(column) == 0:#if there are no relative intensities for the chosen mass fragments of this molecules, all its data is deleted from the arrays
                     ReferenceData.monitored_reference_intensities = numpy.delete(ReferenceData.monitored_reference_intensities,(columncounter-place_holder),axis = 1)
-                    ReferenceData.matching_correction_values = numpy.delete(ReferenceData.matching_correction_values,(columncounter-place_holder),axis = 1)
+                    ReferenceData.reciprocal_matching_correction_values = numpy.delete(ReferenceData.reciprocal_matching_correction_values,(columncounter-place_holder),axis = 1)
                     ReferenceData.molecules = numpy.delete(ReferenceData.molecules,(columncounter-place_holder))
                     if G.calculateUncertaintiesInConcentrations == True:
                         if type(G.referenceFileUncertainties) != type(None): #Just mimicing the above lines.
-                            ReferenceData.matching_correction_values_relative_uncertainties = numpy.delete(ReferenceData.matching_correction_values_relative_uncertainties,(columncounter-place_holder),axis = 1)
+                            ReferenceData.reciprocal_matching_correction_values_relative_uncertainties = numpy.delete(ReferenceData.reciprocal_matching_correction_values_relative_uncertainties,(columncounter-place_holder),axis = 1)
                     place_holder = place_holder + 1
     return ReferenceData
 
@@ -2007,7 +2008,7 @@ def SelectReferencePattern(currentReferencePatternIndex, referencePatternTimeRan
             extractReferencePatternFromDataOptionHere = "no" #should be extracted already.
             currentReferenceData = PrepareReferenceObjectsAndCorrectionValues(currentReferenceData, ExperimentData.mass_fragment_numbers, ExperimentData, extractReferencePatternFromDataOptionHere, G.rpcMoleculesToChange, G.rpcMoleculesToChangeMF, G.rpcTimeRanges, verbose=False)
             if G.iterativeAnalysis: #If using iterative analysis, interpolate the subtracted signals' matching correction factors between the two reference objects
-                currentReferenceData.SSmatching_correction_values = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.SSmatching_correction_values,secondReferenceObject.SSmatching_correction_values,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
+                currentReferenceData.SSreciprocal_matching_correction_values = DataFunctions.analyticalLinearInterpolator(firstReferenceObject.SSreciprocal_matching_correction_values,secondReferenceObject.SSreciprocal_matching_correction_values,currentTime,referencePatternTimeRanges[currentReferencePatternIndex][1],referencePatternTimeRanges[currentReferencePatternIndex+1][0])
         #If we are out of the first time range, not in a gap, and not in the last time range, then we are in the next time range
         elif currentTime >= referencePatternTimeRanges[currentReferencePatternIndex+1][0]:
             #Increase the index
@@ -2146,19 +2147,19 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[
     # Some initial preprocessing on the reference data
     ReferenceData = ReferenceInputPreProcessing(ReferenceData, verbose) #Note: if implicitSLScorrection is being used, G.currentReferenceDataUnfiltered gets created inside ReferenceInputPreProcessing
     # Set the ReferenceData.monitored_reference_intensities and
-    # ReferenceData.matching_correction_values fields
+    # ReferenceData.reciprocal_matching_correction_values fields
     # based on the massesOfInterest, which is typically the ExperimentData.mass_fragment_numbers
     if len(massesOfInterest) > 0:
-        ReferenceData = Populate_matching_correction_values(massesOfInterest,ReferenceData)
+        ReferenceData = Populate_reciprocal_matching_correction_values(massesOfInterest,ReferenceData)
         if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
-            G.currentReferenceDataUnfiltered = Populate_matching_correction_values(massesOfInterest,G.currentReferenceDataUnfiltered)
+            G.currentReferenceDataUnfiltered = Populate_reciprocal_matching_correction_values(massesOfInterest,G.currentReferenceDataUnfiltered)
         #Exports the matching correction value 
-        ReferenceData.ExportCollector('MatchingCorrectionValues', export_matching_correction_value = True)              #exports matching correction value 
+        ReferenceData.ExportCollector('ReciprocalMatchingCorrectionValues', export_matching_correction_value = True)              #exports matching correction value 
         #Only print if not called from interpolating reference objects
         if verbose:
             print("Matching Correction Values complete")
     # Remove reference species that have no mass fragment data
-    # from the ReferenceData fields monitored_reference_intensities, matching_correction_values and molecules
+    # from the ReferenceData fields monitored_reference_intensities, reciprocal_matching_correction_values and molecules
     ## TODO: Consider changing this function to take the array directly i.e.
     ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
     ## like ReferenceData.standardized_reference_patterns
@@ -2189,7 +2190,7 @@ def signalThresholdFilter(ReferenceDataObject, rawsignalsarrayline, minimumSigna
         #the sum of the Boolean array will be > 0 if there was any cases with negligible signals for significant peaks.
         if sum(negligibleSignalForSignificantPeak) > 0:
             ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex] = ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex]*0 #note that this changes the reference object directly.
-            ReferenceDataObject.matching_correction_values[:,moleculeIndex] = ReferenceDataObject.matching_correction_values[:,moleculeIndex]*0 #note that this changes the reference object directly.
+            ReferenceDataObject.reciprocal_matching_correction_values[:,moleculeIndex] = ReferenceDataObject.reciprocal_matching_correction_values[:,moleculeIndex]*0 #note that this changes the reference object directly.
             indexesOfMoleculesSetToZero.append(moleculeIndex)
     return ReferenceDataObject
 
@@ -2398,14 +2399,14 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
         sys.exit()
 
     ReferenceDataSS = []
-    ReferenceDataSSmatching_correction_valuesList = [] #This list will hold the correction factors used for each individual reference pattern
+    ReferenceDataSSreciprocal_matching_correction_valuesList = [] #This list will hold the correction factors used for each individual reference pattern
     for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
         #Creating a correction values matrix list for signal simulation at the end of the program
         ReferenceDataSS.append(copy.deepcopy(RefObject))
         ReferenceDataSS[RefObjectIndex] = ReferenceInputPreProcessing(ReferenceDataSS[RefObjectIndex])
-        ReferenceDataSS[RefObjectIndex] = Populate_matching_correction_values(ExperimentDataFullCopy.mass_fragment_numbers,ReferenceDataSS[RefObjectIndex])
-        ReferenceDataSSmatching_correction_valuesList.append(ReferenceDataSS[RefObjectIndex].matching_correction_values)
-        RefObject.SSmatching_correction_values = ReferenceDataSS[RefObjectIndex].matching_correction_values
+        ReferenceDataSS[RefObjectIndex] = Populate_reciprocal_matching_correction_values(ExperimentDataFullCopy.mass_fragment_numbers,ReferenceDataSS[RefObjectIndex])
+        ReferenceDataSSreciprocal_matching_correction_valuesList.append(ReferenceDataSS[RefObjectIndex].reciprocal_matching_correction_values)
+        RefObject.SSreciprocal_matching_correction_values = ReferenceDataSS[RefObjectIndex].reciprocal_matching_correction_values
         
     #Selecting unused Reference Data
     unusedMolecules = []
@@ -2439,7 +2440,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
             
             referenceDataToExport.to_csv(G.nextRefFileName[RefObjectIndex], header = False, index = False)
     
-    return ReferenceDataSSmatching_correction_valuesList, unusedMolecules
+    return ReferenceDataSSreciprocal_matching_correction_valuesList, unusedMolecules
 
 #sortArrayByHeader is used in exportSimulatedSignalsSoFar to sort simulated data in order by mass fragment
 def sortArrayByHeader(headerArray,dataArray):
@@ -3204,7 +3205,7 @@ class MSReference (object):
             if export_uncertainties:
                 self.dataToExport.append(self.provided_reference_patterns_absolute_uncertainties.copy())
             elif export_matching_correction_value:
-                self.dataToExport.append(self.matching_correction_values.copy())     #Export Correction values along with provided reference patterns
+                self.dataToExport.append(self.reciprocal_matching_correction_values.copy())     #Export Correction values along with provided reference patterns
             elif export_tuning_uncertainties:
                 self.dataToExport.append(self.standardized_reference_patterns_tuning_uncertainties.copy())
             elif export_standard_uncertainties:
@@ -3472,7 +3473,7 @@ class MolecularIonizationData (object):
 #G.massesUsedInSolvingMoleculesForThisPoint keeps track of anything solved by SLSUnique.
 #original_list_of_mass_fragments (array of mass fragments) vs. used_mass_fragments (array of 0 and 1 for which ones have been used)
 #molecules_unedited (list of strings) vs.   solvedmolecules (array of 0 and 1 for which ones have been solved)
-#matching_correction_values is not only a trimmed down version of correction_values, it is also transposed.
+#reciprocal_matching_correction_values is not only a trimmed down version of correction_values, it is also transposed.
 #uncertainties_dict contains all of the uncertainties including the dynamic variable versions that get changed during SLSUniqueFragments
 #G.currentTimeIndex = timeIndex and there is also G.currentTimePoint #This is useful for debugging when in the for loop of data analysis.                                                                                                                                         
     
@@ -3495,9 +3496,9 @@ def RawSignalsArrayMaker(mass_fragment_numbers_monitored,mass_fragment_numbers,c
 #CombinationMaker gets the combinations of matrices and solves each one by one and enters them into the list of answers-signals
 #specifically to make square matrices
 #itertools uses a combination function (below) and the function uses those to index drawing out of all the rows in an array
-def CombinationMaker(matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers):
-    num_molecules = len(matching_correction_values[0,:])
-    num_MassFragments = len(matching_correction_values[:,0])
+def CombinationMaker(reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers):
+    num_molecules = len(reciprocal_matching_correction_values[0,:])
+    num_MassFragments = len(reciprocal_matching_correction_values[:,0])
     import itertools 
     combinations = list(itertools.combinations(list(range(num_MassFragments)),num_molecules)) 
     if combinations == []:#This function will not work without enough mass fragments, so the user must know the problem
@@ -3520,7 +3521,7 @@ def CombinationMaker(matching_correction_values,rawsignalsarrayline,monitored_re
     #and relative intensities
     for combinationnum in range(combinations_len): #array-indexed for loop
         for moleculecounter in range(num_molecules):    #array-indexed for loop
-            correctionrow = matching_correction_values[combinations[combinationnum][moleculecounter],:] 
+            correctionrow = reciprocal_matching_correction_values[combinations[combinationnum][moleculecounter],:] 
             intensityrow = monitored_reference_intensities[combinations[combinationnum][moleculecounter],:]
             rawsignalrow = rawsignalsarrayline[combinations[combinationnum][moleculecounter],:]
             massfragrow = massfragrow + str(mass_fragment_numbers[combinations[combinationnum][moleculecounter]]) + ','
@@ -3575,8 +3576,8 @@ def DataCompressor(signals,molecules,type):
     
     
 #this function calls all the functions that make up the inverse method, so that there is no need to call them individually later
-def InverseMethod(matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers,molecules,type):
-    [combinations_len,rawsignallist,correctionlist,intensitylist,massfraglist] = CombinationMaker (matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers)
+def InverseMethod(reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers,molecules,type):
+    [combinations_len,rawsignallist,correctionlist,intensitylist,massfraglist] = CombinationMaker (reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers)
     [compositions] = CombinationSolver (combinations_len,rawsignallist,correctionlist,molecules,massfraglist)
     [averagecomp,stddevcomp] = DataCompressor(compositions,molecules,'composition')
     return averagecomp
@@ -3739,7 +3740,7 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeL
         shortCorrectionValues.append(correctionValues[row_num])
         shortRawSignals.append(rawSignals[row_num])
         if len(uncertainties_dict) > 0:
-            shortCorrectionValues_relative_uncertainties.append(uncertainties_dict['matching_correction_values_relative_uncertainties_one_time'][row_num])
+            shortCorrectionValues_relative_uncertainties.append(uncertainties_dict['reciprocal_matching_correction_values_relative_uncertainties_one_time'][row_num])
             shortRawSignals_absolute_uncertainties.append(uncertainties_dict['rawsignals_absolute_uncertainties_one_time'][row_num])
     #This section stacks the chosen rows from lists into arrays
     shortRefMassFrags = numpy.asarray(shortRefMassFrags)
@@ -3760,14 +3761,14 @@ def DistinguishedArrayChooser(refMassFrags,correctionValues,rawSignals,moleculeL
     
     
 #this function takes the data from important abscissa identifier and 
-def InverseMethodDistinguished(monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, uncertainties_dict={}):
-    monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, matching_correction_values_relative_uncertainties, rawsignals_absolute_uncertainties = DistinguishedArrayChooser(monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, G.moleculeLikelihoods,G.sensitivityValues, uncertainties_dict)
+def InverseMethodDistinguished(monitored_reference_intensities,reciprocal_matching_correction_values,rawsignalsarrayline, uncertainties_dict={}):
+    monitored_reference_intensities,reciprocal_matching_correction_values,rawsignalsarrayline, reciprocal_matching_correction_values_relative_uncertainties, rawsignals_absolute_uncertainties = DistinguishedArrayChooser(monitored_reference_intensities,reciprocal_matching_correction_values,rawsignalsarrayline, G.moleculeLikelihoods,G.sensitivityValues, uncertainties_dict)
     #The below try and except statemnt is meant to catch cases as described in the except statement.
     try:
-        numpy.linalg.det(matching_correction_values)
+        numpy.linalg.det(reciprocal_matching_correction_values)
     except:
         print("There is an error in a matrix operation evaluation: The number of feasible mass fragments to check is probably less than the number of molecules. This can happen if referenceValueThreshold is too strict, leaving not enough feasible fargments to consider. The program is probably about to crash.")               
-    if numpy.linalg.det(matching_correction_values) != 0:#only solves if determinant is not equal to zero     
+    if numpy.linalg.det(reciprocal_matching_correction_values) != 0:#only solves if determinant is not equal to zero     
         #Now we will solve with the inverse way, and also for uncertainties if that module is present.
         #The uncertainties module works well for matrix inverse, but not for dot product. So we make a custom function.                                                                                                   
         if len(uncertainties_dict) > 0:
@@ -3813,17 +3814,17 @@ def InverseMethodDistinguished(monitored_reference_intensities,matching_correcti
                     # return dotProductArray 
             except:
                 uncertaintiesModulePresent = False
-                solutions = numpy.linalg.solve(matching_correction_values,rawsignalsarrayline) 
+                solutions = numpy.linalg.solve(reciprocal_matching_correction_values,rawsignalsarrayline) 
                 uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = numpy.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
                 uncertainties_dict['concentrations_relative_uncertainties_one_time'] = numpy.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
                 print("WARNING: InverseMethodDistinguished could not return uncertainties and is returning uncertainties of zero. This is for the datapoint with intensities of", rawsignalsarrayline, "and concentrations of", solutions)
             if uncertaintiesModulePresent == True:              
-                matching_correction_values_relative_uncertainties = matching_correction_values_relative_uncertainties#Note that we cannot use uncertainties_dict['matching_correction_values_relative_uncertainties'], because we have truncated the array already based on distinguished.
-                matching_correction_values_absolute_uncertainties = matching_correction_values*matching_correction_values_relative_uncertainties                                                        
-                unumpy_matching_correction_values = unumpy.uarray(numpy.array(matching_correction_values), numpy.array(matching_correction_values_absolute_uncertainties)) #inverse doesn't work if they're not numpy arrays already. They were lists before this line.
+                reciprocal_matching_correction_values_relative_uncertainties = reciprocal_matching_correction_values_relative_uncertainties#Note that we cannot use uncertainties_dict['reciprocal_matching_correction_values_relative_uncertainties'], because we have truncated the array already based on distinguished.
+                reciprocal_matching_correction_values_absolute_uncertainties = reciprocal_matching_correction_values*reciprocal_matching_correction_values_relative_uncertainties                                                        
+                unumpy_reciprocal_matching_correction_values = unumpy.uarray(numpy.array(reciprocal_matching_correction_values), numpy.array(reciprocal_matching_correction_values_absolute_uncertainties)) #inverse doesn't work if they're not numpy arrays already. They were lists before this line.
                 #Needs to be a umatrix, not uarray, if want to invert and do dot product.          
                 #following https://pythonhosted.org/uncertainties/numpy_guide.html?highlight=inverse then adding dot product.
-                uInverseInBetween = unumpy.ulinalg.pinv(unumpy_matching_correction_values)                                  
+                uInverseInBetween = unumpy.ulinalg.pinv(unumpy_reciprocal_matching_correction_values)                                  
                 #Up until this line, rawsignals_absolute_uncertainties has been 1D. We need to make it 2D and the same direction as rawsignalsarrayline which is already 2D.
                 rawsignals_absolute_uncertainties_2D = numpy.atleast_2d(rawsignals_absolute_uncertainties).transpose()
                 unumpy_rawsignalsarrayline = unumpy.uarray(numpy.array(rawsignalsarrayline), numpy.array(rawsignals_absolute_uncertainties_2D)) #When this has 0.0 we get a very small final uncertainties listed as 0.        
@@ -3832,13 +3833,13 @@ def InverseMethodDistinguished(monitored_reference_intensities,matching_correcti
                 solutions_uncertainties =unumpy.std_devs(uSolutions)
                 uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = abs(numpy.array(solutions_uncertainties).transpose()) #The uncertainties dictionary does have these the other way, so have to transpose back.
                 uncertainties_dict['concentrations_relative_uncertainties_one_time'] = abs(numpy.array(solutions_uncertainties/solutions).transpose()) #The uncertainties dictionary does have these the other way, so have to transpose back.
-        solutions = numpy.linalg.solve(matching_correction_values,rawsignalsarrayline)
+        solutions = numpy.linalg.solve(reciprocal_matching_correction_values,rawsignalsarrayline)
     else:
         print('The Array Chosen is Singular')
         solutions = numpy.zeros(len(rawsignalsarrayline)) # the solutions are         if len(uncertainties_dict) > 0:
         if len(uncertainties_dict) > 0:
             print('The Array Chosen is Singular. Using a 0 for all uncertainties. In future, may try to use pseudo inverse uncertainties propagation, but it would likely underestimate the uncertainties.')
-            #In future can probably use uInverseInBetween = unumpy.ulinalg.pinv(unumpy_matching_correction_values), assuming that function exists.
+            #In future can probably use uInverseInBetween = unumpy.ulinalg.pinv(unumpy_reciprocal_matching_correction_values), assuming that function exists.
             uncertainties_dict['concentrations_absolute_uncertainties_one_time']=solutions*0.0
             uncertainties_dict['concentrations_relative_uncertainties_one_time']=solutions*0.0        
     return solutions
@@ -3969,11 +3970,11 @@ def DataRangeSpecifier(molecules,timeIndex,molecules_copy,conversionfactor,dataf
 # finding the percentages that are closest to the correct percentages
 def SimulateSignalAndReturnObjFunc(concentrations,*otherArgumentsList):
     rawsignalsarrayline = otherArgumentsList[0]#the item in the list is the raw signal arrayline
-    matching_correction_values = otherArgumentsList[1] #the second item is the matching correction values
+    reciprocal_matching_correction_values = otherArgumentsList[1] #the second item is the matching correction values
     objectiveFunctionOption = otherArgumentsList[2]#the input argument contains both the objectiveFunctionOption (objectiveFunctionType) and the two arrays: raw signals array line and matching correction values
     xyyData = numpy.zeros([3,len(rawsignalsarrayline)]) #a three line array is made that will be entered into the function below
     xyyData[1:2,:] = numpy.hstack(rawsignalsarrayline) #this second line is the raw signals
-    xyyData[2:3,:] = numpy.hstack(numpy.array(numpy.array(matching_correction_values)@numpy.array(numpy.vstack(concentrations)))) #the third row is the calculated signals
+    xyyData[2:3,:] = numpy.hstack(numpy.array(numpy.array(reciprocal_matching_correction_values)@numpy.array(numpy.vstack(concentrations)))) #the third row is the calculated signals
     objectiveFunctionDictionary = ObjectiveFunctionGenerator(xyyData,0)
     if objectiveFunctionOption == 'weightedSAR': #based on the choice given the output will be chosen from this called functions dictionary
         objective_function = objectiveFunctionDictionary['weightedSAR']
@@ -4054,13 +4055,13 @@ def ObjectiveFunctionGenerator(xyyData, minVal, args=[1.,1.], maxValOption=0):
 
 #This is the function that actually calls the function brute and runs it based on the function above, with ranges as specified
 #by the datarangespecifier function, it proceeds to output the answers as well as print them to the screen.
-def OptimizingFinisher(molecules,specifications,matching_correction_values,rawsignalsarrayline,objectiveFunctionType,maxPermutations=100001, optimizer="BruteForce"):
+def OptimizingFinisher(molecules,specifications,reciprocal_matching_correction_values,rawsignalsarrayline,objectiveFunctionType,maxPermutations=100001, optimizer="BruteForce"):
     #The optimizer can be BruteForce (grid based) or can come from scipy.optimize.minimize
     #specifications is normally a list. If the optimizer is BruteForce, then the specifications variable contains information about the grid. Index 1 and 0 are max and min along an axis, index 2 is increment/spacing along that axis.
     #If the optimizer is not BruteForce, then specifications includes the initial guess in its first index.
     SimulateSignalAndReturnObjFuncArgs = []#a list is made in order to use inside the forward problem since we are not defining anything globally
     SimulateSignalAndReturnObjFuncArgs.append(rawsignalsarrayline)
-    SimulateSignalAndReturnObjFuncArgs.append(matching_correction_values)
+    SimulateSignalAndReturnObjFuncArgs.append(reciprocal_matching_correction_values)
     SimulateSignalAndReturnObjFuncArgs.append(objectiveFunctionType)
     def SimulateSignalAndReturnObjFuncWrapper(concentrationGuess):
         objFuncValue = SimulateSignalAndReturnObjFunc(concentrationGuess,*SimulateSignalAndReturnObjFuncArgs)        
@@ -4129,7 +4130,7 @@ def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, r
 #method or as opposed to it. Either way, it only produces one set of values, so it has no need for the 
 #data compressor function and starts right after the correction values are obtained
 #TODO: make some kind of unit test that tests a good order being chosen.
-def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline, timeIndex, time, uncertainties_dict={}):
+def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matching_correction_values,rawsignalsarrayline, timeIndex, time, uncertainties_dict={}):
     #FIXME: I am using the currentReferenceData.mass_fragment_numbers_monitored but it needs to be passed in from Reference or Experimental datal.
     try:
         type(G.massesUsedInSolvingMoleculesForThisPoint)
@@ -4141,10 +4142,10 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     remaining_reference_intensities_SLS = copy.deepcopy(monitored_reference_intensities)
     
 
-    # This is creating a local copy of 'matching_correction_values' which will become
+    # This is creating a local copy of 'reciprocal_matching_correction_values' which will become
     # truncated as the molecules are solved and masses are removed
-    remaining_correction_factors_SLS = copy.deepcopy(matching_correction_values)
-    original_correction_factors = copy.deepcopy(matching_correction_values)
+    remaining_correction_factors_SLS = copy.deepcopy(reciprocal_matching_correction_values)
+    original_correction_factors = copy.deepcopy(reciprocal_matching_correction_values)
     #We keep track of the original number of mass fragments and molecules for indexing purposes.
     #In the loop, we'll update the number of remaining molecules and  mass fragments from remaining correction values.
     original_num_MassFragments = len(original_correction_factors[:,0])
@@ -4161,7 +4162,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
     molecules_unedited = copy.deepcopy(molecules) #old variable, but being kept to prevent need to change things.
     
     if len(uncertainties_dict) > 0: #This means that the uncertainties_dict argument has been passed in with values to use.
-        uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['matching_correction_values_relative_uncertainties_one_time'])
+        uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['reciprocal_matching_correction_values_relative_uncertainties_one_time'])
         if (type(uncertainties_dict['rawsignals_absolute_uncertainties']) != type(None)) and (str(uncertainties_dict['rawsignals_absolute_uncertainties']).lower() != 'none'):
             uncertainties_dict['remaining_rawsignals_absolute_uncertainties_SLS'] = copy.deepcopy(uncertainties_dict['rawsignals_absolute_uncertainties_one_time'])
             #need to also make it 2D and then transpose.
@@ -4225,13 +4226,13 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
             
             slsReferenceDataObject = copy.deepcopy(currentReferenceData)
             slsReferenceDataObject.monitored_reference_intensities = remaining_reference_intensities_SLS
-            slsReferenceDataObject.matching_correction_values = remaining_correction_factors_SLS
+            slsReferenceDataObject.reciprocal_matching_correction_values = remaining_correction_factors_SLS
             slsReferenceDataObject.molecules = remaining_molecules_SLS
             slsReferenceDataObject = signalThresholdFilter(slsReferenceDataObject, remaining_rawsignals_SLS, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
             #after done, update local variables from the object that has now been changed.
             remaining_monitored_reference_intensities = slsReferenceDataObject.monitored_reference_intensities *1.0  #These are the remaining_monitored_reference_intensities after exclusion.
             remaining_reference_intensities_SLS = slsReferenceDataObject.monitored_reference_intensities *1.0 #This one will get further shortened inside the loop.
-            remaining_correction_factors_SLS = slsReferenceDataObject.matching_correction_values
+            remaining_correction_factors_SLS = slsReferenceDataObject.reciprocal_matching_correction_values
             remaining_molecules_SLS = slsReferenceDataObject.molecules #should not have changed, since it just adds zeroes to patterns without removing molecules.
             #now we exclude (remove) molecules with no signals left in their reference patterns on any of the remaining mass fragments, which can happen due to the rawThresholdFilter.
             
@@ -4479,7 +4480,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
                 if type(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']) != type(None):
                     uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'] = numpy.delete(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'],(moleculeIndexForThisSLS),axis = 1)
                     uncertainties_dict['correction_values_relative_uncertainties_one_time'] = uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']*1.0
-                    uncertainties_dict['matching_correction_values_relative_uncertainties_one_time'] = uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']*1.0
+                    uncertainties_dict['reciprocal_matching_correction_values_relative_uncertainties_one_time'] = uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS']*1.0
             #Reset these lists to start again.
             nonZeroCorrectionValuesList = []
             signalsCorrespondingToNonZeroCorrectionValuesList = []
@@ -4567,7 +4568,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,matching_correc
 #three (ultimately, any size array can be solved via this method (if the method went to infinity rather than stopping at
 #3) provided that the array were square- for, in fact, none of these method (save for the brute method) can solve for the 
 #signals if the first array is not square
-def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,scaledConcentrationsarray,molecules_unedited,conversionfactor,datafromcsv,DataRangeSpecifierlist,objectiveFunctionType,counterforspecifications,maxPermutations = 100001, uncertainties_dict={}):
+def SLSCommonFragments(reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,scaledConcentrationsarray,molecules_unedited,conversionfactor,datafromcsv,DataRangeSpecifierlist,objectiveFunctionType,counterforspecifications,maxPermutations = 100001, uncertainties_dict={}):
 
     #TODO: #FIXME: It seems 
     # like this function forces Brute towards the end, rather than checking 
@@ -4577,9 +4578,9 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
     # truncated as the molecules are solved and masses are removed
     remaining_reference_intensities_SLS = copy.deepcopy(monitored_reference_intensities)
 
-    # This is creating a local copy of the matching_correction_values which will become
+    # This is creating a local copy of the reciprocal_matching_correction_values which will become
     # truncated as the molecules are solved and masses are removed
-    remaining_correction_factors_SLS = copy.deepcopy(matching_correction_values)
+    remaining_correction_factors_SLS = copy.deepcopy(reciprocal_matching_correction_values)
 
     # This is creating a local copy of the rawsignalsarrayline which will become
     # truncated as the molecules are solved and masses are removed
@@ -4775,7 +4776,7 @@ def SLSCommonFragments(matching_correction_values,rawsignalsarrayline,monitored_
 #this function simply calls the other functions to be used, based on the user input pathway, that means that this
 #function can send the sls to unique or common fragments, to inverse or brute method after, and sends the data back 
 #and forth between the unique and common fragments for the common fragments method
-def SLSMethod(molecules,monitored_reference_intensities,matching_correction_values,rawsignalsarrayline,timeIndex,conversionfactor,datafromcsv,molecules_copy,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,objectiveFunctionType,time,maxPermutations=100001, bestMassFragChooser=False, uncertainties_dict={}):
+def SLSMethod(molecules,monitored_reference_intensities,reciprocal_matching_correction_values,rawsignalsarrayline,timeIndex,conversionfactor,datafromcsv,molecules_copy,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,objectiveFunctionType,time,maxPermutations=100001, bestMassFragChooser=False, uncertainties_dict={}):
     #FIXME: uncertainties_dict is supposed to be passed in as an argument, but for now I am taking it from othe globals because I had some strange empty list error for the solutions concentrations when I tried passing it in.
     uncertainties_dict = G.uncertainties_dict
 
@@ -4783,9 +4784,9 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
     # truncated as the molecules are solved and masses are removed
     remaining_reference_intensities_SLS = copy.deepcopy(monitored_reference_intensities)
 
-    # This is creating a local copy of the matching_correction_values which will become
+    # This is creating a local copy of the reciprocal_matching_correction_values which will become
     # truncated as the molecules are solved and masses are removed
-    remaining_correction_factors_SLS = copy.deepcopy(matching_correction_values)
+    remaining_correction_factors_SLS = copy.deepcopy(reciprocal_matching_correction_values)
 
     # This is creating a local copy of the rawsignalsarrayline which will become
     # truncated as the molecules are solved and masses are removed
@@ -4988,7 +4989,7 @@ def SLSMethod(molecules,monitored_reference_intensities,matching_correction_valu
 #five, then the molecule is not present for that particular time. This whole row is then deleted instead of 
 #altering the numbers in order that data is not skewed, of course, this can result in less mass fragments than 
 #present molecules, which will give an error later on in the function (the inverse method section of the sls most likely)
-def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,timeIndex,
+def RawSignalThresholdFilter (distinguished,reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,timeIndex,
                               mass_fragment_numbers,ThresholdList,answer,time,
                               conversionfactor = [],datafromcsv = [],DataRangeSpecifierlist = [],
                               SLSChoices = [],permutationNum = [],scaledConcentrationsarray = [],objectiveFunctionType = [],
@@ -4998,9 +4999,9 @@ def RawSignalThresholdFilter (distinguished,matching_correction_values,rawsignal
     # truncated as the molecules are solved and masses are removed
     remaining_reference_intensities_filter = copy.deepcopy(monitored_reference_intensities)
 
-    # This is creating a local copy of the matching_correction_values which will become
+    # This is creating a local copy of the reciprocal_matching_correction_values which will become
     # truncated as the molecules are solved and masses are removed
-    remaining_correction_factors_SLS = copy.deepcopy(matching_correction_values)
+    remaining_correction_factors_SLS = copy.deepcopy(reciprocal_matching_correction_values)
 
     # This is creating a local copy of the rawsignalsarrayline which will become
     # truncated as the molecules are solved and masses are removed
@@ -5130,7 +5131,7 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                         if moleculesTSC_List[referencePatternIndex] == AllMoleculesReferenceDataList[referencePatternIndex].molecules[moleculecounter]:#gets molecule index
                             if massNumberTSC_List[referencePatternIndex] == AllMoleculesReferenceDataList[referencePatternIndex].matching_abscissa[masscounter]:#gets index
                                 #solve for the conversion factor of this reference file
-                                conversionFactorForEachReferenceFile[referencePatternIndex] = (moleculeConcentrationTSC_List[referencePatternIndex]*AllMoleculesReferenceDataList[referencePatternIndex].matching_correction_values[masscounter,moleculecounter])/float(moleculeSignalTSC_List[referencePatternIndex]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
+                                conversionFactorForEachReferenceFile[referencePatternIndex] = (moleculeConcentrationTSC_List[referencePatternIndex]*AllMoleculesReferenceDataList[referencePatternIndex].reciprocal_matching_correction_values[masscounter,moleculecounter])/float(moleculeSignalTSC_List[referencePatternIndex]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
             #Now we need to populate conversionFactorsAtEachTime with the proper conversion factors
             if len(referencePatternTimeRanges) > 0: #If using reference pattern time chooser, loop through ExpData.times to determine which conversion factor goes where
                 for timeIndex in range(len(ExperimentData.times)): #Looping through all times
@@ -5159,7 +5160,7 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                         if massNumberTSC_List[0] == AllMoleculesReferenceDataList[0].matching_abscissa[masscounter]: #Gets index of first massNumberTSC in the collected data
                             #Get the concentration factor for the first molecule listed
                             correction_values_masscounter = AllMoleculesReferenceDataList[0].matching_abscissa.index(AllMoleculesReferenceDataList[0].matching_abscissa[masscounter])
-                            conversionFactorForFirstMoleculeTSC = (moleculeConcentrationTSC_List[0]*AllMoleculesReferenceDataList[0].matching_correction_values[correction_values_masscounter,moleculecounter])/float(moleculeSignalTSC_List[0]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
+                            conversionFactorForFirstMoleculeTSC = (moleculeConcentrationTSC_List[0]*AllMoleculesReferenceDataList[0].reciprocal_matching_correction_values[correction_values_masscounter,moleculecounter])/float(moleculeSignalTSC_List[0]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
             #Overwrite all values in conversion factor at each time with the conversion factor of the first moleculeTSC
             #This for loop is looping conversionFactorsAtEachTime array which is the same length as the trimmed molecules
             for conversionIndex in range(len(conversionFactorsAtEachTime[0])): #index of 0 is needed because array is 2-D with 1 row and rows are indexed first and we want to loop over each column
@@ -5176,7 +5177,7 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                                     #Solve for the new conversion factor and place it at the index of the molecule's appearance in the trimmed reference data
                                     #index of 0 is needed because array is 2-D with 1 row and rows are indexed first
                                     correction_values_masscounter = AllMoleculesReferenceDataList[0].matching_abscissa.index(AllMoleculesReferenceDataList[0].matching_abscissa[masscounter])
-                                    conversionFactorsAtEachTime[0][ReferenceDataMoleculeIndex] = (moleculeConcentrationTSC_List[moleculeTSC_Index]*AllMoleculesReferenceDataList[0].matching_correction_values[correction_values_masscounter,moleculecounter])/float(moleculeSignalTSC_List[moleculeTSC_Index]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
+                                    conversionFactorsAtEachTime[0][ReferenceDataMoleculeIndex] = (moleculeConcentrationTSC_List[moleculeTSC_Index]*AllMoleculesReferenceDataList[0].reciprocal_matching_correction_values[correction_values_masscounter,moleculecounter])/float(moleculeSignalTSC_List[moleculeTSC_Index]) #Use the matching correction value determined by using all molecules and mass fragments from the imported files
                                 else: #if the molecule is not in the trimmed data then just use the conversion factor of the first molecule listed which is what already populates conversionFactorAtEachTime
                                     pass
         else:
@@ -5189,36 +5190,36 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
 #this function is going to be rather simple, but it will be the forward function, that simulates raw signals from the calculated
 #signals that we acquired, which will later be printed out in the main() function. The inputs for this function are the signals 
 #array as well as the correction values, in order to simulate the raw signals
-def RawSignalsSimulation(scaledConcentrationsarray,matching_correction_values):
-    simulateddata = numpy.zeros([len(scaledConcentrationsarray[:,0]),len(matching_correction_values[0][:,0])+1])#a simulated data array made the height of the signals array and the width equal to the correction arrays height
+def RawSignalsSimulation(scaledConcentrationsarray,reciprocal_matching_correction_values):
+    simulateddata = numpy.zeros([len(scaledConcentrationsarray[:,0]),len(reciprocal_matching_correction_values[0][:,0])+1])#a simulated data array made the height of the signals array and the width equal to the correction arrays height
     times = scaledConcentrationsarray[:,0]#the first row of the signals array is the times
     scaledConcentrationsarray = scaledConcentrationsarray[:,1:] #because one of the lines here is the times, and it need to be removed
     for scaledtimeIndex in range(len(scaledConcentrationsarray[:,0])):#array-indexed for loop
-        simulateddata[scaledtimeIndex:scaledtimeIndex+1,1:] = numpy.transpose(numpy.array(matching_correction_values[scaledtimeIndex]) @ numpy.array(numpy.vstack(scaledConcentrationsarray[scaledtimeIndex,:])))#the data is simulated by multiplying the matrix of correction values by the raw signals for each row. the "@" allows 'matrix multiplication' with numpy.
+        simulateddata[scaledtimeIndex:scaledtimeIndex+1,1:] = numpy.transpose(numpy.array(reciprocal_matching_correction_values[scaledtimeIndex]) @ numpy.array(numpy.vstack(scaledConcentrationsarray[scaledtimeIndex,:])))#the data is simulated by multiplying the matrix of correction values by the raw signals for each row. the "@" allows 'matrix multiplication' with numpy.
     simulateddata[:,0] = times #the times are added back in so they can be printed more easily
     return simulateddata
 
 #This was written as a support function for NegativeAnalyzer in Jan 2020, but was put outside since it could be useful for other applications.
-def littleSimulationFunction(concentrations_without_time, matching_correction_values_to_simulate):
-    simulatedRawSignal = numpy.array(matching_correction_values_to_simulate)@numpy.array(numpy.vstack(concentrations_without_time))  #the "@" allows 'matrix multiplication' with numpy.
+def littleSimulationFunction(concentrations_without_time, reciprocal_matching_correction_values_to_simulate):
+    simulatedRawSignal = numpy.array(reciprocal_matching_correction_values_to_simulate)@numpy.array(numpy.vstack(concentrations_without_time))  #the "@" allows 'matrix multiplication' with numpy.
     return simulatedRawSignal
 
 #a function to subtract the signals of the certain molecules, so that we can isolate the raw signals of  the non-subtracted molecules.
 #This was written as a support function for NegativeAnalyzer in Jan 2020, but was put outside since it could be useful for other applications.
-def subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtract, allConcentrationsVector, all_matching_correction_values, rawsignalsarrayline):
+def subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtract, allConcentrationsVector, all_reciprocal_matching_correction_values, rawsignalsarrayline):
     #allConcentrationsVector is a concetration vector for all molecules, and we will set to zeros for any molecule that should not be subtracted.
-    #matching_correction_values_to_subtract is a concetration vector for all molecules and has zeros for any molecule that should not be subtracted.
-    #First make a version of allConcentrationsVector and of matching_correction_values that has only the molecules to subtract, so we can simulate only those signals.
+    #reciprocal_matching_correction_values_to_subtract is a concetration vector for all molecules and has zeros for any molecule that should not be subtracted.
+    #First make a version of allConcentrationsVector and of reciprocal_matching_correction_values that has only the molecules to subtract, so we can simulate only those signals.
     concentrationsToSubtract = allConcentrationsVector*1.0
-    matching_correction_values_to_subtract = all_matching_correction_values*1.0
+    reciprocal_matching_correction_values_to_subtract = all_reciprocal_matching_correction_values*1.0
     for moleculeIndex in range(len(allConcentrationsVector)):
         if moleculeIndex not in moleculeIndicesToSubtract:
             concentrationsToSubtract[moleculeIndex] = 0
-            matching_correction_values_to_subtract[:, moleculeIndex] = 0 #matching correction values has indices of [massFragment, moleculeIndex]
+            reciprocal_matching_correction_values_to_subtract[:, moleculeIndex] = 0 #matching correction values has indices of [massFragment, moleculeIndex]
         # else: #This else is implied, given how the vectors were created.
             # concentrationsToSubtract[moleculeIndex] = allConcentrationsVector[moleculeIndex]
-            # matching_correction_values_to_subtract[:, moleculeIndex] = all_matching_correction_values[moleculeIndex]                    
-    rawsignalstosubtract = littleSimulationFunction(concentrationsToSubtract, matching_correction_values_to_subtract)#The raw signals are simulated from the correction values and raw signals containing all molecules we don't want to consider.
+            # reciprocal_matching_correction_values_to_subtract[:, moleculeIndex] = all_reciprocal_matching_correction_values[moleculeIndex]                    
+    rawsignalstosubtract = littleSimulationFunction(concentrationsToSubtract, reciprocal_matching_correction_values_to_subtract)#The raw signals are simulated from the correction values and raw signals containing all molecules we don't want to consider.
     rawsignals_remaining = rawsignalsarrayline - rawsignalstosubtract
     return rawsignals_remaining
 
@@ -5231,7 +5232,7 @@ class referenceThresholdFilterCorrectingSandbox():
     def __init__(self, solvedConcentrationsAtThisTime,referenceBeforeFiltering,referenceAfterFiltering, slsSolvedMasses):
         #The below few lines are to get the existing simulated signals for this time point.
         #We put list brackets around the arguments below because the RawSignalSimulation function actually expects an array of arrays.
-        simulateddataAtThisTime = RawSignalsSimulation(numpy.array([solvedConcentrationsAtThisTime]), numpy.array([referenceAfterFiltering.matching_correction_values]))
+        simulateddataAtThisTime = RawSignalsSimulation(numpy.array([solvedConcentrationsAtThisTime]), numpy.array([referenceAfterFiltering.reciprocal_matching_correction_values]))
         simulateddataAtThisTime1D = simulateddataAtThisTime[0] #The RawSignalsSimulation function returns a nested object, so we un-nest it.                                
         self.slsSolvedMasses = slsSolvedMasses
         self.referenceBeforeFiltering = referenceBeforeFiltering
@@ -5264,11 +5265,11 @@ class referenceThresholdFilterCorrectingSandbox():
                 #TODO: Consider that we are only going to do one recursive loop here. Maybe that should change.
                 solvedConcentrationsWithoutOtherMolecules = solvedConcentrationsCorrected*0.0  #Need to keep the same shape but have zeros for other molecules.
                 solvedConcentrationsWithoutOtherMolecules[moleculeIndex+1] = solvedConcentrationsCorrected[moleculeIndex+1] #the plus one is because this has "time" also.
-                thisMoleculeSimulatedSignalWithReferenceWithoutFiltering = RawSignalsSimulation(numpy.array([solvedConcentrationsWithoutOtherMolecules]), numpy.array([self.referenceBeforeFiltering.matching_correction_values]))
+                thisMoleculeSimulatedSignalWithReferenceWithoutFiltering = RawSignalsSimulation(numpy.array([solvedConcentrationsWithoutOtherMolecules]), numpy.array([self.referenceBeforeFiltering.reciprocal_matching_correction_values]))
                 #There is a subtlety because the with filtering case must use the ORIGINAL concentration, because in the iterative way of doing things the solvedConcentrationsCorrected will no longer reflect he originally ascribed signal. We need to compare to that.
                 solvedConcentrationsAtThisTimeUncorrectedWithoutOtherMolecules = self.solvedConcentrationsAtThisTimeUncorrected*0.0
                 solvedConcentrationsAtThisTimeUncorrectedWithoutOtherMolecules[moleculeIndex+1] = solvedConcentrationsCorrected[moleculeIndex+1]
-                thisMoleculeSimulatedSignalWithReferenceWithFilteringOriginal = RawSignalsSimulation(numpy.array([solvedConcentrationsAtThisTimeUncorrectedWithoutOtherMolecules]), numpy.array([self.referenceAfterFiltering.matching_correction_values]))
+                thisMoleculeSimulatedSignalWithReferenceWithFilteringOriginal = RawSignalsSimulation(numpy.array([solvedConcentrationsAtThisTimeUncorrectedWithoutOtherMolecules]), numpy.array([self.referenceAfterFiltering.reciprocal_matching_correction_values]))
                 thisMoleculefilteredContributions = (thisMoleculeSimulatedSignalWithReferenceWithFilteringOriginal - thisMoleculeSimulatedSignalWithReferenceWithoutFiltering)[0][1:]  #The 0 is necessary because this is actually a nested object. Then, the 1: is to remove the index that is related to time. We could have sliced before the subtraction, but we just do it after.
                 thisMoleculeSlsSimulatedSignal = thisMoleculeSimulatedSignalWithReferenceWithFilteringOriginal[0][slsMassIndex+1]  #Need+1 because the simulated signal array includes the time.
                 self.allMoleculesSlsSimulatedSignals.append(thisMoleculeSlsSimulatedSignal)
@@ -5317,13 +5318,13 @@ class referenceThresholdFilterCorrectingSandbox():
 #this function can be useful for preventing negative concentrations. If it finds negatives it uses an optimizing finisher (grid based brute method) to search in the observed concentration range.
 #The function finds other molecules that contribute to the signals that were relevant for that molecule, and then solves only those molecules.
 #The baseNumberOfGridIntervals is per direction (so 5 actually means 2*5 = 10).
-def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarrayline,molecules,objectiveFunctionType,maxPermutations=100001, topNcontributors=5, baseNumberOfGridIntervals = 5):
+def NegativeAnalyzer(solutionsline,reciprocal_matching_correction_values,rawsignalsarrayline,molecules,objectiveFunctionType,maxPermutations=100001, topNcontributors=5, baseNumberOfGridIntervals = 5):
     NGstart = timeit.default_timer()
     solutionslinedata = solutionsline[1:]*1.0# gets rid of the times for our data array
     negatives = []
     negative_molecule_indexes = []
-    num_MassFragments = len(matching_correction_values[:,0])  #The indices in matching_correction_values are [massfragment, moleculenumber]
-    num_Molecules = len(solutionslinedata) #This is the same length as len(matching_correction_values[0,:])
+    num_MassFragments = len(reciprocal_matching_correction_values[:,0])  #The indices in reciprocal_matching_correction_values are [massfragment, moleculenumber]
+    num_Molecules = len(solutionslinedata) #This is the same length as len(reciprocal_matching_correction_values[0,:])
     for solutionsIndex in range(len(solutionslinedata)): #looks through the line
         if solutionslinedata[solutionsIndex] < 0: #if there is a value below zero it keeps the value and the index
             negatives.append(solutionslinedata[solutionsIndex])
@@ -5340,15 +5341,15 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
                 indexOfRelevantMFofNegMolecule = list(G.massFragmentsArrayForThisPoint).index(relevantMFofNegMolecule)
             else: #When the molecule does not have a unique mass fragment that it was solved by, then we get the biggest mass fragment. #TODO: probably should find the biggest significant mass fragment, since the biggest one may not have been the one used in solving.
                 for massFragmentIndex in range(num_MassFragments):#looks through the correction values
-                    if matching_correction_values[massFragmentIndex,negative_molecule_indexes[negativeXofN]] == max(matching_correction_values[:,negative_molecule_indexes[negativeXofN]]):#finds the index of the negative molecule's largest correction value 
+                    if reciprocal_matching_correction_values[massFragmentIndex,negative_molecule_indexes[negativeXofN]] == max(reciprocal_matching_correction_values[:,negative_molecule_indexes[negativeXofN]]):#finds the index of the negative molecule's largest correction value 
                         indexOfBiggestMFofNegMolecule = massFragmentIndex
                         indexOfRelevantMFofNegMolecule = indexOfRelevantMFofNegMolecule
             
             #Now, we're going to find out which molecule(s) could have caused that "false" negative concentration. We'll focus on the biggest possible contributer(s)
             #FIXME: Below is using biggest concentration value. That's not the actual biggest contributor. Should be by simulated signal. So should simulate each molecule's contribution separately to this mass, and then find the one which has the maximum contribution. That will give the right choice for correction2index
             moleculesWithMassFragmentList = []
-            for matchCorrIndexRow in range(num_Molecules):#goes through the correction values.  #num_Molecules is the same length as len(matching_correction_values[0,:])
-                if matching_correction_values[indexOfRelevantMFofNegMolecule,matchCorrIndexRow] != 0:#if the molecule has a relative intensity (other than zero) at the mass fragment chosen (by the last loop)
+            for matchCorrIndexRow in range(num_Molecules):#goes through the correction values.  #num_Molecules is the same length as len(reciprocal_matching_correction_values[0,:])
+                if reciprocal_matching_correction_values[indexOfRelevantMFofNegMolecule,matchCorrIndexRow] != 0:#if the molecule has a relative intensity (other than zero) at the mass fragment chosen (by the last loop)
                     moleculesWithMassFragmentList.append(1)
                 else: #if there is no molecule a zero is appended to the list
                     moleculesWithMassFragmentList.append(0)
@@ -5368,9 +5369,9 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
                             # dominant_concentration_index = moleculeConcentrationIndex
                 # dominant_concentration = solutionslinedata[dominant_concentration_index] #the higher (positive) concentration molecule is chosen to set a dominant concentration that could overwhelm the negative one, and will be used to set bounds as well.
                 # #now we will make an array of these correction values of the two molecules chosen.
-                # matching_correction_values_dominant_concentration_only = matching_correction_values[:,negative_molecule_indexes[negativeXofN]],matching_correction_values[:,dominant_concentration_index]#an array amalgam is made with  two columns for the two chosen molecules
-                # matching_correction_values_dominant_concentration_only = numpy.array(matching_correction_values_dominant_concentration_only)
-                # matching_correction_values_dominant_concentration_only = numpy.transpose(matching_correction_values_dominant_concentration_only) #the array is transposed so it can be used in matrix multiplication
+                # reciprocal_matching_correction_values_dominant_concentration_only = reciprocal_matching_correction_values[:,negative_molecule_indexes[negativeXofN]],reciprocal_matching_correction_values[:,dominant_concentration_index]#an array amalgam is made with  two columns for the two chosen molecules
+                # reciprocal_matching_correction_values_dominant_concentration_only = numpy.array(reciprocal_matching_correction_values_dominant_concentration_only)
+                # reciprocal_matching_correction_values_dominant_concentration_only = numpy.transpose(reciprocal_matching_correction_values_dominant_concentration_only) #the array is transposed so it can be used in matrix multiplication
 
                 # #Now, a 'clever' algorithm is used in which we assume that the positive concentration molecule has caused the negative concentration molecule's negative concentration.
                 # #In order to find a 'nice' solution, we will subtract the contributions of all other molecules, so we can analyze the signals that would be associated with these two molecules.
@@ -5383,7 +5384,7 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
                 # for moleculeIndex in indicesOfMoleculesToKeep:
                     # moleculeIndicesToSubtractList.remove(moleculeIndex)
                 # #Now we call a function to subtract the signals of the other molecules, so that we can isolate the raw signals of these molecules.
-                # rawsignals_of_considered_molecules = subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtractList, solutionslinedata, matching_correction_values,rawsignalsarrayline)
+                # rawsignals_of_considered_molecules = subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtractList, solutionslinedata, reciprocal_matching_correction_values,rawsignalsarrayline)
                 
                 # #For brute optimization, the 'specifications; are the min and max along an axis followed by the size of increments/spacing along the axis. The negative molecule is checked for between the higher molecule's signal/10, in 10ths of the range.
                 # max_concentration_for_negative_molecule = dominant_concentration/float(10)
@@ -5391,7 +5392,7 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
                 # if sum(specifications[0]) == 0 and sum(specifications[1]) == 0: #This can only happen if the higher of the two concentrations being considered is already 0.
                     # solutionslinedata[negativeXofN] = 0 #So we just set the concentration of our molecule in question to 0 and we skip the brute.
                 # else: #The normal case is a brute optimization. Below, we pass the argument of molecules but that argument is not actually used within the optimizer.
-                    # answers = OptimizingFinisher(molecules,specifications,matching_correction_values_dominant_concentration_only,rawsignals_of_considered_molecules,objectiveFunctionType,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
+                    # answers = OptimizingFinisher(molecules,specifications,reciprocal_matching_correction_values_dominant_concentration_only,rawsignals_of_considered_molecules,objectiveFunctionType,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
                     # solutionslinedata[negative_molecule_indexes[negativeXofN]] = answers[0]#sets the first solution
                     # solutionslinedata[dominant_concentration_index] = answers[1]#sets the second
 
@@ -5400,7 +5401,7 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
                 #HERE IS THE NEW CODE FOR DOMINANT SIGNAL CONTRIBUTOR
                 contributors_with_mass_fragment_rawsignals_list = []
                 dominant_contributors_concentrations_list = []
-                matching_correction_values_dominant_contributors_only = []
+                reciprocal_matching_correction_values_dominant_contributors_only = []
                 solutionslinedata_dominant_contributors_only = []
                 molecules_having_mass_fragment_indices = []
                 key_for_negativeXofN_in_dominant_contributors_only = []
@@ -5413,11 +5414,11 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
                         #we're going to make a solutionslinedata version that has *only* this molecule present. First make a version with all zeros, then put this molecule's concentration in.
                         solutionslinedata_this_molecule_only = solutionslinedata*0.0
                         solutionslinedata_this_molecule_only[moleculeIndex] = solutionslinedata[moleculeIndex]
-                        all_simulated_raw_signals_this_molecule_only = littleSimulationFunction(solutionslinedata_this_molecule_only, matching_correction_values)
+                        all_simulated_raw_signals_this_molecule_only = littleSimulationFunction(solutionslinedata_this_molecule_only, reciprocal_matching_correction_values)
                         relevant_simulated_raw_signal_this_molecule_only = float(all_simulated_raw_signals_this_molecule_only[indexOfRelevantMFofNegMolecule]) #The "float" casting is to go from 1 value numpy matrices to floats.
                         contributors_with_mass_fragment_rawsignals_list.append(relevant_simulated_raw_signal_this_molecule_only) #note that this does already include the molecule chosen. 
                         dominant_contributors_concentrations_list.append(solutionsline_MassFragmentPresentKey[moleculeIndex])
-                        matching_correction_values_dominant_contributors_only.append(matching_correction_values[:,moleculeIndex])
+                        reciprocal_matching_correction_values_dominant_contributors_only.append(reciprocal_matching_correction_values[:,moleculeIndex])
                         solutionslinedata_dominant_contributors_only.append(solutionslinedata[moleculeIndex])
                         if moleculeIndex != negativeXofN: #We append to find the useful information of where the "negative" concentration we're looking is within the list of dominant contributors (really all contributors).
                             key_for_negativeXofN_in_dominant_contributors_only.append(0)
@@ -5447,7 +5448,7 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
                 for moleculeIndex in indicesOfMoleculesToKeep:
                     moleculeIndicesToSubtractList.remove(moleculeIndex)
                 #Now we call a function to subtract the signals of the other molecules, so that we can isolate the raw signals of these molecules.
-                rawsignals_of_considered_molecules_topNorLess_contributors = subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtractList, solutionslinedata, matching_correction_values,rawsignalsarrayline)
+                rawsignals_of_considered_molecules_topNorLess_contributors = subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtractList, solutionslinedata, reciprocal_matching_correction_values,rawsignalsarrayline)
                 #Now we have the raw signals that we need to go into brute optimization.
                 
                 #Now we need the concentrations of *only* the dominant contributors and the negative molecule. To make sure we don't double count, we'll check if the negative molecule ended up in the topNorLess and work with it separately if it ended up there.
@@ -5482,14 +5483,14 @@ def NegativeAnalyzer(solutionsline,matching_correction_values,rawsignalsarraylin
                         specifications_topNorLess_contributors.append(  (topNorLessConcentration-(currentNumberOfGridIntervals*currentIntervalSize), topNorLessConcentration+(currentNumberOfGridIntervals*currentIntervalSize), currentIntervalSize)  ) #(min, max, spacing/increment) in tuple.
 
                     #now need to make a new correction values array. 
-                    matching_correction_values_topNorLess_contributors_and_negative_molecule = []
-                    matching_correction_values_topNorLess_contributors_and_negative_molecule.append(matching_correction_values[:,negative_molecule_indexes[negativeXofN]])#first add the negative molecule because it's simple.
+                    reciprocal_matching_correction_values_topNorLess_contributors_and_negative_molecule = []
+                    reciprocal_matching_correction_values_topNorLess_contributors_and_negative_molecule.append(reciprocal_matching_correction_values[:,negative_molecule_indexes[negativeXofN]])#first add the negative molecule because it's simple.
                     for topNorLessIndex in molecularIndicesOfTopNorLessContributors_without_negativeXofN: #now loop across the topNorLessContributors indices and add their correction values too.
-                        matching_correction_values_topNorLess_contributors_and_negative_molecule.append(matching_correction_values[:,topNorLessIndex])
-                    matching_correction_values_topNorLess_contributors_and_negative_molecule = numpy.array(matching_correction_values_topNorLess_contributors_and_negative_molecule)
-                    matching_correction_values_topNorLess_contributors_and_negative_molecule = numpy.transpose(matching_correction_values_topNorLess_contributors_and_negative_molecule) #the array is transposed to from list of 1D rows to 1D columns (or vice versa)
+                        reciprocal_matching_correction_values_topNorLess_contributors_and_negative_molecule.append(reciprocal_matching_correction_values[:,topNorLessIndex])
+                    reciprocal_matching_correction_values_topNorLess_contributors_and_negative_molecule = numpy.array(reciprocal_matching_correction_values_topNorLess_contributors_and_negative_molecule)
+                    reciprocal_matching_correction_values_topNorLess_contributors_and_negative_molecule = numpy.transpose(reciprocal_matching_correction_values_topNorLess_contributors_and_negative_molecule) #the array is transposed to from list of 1D rows to 1D columns (or vice versa)
 
-                    answers_topNorLessContributors = OptimizingFinisher(molecules,specifications_topNorLess_contributors,matching_correction_values_topNorLess_contributors_and_negative_molecule,rawsignals_of_considered_molecules_topNorLess_contributors,objectiveFunctionType,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
+                    answers_topNorLessContributors = OptimizingFinisher(molecules,specifications_topNorLess_contributors,reciprocal_matching_correction_values_topNorLess_contributors_and_negative_molecule,rawsignals_of_considered_molecules_topNorLess_contributors,objectiveFunctionType,maxPermutations)#brute method used- 200 permutations- 20*10 from the increments above
                     #now put things into the solutions line data.
                     solutionslinedata[negative_molecule_indexes[negativeXofN]] = answers_topNorLessContributors[0] #The negative molecule's information is here.
                     for topNorLessIndex, topNorLessConcentration in enumerate(answers_topNorLessContributors[1:]):  #we start from 1 because we've already got the negative molecule's information. Now topNorLessIndex of 0 is the first of these concentrations.
@@ -6007,7 +6008,7 @@ def main():
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(AllMassFragmentsExperimentDataFileNamePath)
     AllMassFragmentsExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)        
     AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesReferenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
-    #Then prepare AllMoleculesReferenceDataList to get matching_correction_values, this value is fed into RatioFinder
+    #Then prepare AllMoleculesReferenceDataList to get reciprocal_matching_correction_values, this value is fed into RatioFinder
     global PreparingAllMoleculesReferenceDataList; PreparingAllMoleculesReferenceDataList = False #initializing this flag          
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
         PreparingAllMoleculesReferenceDataList = True #Set flag to true before doing each preparation.  
@@ -6206,7 +6207,7 @@ def main():
         print("Entering Data Analysis")
         #The iterative analysis preprocessing creates the proper export folder and exports the unused reference data
         if G.iterativeAnalysis:
-            ReferenceDataSSmatching_correction_valuesList, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMoleculesNames, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataListFullCopy)
+            ReferenceDataSSreciprocal_matching_correction_valuesList, G.unusedMolecules = IADirandVarPopulation(G.iterativeAnalysis, G.chosenMassFragments, G.chosenMoleculesNames, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataListFullCopy)
                 
         # Reset the checkpoint timer for the data analysis section
         G.checkpoint = timeit.default_timer()
@@ -6227,7 +6228,7 @@ def main():
         concentrationsScaledToCOarray = numpy.zeros(len(prototypicalReferenceData.molecules)+1)
         concentrationsarray = numpy.zeros(len(prototypicalReferenceData.molecules)+1)
         correctionFactorArraysList = [] #initialize the correctionFactorArray as an empty list
-        SS_matching_correction_values_TimesList = [] #initialze ReferenceDataSSmatching_correction_valuesList as an empty list.  This list will store correction values used at each time point
+        SS_reciprocal_matching_correction_values_TimesList = [] #initialze ReferenceDataSSreciprocal_matching_correction_valuesList as an empty list.  This list will store correction values used at each time point
         
         # Loading user choices for data analysis
         DataRangeSpecifierlist = [G.dataRangeSpecifierYorN, G.signalOrConcentrationRange,
@@ -6280,7 +6281,7 @@ def main():
             if (G.calculateUncertaintiesInConcentrations == True):
                 if type(G.referenceFileUncertainties) != type(None):  #This means we should have uncertainties in the reference file.
                     uncertainties_dict['correction_values_relative_uncertainties_one_time'] = currentReferenceData.correction_values_relative_uncertainties*1.0
-                    uncertainties_dict['matching_correction_values_relative_uncertainties_one_time'] = currentReferenceData.matching_correction_values_relative_uncertainties*1.0
+                    uncertainties_dict['reciprocal_matching_correction_values_relative_uncertainties_one_time'] = currentReferenceData.reciprocal_matching_correction_values_relative_uncertainties*1.0
                 elif type(G.referenceFileUncertainties) == type(None):
                     uncertainties_dict['correction_values_relative_uncertainties'] = None
                 #G.collectedFileUncertainties = None
@@ -6318,31 +6319,31 @@ def main():
                 #FIXME: Check if this is compatible with uncertainties. I don't think it is, as of Feb 2nd 2020.                                                                                                
                 currentReferenceData = signalThresholdFilter(currentReferenceData, rawsignalsarrayline, G.minimumSignalRequired, G.minimumStandardizedReferenceHeightToBeSignificant)
                     
-                    #solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.matching_correction_values,rawsignalsarrayline,
+                    #solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline,
                                                          # currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
                                                          # ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
                                                          # DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType, G.maxPermutations)           
             if G.answer == 'inverse':#user input, the inverse method
                 if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                    solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, uncertainties_dict)
+                    solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline, uncertainties_dict)
                 else:
-                    solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition', uncertainties_dict)
+                    solutions = InverseMethod(currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition', uncertainties_dict)
 
             elif G.answer == 'sls' or G.answer == 'autosolver':#user input, the SLS method is chosen)
                 #FIXME: should be passing uncertainties_dict into SLSMethod, but when I try I get some kind of solutions error. Comes out as []. Since I am having trouble, I am just passing it through globals.
                 G.uncertainties_dict = uncertainties_dict
-                solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType,ExperimentData.times[timeIndex],G.maxPermutations)
+                solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType,ExperimentData.times[timeIndex],G.maxPermutations)
                 if G.answer == 'autosolver':
                     if solutions.any() == None:
                         if SLSChoices[0] == "unique":
                             print("SLS Unique has failed, trying SLS common.")
-                            solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,["common", G.slsFinish, G.distinguished],ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType,ExperimentData.times[timeIndex],G.maxPermutations)
+                            solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline, timeIndex, conversionFactorsAtEachTime, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,["common", G.slsFinish, G.distinguished],ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType,ExperimentData.times[timeIndex],G.maxPermutations)
                             if solutions.any() == None:
                                 print("The SLS method failed to solve this problem even with SLS common. Attempting an inverse method solution. To solve without inverse, consider raising the Reference Mass Fragmentation Threshold.")
                                 if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
-                                    solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.matching_correction_values,rawsignalsarrayline)
+                                    solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline)
                                 else:
-                                    solutions = InverseMethod(currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
+                                    solutions = InverseMethod(currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
             solutions = solutions.flatten() #In the major numpy update before summer 2019, this line suddenly started becoming filled with nested arrays sometimes (not sure why) but flattening fixed it.
             arrayline = []
             for moleculecounter in range(len(currentReferenceData.molecules)):#array-indexed for loop, this is the same data structure as the inverse method above once the line of solutions is found, see above for comments
@@ -6357,7 +6358,7 @@ def main():
                 if G.UserChoices['dataAnalysisMethods']['finalOptimization'] != 'None':
                     optimizer = G.UserChoices['dataAnalysisMethods']['finalOptimization']
                     specifications=[solutions]
-                    concentrationsFromFinisher = OptimizingFinisher(currentReferenceData.molecules,specifications,currentReferenceData.matching_correction_values,rawsignalsarrayline,G.UserChoices['dataAnalysisMethods']['objectiveFunctionType'],G.maxPermutations, optimizer=optimizer)
+                    concentrationsFromFinisher = OptimizingFinisher(currentReferenceData.molecules,specifications,currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline,G.UserChoices['dataAnalysisMethods']['objectiveFunctionType'],G.maxPermutations, optimizer=optimizer)
                     solutions = concentrationsFromFinisher
             except:
                 pass
@@ -6373,7 +6374,7 @@ def main():
                     f.write( str(list(G.massesUsedInSolvingMoleculesForThisPoint))[1:-1] + "\n" )                    
             
             if G.negativeAnalyzerYorN == 'yes':
-                arrayline = NegativeAnalyzer(arrayline,currentReferenceData.matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.objectiveFunctionType, G.maxPermutations, G.NegativeAnalyzerTopNContributors, G.NegativeAnalyzerBaseNumberOfGridIntervals)
+                arrayline = NegativeAnalyzer(arrayline,currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline,currentReferenceData.molecules,G.objectiveFunctionType, G.maxPermutations, G.NegativeAnalyzerTopNContributors, G.NegativeAnalyzerBaseNumberOfGridIntervals)
 
             if G.implicitSLScorrection == True: #Note: Not compatibile with iterative. Needs to be executed before the concentrations (arrayline) are stacked.
             #TODO: May 17 2020. Right now, we only take the LARGEST correction for each sls when deciding which sls mass to correct, then we apply that correction. But maybe we should take a single recursion of all molecules affecting? Then apply all molecules to that sls mass before moving to the next one?
@@ -6397,7 +6398,7 @@ def main():
                 concentrationsScaledToCOarray = arrayline*1.0
             elif timeIndex > 0: #Everything else is appended via numpy.vstack
                 concentrationsScaledToCOarray = numpy.vstack((concentrationsScaledToCOarray,arrayline))
-            correctionFactorArraysList.append(currentReferenceData.matching_correction_values) #populate the list with the proper correction values
+            correctionFactorArraysList.append(currentReferenceData.reciprocal_matching_correction_values) #populate the list with the proper correction values
             if (G.calculateUncertaintiesInConcentrations == True):  #Keep track of uncertainties same way as concentrationsScaledToCOarray 
                 #We have an 'optional'/'added' correction here related to G.implicitSLScorrection
                 if G.implicitSLScorrection == True: 
@@ -6415,8 +6416,8 @@ def main():
                 elif timeIndex > 0: #Everything else is appended via numpy.vstack
                     concentrations_absolute_uncertainties_all_times = numpy.vstack((concentrations_absolute_uncertainties_all_times,uncertainties_dict['concentrations_absolute_uncertainties_one_time']))
                     concentrations_relative_uncertainties_all_times = numpy.vstack((concentrations_relative_uncertainties_all_times,uncertainties_dict['concentrations_relative_uncertainties_one_time']))
-            if G.iterativeAnalysis: #If using iterative analysis, append the subtracted signals' matching correction values that were used to SS_matching_correction_values_TimesList
-                SS_matching_correction_values_TimesList.append(currentReferenceData.SSmatching_correction_values)
+            if G.iterativeAnalysis: #If using iterative analysis, append the subtracted signals' matching correction values that were used to SS_reciprocal_matching_correction_values_TimesList
+                SS_reciprocal_matching_correction_values_TimesList.append(currentReferenceData.SSreciprocal_matching_correction_values)
                 
             
 
@@ -6541,14 +6542,14 @@ def main():
         #reset timer so that data simiulation can be timed
         G.checkpoint = timeit.default_timer()
         if G.iterativeAnalysis:
-            #TODO when RawSignalSimulation is rewritten for multiple reference patterns, ReferenceDataSSmatching_correction_valuesList[0] should be replaced with ReferenceDataSSmatching_correction_valuesList
-            SS_matching_correction_values_TimesArray = numpy.stack(SS_matching_correction_values_TimesList) #use numpy.stack to make an array of all the arrays
+            #TODO when RawSignalSimulation is rewritten for multiple reference patterns, ReferenceDataSSreciprocal_matching_correction_valuesList[0] should be replaced with ReferenceDataSSreciprocal_matching_correction_valuesList
+            SS_reciprocal_matching_correction_values_TimesArray = numpy.stack(SS_reciprocal_matching_correction_values_TimesList) #use numpy.stack to make an array of all the arrays
             #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
             if G.scaleRawDataFactor == 1.0: 
-                simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, SS_matching_correction_values_TimesArray)
+                simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, SS_reciprocal_matching_correction_values_TimesArray)
             else:
                 print("Warning: With iterative analysis, using scaleRawDataOption (also called scaleRawDataYorN) ends up scaling the simulated raw signals, also.")
-                simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, SS_matching_correction_values_TimesArray)*G.scaleRawDataFactor
+                simulateddata = RawSignalsSimulation(concentrationsScaledToCOarray, SS_reciprocal_matching_correction_values_TimesArray)*G.scaleRawDataFactor
         if not G.iterativeAnalysis:
             correctionFactorsAtEachTime = numpy.stack(correctionFactorArraysList) #use numpy.stack to make an array of all the arrays
             #now the simulated data function uses the answer array and finds what the raw signals would be produced with their signals
