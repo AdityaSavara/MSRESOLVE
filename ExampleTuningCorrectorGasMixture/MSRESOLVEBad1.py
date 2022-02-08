@@ -1168,10 +1168,11 @@ def Populate_reciprocal_matching_correction_values(mass_fragment_numbers, Refere
     #this more simply, but there are zeros here and we cannot have inf as our value, so the else statement simply
     #skips the zeros and inverse all others
     def ArrayElementsInverser(reciprocal_matching_correction_values):  #TODO: use numpy.divide for this (it is used for a similar task elsewhere in the program already, just search in program for example)
-        for x in range(len(reciprocal_matching_correction_values[:,0])): #array-indexed for loop, these two loops go through all the values in the array
-            for y in range(len(reciprocal_matching_correction_values[0,:])):#array-indexed for loop
-                if reciprocal_matching_correction_values[x][y] != 0: #when a number is zero using **-1 gives a divide by zero error- so all these are skipped
-                    reciprocal_matching_correction_values[x][y] = reciprocal_matching_correction_values[x][y]**float(-1)
+        reciprocal_matching_correction_values = copy.deepcopy(matching_correction_values)#we mean element reciprical 1/X. Not inverse Matrix
+        for x in range(len(matching_correction_values[:,0])): #array-indexed for loop, these two loops go through all the values in the array
+            for y in range(len(matching_correction_values[0,:])):#array-indexed for loop
+                if matching_correction_values[x][y] != 0: #when a number is zero using **-1 gives a divide by zero error- so all these are skipped
+                    reciprocal_matching_correction_values[x][y] = matching_correction_values[x][y]**float(-1)
         return reciprocal_matching_correction_values
     #here the main function, Populate_reciprocal_matching_correction_values, calls all of its sub-functions 
     ReferenceData.reciprocal_matching_correction_values, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
