@@ -911,7 +911,7 @@ def Populate_reciprocal_matching_correction_values(mass_fragment_numbers, Refere
     #This small function just goes through every element of the correction array and inverses it; you can do
     #this more simply, but there are zeros here and we cannot have inf as our value, so the else statement simply
     #skips the zeros and inverse all others
-    def ArrayElementsInverser(reciprocal_matching_correction_values):  #TODO: use numpy.divide for this (it is used for a similar task elsewhere in the program already, just search in program for example)
+    def ArrayElementsInverser(matching_correction_values):  #TODO: use numpy.divide for this (it is used for a similar task elsewhere in the program already, just search in program for example)
         reciprocal_matching_correction_values = copy.deepcopy(matching_correction_values)#we mean element reciprical 1/X. Not inverse Matrix
         for x in range(len(matching_correction_values[:,0])): #array-indexed for loop, these two loops go through all the values in the array
             for y in range(len(matching_correction_values[0,:])):#array-indexed for loop
@@ -919,12 +919,12 @@ def Populate_reciprocal_matching_correction_values(mass_fragment_numbers, Refere
                     reciprocal_matching_correction_values[x][y] = matching_correction_values[x][y]**float(-1)
         return reciprocal_matching_correction_values
     #here the main function, Populate_reciprocal_matching_correction_values, calls all of its sub-functions 
-    ReferenceData.reciprocal_matching_correction_values, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
+    ReferenceData.matching_correction_values, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
     ReferenceData.monitored_reference_intensities, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referenceDataArray)
     if G.calculateUncertaintiesInConcentrations == True:
         if type(G.referenceFileUncertainties) != type(None): #Just mimicing the above lines.
             ReferenceData.reciprocal_matching_correction_values_relative_uncertainties, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values_relative_uncertainties)
-    ReferenceData.reciprocal_matching_correction_values = ArrayElementsInverser(ReferenceData.reciprocal_matching_correction_values)
+    ReferenceData.reciprocal_matching_correction_values = ArrayElementsInverser(ReferenceData.matching_correction_values)
     return ReferenceData
     
     
