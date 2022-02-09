@@ -522,7 +522,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     if type(referenceCorrectionCoefficients) == type({}):#check if it's a dictionary. If it is, we need to make it a list.
         referenceCorrectionCoefficients = [referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C']]
     if measuredReferenceYorN =='yes':
-        if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
+        if len(referenceFileDesiredTuningAndForm) == 0:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
             referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
@@ -589,17 +589,17 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         G.tuningCorrectPatternInternalVsExternal = 'External' 
     if ((G.createMixedTuningPattern == False) or (G.tuningCorrectPatternInternalVsExternal == 'Internal')):   
         if G.tuningCorrectPatternInternalVsExternal == 'Internal':
-            if ((G.referenceFileExistingTuning ==[]) and (G.referenceFileStandardTuning==[])): #if no external pattern provided, we will use the coefficients provided directly.
+            if ((len(G.referenceFileExistingTuning) == 0) and (len(G.referenceFileStandardTuning) == 0)): #if no external pattern provided, we will use the coefficients provided directly.
                 G.referenceCorrectionCoefficients = G.referenceCorrectionCoefficients
                 G.referenceCorrectionCoefficients_cov = G.referenceCorrectionCoefficients_cov
             elif ((G.referenceFileExistingTuning !=[]) or (G.referenceFileStandardTuning!=[])) : #in this case, we are going to overwrite any coefficients provided in order to apply the desired tuning to the external pattern.
                 referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
                 referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
-                if referenceFileExistingTuningAndForm == []: #Use the standard tuning file if blank.
+                if len(referenceFileExistingTuningAndForm) == 0: #Use the standard tuning file if blank.
                     referenceFileExistingTuningAndForm = G.referenceFileStandardTuning
                 ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
                 ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternExistingOriginal.csv')
-                if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
+                if len(referenceFileDesiredTuningAndForm) == 0:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
                     resetReferenceFileDesiredTuningAndForm = True 
                     referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
                 abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
@@ -636,15 +636,15 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                     ReferenceData.update_relative_standard_uncertainties()
                     ReferenceData.ExportCollector('StandardizeReferencePattern_relative_standard_uncertainties', export_relative_uncertainties= True)
         elif G.tuningCorrectPatternInternalVsExternal =='External':
-            if ((G.referenceFileExistingTuning ==[]) and (G.referenceFileStandardTuning==[])): #if no external pattern provided, we will use the coefficients provided directly.
+            if ((len(G.referenceFileExistingTuning) == 0) and (len(G.referenceFileStandardTuning) == 0)): #if no external pattern provided, we will use the coefficients provided directly.
                 G.referenceCorrectionCoefficients = G.referenceCorrectionCoefficients
                 G.referenceCorrectionCoefficients_cov = G.referenceCorrectionCoefficients_cov
             elif ((G.referenceFileExistingTuning !=[]) or (G.referenceFileStandardTuning!=[])) : #in this case, we are going to overwrite any coefficients provided in order to apply the desired tuning to the external pattern.
                 referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
                 referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
-                if referenceFileExistingTuningAndForm == []: #Use the standard tuning file if blank.
+                if len(referenceFileExistingTuningAndForm) == 0: #Use the standard tuning file if blank.
                         referenceFileExistingTuningAndForm = G.referenceFileStandardTuning
-                if referenceFileDesiredTuningAndForm == []: #Use the original reference pattern if blank.
+                if len(referenceFileDesiredTuningAndForm) == 0: #Use the original reference pattern if blank.
                         resetReferenceFileDesiredTuningAndForm = True
                         referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
                 #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
@@ -689,9 +689,9 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             #First read in the existing tuning patterns.
             referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
             referenceFileExistingTuningAndForm = G.referenceFileExistingTuning
-            if referenceFileExistingTuningAndForm == []: #Use the standard tuning file if blank.
+            if len(referenceFileExistingTuningAndForm) == 0: #Use the standard tuning file if blank.
                     referenceFileExistingTuningAndForm = G.referenceFileStandardTuning
-            if referenceFileDesiredTuningAndForm == []: #Use the original reference pattern if blank.
+            if len(referenceFileDesiredTuningAndForm) == 0: #Use the original reference pattern if blank.
                     resetReferenceFileDesiredTuningAndForm = True
                     referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
             #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
@@ -811,7 +811,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData=None): #makin
         ReferenceDataExistingTuning.correction_values, ReferenceDataExistingTuning.correction_values_relative_uncertainties = CorrectionValuesObtain(ReferenceDataExistingTuning)
         #We don't need a desired tuning data object right now, but we will make one since we'll need it for creating the mixed reference pattern later.
         #By default, the regular reference data object will be considered the desired tuning, if not specified.
-        if G.referenceFileDesiredTuning == []:
+        if len(G.referenceFileDesiredTuning) == 0:
             #Take the first item from ReferenceDataList (which may have been extracted from the experiment file)
             ReferenceDataDesiredTuning = ReferenceDataList[0]
             ReferenceDataDesiredTuning.exportReferencePattern("ExportedReferencePatternOriginal.csv") #Exported for during TuningCorrection.     
@@ -1343,7 +1343,7 @@ def CorrectionValuesObtain(ReferenceData):
         
         #NEED AN IF STATEMENT TO DETERMINE THESE COEFFICENTS FROM GAS MIXTURE IF USING THAT.
         if str(G.referenceFileStandardTuning[0]).lower() != 'gaxmixture':
-            if G.referenceFileDesiredTuning == []: #Use the original reference pattern if blank.
+            if len(G.referenceFileDesiredTuning) == 0: #Use the original reference pattern if blank.
                 referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
             else:
                 referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuning
@@ -2265,7 +2265,7 @@ def FindHighestDirNumber(keyword):
         #append the last value of each name
         suffixlist.append(directoryname[-1])
     #return the highest of the last values
-    if not suffixlist == []:
+    if not len(suffixlist) == 0:
         return(max(suffixlist))
     return 1
 
@@ -3100,19 +3100,19 @@ class MSReference (object):
         for moleculeIndex, moleculeName in enumerate(self.molecules):
             self.molecules[moleculeIndex] = moleculeName.strip()     
         #Initializing some list variables with defaults.
-        if self.SourceOfFragmentationPatterns == []:
+        if len(self.SourceOfFragmentationPatterns) == 0:
             self.SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
-        if self.sourceOfIonizationData == []:
+        if len(self.sourceOfIonizationData) == 0:
             self.sourceOfIonizationData = ['unknown']* len(self.molecules)       
             self.sourceOfIonizationData = numpy.array(self.sourceOfIonizationData, dtype="str")
         else:
             self.sourceOfIonizationData = numpy.array(self.sourceOfIonizationData, dtype="str")
-        if self.relativeIonizationEfficiencies == []:
+        if len(self.relativeIonizationEfficiencies) == 0:
             self.relativeIonizationEfficiencies = ['unknown']* len(self.molecules)
             self.relativeIonizationEfficiencies = numpy.array(self.relativeIonizationEfficiencies, dtype="object") #can have Strings or floats, so use dtype="object"
         else:
             self.relativeIonizationEfficiencies = numpy.array(self.relativeIonizationEfficiencies, dtype="object") #can have Strings or floats, so use dtype="object"
-        if self.moleculeIonizationType == []:
+        if len(self.moleculeIonizationType) == 0:
             self.moleculeIonizationType = ['unknown']* len(self.molecules)
         self.provided_mass_fragments = self.provided_reference_patterns[:,0]
         #clear ClearZeroRowsFromProvidedReferenceIntensities
@@ -3144,13 +3144,13 @@ class MSReference (object):
         if type(molecules) == type("string"):
             molecules = [molecules]
         #Initializing some list variables with defaults.
-        if SourceOfFragmentationPatterns == []:
+        if len(SourceOfFragmentationPatterns) == 0:
            SourceOfFragmentationPatterns = ['unknown']* len(self.molecules)
-        if sourceOfIonizationData == []:
+        if len(sourceOfIonizationData) == 0:
            sourceOfIonizationData = ['unknown']* len(self.molecules)       
-        if relativeIonizationEfficiencies == []:
+        if len(relativeIonizationEfficiencies) == 0:
            relativeIonizationEfficiencies = ['unknown']* len(self.molecules)
-        if moleculeIonizationType == []:
+        if len(moleculeIonizationType) == 0:
            moleculeIonizationType = ['unknown']* len(self.molecules)
            
         #Now to concatenate to the existing reference objects. Can't use ".extend" because that modifies the original list while returning "None."
@@ -3501,7 +3501,7 @@ def CombinationMaker(reciprocal_matching_correction_values,rawsignalsarrayline,m
     num_MassFragments = len(reciprocal_matching_correction_values[:,0])
     import itertools 
     combinations = list(itertools.combinations(list(range(num_MassFragments)),num_molecules)) 
-    if combinations == []:#This function will not work without enough mass fragments, so the user must know the problem
+    if len(combinations) == 0:#This function will not work without enough mass fragments, so the user must know the problem
         print('****************************************')
         print('Not enough matching mass fragments input')
         print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  minimalReferenceValue feature with referenceValueThreshold, such as referenceValueThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
@@ -3662,7 +3662,7 @@ def ImportantAbscissaIdentifier(anArray, moleculesLikelihood):
         columnOrderList.append(OrderedSignIndices)
         #if I am trying to add the row for the first column, then I can do so 
         #without worry because it cannot possibly be used already
-        if overallOrder == []:
+        if len(overallOrder) == 0:
             overallOrder.append(columnOrderList[columncounter][0])
         #if I am trying to add a row for a later column to the overall order
         else:
@@ -4738,7 +4738,7 @@ def SLSCommonFragments(reciprocal_matching_correction_values,rawsignalsarrayline
                                                     if place_holder3 == 0:
                                                         useablemolecules.append(molecules_unedited[molecules_unedited_counter])
                                             place_holder3 = 0
-                                        if useablemolecules == []:
+                                        if len(useablemolecules) == 0:
                                             useablemolecules = molecules_unedited
                                         #this works in the same way as the brute force method for the remaining matrix at the end of the sls method, where when
                                         #the counter is equal to zero the moleculespecifier chooses all of the array line. This is because when the counter is zero
@@ -5023,7 +5023,7 @@ def RawSignalThresholdFilter (distinguished,reciprocal_matching_correction_value
     #this section of the code enables the function to eliminate from the raw signal array (for the purpose of this function only)
     #the highest value in the array, if it makes up over 90 percent of the raw signals present. This is useful because if one of 
     #the signals does become this great then it will eliminate all the other signals present when it becomes very high
-    if rawSignalThresholdLimitPercent == []:#if no user input
+    if len(rawSignalThresholdLimitPercent) == 0:#if no user input
         rawSignalThresholdLimitPercent = 0.9
     if rawSignalThresholdLimit == 'yes':#from data edit file
         for rawsignalNumber in range(len(remaining_rawsignals_SLS)):    #array-indexed for loop
@@ -5974,7 +5974,7 @@ def main():
     #G.moleculesNamesExtended needs to be populated before the first tuning correction and before parsing of userinput.
     if str(G.measuredReferenceYorN).lower() == 'yes': 
         if G.createMixedTuningPattern == True:
-            if G.referenceFileExistingTuning == []:
+            if len(G.referenceFileExistingTuning) == 0:
                 G.referenceFileExistingTuning = G.referenceFileStandardTuning #Use the standard tuning file if blank.
             [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
             SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType,
