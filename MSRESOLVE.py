@@ -4451,8 +4451,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
             solvedSignalsForSubtractionArray = numpy.zeros([remaining_num_MassFragments,1])                           
             solvedSignalsForSubtractionArray_relative_uncertainties = numpy.zeros([remaining_num_MassFragments,1])                           
             for massFragmentIndex_jj in range(remaining_num_MassFragments):#array-indexed for loop. #This is being called massFragmentIndex_jj to distinguish it from the outer loop.
-                if reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
-                    solvedSignalsForSubtractionArray[massFragmentIndex_jj] = reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
+                if remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
+                    solvedSignalsForSubtractionArray[massFragmentIndex_jj] = remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
                     
                     if G.debuggingExportIndividualItem :  #This if statement is for SLS debugging purposes. 
                     
@@ -4463,7 +4463,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
                         debuggingExportIndividualItem (Prefix, ObjectforExport1, Filename) 
                         combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport1) + ' \n'
 
-                        ObjectforExport2= str(reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
+                        ObjectforExport2= str(remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
                  
                         Filename = " " + str(chosenMolecule)
                         Prefix = " RRCF "    #RRCF stands for Reciprocal Remaining Correction factor
