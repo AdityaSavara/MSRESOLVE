@@ -4454,7 +4454,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
                 if remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
                     solvedSignalsForSubtractionArray[massFragmentIndex_jj] = remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
                     
-                    if G.debuggingExportIndividualItem :  #This if statement is for SLS debugging purposes. 
+                    if debuggingExportIndividualItem :  #This if statement is for SLS debugging purposes. 
                     
                         ObjectforExport1= str(solvedSignalsForSubtractionArray[massFragmentIndex_jj]) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
                  
@@ -4494,7 +4494,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
             #Since it's done, we'll update the solved molecules array etc.
             solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
                         
-            if G.debuggingExportIndividualItem :   #This if statement is for SLS debugging purposes.
+            if debuggingExportIndividualItem :   #This if statement is for SLS debugging purposes.
             
                 ObjectforExport4= str(solutions[chosenMolecule_original_molecular_index]) + " " + str(chosenMolecule) + " " + str(moleculeIndexForThisSLS) 
              
@@ -6017,9 +6017,9 @@ def main():
     global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
     G.lastFigureNumber = 0
     
-    G.debuggingExportIndividualItem = False #This line turns on and off the "debuggingExportIndividualItem" funciton.
-    G.debuggingExportListofItem = False #This line turns on and off the "debuggingExportListofItem" funciton.
-    
+    global debuggingExportIndividualItem; debuggingExportIndividualItem = False #This line turns on and off the "debuggingExportIndividualItem" funciton.
+    global debuggingExportListofItem; debuggingExportListofItem = False #This line turns on and off the "debuggingExportListofItem" funciton.
+  
     filesAndDirectories = os.listdir()
     for name in filesAndDirectories:
         if name.startswith("Exported") and name.endswith(".csv"):
