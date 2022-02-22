@@ -4132,6 +4132,8 @@ def excludeEmptyMolecules(remaining_num_molecules, solutions, solvedmolecules, r
 #TODO: make some kind of unit test that tests a good order being chosen.
 def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matching_correction_values,rawsignalsarrayline, timeIndex, time, uncertainties_dict={}):
     #FIXME: I am using the currentReferenceData.mass_fragment_numbers_monitored but it needs to be passed in from Reference or Experimental datal.
+    
+    combinedString = '' #This line is for debugging purposes. 
     try:
         type(G.massesUsedInSolvingMoleculesForThisPoint)
     except: #This means somebody is trying to call the function directly and does not need G.massesUsedInSolvingMoleculesForThisPoint.  Probably due to using a unit test or best mass frag chooser.
@@ -4449,8 +4451,32 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
             solvedSignalsForSubtractionArray = numpy.zeros([remaining_num_MassFragments,1])                           
             solvedSignalsForSubtractionArray_relative_uncertainties = numpy.zeros([remaining_num_MassFragments,1])                           
             for massFragmentIndex_jj in range(remaining_num_MassFragments):#array-indexed for loop. #This is being called massFragmentIndex_jj to distinguish it from the outer loop.
-                if remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
-                    solvedSignalsForSubtractionArray[massFragmentIndex_jj] = remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
+                if reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
+                    solvedSignalsForSubtractionArray[massFragmentIndex_jj] = reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
+                    
+                    if G.debuggingExportIndividualItem :  #This if statement is for SLS debugging purposes. 
+                    
+                        ObjectforExport1= str(solvedSignalsForSubtractionArray[massFragmentIndex_jj]) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
+                 
+                        Filename = " " + str(chosenMolecule)
+                        Prefix = " solvedSignals4Sub "     #solvedSignals4Sub stands for solved signals for subtraction.
+                        debuggingExportIndividualItem (Prefix, ObjectforExport1, Filename) 
+                        combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport1) + ' \n'
+
+                        ObjectforExport2= str(reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
+                 
+                        Filename = " " + str(chosenMolecule)
+                        Prefix = " RRCF "    #RRCF stands for Reciprocal Remaining Correction factor
+                        debuggingExportIndividualItem (Prefix, ObjectforExport2, Filename) 
+                        combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport2) + ' \n'
+                        
+                        ObjectforExport3= str(concentrationOfMoleculeForThisSLS) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
+                 
+                        Filename = " " + str(chosenMolecule)
+                        Prefix = " ConcentrationSLS "       #ConcentrationSLS stands for solved concetrations for SLS
+                        debuggingExportIndividualItem (Prefix, ObjectforExport3, Filename) 
+                        combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport3) + ' \n'
+                    
                     if len(uncertainties_dict) > 0: #Just propagating the error to make the concentration uncertainties, including the signal associated with massFragmentIndexForThisSLS.
                         solvedSignalsForSubtractionArray_relative_uncertainties[massFragmentIndex_jj] = (concentrationOfMoleculeForThisSLS_relative_uncertainty**2+(uncertainties_dict['remaining_correction_values_relative_uncertainties_SLS'][massFragmentIndex_jj,moleculeIndexForThisSLS])**2)**0.5
 
@@ -4467,6 +4493,18 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
                 
             #Since it's done, we'll update the solved molecules array etc.
             solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
+                        
+            if G.debuggingExportIndividualItem :   #This if statement is for SLS debugging purposes.
+            
+                ObjectforExport4= str(solutions[chosenMolecule_original_molecular_index]) + " " + str(chosenMolecule) + " " + str(moleculeIndexForThisSLS) 
+             
+                Filename = " " + str(chosenMolecule)
+                Prefix = " Solutions "
+                debuggingExportIndividualItem (Prefix, ObjectforExport4, Filename) 
+                combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport4) + ' \n'
+
+                debuggingExportIndividualItem ( " SLS Step By Step ", combinedString) #Exports SLS in step by step format for debugging purposes. 
+            
             solvedmolecules[chosenMolecule_original_molecular_index] = 1 #This updates a list that keeps track of which molecules have been used up.
 
        
@@ -5896,6 +5934,81 @@ def PopulateLogFile():
     f6.write('###################################################################### \n')
     f6.close()#once the log file is printed the program is finished
     return None
+    
+    
+def debuggingExportIndividualItem (prefix, objectToExport, objectName = ""):
+
+    prefix = str(prefix)
+    objectName = str(objectName)
+    print(numpy.shape(objectToExport), type([])); 
+    if type(objectToExport) == type([]):
+        fileName = "DebugExport" + prefix + objectName + ".csv"
+        #use numpy.savetxt here 
+        #numpy.savetxt(fileName, prefix, objectName)
+        numpy.savetxt(fileName, objectToExport, delimiter = ',', fmt ="%s")
+    if type(objectToExport) == type(numpy.array([0])):
+
+        fileName = "DebugExport" + prefix + objectName + ".csv"
+        #use numpy.savetxt here 
+        #numpy.savetxt(fileName, prefix, objectName)
+        numpy.savetxt(fileName, objectToExport, delimiter = ',', fmt ="%s")
+    if type(objectToExport) == type(str):
+
+        fileName = "DebugExport" + prefix + objectName + ".txt"
+            #use numpy
+        f6 = open(fileName,'a')
+        f6.write('\n')
+        f6.write('prefix = %s \n'%(prefix))
+        f6.write('Object  = %s \n'%(objectToExport))
+        f6.write('objectName = %s \n'%(objectName))
+        f6.close()
+    else:
+
+        fileName = "DebugExportWARNING" + prefix + objectName + ".txt"
+        print("warning " + prefix + objectName + " is not supported")
+        #write warning text to file name 
+        f6 = open(fileName,'a')
+        f6.write('\n')
+        f6.write('prefix = %s \n'%(prefix))
+        f6.write('Object  = %s \n'%(objectToExport))
+        f6.write('objectName = %s \n'%(objectName))
+        f6.close()
+
+def debuggingExportListofItem (prefix, listOfobject = [], listOfObjectNames = ""):
+
+    prefix = str(prefix)
+    listOfObjectNames = str(listOfObjectNames)
+    
+    if type(listOfobject) == type([]):
+        fileName = "DebugExport" + prefix + listOfObjectNames + ".csv"
+        #use numpy.savetxt here 
+        numpy.savetxt(fileName, listOfobject, delimiter = ',', fmt ="%s")
+    if type(listOfobject) == type(numpy):
+
+        fileName = "DebugExport" + prefix + listOfObjectNames + ".csv"
+        #use numpy.savetxt here 
+        numpy.savetxt(fileName, listOfobject, delimiter = ',', fmt ="%s")
+    if type(listOfobject) == type(str):
+
+        fileName = "DebugExport" + prefix + listOfObjectNames + ".txt"
+            #use numpy
+        f6 = open(fileName,'a')
+        f6.write('\n')
+        f6.write('prefix = %s \n'%(prefix))
+        f6.write('Object  = %s \n'%(listOfObjectNames))
+        f6.write('listOfObjectNames = %s \n'%(listOfObjectNames))
+        f6.close()
+    else:
+
+        fileName = "DebugExportWARNING" + prefix + listOfObjectNames + ".txt"
+        print("warning" + prefix + listOfObjectNames + "is not supported")
+        #write warning text to file name 
+        f6 = open(fileName,'a')
+        f6.write('\n')
+        f6.write('prefix = %s \n'%(prefix))
+        f6.write('Object  = %s \n'%(listOfObjectNames))
+        f6.write('listOfObjectNames = %s \n'%(listOfObjectNames))
+        f6.close()
    
 ##################################################################################################################
 ###############################################Algorithm Part 3: Main Control Function ###################################
@@ -5903,6 +6016,9 @@ def PopulateLogFile():
 def main():
     global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
     G.lastFigureNumber = 0
+    
+    G.debuggingExportIndividualItem = False #This line turns on and off the "debuggingExportIndividualItem" funciton.
+    G.debuggingExportListofItem = False #This line turns on and off the "debuggingExportListofItem" funciton.
     
     filesAndDirectories = os.listdir()
     for name in filesAndDirectories:
