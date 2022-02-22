@@ -4432,8 +4432,8 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
             ## These below lines will be preserved for debugging purposes.
             # #now we need to collect the list of masses/signals and correction factors that correspond to that molecule, i.e. moleculeIndexForThisSLS, which are nonzero.
             # for massFragmentIndex_jjj in range(remaining_num_MassFragments):
-                # if remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS] != 0:#If the value in the correction_values is not zero, it is kept
-                    # nonZeroCorrectionValuesList.append(remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS]) 
+                # if reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS] != 0:#If the value in the correction_values is not zero, it is kept
+                    # nonZeroCorrectionValuesList.append(reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jjj,moleculeIndexForThisSLS]) 
                     # signalsCorrespondingToNonZeroCorrectionValuesList.append(remaining_rawsignals_SLS[massFragmentIndex_jjj])  #This only appends signals where a correction value exists for *this* molecule, molecule_ii.
             #We need to propagate the error that is in the concentration into the simulated raw signals.
             
