@@ -3240,7 +3240,7 @@ def CombinationMaker(reciprocal_matching_correction_values,rawsignalsarrayline,m
     correctionarray = numpy.zeros([1,num_molecules])
     intensityarray = numpy.zeros([1,num_molecules])
     rawsignalarray = numpy.zeros([1,1])
-    correctionlist = []
+    reciprocal_correction_Values_list = []
     intensitylist = []
     rawsignallist = [] 
     massfragrow = 'yuh,'
@@ -3265,22 +3265,22 @@ def CombinationMaker(reciprocal_matching_correction_values,rawsignalsarrayline,m
                 massfragrow1 = massfragrow.split(',',1)[1]
                 massfraglist.append(massfragrow1)
                 massfragrow = 'yuh,'
-                correctionlist.append(correctionarray)
+                reciprocal_correction_Values_list.append(correctionarray)
                 intensitylist.append(intensityarray)
                 rawsignallist.append(rawsignalarray)
                 correctionarray = numpy.zeros([1,num_molecules])
                 intensityarray = numpy.zeros([1,num_molecules])
                 rawsignalarray = numpy.zeros([1,1])
     combinations_len = len(combinations)
-    return [combinations_len,rawsignallist,correctionlist,intensitylist,massfraglist]
+    return [combinations_len,rawsignallist,reciprocal_correction_Values_list,intensitylist,massfraglist]
 
 
 #This function simply solves each of the combinations, drawing the respective values out of the lists and uses numpy.linalg
-def CombinationSolver(combinations_len,rawsignallist,correctionlist,molecules,massfraglist):
+def CombinationSolver(combinations_len,rawsignallist,reciprocal_correction_Values_list,molecules,massfraglist):
     compositions = []
     for combinationcounter in range (combinations_len):  #array-indexed for loop
-        if numpy.linalg.det(correctionlist[combinationcounter]) != 0:#if the determinant is zero, then doing the linalg.solve function will stop the entire script- so you must use this method
-            solutions = numpy.linalg.solve(correctionlist[combinationcounter], rawsignallist[combinationcounter])
+        if numpy.linalg.det(reciprocal_correction_Values_list[combinationcounter]) != 0:#if the determinant is zero, then doing the linalg.solve function will stop the entire script- so you must use this method
+            solutions = numpy.linalg.solve(reciprocal_correction_Values_list[combinationcounter], rawsignallist[combinationcounter])
             composition = solutions 
             compositions.append(composition)
     return[compositions]
@@ -3307,8 +3307,8 @@ def DataCompressor(signals,molecules,type):
     
 #this function calls all the functions that make up the inverse method, so that there is no need to call them individually later
 def InverseMethod(reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers,molecules,type):
-    [combinations_len,rawsignallist,correctionlist,intensitylist,massfraglist] = CombinationMaker (reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers)
-    [compositions] = CombinationSolver (combinations_len,rawsignallist,correctionlist,molecules,massfraglist)
+    [combinations_len,rawsignallist,reciprocal_correction_Values_list,intensitylist,massfraglist] = CombinationMaker (reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,mass_fragment_numbers)
+    [compositions] = CombinationSolver (combinations_len,rawsignallist,reciprocal_correction_Values_list,molecules,massfraglist)
     [averagecomp,stddevcomp] = DataCompressor(compositions,molecules,'composition')
     return averagecomp
     
