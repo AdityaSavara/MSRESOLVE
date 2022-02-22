@@ -3814,7 +3814,7 @@ def InverseMethodDistinguished(monitored_reference_intensities,reciprocal_matchi
                     # return dotProductArray 
             except:
                 uncertaintiesModulePresent = False
-                solutions = numpy.linalg.solve(reciprocal_matching_correction_values,rawsignalsarrayline) 
+                solutions = numpy.linalg.solve(reciprocal_matching_correction_values,rawsignalsarrayline) #Linalg.solve will solve the matrix equation Ax=B. The first argument is A. The second argument is B. Comparing to the correction factor matrix equation in the madix and Ko excel sheet. A is a matrix of reciprocal correction values. X is a matrix of concentrations. B is a matrix of signals. 
                 uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = numpy.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
                 uncertainties_dict['concentrations_relative_uncertainties_one_time'] = numpy.array(solutions*0.0).transpose() #The uncertainties dictionary does have these the other way, so have to transpose back.
                 print("WARNING: InverseMethodDistinguished could not return uncertainties and is returning uncertainties of zero. This is for the datapoint with intensities of", rawsignalsarrayline, "and concentrations of", solutions)
@@ -3833,7 +3833,7 @@ def InverseMethodDistinguished(monitored_reference_intensities,reciprocal_matchi
                 solutions_uncertainties =unumpy.std_devs(uSolutions)
                 uncertainties_dict['concentrations_absolute_uncertainties_one_time'] = abs(numpy.array(solutions_uncertainties).transpose()) #The uncertainties dictionary does have these the other way, so have to transpose back.
                 uncertainties_dict['concentrations_relative_uncertainties_one_time'] = abs(numpy.array(solutions_uncertainties/solutions).transpose()) #The uncertainties dictionary does have these the other way, so have to transpose back.
-        solutions = numpy.linalg.solve(reciprocal_matching_correction_values,rawsignalsarrayline)
+        solutions = numpy.linalg.solve(reciprocal_matching_correction_values,rawsignalsarrayline)   #Linalg.solve will solve the matrix equation Ax=B. The first argument is A. The second argument is B. Comparing to the correction factor matrix equation in the madix and Ko excel sheet. A is a matrix of reciprocal correction values. X is a matrix of concentrations. B is a matrix of signals.
     else:
         print('The Array Chosen is Singular')
         solutions = numpy.zeros(len(rawsignalsarrayline)) # the solutions are         if len(uncertainties_dict) > 0:
