@@ -3550,7 +3550,7 @@ def CombinationSolver(combinations_len,rawsignallist,correctionlist,molecules,ma
     compositions = []
     for combinationcounter in range (combinations_len):  #array-indexed for loop
         if numpy.linalg.det(correctionlist[combinationcounter]) != 0:#if the determinant is zero, then doing the linalg.solve function will stop the entire script- so you must use this method
-            solutions = numpy.linalg.solve(correctionlist[combinationcounter], rawsignallist[combinationcounter])
+            solutions = numpy.linalg.solve(correctionlist[combinationcounter], rawsignallist[combinationcounter])   #Linalg.solve will solve the matrix equation Ax=B. The first argument is A. The second argument is B. Comparing to the correction factor matrix equation in the madix and Ko excel sheet. A is a matrix of reciprocal correction values. X is a matrix of concentrations. B is a matrix of signals.
             composition = solutions 
             compositions.append(composition)
     return[compositions]
