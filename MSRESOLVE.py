@@ -4454,26 +4454,26 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
                 if reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
                     solvedSignalsForSubtractionArray[massFragmentIndex_jj] = reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
                     
-                    if debuggingExportIndividualItem :
+                    if debuggingExportIndividualItem :  #This if statement is for SLS debugging purposes. 
                     
                         ObjectforExport1= str(solvedSignalsForSubtractionArray[massFragmentIndex_jj]) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
                  
                         Filename = " " + str(chosenMolecule)
-                        Prefix = " solvedSignals4Sub "
+                        Prefix = " solvedSignals4Sub "     #solvedSignals4Sub stands for solved signals for subtraction.
                         debuggingExportIndividualItem (Prefix, ObjectforExport1, Filename) 
                         combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport1) + ' \n'
 
                         ObjectforExport2= str(reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
                  
                         Filename = " " + str(chosenMolecule)
-                        Prefix = " RCF "
+                        Prefix = " RRCF "    #RRCF stands for Reciprocal Remaining Correction factor
                         debuggingExportIndividualItem (Prefix, ObjectforExport2, Filename) 
                         combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport2) + ' \n'
                         
                         ObjectforExport3= str(concentrationOfMoleculeForThisSLS) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
                  
                         Filename = " " + str(chosenMolecule)
-                        Prefix = " ConcentrationSLS "
+                        Prefix = " ConcentrationSLS "       #ConcentrationSLS stands for solved concetrations for SLS
                         debuggingExportIndividualItem (Prefix, ObjectforExport3, Filename) 
                         combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport3) + ' \n'
                     
@@ -4502,7 +4502,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
             #Since it's done, we'll update the solved molecules array etc.
             solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
                         
-            if debuggingExportIndividualItem :
+            if debuggingExportIndividualItem :   #This if statement is for SLS debugging purposes.
             
                 ObjectforExport4= str(solutions[chosenMolecule_original_molecular_index]) + " " + str(chosenMolecule) + " " + str(moleculeIndexForThisSLS) 
              
@@ -4511,7 +4511,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
                 debuggingExportIndividualItem (Prefix, ObjectforExport4, Filename) 
                 combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport4) + ' \n'
 
-                debuggingExportIndividualItem ( " SLS Step By Step ", combinedString)
+                debuggingExportIndividualItem ( " SLS Step By Step ", combinedString) #Exports SLS in step by step format for debugging purposes. 
             
             solvedmolecules[chosenMolecule_original_molecular_index] = 1 #This updates a list that keeps track of which molecules have been used up.
 
