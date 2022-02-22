@@ -4454,7 +4454,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
                 if reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]!= 0: #used to find the raw signals that are made b the molecules that are being deleted
                     solvedSignalsForSubtractionArray[massFragmentIndex_jj] = reciprocal_remaining_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS] * concentrationOfMoleculeForThisSLS
                     
-                    if debuggingExportIndividualItem :  #This if statement is for SLS debugging purposes. 
+                    if G.debuggingExportIndividualItem :  #This if statement is for SLS debugging purposes. 
                     
                         ObjectforExport1= str(solvedSignalsForSubtractionArray[massFragmentIndex_jj]) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
                  
@@ -4502,7 +4502,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
             #Since it's done, we'll update the solved molecules array etc.
             solutions[chosenMolecule_original_molecular_index] = concentrationOfMoleculeForThisSLS
                         
-            if debuggingExportIndividualItem :   #This if statement is for SLS debugging purposes.
+            if G.debuggingExportIndividualItem :   #This if statement is for SLS debugging purposes.
             
                 ObjectforExport4= str(solutions[chosenMolecule_original_molecular_index]) + " " + str(chosenMolecule) + " " + str(moleculeIndexForThisSLS) 
              
@@ -5982,7 +5982,7 @@ def debuggingExportIndividualItem (prefix, objectToExport, objectName = ""):
         f6.write('objectName = %s \n'%(objectName))
         f6.close()
 
-def debuggingExportListofIteam (prefix, listOfobject = [], listOfObjectNames = ""):
+def debuggingExportListofItem (prefix, listOfobject = [], listOfObjectNames = ""):
 
     prefix = str(prefix)
     listOfObjectNames = str(listOfObjectNames)
@@ -6025,8 +6025,8 @@ def main():
     global G #This connects the local variable G to the global variable G, so we can assign the variable G below as needed.    
     G.lastFigureNumber = 0
     
-    debuggingExportIndividualItem = False #This line turns on and off the "debuggingExportIndividualItem" funciton.
-    debuggingExportListofIteam = False #This line turns on and off the "debuggingExportListofIteam" funciton.
+    G.debuggingExportIndividualItem = False #This line turns on and off the "debuggingExportIndividualItem" funciton.
+    G.debuggingExportListofItem = False #This line turns on and off the "debuggingExportListofItem" funciton.
     
     filesAndDirectories = os.listdir()
     for name in filesAndDirectories:
