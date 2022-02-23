@@ -46,5 +46,11 @@ By embedding a print statement inside MSRESOLVE, this 'manual' printing showed t
 
 #FIXME: test_9.py is with createMixedTuningPattern turned off and also uses a shortened measured pattern (this test is not realistic and was made just to check that MSRESOLVE would lengthen arrays as needed). Test_9.py was not checked to see what the outcomes were on the resolved concentrations, just that a mixed pattern was not made and that the analysis ran to completion.  However, inspection of the scaled concentrations that come out for test_9.py show only one molecule, which is not the expected behavior.
 
+
+
+In test_10.py, we are performing a tuning correction using the SLS solving method. This unit test was derived from test_5.py then altered. test_10.py turns on minimalReferenceValue, sets referenceValueThreshold = [4.0], referenceSignificantFragmentThreshold = [6.0], answer = 'sls', SLSUniqueExport = 'yes', uniqueOrCommon = 'unique", UserChoices['dataAnalysisMethods']['answer'] = 'sls', specificMolecules = 'yes', chosenMoleculesNames = ['Acetaldehyde' , 'CO' , 'CO2' , 'Ethylene (Ethene)' , 'Ethanol' , 'Crotyl Alcohol' , 'H2' , 'H2O' , '1butanal']
+The main intent of test_10.py was to perform SLS manually step by step. This will allow for a working example of SLS perfromed outside of MSRESOLVE.
+
+
 ***
 In many real applications of this feature, what is desired is to predict from an external reference what the fragmentation pattern would be on one's own spectrometer.  In that situation, the "ReferenceCollected.csv" is the desired pattern one and the "ReferenceLiterature.csv" is the existing pattern to be adjusted. These names may become further adjusted to "PatternToMatch" and "PatternToAdjust" or something like that.
