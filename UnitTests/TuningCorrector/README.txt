@@ -50,6 +50,19 @@ By embedding a print statement inside MSRESOLVE, this 'manual' printing showed t
 
 In test_10.py, we are performing a tuning correction using the SLS solving method. This unit test was derived from test_5.py then altered. test_10.py turns on minimalReferenceValue, sets referenceValueThreshold = [4.0], referenceSignificantFragmentThreshold = [6.0], answer = 'sls', SLSUniqueExport = 'yes', uniqueOrCommon = 'unique", UserChoices['dataAnalysisMethods']['answer'] = 'sls', specificMolecules = 'yes', chosenMoleculesNames = ['Acetaldehyde' , 'CO' , 'CO2' , 'Ethylene (Ethene)' , 'Ethanol' , 'Crotyl Alcohol' , 'H2' , 'H2O' , '1butanal']
 The main intent of test_10.py was to perform SLS manually step by step. This will allow for a working example of SLS perfromed outside of MSRESOLVE.
+All information regarding test_10.py manual SLS will be located in sub-directory "test_10 Manual SLS"
+	
+	Test_10 Quick Summary:	(Detailed steps located in sub-directory "test_10 Manual SLS" in the Proc Doc: "220113_Manual_TuningCorrection_Unit_Test_10_Proc_Doc")
+	
+	1)	Unit test_5 was modified to include SLS
+	2)	Our original reference pattern was scaled to 100 for each molecule, all intensities below 4 manually filtered out
+	3)	Using the "180613MadixKoMSCorrectionsFactor.." excel file, we input the scaled molecule patterns (scaled to 100 for each molecule) from the our scaled original pattern into MadixKo to get our correction factors (Non-Tuning Corrected). We must run MSRESOLVE to know which significant Mass is used. This will tell us which correction factor we need to use for each molecule.
+	4)	We aquire a Nist refernce pattern for the molecules used. These patterns are then scaled to 100 for each molecule.
+	5)	Using the "TuningCorrectorGasMixtureHypotheticalReferenceMeasuredVsSimulated"  excel file as a reference, we are able to create a polynomial fit equation between the original reference pattern and the Nist reference pattern. This equation can be used to create ratios for each molecular mass that will then be multiplied to the Nist reference pattern of "1Butanal" to get a Nist-TuningCorrected pattern for "1Butanal". This pattern will also be standardized to 100 and have intensities less than 4 remolved. 
+	6)	We now create a Mixed pattern, this reference pattern will include the original reference patterns for Acetaldehyde, CO, Ethylene (Ethene), Ethanol, Crotyl Alcohol, H2, H2O, and the Nist-TuningCorrected pattern for "1Butanal". This will give us our Mixed reference pattern.
+	7)	Using the "180613MadixKoMSCorrectionsFactor.." excel file, we input the molecule patterns from our Mixed reference pattern to get our new correction factors. We must run MSRESOLVE to know which significant Mass is used. This will tell us which correction factor we need to use for each molecule.
+	8)	We now perferm SLS manually by picking a time (176.848 for this example), and subrtacting each molecule signal and their contributions for each mass using our correction factor. We will obtain our solved concetration for each molecule. 
+
 
 
 ***
