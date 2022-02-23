@@ -1,0 +1,29 @@
+Mon Jan 31 13:04:42 2022
+
+referenceFileName = ['AcetaldehydeMeasured.csv'] 
+form  = ['xyyy'] 
+collectedFileName = 2-CrotAcetExp#2.csv 
+timeRangeLimit = yes 
+timeRangeStart = 176.0 
+timeRangeFinish = 178.0 
+measuredReferenceYorN = yes 
+referenceCorrectionCoefficientA = 0.0006434368557387084 
+referenceCorrectionCoefficientB = -0.03190349424712061 
+referenceCorrectionCoefficientC = 1.3575582459604374 
+referenceCorrection_abcCoefficients = [0.0006434368557387084, -0.03190349424712061, 1.3575582459604374] 
+referenceCorrection_abcCoefficients_cov = [[1.5796510395706737e-07, -1.1989070205798421e-05, 0.0002096417829741142], [-1.198907020579842e-05, 0.0009350370894595779, -0.01687273371586817], [0.0002096417829741142, -0.01687273371586817, 0.3178880804222858]] 
+specificMolecules = yes 
+chosenMoleculesNames = ['Acetaldehyde', 'CO', 'CO2', 'Ethylene (Ethene)', 'Ethanol', 'Crotyl Alcohol', 'H2', 'H2O', '1butanal'] 
+minimalReferenceValue = yes 
+referenceValueThreshold = [4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0, 4.0] 
+referenceSignificantFragmentThresholds = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
+answer = sls 
+uniqueOrCommon = unique 
+slsFinish = inverse 
+distinguished = yes 
+scaleRawDataFactor  = 1.0 
+resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
+concentrationsOutputName = ResolvedConcentrations.csv 
+simulatedSignalsOutputName = SimulatedRawSignals.csv 
+Run Time 0.13059 seconds 
+###################################################################### 
