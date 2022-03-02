@@ -85,7 +85,7 @@ def test_Run(allowOverwrite = False):
     #this option allows pytest to call the function
     if not allowOverwrite: 
         #this assert statement is required for the pytest module 
-        assert ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False, relativeTolerance=0.05, absoluteTolerance=1.0E-5) == True
+        assert ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False, relativeTolerance=0.14, absoluteTolerance=1.0E-5) == True
     
 if __name__ == "__main__":
    test_Run(allowOverwrite = True)
