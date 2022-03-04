@@ -62,14 +62,14 @@ MSRESOLVE.main()
 
 #print(MSRESOLVE.G.referenceCorrectionCoefficients)
 #The below concentrations are from Excel in the "Test_10_SLS.xlsx" File. These concentrations where manually calculated. 
-expected_results = [3.54578864, 1.034441868, 0.502509703, 0.157340555, -0.194707026, 0.86907201, 0.213372806, 0.714887949]
+expected_results = [0.332541445, 3.54578864, 1.034441868, 0.502509703, 0.157340555, -0.194707026, 0.86907201, 0.213372806, 0.714887949]
 
 
 
 
 ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
 
-output = MSRESOLVE.concentrationsScaledToCOarrayExported[0,1:] 
+output = MSRESOLVE.concentrationsScaledToCOarrayExported[0,0:] 
 resultObj = (output)
 #String is provided
 resultStr = str(resultObj)
