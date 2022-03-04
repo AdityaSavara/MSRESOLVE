@@ -61,7 +61,7 @@ MSRESOLVE.G.chosenMoleculesNames = ['Acetaldehyde' , 'CO' , 'CO2' , 'Ethylene (E
 MSRESOLVE.main()
 
 #print(MSRESOLVE.G.referenceCorrectionCoefficients)
-#The below concentrations are from Excel in the "Test_10_SLS.xlsx" File. These concentrations where manually calculated. 
+#The below concentrations are from Excel in the "Test_10_SLS.xlsx" File. These concentrations were manually calculated. 
 expected_results = [0.332541445, 3.54578864, 1.034441868, 0.502509703, 0.157340555, -0.194707026, 0.86907201, 0.213372806, 0.714887949]
 
 
