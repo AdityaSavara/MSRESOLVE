@@ -6570,7 +6570,7 @@ def main():
             ExportXYYYData(G.scaledConcentrationsPercentages, percentagesOutputArray, currentReferenceData.molecules, fileSuffix = G.iterationSuffix)
         ExportXYYYData(G.resolvedScaledConcentrationsOutputName, concentrationsScaledToCOarray, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = str('scaled'))
         times = concentrationsScaledToCOarray[:,0]#the times are just the first column of the array
-        data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times
+        data = concentrationsScaledToCOarray[:,1:]#the data is the whole array except the first column, which is the times 
         if (G.calculateUncertaintiesInConcentrations == True): #This is scaled to CO, not scaled to unit (which is concentration finder case).
             times_array_2D = numpy.transpose(numpy.atleast_2d(times)) #need to make it a 2D array with right direction to stack.
             concentrations_absolute_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_absolute_uncertainties_all_times']))
