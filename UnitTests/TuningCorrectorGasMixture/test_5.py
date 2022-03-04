@@ -32,7 +32,7 @@ print(MSRESOLVE.G.referenceCorrectionCoefficients)
 expected_results = [2.7233E-07, 8.1371E-07, 1.83852E-06, 1.60614E-08]
 ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
 
-output = MSRESOLVE.concentrationsScaledToCOarrayExported[0,0:] 
+output = MSRESOLVE.resultsObjects['concentrationsScaledToCOarray'][0,1:]
 resultObj = (output)
 #String is provided
 resultStr = str(resultObj)

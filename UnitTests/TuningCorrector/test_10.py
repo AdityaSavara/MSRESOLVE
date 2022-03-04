@@ -69,7 +69,7 @@ expected_results = [0.332541445, 3.54578864, 1.034441868, 0.502509703, 0.1573405
 
 ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
 
-output = MSRESOLVE.concentrationsScaledToCOarrayExported[0,0:] 
+output = MSRESOLVE.resultsObjects['concentrationsScaledToCOarray'][0,1:] 
 resultObj = (output)
 #String is provided
 resultStr = str(resultObj)
