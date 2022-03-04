@@ -3,14 +3,14 @@ Unit Test: test_10.py
 Test_10 Quick Summary:              (Note: It's better to read this "README" file then to read the ProcDoc)
 
 1)	Unit test_5.py was modified to include SLS. Once modified, test_5.py was renamed to test_10.py. Note, the number of chosen molecules was also reduced when making test_10.py in order for SLS to be able to solve this dataset with the molecules provided.
-	Note: test_5.txt and test_10.txt must be converted back into Python files (test_5.py and test_10.py). Both test_5 and test_10 are saved as text files to prevent errors when running a Unit Test.
+	Note: test_5.turnedOff and test_10.turnedOff must be converted back into Python files (test_5.py and test_10.py). Both test_5 and test_10 are saved as turned off files to prevent errors when running a Unit Test.
 
 2)	Our original reference pattern "AcetaldehydeMeasured.csv" was scaled to 100 for each molecule, all intensities below 4 manually filtered out. This can be shown in "AcetaldehydeMeasured_Scaled_to_100.xlsx"
 
 3)	Using the "180613MadixKoMSCorrectionsFactorExample_NO_HIDING.xlsx" file, we input the scaled molecule patterns (scaled to 100 for each molecule) from the our scaled original pattern file "AcetaldehydeMeasured_Scaled_to_100.xlsx" into MadixKo to get our correction factors (Non-Tuning Corrected). This is shown in the "180613MadixKo_Test_10.xlsx" file.
 
 4)  	We must run test_10.py to know which significant Mass is used & SLS molecule order. This will tell us which correction factor we need to use for each molecule. You will need the measured csv file "2-CrotAcetExp#2". The original reference file "AcetaldehydeMeasured.csv" and the existing tuning reference file "ReferenceLiterature.csv". Once ran, we will get our SLS molecule order and chosen mass fragment in the export file "ExportedSLSUniqueMoleculesAndChosenMassFragments.csv". We will then rename this file to "Masses-Molecules_SLS_UnitTest_Test_10.xlsx".
-	Note: test_10.txt must be converted back to a Python file (test_10.py).
+	Note: test_10.turnedOff must be converted back to a Python file (test_10.py).
 	
 5)	We acquire a Nist refernce pattern for the molecules used. This is the "ReferenceLiterature.csv" that was used in the last step.  These patterns are then scaled to 100 for each molecule in the file "ReferenceLiterature_Standardized_100". Zeros where then removed from the patterns. This can be found in the "NistRef_Zeros_Removed.csv"
 	We must also acquire a measured reference file with zeros removed. Using the "ExportedReferencePatternDesiredOriginal.csv" file (This file will be acquired after runing test_10.py) we will then remove the zeros and unneeded molecules, Kept: (Acetaldehyde, (E) 2-Butenal, Ethylene, Ethanol, Crotyl Alcohol). This can be found in the "MeasureRef_Zeros_Removed.csv" file.
