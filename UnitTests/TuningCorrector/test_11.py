@@ -63,7 +63,7 @@ MSRESOLVE.main()
 
 #print(MSRESOLVE.G.referenceCorrectionCoefficients)
 #The below concentrations are from Excel in the "Test_10_SLS.xlsx" File. These concentrations were manually calculated. 
-expected_results = [0.332671753, 3.643140861, 1.062048062, 0.524727021, 0.166826058, -0.204349148, 0.882210705, 0.21563768, 0.759801714]
+expected_results = [0.220291051, 3.643140861, 1.062048062, 0.524727021, 0.079642269, -0.290215952, 0.88199886, 0.211367712, 0.759801714]
 
 
 
@@ -82,11 +82,11 @@ def test_Run(allowOverwrite = False):
     #if the user wants to be able to change what the saved outputs are
     if allowOverwrite:
         #This function call is used when this test is run solo as well as by UnitTesterSG
-        ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, relativeTolerance=0.49, absoluteTolerance=1.0E-5)
+        ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, relativeTolerance=0.3, absoluteTolerance=1.0E-5)
     #this option allows pytest to call the function
     if not allowOverwrite: 
         #this assert statement is required for the pytest module 
-        assert ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False, relativeTolerance=0.49, absoluteTolerance=1.0E-5) == True
+        assert ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False, relativeTolerance=0.3, absoluteTolerance=1.0E-5) == True
     
 if __name__ == "__main__":
    test_Run(allowOverwrite = True)
