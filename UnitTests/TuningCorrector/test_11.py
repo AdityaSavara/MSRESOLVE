@@ -63,7 +63,7 @@ MSRESOLVE.main()
 
 #print(MSRESOLVE.G.referenceCorrectionCoefficients)
 #The below concentrations are from Excel in the "Test_10_SLS.xlsx" File. These concentrations were manually calculated. 
-expected_results = [0.220291051, 3.643140861, 1.062048062, 0.524727021, 0.079642269, -0.290215952, 0.88199886, 0.211367712, 0.759801714]
+expected_results = [0.220291051, 3.643140861, 1.062048062, 0.524727021, 0.079642269, -0.290215952, 0.88199886, 0.211367712, 0.883012802]
 
 
 
