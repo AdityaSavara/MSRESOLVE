@@ -1,0 +1,92 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Jul 18 15:20:19 2018
+
+@author: Alex
+"""
+
+import sys
+import os
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, "lib"))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir))
+sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
+#This test file tests the ReferencePatternTimeChooser feature
+
+import MSRESOLVE, importlib; importlib.reload(MSRESOLVE)
+import UnitTesterSG as ut
+import pandas
+import numpy as np
+
+#Get the suffix argument for check_results
+suffix = ut.returnDigitFromFilename(__file__)
+
+#We can use the default user input, which is already in MSRESOLVE.G.
+#Need to change the "direct variable" version rather than the dictionary version.
+MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasured.csv']
+MSRESOLVE.G.measuredReferenceYorN = 'yes'
+MSRESOLVE.G.createMixedTuningPattern = True
+MSRESOLVE.G.referenceFileExistingTuning = ['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileDesiredTuning =[]
+
+#apparently need to have dataAnalysis on to use this feature (should not need to, but as of Sep 2019, do need to.
+MSRESOLVE.G.dataAnalysis ='yes'
+
+#Turn off certain other settings to make the test faster.
+MSRESOLVE.G.grapher ='no'
+MSRESOLVE.G.dataSimulation ='no'
+MSRESOLVE.G.timeRangeLimit = 'yes'
+MSRESOLVE.G.timeRangeStart = 176  #start time (-int)
+MSRESOLVE.G.timeRangeFinish = 178  #start time (-int)
+MSRESOLVE.G.dataSmootherYorN = 'no'
+
+#will use minimalReferenceValue (single value means it will be applied to all molecules)
+MSRESOLVE.G.minimalReferenceValue= 'yes'
+MSRESOLVE.G.referenceValueThreshold = [4.0]
+MSRESOLVE.G.referenceSignificantFragmentThresholds = [6.0]
+MSRESOLVE.G.answer = 'sls'
+MSRESOLVE.G.implicitSLScorrection = True
+
+MSRESOLVE.G.SLSUniqueExport = 'yes'
+MSRESOLVE.G.uniqueOrCommon = 'unique' 
+
+MSRESOLVE.G.UserChoices['dataAnalysisMethods']['answer'] = 'sls'
+MSRESOLVE.G.specificMolecules = 'yes'
+MSRESOLVE.G.chosenMoleculesNames = ['Acetaldehyde' , 'CO' , 'CO2' , 'Ethylene (Ethene)' , 'Ethanol' , 'Crotyl Alcohol' , 'H2' , 'H2O' , '1butanal']
+
+#Now to get started with the test itself...
+
+#these are the tuning coefficients before doing anything (should be 0,0,1)
+#print(MSRESOLVE.G.referenceCorrectionCoefficients)
+#now need to run MSRESOLVE which will change the coefficients...
+
+MSRESOLVE.main()
+
+#print(MSRESOLVE.G.referenceCorrectionCoefficients)
+#The below concentrations are from Excel in the "Test_10_SLS.xlsx" File. These concentrations were manually calculated. 
+expected_results = [0.220291051, 3.643140861, 1.062048062, 0.524727021, 0.079642269, -0.290215952, 0.88199886, 0.211367712, 0.883012802]
+
+
+
+
+ut.set_expected_result(expected_results, str(expected_results), prefix = '', suffix=suffix)
+
+output = MSRESOLVE.resultsObjects['concentrationsScaledToCOarray'][0,1:] 
+resultObj = (output)
+#String is provided
+resultStr = str(resultObj)
+
+
+
+#run the Unit Tester
+def test_Run(allowOverwrite = False):
+    #if the user wants to be able to change what the saved outputs are
+    if allowOverwrite:
+        #This function call is used when this test is run solo as well as by UnitTesterSG
+        ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, relativeTolerance=0.3, absoluteTolerance=1.0E-5)
+    #this option allows pytest to call the function
+    if not allowOverwrite: 
+        #this assert statement is required for the pytest module 
+        assert ut.check_results(resultObj, resultStr, prefix = '', suffix=suffix, allowOverwrite = False, relativeTolerance=0.3, absoluteTolerance=1.0E-5) == True
+    
+if __name__ == "__main__":
+   test_Run(allowOverwrite = True)
