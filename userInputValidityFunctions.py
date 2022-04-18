@@ -343,6 +343,13 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['scaleRawDataFactor']   = UserChoices['scaleRawDataYorN']['scaleRawDataFactor']
 
     SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
+    
+    if UserChoices['measuredReferenceYorN']['on'] == 'no':
+        UserChoices['measuredReferenceYorN']['referenceFileStandardTuning'] = []
+        UserChoices['measuredReferenceYorN']['referenceFileExistingTuning'] = []
+        SettingsVDictionary['referenceFileStandardTuning']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuning']
+        SettingsVDictionary['referenceFileExistingTuning']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuning']
+
     if 'tuningCorrectPatternInternalVsExternal' in UserChoices['measuredReferenceYorN']:
         SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal']
         if UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal'] == 'External':             #This If statement sets createMixedTuningPattern to False if a 'External' pattern is used.
