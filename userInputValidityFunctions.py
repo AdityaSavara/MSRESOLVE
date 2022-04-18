@@ -358,6 +358,10 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['referenceFileExistingTuning']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuning']
     SettingsVDictionary['referenceFileDesiredTuning']    = UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning']
     SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients']
+    if 'implicitSLSRecursion' not in UserChoices['dataAnalysisMethods']: #This variable is a work in progress. This if statement is to prevent errors thats created by old Unit Test. 
+        UserChoices['dataAnalysisMethods']['implicitSLSRecursion'] = 0 
+        SettingsVDictionary['implicitSLSRecursion']  = UserChoices['dataAnalysisMethods']['implicitSLSRecursion']
+         
 
     #to make sure old unit tests and analyses work.
     if 'referenceFileStandardTuning' in UserChoices['measuredReferenceYorN']:

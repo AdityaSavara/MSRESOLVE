@@ -203,6 +203,7 @@ objectiveFunctionType = 'ssr'	#objectiveFunctionType = 'ssr', 'sar', 'weightedSA
 distinguished = 'yes'
 fullBrute = 'yes'
 SLSUniqueExport = 'yes'
+implicitSLSRecursion = 0 #Work in progress variable. Placed to prevent Unit test Error 
 
 
 #//Concentration Finder//
