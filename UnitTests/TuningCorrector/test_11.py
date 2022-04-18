@@ -25,8 +25,8 @@ suffix = ut.returnDigitFromFilename(__file__)
 MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasured.csv']
 MSRESOLVE.G.measuredReferenceYorN = 'yes'
 MSRESOLVE.G.createMixedTuningPattern = True
-MSRESOLVE.G.referenceFileExistingTuning = ['ReferenceLiterature.csv','xyyy']
-MSRESOLVE.G.referenceFileDesiredTuning =[]
+MSRESOLVE.G.referenceFileExistingTuningandForm = ['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileDesiredTuningandForm =[]
 
 #apparently need to have dataAnalysis on to use this feature (should not need to, but as of Sep 2019, do need to.
 MSRESOLVE.G.dataAnalysis ='yes'
