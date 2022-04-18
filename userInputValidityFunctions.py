@@ -345,8 +345,13 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
     if 'tuningCorrectPatternInternalVsExternal' in UserChoices['measuredReferenceYorN']:
         SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal']
+        if UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal'] == 'External':             #This If statement sets createMixedTuningPattern to False if a 'External' pattern is used.
+            if 'createMixedTuningPattern' in UserChoices['measuredReferenceYorN']:
+                SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
+                UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
     else: #If not provided, then populate with the default for backwards compatibility.
         SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = 'External'
+        
     if 'createMixedTuningPattern' not in UserChoices['measuredReferenceYorN']:
         UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = True
     SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
@@ -357,6 +362,9 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     #to make sure old unit tests and analyses work.
     if 'referenceFileStandardTuning' in UserChoices['measuredReferenceYorN']:
         SettingsVDictionary['referenceFileStandardTuning']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuning']
+        if UserChoices['measuredReferenceYorN']['referenceFileStandardTuning'] == []:                #This If statement sets createMixedTuningPattern to False if referenceFileStandardTuning pattern is populated with a blank list.
+            SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
+            UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
     else:
         SettingsVDictionary['referenceFileStandardTuning'] = []
 
