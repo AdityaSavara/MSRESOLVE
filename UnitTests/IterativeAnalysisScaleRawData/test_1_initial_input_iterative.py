@@ -122,8 +122,8 @@ scaleRawDataFactor = 1000.0
 #//Reference Correction Coefficients//
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 measuredReferenceYorN='no'
-referenceFileExistingTuning='AcetaldehydeMeasuredRef.csv'
-referenceFileDesiredTuning ='AcetaldehydeOnlyNISTRef.csv'
+referenceFileExistingTuningAndForm='AcetaldehydeMeasuredRef.csv'
+referenceFileDesiredTuningAndForm ='AcetaldehydeOnlyNISTRef.csv'
 referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
 
@@ -204,6 +204,7 @@ objectiveFunctionType = 'ssr'	#objectiveFunctionType = 'ssr', 'sar', 'weightedSA
 distinguished = 'yes'
 fullBrute = 'yes'
 SLSUniqueExport = 'yes'
+implicitSLSRecursion = 0 #Work in progress variable. Placed to prevent Unit test Error 
 
 
 #//Concentration Finder//

@@ -1195,7 +1195,7 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #Wanted to do something like "if list(G.referenceCorrectionCoefficients) != [0,0,1]:" but can't do it out here. Can do it inside function.                                                                                                                  
     ReferenceData.standardized_reference_patterns, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
                                                            G.referenceCorrectionCoefficients,G.referenceCorrectionCoefficients_cov,
-                                                           G.referenceFileDesiredTuning, G.referenceFileExistingTuning,
+                                                           G.referenceFileDesiredTuningAndForm, G.referenceFileExistingTuningAndForm,
                                                            G.measuredReferenceYorN)
     #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
     try:

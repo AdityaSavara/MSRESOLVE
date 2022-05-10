@@ -27,8 +27,8 @@ MSRESOLVE.G.tuningCorrectPatternInternalVsExternal = 'Internal'
 MSRESOLVE.G.measuredReferenceYorN = 'yes'
 MSRESOLVE.G.createMixedTuningPattern = False
 MSRESOLVE.G.referenceFileNamesList[0] = 'ReferenceLiterature.csv'
-MSRESOLVE.G.referenceFileExistingTuning = ['ReferenceCollected.csv','xyyy']
-MSRESOLVE.G.referenceFileDesiredTuning =['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileExistingTuningAndForm = ['ReferenceCollected.csv','xyyy']
+MSRESOLVE.G.referenceFileDesiredTuningAndForm =['ReferenceLiterature.csv','xyyy']
 
 
 #apparently need to have dataAnalysis on to use this feature (should not need to, but as of Sep 2019, do need to.

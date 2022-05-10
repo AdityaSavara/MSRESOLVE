@@ -124,8 +124,8 @@ def parseUserInput(currentUserInput):
     #Reference Correction Changer
     parse.strCheck(currentUserInput.measuredReferenceYorN,'measuredReferenceYorN')
     #The below two variables are no longer strings. They are now lists with two elements, each of which are strings. TODO: Change their names to referenceFileExistingTuningAndForm and referenceFileDesiredTuningAndForm
-    #parse.strCheck(currentUserInput.referenceFileExistingTuning,'referenceFileExistingTuning')
-    #parse.strCheck(currentUserInput.referenceFileDesiredTuning,'referenceFileDesiredTuning')
+    #parse.strCheck(currentUserInput.referenceFileExistingTuningAndForm,'referenceFileExistingTuningAndForm')
+    #parse.strCheck(currentUserInput.referenceFileDesiredTuningAndForm,'referenceFileDesiredTuningAndForm')
     
     #Reference Pattern Changer
     parse.strCheck(currentUserInput.extractReferencePatternFromDataOption,'extractReferencePatternFromDataOption')
@@ -342,8 +342,8 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     if 'createMixedTuningPattern' not in UserChoices['measuredReferenceYorN']:
         UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = True
     SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
-    SettingsVDictionary['referenceFileExistingTuning']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuning']
-    SettingsVDictionary['referenceFileDesiredTuning']    = UserChoices['measuredReferenceYorN']['referenceFileDesiredTuning']
+    SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']
+    SettingsVDictionary['referenceFileDesiredTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileDesiredTuningAndForm']
     SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients']
 
     try: #to make sure old unit tests and analyses work.
