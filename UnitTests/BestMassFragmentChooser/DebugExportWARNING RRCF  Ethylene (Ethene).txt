@@ -1,0 +1,1440 @@
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.753353271256954 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 25.04959259431421 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 3.2367841605782632 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  RRCF  
+Object  = 2.0497083361636763 Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
