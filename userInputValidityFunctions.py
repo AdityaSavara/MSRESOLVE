@@ -275,6 +275,13 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     if 'referenceFileStandardTuningAndForm' not in UserChoices['measuredReferenceYorN']:
         UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
+    if 'referenceFileExistingTuningAndForm' not in UserChoices['measuredReferenceYorN']:
+        UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
+
+    if ((UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] == []) and (UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] == [])):                #This If statement sets createMixedTuningPattern to False if referenceFileStandardTuningAndForm pattern and referenceFileExistingTuningAndForm are both populated with a blank list.
+            UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
+            print("No Standard or External tuning pattern. Forcing createMixedTuningPattern to False.")
+
 
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
     #The original variable names were single variables. Now, we are using a dictionary type structure (right side of equal signs) so they are being mapped to the single variables (left side of equal sign)
@@ -376,9 +383,6 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     #to make sure old unit tests and analyses work.
     if 'referenceFileStandardTuningAndForm' in UserChoices['measuredReferenceYorN']:
         SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']
-        if UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] == []:                #This If statement sets createMixedTuningPattern to False if referenceFileStandardTuningAndForm pattern is populated with a blank list.
-            SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
-            UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
     else:
         SettingsVDictionary['referenceFileStandardTuningAndForm'] = []
 
