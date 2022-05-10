@@ -1,4 +1,4 @@
-Tue Nov  9 20:25:44 2021
+Tue May 10 12:41:28 2022
 
 referenceFileName = ['AcetaldehydeMeasuredShortened.csv'] 
 form  = ['xyyy'] 
@@ -13,8 +13,8 @@ referenceCorrectionCoefficientC = 0.035082939270643265
 referenceCorrection_abcCoefficients = [-0.000594063037632884, 0.05136153011636842, 0.035082939270643265] 
 referenceCorrection_abcCoefficients_cov = [[2.473901035558921e-07, -1.96108346497385e-05, 0.00035949535148714574], [-1.96108346497385e-05, 0.001576726891341222, -0.029260978861604486], [0.00035949535148714574, -0.029260978861604493, 0.5507218596258738]] 
 minimalReferenceValue = yes 
-referenceValueThreshold = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
-referenceSignificantFragmentThresholds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
+referenceValueThreshold = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
+referenceSignificantFragmentThresholds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
 answer = sls 
 uniqueOrCommon = unique 
 slsFinish = inverse 
@@ -23,5 +23,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.86958 seconds 
+Run Time 0.57036 seconds 
 ###################################################################### 

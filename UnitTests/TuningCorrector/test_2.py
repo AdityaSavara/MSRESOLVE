@@ -26,8 +26,8 @@ MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasured.csv']
 MSRESOLVE.G.tuningCorrectPatternInternalVsExternal = 'Internal'
 MSRESOLVE.G.measuredReferenceYorN = 'yes'
 MSRESOLVE.G.createMixedTuningPattern = False
-MSRESOLVE.G.referenceFileExistingTuningandForm = ['ReferenceCollected.csv','xyyy']
-MSRESOLVE.G.referenceFileDesiredTuningandForm =['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileExistingTuningAndForm = ['ReferenceCollected.csv','xyyy']
+MSRESOLVE.G.referenceFileDesiredTuningAndForm =['ReferenceLiterature.csv','xyyy']
 
 #apparently need to have dataAnalysis on to use this feature (should not need to, but as of Sep 2019, do need to.
 MSRESOLVE.G.dataAnalysis ='yes'

@@ -1,9 +1,9 @@
 # molecules,'ethyne', 'ethene', 'ethane', '1butanal'
-ScaledConcentrations_Means,2.153212109222213e-07,8.165754880981888e-07,2.1893247239640924e-06,-2.0627256338716823e-06
+ScaledConcentrations_Means,2.690787638284799e-07,8.084204994199837e-07,1.8219970746938638e-06,1.604391290631006e-08
 ScaledConcentrations_StdDevs,0.0,0.0,0.0,0.0
 ScaledConcentrations_StdErrs,0.0,0.0,0.0,0.0
-ScaledConcentrations_absolute_uncertainties_Means,1.7989301963031117e-07,4.351455677303655e-07,2.975202392467205e-07,1.743894598955308e-06
+ScaledConcentrations_absolute_uncertainties_Means,1.029577308678675e-07,2.500020631991401e-07,1.798241936491399e-07,1.7190279521258272e-07
 ScaledConcentrations_absolute_uncertainties_StdDevs,0.0,0.0,0.0,0.0
-ScaledConcentrations_relative_uncertainties_Means,0.8354635331086468,0.5328908032052532,0.13589589337301075,-0.8454321652473301
-ScaledConcentrations_relative_uncertainties_StdDevs,0.0,0.0,0.0,-0.0
-ScaledConcentrations_absolute_uncertainties_Total,1.7989301963031117e-07,4.351455677303655e-07,2.975202392467205e-07,1.743894598955308e-06
+ScaledConcentrations_relative_uncertainties_Means,0.38263045884028335,0.30924755542259097,0.09869620327428592,10.71451809894664
+ScaledConcentrations_relative_uncertainties_StdDevs,0.0,0.0,0.0,0.0
+ScaledConcentrations_absolute_uncertainties_Total,1.029577308678675e-07,2.500020631991401e-07,1.798241936491399e-07,1.7190279521258272e-07

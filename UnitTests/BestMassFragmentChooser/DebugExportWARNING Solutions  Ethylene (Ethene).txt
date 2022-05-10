@@ -1,0 +1,1040 @@
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 15.03783773996984 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 14.734778148920556 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.60210790933414 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.797603866028158 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 14.734778148920556 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 11.79252244568768 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.60210790933414 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.60210790933414 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 11.79252244568768 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.758986091736546 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 11.79252244568768 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.758986091736546 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 11.79252244568768 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 15.03783773996984 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 14.734778148920556 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.60210790933414 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.797603866028158 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 14.734778148920556 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 11.79252244568768 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.60210790933414 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.60210790933414 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 11.79252244568768 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.758986091736546 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -109.50049178094075 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 17.10266464388829 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 11.79252244568768 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 10.800358394159627 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 4.110872380114004 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 22.758986091736546 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 11.79252244568768 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -8.064015966124751 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 21.07905521435703 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 0.3266560706090043 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = -41.70802749799208 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  Solutions  
+Object  = 48.787429038398884 Ethylene (Ethene) 0 
+objectName =  Ethylene (Ethene) 

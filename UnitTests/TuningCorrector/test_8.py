@@ -26,9 +26,9 @@ MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasured.csv']
 #Need to change the "direct variable" version rather than the dictionary version.
 MSRESOLVE.G.measuredReferenceYorN = 'yes'
 MSRESOLVE.G.createMixedTuningPattern = True
-MSRESOLVE.G.referenceFileStandardTuningandForm = ['ReferenceLiterature.csv','xyyy']
-MSRESOLVE.G.referenceFileExistingTuningandForm = []
-MSRESOLVE.G.referenceFileDesiredTuningandForm =[]
+MSRESOLVE.G.referenceFileStandardTuningAndForm = ['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileExistingTuningAndForm = []
+MSRESOLVE.G.referenceFileDesiredTuningAndForm =[]
 
 #apparently need to have dataAnalysis on to use this feature (should not need to, but as of Sep 2019, do need to.
 MSRESOLVE.G.dataAnalysis ='yes'

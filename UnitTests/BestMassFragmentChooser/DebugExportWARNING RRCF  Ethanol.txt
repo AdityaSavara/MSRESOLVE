@@ -1,0 +1,2400 @@
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 43.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 18.679349043152477 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 45.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 4.532020744599774 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 6.452581074151398 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 1.9833124290310162 Ethanol1 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 24.072408286385294 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 8.338550262248614 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 20.03639344185694 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 23.082645134177774 Ethanol0 46.0 
+objectName =  Ethanol 
+
+prefix =  RRCF  
+Object  = 10.876815016693833 Ethanol0 46.0 
+objectName =  Ethanol 
