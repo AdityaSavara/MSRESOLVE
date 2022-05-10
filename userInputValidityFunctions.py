@@ -273,6 +273,20 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
                 UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
                 print("Incompatible choice detected: forcing implicitSLScorrection to False.")
 
+    if UserChoices['measuredReferenceYorN']['on'] == 'no': #forcing the standard and external reference files to blank if measuredReferenceYorN is not on.
+        UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []
+        UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = []
+
+    if 'referenceFileStandardTuningAndForm' not in UserChoices['measuredReferenceYorN']:
+        UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
+    if 'referenceFileExistingTuningAndForm' not in UserChoices['measuredReferenceYorN']:
+        UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
+
+    if ((UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] == []) and (UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] == [])):                #This If statement sets createMixedTuningPattern to False if referenceFileStandardTuningAndForm pattern and referenceFileExistingTuningAndForm are both populated with a blank list.
+            UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
+            print("No Standard or External tuning pattern. Forcing createMixedTuningPattern to False.")
+
+
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
     #The original variable names were single variables. Now, we are using a dictionary type structure (right side of equal signs) so they are being mapped to the single variables (left side of equal sign)
     #TODO: Consider if G.iterativeAnalysis = True or False should be changed to G.IterativeAnalysis_On or something like that, but will break backwards compatibility unless special care is taken.
@@ -344,11 +358,9 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
     
-    if UserChoices['measuredReferenceYorN']['on'] == 'no':
-        UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []
-        UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = []
-        SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']
-        SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']
+        
+    SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']
+    SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']
 
     if 'tuningCorrectPatternInternalVsExternal' in UserChoices['measuredReferenceYorN']:
         SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal']
@@ -373,9 +385,6 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     #to make sure old unit tests and analyses work.
     if 'referenceFileStandardTuningAndForm' in UserChoices['measuredReferenceYorN']:
         SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']
-        if UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] == []:                #This If statement sets createMixedTuningPattern to False if referenceFileStandardTuningAndForm pattern is populated with a blank list.
-            SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
-            UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
     else:
         SettingsVDictionary['referenceFileStandardTuningAndForm'] = []
 
