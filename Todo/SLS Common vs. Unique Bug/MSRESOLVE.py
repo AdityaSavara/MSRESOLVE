@@ -341,10 +341,10 @@ def ABCDetermination(ReferencePatternMeasured, ReferencePatternLiterature):
 #this function either creates or gets the three coefficients for the polynomial correction and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceFileDesiredTuningandForm,referenceFileExistingTuningandForm,measuredReferenceYorN):
+def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceFileDesiredTuningAndForm,referenceFileExistingTuningAndForm,measuredReferenceYorN):
     
     if measuredReferenceYorN =='yes':
-        (referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C'])=ABCDetermination(referenceFileExistingTuningandForm,referenceFileDesiredTuningandForm )
+        (referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C'])=ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm )
     
     referenceabscissa = reference[:,0] #gets arrays of just data and abscissa
     referencedata = reference[:,1:]
@@ -924,7 +924,7 @@ def ReferenceInputPreProcessing(ReferenceData):
     
     print('beginning CorrectionValueCorrector')
     ReferenceData.standardized_reference_intensities = CorrectionValueCorrector(ReferenceData.standardized_reference_intensities, G.referenceCorrectionCoefficients,
-                                                       G.referenceFileDesiredTuningandForm, G.referenceFileExistingTuningandForm,
+                                                       G.referenceFileDesiredTuningAndForm, G.referenceFileExistingTuningAndForm,
                                                        G.measuredReferenceYorN)
     ReferenceData.ExportCollector('CorrectionValueCorrector')
     
