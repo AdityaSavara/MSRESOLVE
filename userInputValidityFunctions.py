@@ -273,6 +273,10 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
                 UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
                 print("Incompatible choice detected: forcing implicitSLScorrection to False.")
 
+    if UserChoices['measuredReferenceYorN']['on'] == 'no': #forcing the standard and external reference files to blank if measuredReferenceYorN is not on.
+        UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []
+        UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = []
+
     if 'referenceFileStandardTuningAndForm' not in UserChoices['measuredReferenceYorN']:
         UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
     if 'referenceFileExistingTuningAndForm' not in UserChoices['measuredReferenceYorN']:
@@ -354,11 +358,9 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
     
-    if UserChoices['measuredReferenceYorN']['on'] == 'no':
-        UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []
-        UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = []
-        SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']
-        SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']
+        
+    SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']
+    SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']
 
     if 'tuningCorrectPatternInternalVsExternal' in UserChoices['measuredReferenceYorN']:
         SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal']
