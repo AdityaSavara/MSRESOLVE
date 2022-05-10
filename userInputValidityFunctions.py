@@ -273,6 +273,9 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
                 UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
                 print("Incompatible choice detected: forcing implicitSLScorrection to False.")
 
+    if 'referenceFileStandardTuningAndForm' not in UserChoices['measuredReferenceYorN']:
+        UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
+
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
     #The original variable names were single variables. Now, we are using a dictionary type structure (right side of equal signs) so they are being mapped to the single variables (left side of equal sign)
     #TODO: Consider if G.iterativeAnalysis = True or False should be changed to G.IterativeAnalysis_On or something like that, but will break backwards compatibility unless special care is taken.
