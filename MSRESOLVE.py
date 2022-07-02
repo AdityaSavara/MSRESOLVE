@@ -2603,6 +2603,22 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
 #These functions read in the experimental data file and the reference file. The
 #returned variables can then be used to initialize the respective classes.
 
+#a small helper function to check if an extension exists in a filename and to return the delimeter based on that.
+def getDelimiterFromExtension(filename):
+    if ".tsv" in filename:
+        delimeter = '\t'
+    elif ".tab" in filename:
+        delimeter = '\t'
+    elif ".txt" in filename:
+        delimeter = '\t'        
+    elif ".skv" in filename:
+        delimeter = ';'
+    elif ".csv" in filename:
+        delimeter = ',' #it could be something else, but we will assume that a csv
+    else:
+        delimiter = '\t' #for MSRESOLVE, this is now the default delimiter.
+    return delimiter
+        
 def readDataFile(collectedFileName):
 
  #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
@@ -2703,8 +2719,14 @@ def readReferenceFile(referenceFileName, form):
         provided_reference_patterns = reference_holder
         return provided_reference_patterns
     
-     #read the csv file into a dataframe
-    dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+    #read the csv file into a dataframe
+    if '.csv' in referenceFileName:
+        dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+    elif '.tsv' in referenceFileName:
+        try: #no easy way to assess utf16 vs utf8, so try both.
+            dataFrame = pandas.read_csv('%s' %referenceFileName, header = None, delimiter = '\t', encoding = 'utf8') #need to specify encoding for cases of tab delimited files.
+        except: #no easy way to assess utf16 vs utf8, so try both.
+            dataFrame = pandas.read_csv('%s' %referenceFileName, header = None, delimiter = '\t', encoding = 'utf16') #need to use utf16 for some cases of tab delimited files.
     
     if form == 'xyyy':
         for rowIndex in range(len(dataFrame)): #Loop through each row and check the abscissa value
@@ -2714,7 +2736,7 @@ def readReferenceFile(referenceFileName, form):
                 reference = dfreference.values #convert to matrix
                 provided_reference_patterns = reference.astype(float) #convert the matrix to floats
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
-                break #exit the for loop
+                break #exit the for loop since the first non-header row has been reached.
             except: #Otherwise the row consists of other information
                 if (dataFrame.iloc[rowIndex][0] == 'SourceOfFragmentationPatterns') or (dataFrame.iloc[rowIndex][0] == 'Source:'): #if the abscissa titles the source (both old and new reference files)
                     dfSourceOfFragmentationPatterns = dataFrame.iloc[rowIndex][1:] #select the row of names
