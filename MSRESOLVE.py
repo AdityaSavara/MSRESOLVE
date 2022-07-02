@@ -2741,15 +2741,15 @@ def readReferenceFile(referenceFileName, form):
                 if (dataFrame.iloc[rowIndex][0] == 'SourceOfFragmentationPatterns') or (dataFrame.iloc[rowIndex][0] == 'Source:'): #if the abscissa titles the source (both old and new reference files)
                     dfSourceOfFragmentationPatterns = dataFrame.iloc[rowIndex][1:] #select the row of names
                     SourceOfFragmentationPatterns = dfSourceOfFragmentationPatterns.values #convert to matrix
-                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(numpy.str) #save as class object with type string
+                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'sourceOfIonizationData':
                     dfsourceOfIonizationData = dataFrame.iloc[rowIndex][1:] #Select the row of names
                     sourceOfIonizationData = dfsourceOfIonizationData.values #convert to matrix
-                    sourceOfIonizationData = sourceOfIonizationData.astype(numpy.str) #save as class object with type string
+                    sourceOfIonizationData = sourceOfIonizationData.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Molecules': #if the abscissa titles the molecule names
                     dfmolecules = dataFrame.iloc[rowIndex][1:] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
-                    molecules = molecules.astype(numpy.str) #save as class object with type string
+                    molecules = molecules.astype(str) #save as class object with type string
                     molecules = list(molecules)
                     for moleculeIndex in range(len(molecules)):
                         molecules[moleculeIndex] = molecules[moleculeIndex].strip()#remove leading and trailing whitespaces.
@@ -2764,7 +2764,7 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'moleculeIonizationType':
                     dfmoleculeIonizationType = dataFrame.iloc[rowIndex][1:] #select row of names
                     moleculeIonizationType = dfmoleculeIonizationType.values #convert to matrix
-                    moleculeIonizationType = moleculeIonizationType.astype(numpy.str) #save as class object with type string
+                    moleculeIonizationType = moleculeIonizationType.astype(str) #save as class object with type string
                 elif (dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies') or (dataFrame.iloc[rowIndex][0] == 'knownIonizationFactorsRelativeToN2'):
                     dfrelativeIonizationEfficiencies = dataFrame.iloc[rowIndex][1:] #select row of names
                     relativeIonizationEfficiencies = dfrelativeIonizationEfficiencies.values #convert to matrix
@@ -2821,7 +2821,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecules = dfmolecules.values
 #        #save as class object with type string
-#        molecules = molecules.astype(numpy.str)
+#        molecules = molecules.astype(str)
 #        
 #        '''generate list of molecular weights'''
 #        #select row of names
@@ -2837,7 +2837,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        sourceInfo = dfsourceInfo.values
 #        #save as class object with type string
-#        sourceInfo = sourceInfo.astype(numpy.str)
+#        sourceInfo = sourceInfo.astype(str)
         
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
@@ -2859,15 +2859,15 @@ def readReferenceFile(referenceFileName, form):
                 if (dataFrame.iloc[rowIndex][0] == 'SourceOfFragmentationPatterns') or (dataFrame.iloc[rowIndex][0] == 'Source:'): #if the abscissa titles the source (both old and new reference files)
                     dfSourceOfFragmentationPatterns = dataFrame.iloc[rowIndex][1::2] #select the row of names
                     SourceOfFragmentationPatterns = dfSourceOfFragmentationPatterns.values #convert to matrix
-                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(numpy.str) #save as class object with type string
+                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'sourceOfIonizationData':
                     dfsourceOfIonizationData = dataFrame.iloc[rowIndex][1::2] #Select the row of names
                     sourceOfIonizationData = dfsourceOfIonizationData.values #convert to matrix
-                    sourceOfIonizationData = sourceOfIonizationData.astype(numpy.str) #save as class object with type string
+                    sourceOfIonizationData = sourceOfIonizationData.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Molecules': #if the abscissa titles the molecule names
                     dfmolecules = dataFrame.iloc[rowIndex][1::2] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
-                    molecules = molecules.astype(numpy.str) #save as class object with type string
+                    molecules = molecules.astype(str) #save as class object with type string
                     molecules = list(molecules)
                     for moleculeIndex in range(len(molecules)):
                         molecules[moleculeIndex] = molecules[moleculeIndex].strip()#remove leading and trailing whitespaces.
@@ -2882,7 +2882,7 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'moleculeIonizationType':
                     dfmoleculeIonizationType = dataFrame.iloc[rowIndex][1::2] #select row of names
                     moleculeIonizationType = dfmoleculeIonizationType.values #convert to matrix
-                    moleculeIonizationType = moleculeIonizationType.astype(numpy.str) #save as class object with type string
+                    moleculeIonizationType = moleculeIonizationType.astype(str) #save as class object with type string
                 elif (dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies') or (dataFrame.iloc[rowIndex][0] == 'knownIonizationFactorsRelativeToN2'):
                     dfrelativeIonizationEfficiencies = dataFrame.iloc[rowIndex][1::2] #select row of names
                     relativeIonizationEfficiencies = dfrelativeIonizationEfficiencies.values #convert to matrix
@@ -2941,7 +2941,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecules = dfmolecules.values
 #        #save as class object with type string
-#        molecules = molecules.astype(numpy.str)
+#        molecules = molecules.astype(str)
 #        
 #        '''generate list of molecular weights'''
 #        #select row of names
@@ -2957,7 +2957,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        sourceInfo = dfsourceInfo.values
 #        #save as class object with type string
-#        sourceInfo = sourceInfo.astype(numpy.str)
+#        sourceInfo = sourceInfo.astype(str)
         
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
