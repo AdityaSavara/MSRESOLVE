@@ -3118,7 +3118,8 @@ class MSReference (object):
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         self.iterationSuffix = ''
-        self.referenceFileNameExtension = self.referenceFileName.split(".")[1]
+        if type(referenceFileName) != type(None):
+            self.referenceFileNameExtension = self.referenceFileName.split(".")[1]
         #This loops through the molecules, and removes whitespaces from before and after the molecule's names.
         for moleculeIndex, moleculeName in enumerate(self.molecules):
             self.molecules[moleculeIndex] = moleculeName.strip()     
