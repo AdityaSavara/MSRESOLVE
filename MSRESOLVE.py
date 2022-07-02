@@ -2545,7 +2545,7 @@ def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
     
     #Now going to overwrite parallelized variables with their original versions if they were set to length of chosen molecules.
     delimitedStringOfVariablesToUnparallelize = 'moleculeLikelihoods, sensitivityValues, referenceValueThreshold, referenceSignificantFragmentThresholds'
-    listOfVariablesToUnparallelize = delimitedStringOfVariablesToUnparallelize.split(", ") #Note that we are using ", " as the delimeter, not just ","
+    listOfVariablesToUnparallelize = delimitedStringOfVariablesToUnparallelize.split(", ") #Note that we are using ", " as the delimiter, not just ","
     for variable in listOfVariablesToUnparallelize:
         G.nextUserInputModule.__dict__[variable]=G.beforeParsedGDict[variable]
     
@@ -2603,18 +2603,18 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
 #These functions read in the experimental data file and the reference file. The
 #returned variables can then be used to initialize the respective classes.
 
-#a small helper function to check if an extension exists in a filename and to return the delimeter based on that.
+#a small helper function to check if an extension exists in a filename and to return the delimiter based on that.
 def getDelimiterFromExtension(filename):
     if ".tsv" in filename:
-        delimeter = '\t'
+        delimiter = '\t'
     elif ".tab" in filename:
-        delimeter = '\t'
+        delimiter = '\t'
     elif ".txt" in filename:
-        delimeter = '\t'        
+        delimiter = '\t'        
     elif ".skv" in filename:
-        delimeter = ';'
+        delimiter = ';'
     elif ".csv" in filename:
-        delimeter = ',' #it could be something else, but we will assume that a csv
+        delimiter = ',' #it could be something else, but we will assume that a csv
     else:
         delimiter = '\t' #for MSRESOLVE, this is now the default delimiter.
     return delimiter
@@ -3118,6 +3118,7 @@ class MSReference (object):
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         self.iterationSuffix = ''
+        self.referenceFileNameExtension = self.referenceFileName.split(".")[1]
         #This loops through the molecules, and removes whitespaces from before and after the molecule's names.
         for moleculeIndex, moleculeName in enumerate(self.molecules):
             self.molecules[moleculeIndex] = moleculeName.strip()     
@@ -3157,6 +3158,24 @@ class MSReference (object):
         self.AllMID_ObjectsDict = AllMID_ObjectsDict
         self.populateIonizationEfficiencies(self.AllMID_ObjectsDict)
         self.exportIonizationInfo()
+
+    #a small helper function to check if an extension exists in a filename and to return the delimiter based on that.
+    def getDelimiterFromExtension(self, filename=''):
+        if filename == '':
+            filename = self.referenceFileName
+        if ".tsv" in filename:
+            delimiter = '\t'
+        elif ".tab" in filename:
+            delimiter = '\t'
+        elif ".txt" in filename:
+            delimiter = '\t'        
+        elif ".skv" in filename:
+            delimiter = ';'
+        elif ".csv" in filename:
+            delimiter = ',' #it could be something else, but we will assume that a csv
+        else:
+            delimiter = '\t' #for MSRESOLVE, this is now the default delimiter.
+        return delimiter
 
     #This function allows adding molecules to an existing reference patterns. When using TuningCorrector it is used to create MixedReference patterns.
     #Though these variable names are plural, they are expected to be lists of one. "molecules" is supposed to be a list of variable names.
@@ -3253,7 +3272,8 @@ class MSReference (object):
                 print(self.runTimeAtExport[savePoint])
             if self.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
-                filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
+                delimiter = getDelimiterFromExtension(self.referenceFileNameExtension)
+                filename = 'Exported%s%s.%s'%(savePoint, self.labelToExport[savePoint], self.referenceFileNameExtension)
                 data = self.dataToExport[savePoint]
                 colIndex = ['%s'% y for y in self.moleculesToExport[savePoint]]
                 #colIndex = ['%s'% y for y in self.molecules]
@@ -5591,10 +5611,10 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
     if dataType == 'Experiment':
         extraLine = len(data[0,1:])
         
-#If future applications of Export XYYY are desired, the new formats can be 
-#specified by additional keywords and if statements.
+    #If future applications of Export XYYY are desired, the new formats can be 
+    #specified by additional keywords and if statements.
 
-#if iterative analysis is being used and the suffix is wanted
+    #if iterative analysis is being used and the suffix is wanted
     if not fileSuffix =='':
         #then the filename will have a suffix attached
         outputFileName = outputFileName[:-4] + fileSuffix + outputFileName[-4:]
@@ -5631,7 +5651,9 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
         lineToInsert = numpy.array(lineToInsert.split(','))
         fullArrayToExport = numpy.vstack((lineToInsert, fullArrayToExport))
     #save the file to the correct name
-    numpy.savetxt(filename, fullArrayToExport, delimiter = ',', fmt ="%s")
+    
+    delimiter = getDelimiterFromExtension(filename)
+    numpy.savetxt(filename, fullArrayToExport, delimiter = delimiter, fmt ="%s")
   
 
 '''This function inserts rows of percentages into arrays of data'''
