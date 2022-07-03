@@ -6067,7 +6067,7 @@ def main():
   
     filesAndDirectories = os.listdir()
     for name in filesAndDirectories:
-        if name.startswith("Exported") and name.endswith(".csv"):
+        if name.startswith("Exported") and (name.endswith(".csv") or name.endswith(".tsv") or name.endswith(".skv")):
             print("Previous run Exported file detected. Deleting file", name)
             os.remove(name)
     # #The below try statement is to check the user input dictionary's existence. Older MSRESOLVE did not use a dictionary.
@@ -6620,15 +6620,22 @@ def main():
             times_array_2D = numpy.transpose(numpy.atleast_2d(times)) #need to make it a 2D array with right direction to stack.
             concentrations_absolute_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_absolute_uncertainties_all_times']))
             concentrations_relative_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_relative_uncertainties_all_times']))
-            ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'scaled', units = None)
-            ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
+            if '.tsv' in G.resolvedScaledConcentrationsOutputName:                            
+                ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_absolute_uncertainties.tsv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'scaled', units = None)
+                ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.tsv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
+            if '.csv' in G.resolvedScaledConcentrationsOutputName:                            
+                ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'scaled', units = None)
+                ExportXYYYData(G.resolvedScaledConcentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
 
         
         G.generateStatistics = True #FIXME: This variable needs to be added to user Input somehow. Also does not work with iterative.
         if G.generateStatistics == True and G.iterativeAnalysis == False:
             ScaledConcentrations_Statistics = []
             import numpy as np
-            ScaledConcentrations = numpy.genfromtxt(G.resolvedScaledConcentrationsOutputName, delimiter=',',skip_header=1)
+            if '.csv' in G.resolvedScaledConcentrationsOutputName:
+                ScaledConcentrations = numpy.genfromtxt(G.resolvedScaledConcentrationsOutputName, delimiter=',',skip_header=1)
+            if '.tsv' in G.resolvedScaledConcentrationsOutputName:
+                ScaledConcentrations = numpy.genfromtxt(G.resolvedScaledConcentrationsOutputName, delimiter='\t',skip_header=1)
             x_axis = ScaledConcentrations[:,0]
             ScaledConcentrations_data = ScaledConcentrations[:,1:]
             ScaledConcentrations_Means = numpy.atleast_2d(numpy.mean(ScaledConcentrations_data, axis=0)) #atleast_2D is just making it 2D
@@ -6644,7 +6651,14 @@ def main():
             #We don't want things to crash if the uncertainties have a problem, so will use try and except.
             ScaledConcentrations_Statistics = ScaledConcentrations_Statistics + [ScaledConcentrations_Means,ScaledConcentrations_StdDevs,ScaledConcentrations_StdErrs]
             if (G.calculateUncertaintiesInConcentrations == True):
-                ScaledConcentrations_absolute_uncertainties = numpy.genfromtxt( "ScaledConcentrations_absolute_uncertainties.csv", delimiter=',',skip_header=1)
+                if '.tsv' in G.resolvedScaledConcentrationsOutputName:
+                    try:
+                        ScaledConcentrations_absolute_uncertainties = numpy.genfromtxt( "ScaledConcentrations_absolute_uncertainties.tsv", delimiter='\t',skip_header=1, encoding='utf8')
+                    except:
+                        ScaledConcentrations_absolute_uncertainties = numpy.genfromtxt( "ScaledConcentrations_absolute_uncertainties.tsv", delimiter='\t',skip_header=1, encoding='utf16')
+                if '.csv' in G.resolvedScaledConcentrationsOutputName:
+                    ScaledConcentrations_absolute_uncertainties = numpy.genfromtxt( "ScaledConcentrations_absolute_uncertainties.csv", delimiter=',',skip_header=1)
+                
                 x_axis = ScaledConcentrations_absolute_uncertainties[:,0]
                 #The "A" below is for absolute uncertainties, the "R" is for relative uncertainties.
                 ScaledConcentrations_absolute_uncertainties_data = ScaledConcentrations_absolute_uncertainties[:,1:]
@@ -6662,8 +6676,13 @@ def main():
                 ScaledConcentrations_relative_uncertainties_StdDevs = ["ScaledConcentrations_relative_uncertainties_StdDevs"] + list(ScaledConcentrations_relative_uncertainties_StdDevs.flatten())
                 ScaledConcentrations_relative_uncertainties_TotUnc = ["ScaledConcentrations_absolute_uncertainties_Total"] + list(ScaledConcentrations_absolute_uncertainties_Total.flatten())
                 ScaledConcentrations_Statistics = ScaledConcentrations_Statistics + [ScaledConcentrations_absolute_uncertainties_Means, ScaledConcentrations_absolute_uncertainties_StdDevs,ScaledConcentrations_relative_uncertainties_Means, ScaledConcentrations_relative_uncertainties_StdDevs, ScaledConcentrations_relative_uncertainties_TotUnc]
-            moleculesHeader = 'molecules,' + str(list(currentReferenceData.molecules)).replace("[",'').replace("]",'')
-            numpy.savetxt(G.resolvedScaledConcentrationsOutputName.replace(".csv",'') + "_Statistics.csv", np.array(ScaledConcentrations_Statistics), delimiter = ',', fmt ="%s", header=moleculesHeader)
+            if '.tsv' in G.resolvedScaledConcentrationsOutputName:
+                moleculesHeader = 'molecules \t' + '\t'.join(currentReferenceData.molecules)
+                numpy.savetxt(G.resolvedScaledConcentrationsOutputName.replace(".tsv",'') + "_Statistics.tsv", np.array(ScaledConcentrations_Statistics), delimiter = '\t', fmt ="%s", header=moleculesHeader)
+            if '.csv' in G.resolvedScaledConcentrationsOutputName:
+                moleculesHeader = 'molecules ,' + ', '.join(currentReferenceData.molecules)
+                numpy.savetxt(G.resolvedScaledConcentrationsOutputName.replace(".csv",'') + "_Statistics.csv", np.array(ScaledConcentrations_Statistics), delimiter = ',', fmt ="%s", header=moleculesHeader)
+
             
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
