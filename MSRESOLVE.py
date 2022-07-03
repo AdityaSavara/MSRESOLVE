@@ -617,6 +617,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                         referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
                     if ReferenceDataExistingTuning.referenceFileNameExtension =='.tsv':
                         referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.tsv","xyyy" ]
+                print("line 620", ReferenceDataExistingTuning.referenceFileNameExtension, ReferenceDataExistingTuning.referenceFileNameExtension)
                 abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
                 referenceCorrectionCoefficients = numpy.zeros(3)
                 referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
