@@ -6,7 +6,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileNamesList = ['AcetaldehydeNISTRefMixed2.csv'] #enter the file name of the file containing reference information
+referenceFileNamesList = ['AcetaldehydeNISTRefMixed2.tsv'] #enter the file name of the file containing reference information
 referenceFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
@@ -222,13 +222,13 @@ unitsTSC = 'bar'	#the units will not be used in calculations so any units may be
 #the last section designates the various output files, all are suppose to be csv values
 #If files do not exist they will be generated
 preProcessedDataOutputName= 'PreProcessedData.csv'
-resolvedScaledConcentrationsOutputName = 'ScaledConcentrations.csv'
-scaledConcentrationsPercentages = 'ScaledConcentrationPercentages.csv'
-concentrationsOutputName= 'ResolvedConcentrations.csv'
+resolvedScaledConcentrationsOutputName = 'ScaledConcentrations.tsv'
+scaledConcentrationsPercentages = 'ScaledConcentrationPercentages.tsv'
+concentrationsOutputName= 'ResolvedConcentrations.tsv'
 simulatedSignalsOutputName= 'SimulatedRawSignals.csv'
 
 #Only used in iterative analysis
-TotalConcentrationsOutputName = 'TotalConcentrations.csv'
+TotalConcentrationsOutputName = 'TotalConcentrations.tsv'
 
 
 ExportAtEachStep = 'yes'
