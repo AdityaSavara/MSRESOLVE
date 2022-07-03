@@ -605,15 +605,15 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                 if len(referenceFileExistingTuningAndForm) == 0: #Use the standard tuning file if blank.
                     referenceFileExistingTuningAndForm = G.referenceFileStandardTuningAndForm
                 ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
-                if ReferenceDataExistingTuning.referenceFileNameExtension =='.csv':
+                if ReferenceDataExistingTuning.referenceFileNameExtension =='csv':
                     ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternExistingOriginal.csv')
-                if ReferenceDataExistingTuning.referenceFileNameExtension =='.tsv':
+                if ReferenceDataExistingTuning.referenceFileNameExtension =='tsv':
                     ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternExistingOriginal.tsv')
                 if len(referenceFileDesiredTuningAndForm) == 0:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
                     resetReferenceFileDesiredTuningAndForm = True 
-                    if ReferenceDataExistingTuning.referenceFileNameExtension =='.csv':
+                    if ReferenceDataExistingTuning.referenceFileNameExtension =='csv':
                         referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
-                    if ReferenceDataExistingTuning.referenceFileNameExtension =='.tsv':
+                    if ReferenceDataExistingTuning.referenceFileNameExtension =='tsv':
                         referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.tsv","xyyy" ]
                 abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
                 referenceCorrectionCoefficients = numpy.zeros(3)
