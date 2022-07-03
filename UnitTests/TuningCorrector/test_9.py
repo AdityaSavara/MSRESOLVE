@@ -57,10 +57,10 @@ MSRESOLVE.G.SLSUniqueExport = 'yes'
 #The below two lines are necessary because otherwise UserInputValidityFunctions will not allow SLSUniqueExport
 MSRESOLVE.G.UserChoices['dataAnalysisMethods']['SLSUniqueExport']  = 'yes'
 MSRESOLVE.G.UserChoices['dataAnalysisMethods']['uniqueOrCommon']   = 'unique'
-print("line 56", MSRESOLVE.G.UserChoices['dataAnalysisMethods'])
+#print("line 56", MSRESOLVE.G.UserChoices['dataAnalysisMethods'])
 
 #Now to get started with the test itself...
-print("line 51", MSRESOLVE.G.__var_list__)
+#print("line 51", MSRESOLVE.G.__var_list__)
 #these are the tuning coefficients before doing anything (should be 0,0,1)
 
 #now need to run MSRESOLVE which will change the coefficients...
