@@ -307,26 +307,26 @@ def readReferenceFile(referenceFileName, form):
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
                 dfreference = dataFrame.iloc[rowIndex:][:] #remove the rows of headers
                 reference = dfreference.values #convert to matrix
-                provided_reference_patterns = reference.astype(numpy.float) #convert the matrix to floats
+                provided_reference_patterns = reference.astype(float) #convert the matrix to floats
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
                 break #exit the for loop
             except: #Otherwise the row consists of other information
                 if (dataFrame.iloc[rowIndex][0] == 'SourceOfFragmentationPatterns') or (dataFrame.iloc[rowIndex][0] == 'Source:'): #if the abscissa titles the source (both old and new reference files)
                     dfSourceOfFragmentationPatterns = dataFrame.iloc[rowIndex][1:] #select the row of names
                     SourceOfFragmentationPatterns = dfSourceOfFragmentationPatterns.values #convert to matrix
-                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(numpy.str) #save as class object with type string
+                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'sourceOfIonizationData':
                     dfsourceOfIonizationData = dataFrame.iloc[rowIndex][1:] #Select the row of names
                     sourceOfIonizationData = dfsourceOfIonizationData.values #convert to matrix
-                    sourceOfIonizationData = sourceOfIonizationData.astype(numpy.str) #save as class object with type string
+                    sourceOfIonizationData = sourceOfIonizationData.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Molecules': #if the abscissa titles the molecule names
                     dfmolecules = dataFrame.iloc[rowIndex][1:] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
-                    molecules = molecules.astype(numpy.str) #save as class object with type string
+                    molecules = molecules.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1:] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
-                    electronnumbers = electronnumbers.astype(numpy.int) #save as class object with type int
+                    electronnumbers = electronnumbers.astype(int) #save as class object with type int
                 elif dataFrame.iloc[rowIndex][0] == 'Molecular Mass': #if the abscissa titles the molecular weights
                     dfmolecularWeights = dataFrame.iloc[rowIndex][1:] #select row of names
                     molecularWeights = dfmolecularWeights.values #convert to matrix
@@ -334,7 +334,7 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'moleculeIonizationType':
                     dfmoleculeIonizationType = dataFrame.iloc[rowIndex][1:] #select row of names
                     moleculeIonizationType = dfmoleculeIonizationType.values #convert to matrix
-                    moleculeIonizationType = moleculeIonizationType.astype(numpy.str) #save as class object with type string
+                    moleculeIonizationType = moleculeIonizationType.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies':
                     dfrelativeIonizationEfficiencies = dataFrame.iloc[rowIndex][1:] #select row of names
                     relativeIonizationEfficiencies = dfrelativeIonizationEfficiencies.values #convert to matrix
@@ -343,7 +343,7 @@ def readReferenceFile(referenceFileName, form):
                             relativeIonizationEfficiencies[index] = float(relativeIonizationEfficiencies[index])
                         except: #if not possible, the value is probably None or 'unknown' so leave as a string
                             pass
-#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(numpy.float) #save as class object with type float
+#                    relativeIonizationEfficiencies = relativeIonizationEfficiencies.astype(float) #save as class object with type float
         
         
         sourceOfIonizationData = None #To remove MSRESOLVE dependencies.
@@ -379,7 +379,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        reference = dfreference.values
 #        #convert the matrix to floats
-#        provided_reference_patterns = reference.astype(numpy.float)
+#        provided_reference_patterns = reference.astype(float)
 #        #clear rows of zeros
 #        provided_reference_patterns=DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1)
 #    
@@ -389,7 +389,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        electronnumbers = dfelectronnumbers.values
 #        #save as class object with type int
-#        electronnumbers = electronnumbers.astype(numpy.int32)
+#        electronnumbers = electronnumbers.astype(int32)
 #   
 #        '''generate list of molecule names'''
 #        #select row of names
@@ -397,7 +397,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecules = dfmolecules.values
 #        #save as class object with type string
-#        molecules = molecules.astype(numpy.str)
+#        molecules = molecules.astype(str)
 #        
 #        '''generate list of molecular weights'''
 #        #select row of names
@@ -405,7 +405,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecularWeights = dfmolecularWeights.values
 #        #save as class object with type float
-#        molecularWeights = molecularWeights.astype(numpy.float)
+#        molecularWeights = molecularWeights.astype(float)
 #        
 #        '''generate list of source information'''
 #        #select row of names
@@ -413,7 +413,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        sourceInfo = dfsourceInfo.values
 #        #save as class object with type string
-#        sourceInfo = sourceInfo.astype(numpy.str)
+#        sourceInfo = sourceInfo.astype(str)
         
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
@@ -424,7 +424,7 @@ def readReferenceFile(referenceFileName, form):
                 float(dataFrame.iloc[rowIndex][0]) #if successful, then this rowIndex is the first index of provided reference intensities
                 dfreference = dataFrame.iloc[rowIndex:][:] #remove the rows of headers
                 reference = dfreference.values #convert to matrix
-                provided_reference_patterns = reference.astype(numpy.float) #convert the matrix to floats
+                provided_reference_patterns = reference.astype(float) #convert the matrix to floats
                 print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
                 provided_reference_patterns = FromXYXYtoXYYY(provided_reference_patterns) #convert reference from XYXY to XYYY
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
@@ -433,26 +433,26 @@ def readReferenceFile(referenceFileName, form):
                 if dataFrame.iloc[rowIndex][0] == 'Source:': #if the abscissa titles the source
                     dfsourceInfo = dataFrame.iloc[rowIndex][1::2] #select the row of names
                     sourceInfo = dfsourceInfo.values #convert to matrix
-                    sourceInfo = sourceInfo.astype(numpy.str) #save as class object with type string
+                    sourceInfo = sourceInfo.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Molecules': #if the abscissa titles the molecule names
                     dfmolecules = dataFrame.iloc[rowIndex][1::2] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
-                    molecules = molecules.astype(numpy.str) #save as class object with type string
+                    molecules = molecules.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Electron Numbers': #if the abscissa titles the electron numbers
                     dfelectronnumbers = dataFrame.iloc[rowIndex][1::2] #select the row of names
                     electronnumbers = dfelectronnumbers.values #convert to matrix
-                    electronnumbers = electronnumbers.astype(numpy.int32) #save as class object with type int
+                    electronnumbers = electronnumbers.astype(int32) #save as class object with type int
                 elif dataFrame.iloc[rowIndex][0] == 'Molecular Mass': #if the abscissa titles the molecular weights
                     dfmolecularWeights = dataFrame.iloc[rowIndex][1::2] #select row of names
                     molecularWeights = dfmolecularWeights.values #convert to matrix
-                    molecularWeights = molecularWeights.astype(numpy.float) #save as class object with type float
+                    molecularWeights = molecularWeights.astype(float) #save as class object with type float
 #        '''generate reference matrix'''
 #        #remove top 4 rows
 #        dfreference = dataFrame.iloc[4:][:]
 #        #convert to matrix
 #        reference = dfreference.values
 #        #convert the matrix to floats 
-#        provided_reference_patterns = reference.astype(numpy.float)
+#        provided_reference_patterns = reference.astype(float)
 #        #convert reference from XYXY to XYYY
 #        print("Warning: FromXYXYtoXYYY for converting data patterns has not been tested in a long time. A unit test should be created and checked prior to use. Then this warning updated (this warning appears in two parts of the code." )
 #        provided_reference_patterns=FromXYXYtoXYYY(provided_reference_patterns)
@@ -465,7 +465,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        electronnumbers = dfelectronnumbers.values
 #        #save as class object with type int
-#        electronnumbers = electronnumbers.astype(numpy.int32)
+#        electronnumbers = electronnumbers.astype(int32)
 #        
 #        '''generate list of molecule names'''
 #        #select matrix of names
@@ -473,7 +473,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecules = dfmolecules.values
 #        #save as class object with type string
-#        molecules = molecules.astype(numpy.str)
+#        molecules = molecules.astype(str)
 #        
 #        '''generate list of molecular weights'''
 #        #select row of names
@@ -481,7 +481,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecularWeights = dfmolecularWeights.values
 #        #save as class object with type float
-#        molecularWeights = molecularWeights.astype(numpy.float)
+#        molecularWeights = molecularWeights.astype(float)
 #        
 #        '''generate list of source information'''
 #        #select row of names
@@ -489,7 +489,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        sourceInfo = dfsourceInfo.values
 #        #save as class object with type string
-#        sourceInfo = sourceInfo.astype(numpy.str)
+#        sourceInfo = sourceInfo.astype(str)
 
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None

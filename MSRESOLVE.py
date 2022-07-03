@@ -2545,7 +2545,7 @@ def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
     
     #Now going to overwrite parallelized variables with their original versions if they were set to length of chosen molecules.
     delimitedStringOfVariablesToUnparallelize = 'moleculeLikelihoods, sensitivityValues, referenceValueThreshold, referenceSignificantFragmentThresholds'
-    listOfVariablesToUnparallelize = delimitedStringOfVariablesToUnparallelize.split(", ") #Note that we are using ", " as the delimeter, not just ","
+    listOfVariablesToUnparallelize = delimitedStringOfVariablesToUnparallelize.split(", ") #Note that we are using ", " as the delimiter, not just ","
     for variable in listOfVariablesToUnparallelize:
         G.nextUserInputModule.__dict__[variable]=G.beforeParsedGDict[variable]
     
@@ -2603,6 +2603,22 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
 #These functions read in the experimental data file and the reference file. The
 #returned variables can then be used to initialize the respective classes.
 
+#a small helper function to check if an extension exists in a filename and to return the delimiter based on that.
+def getDelimiterFromExtension(filename):
+    if ".tsv" in filename:
+        delimiter = '\t'
+    elif ".tab" in filename:
+        delimiter = '\t'
+    elif ".txt" in filename:
+        delimiter = '\t'        
+    elif ".skv" in filename:
+        delimiter = ';'
+    elif ".csv" in filename:
+        delimiter = ',' #it could be something else, but we will assume that a csv
+    else:
+        delimiter = '\t' #for MSRESOLVE, this is now the default delimiter.
+    return delimiter
+        
 def readDataFile(collectedFileName):
 
  #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
@@ -2703,8 +2719,14 @@ def readReferenceFile(referenceFileName, form):
         provided_reference_patterns = reference_holder
         return provided_reference_patterns
     
-     #read the csv file into a dataframe
-    dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+    #read the csv file into a dataframe
+    if '.csv' in referenceFileName:
+        dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+    elif '.tsv' in referenceFileName:
+        try: #no easy way to assess utf16 vs utf8, so try both.
+            dataFrame = pandas.read_csv('%s' %referenceFileName, header = None, delimiter = '\t', encoding = 'utf8') #need to specify encoding for cases of tab delimited files.
+        except: #no easy way to assess utf16 vs utf8, so try both.
+            dataFrame = pandas.read_csv('%s' %referenceFileName, header = None, delimiter = '\t', encoding = 'utf16') #need to use utf16 for some cases of tab delimited files.
     
     if form == 'xyyy':
         for rowIndex in range(len(dataFrame)): #Loop through each row and check the abscissa value
@@ -2714,20 +2736,20 @@ def readReferenceFile(referenceFileName, form):
                 reference = dfreference.values #convert to matrix
                 provided_reference_patterns = reference.astype(float) #convert the matrix to floats
                 provided_reference_patterns = DataFunctions.removeColumnsWithAllvaluesBelowZeroOrThreshold(provided_reference_patterns,startingRowIndex=1) #clear row of zeros
-                break #exit the for loop
+                break #exit the for loop since the first non-header row has been reached.
             except: #Otherwise the row consists of other information
                 if (dataFrame.iloc[rowIndex][0] == 'SourceOfFragmentationPatterns') or (dataFrame.iloc[rowIndex][0] == 'Source:'): #if the abscissa titles the source (both old and new reference files)
                     dfSourceOfFragmentationPatterns = dataFrame.iloc[rowIndex][1:] #select the row of names
                     SourceOfFragmentationPatterns = dfSourceOfFragmentationPatterns.values #convert to matrix
-                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(numpy.str) #save as class object with type string
+                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'sourceOfIonizationData':
                     dfsourceOfIonizationData = dataFrame.iloc[rowIndex][1:] #Select the row of names
                     sourceOfIonizationData = dfsourceOfIonizationData.values #convert to matrix
-                    sourceOfIonizationData = sourceOfIonizationData.astype(numpy.str) #save as class object with type string
+                    sourceOfIonizationData = sourceOfIonizationData.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Molecules': #if the abscissa titles the molecule names
                     dfmolecules = dataFrame.iloc[rowIndex][1:] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
-                    molecules = molecules.astype(numpy.str) #save as class object with type string
+                    molecules = molecules.astype(str) #save as class object with type string
                     molecules = list(molecules)
                     for moleculeIndex in range(len(molecules)):
                         molecules[moleculeIndex] = molecules[moleculeIndex].strip()#remove leading and trailing whitespaces.
@@ -2742,7 +2764,7 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'moleculeIonizationType':
                     dfmoleculeIonizationType = dataFrame.iloc[rowIndex][1:] #select row of names
                     moleculeIonizationType = dfmoleculeIonizationType.values #convert to matrix
-                    moleculeIonizationType = moleculeIonizationType.astype(numpy.str) #save as class object with type string
+                    moleculeIonizationType = moleculeIonizationType.astype(str) #save as class object with type string
                 elif (dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies') or (dataFrame.iloc[rowIndex][0] == 'knownIonizationFactorsRelativeToN2'):
                     dfrelativeIonizationEfficiencies = dataFrame.iloc[rowIndex][1:] #select row of names
                     relativeIonizationEfficiencies = dfrelativeIonizationEfficiencies.values #convert to matrix
@@ -2799,7 +2821,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecules = dfmolecules.values
 #        #save as class object with type string
-#        molecules = molecules.astype(numpy.str)
+#        molecules = molecules.astype(str)
 #        
 #        '''generate list of molecular weights'''
 #        #select row of names
@@ -2815,7 +2837,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        sourceInfo = dfsourceInfo.values
 #        #save as class object with type string
-#        sourceInfo = sourceInfo.astype(numpy.str)
+#        sourceInfo = sourceInfo.astype(str)
         
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
@@ -2837,15 +2859,15 @@ def readReferenceFile(referenceFileName, form):
                 if (dataFrame.iloc[rowIndex][0] == 'SourceOfFragmentationPatterns') or (dataFrame.iloc[rowIndex][0] == 'Source:'): #if the abscissa titles the source (both old and new reference files)
                     dfSourceOfFragmentationPatterns = dataFrame.iloc[rowIndex][1::2] #select the row of names
                     SourceOfFragmentationPatterns = dfSourceOfFragmentationPatterns.values #convert to matrix
-                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(numpy.str) #save as class object with type string
+                    SourceOfFragmentationPatterns = SourceOfFragmentationPatterns.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'sourceOfIonizationData':
                     dfsourceOfIonizationData = dataFrame.iloc[rowIndex][1::2] #Select the row of names
                     sourceOfIonizationData = dfsourceOfIonizationData.values #convert to matrix
-                    sourceOfIonizationData = sourceOfIonizationData.astype(numpy.str) #save as class object with type string
+                    sourceOfIonizationData = sourceOfIonizationData.astype(str) #save as class object with type string
                 elif dataFrame.iloc[rowIndex][0] == 'Molecules': #if the abscissa titles the molecule names
                     dfmolecules = dataFrame.iloc[rowIndex][1::2] #select the row of names
                     molecules = dfmolecules.values #convert to matrix
-                    molecules = molecules.astype(numpy.str) #save as class object with type string
+                    molecules = molecules.astype(str) #save as class object with type string
                     molecules = list(molecules)
                     for moleculeIndex in range(len(molecules)):
                         molecules[moleculeIndex] = molecules[moleculeIndex].strip()#remove leading and trailing whitespaces.
@@ -2860,7 +2882,7 @@ def readReferenceFile(referenceFileName, form):
                 elif dataFrame.iloc[rowIndex][0] == 'moleculeIonizationType':
                     dfmoleculeIonizationType = dataFrame.iloc[rowIndex][1::2] #select row of names
                     moleculeIonizationType = dfmoleculeIonizationType.values #convert to matrix
-                    moleculeIonizationType = moleculeIonizationType.astype(numpy.str) #save as class object with type string
+                    moleculeIonizationType = moleculeIonizationType.astype(str) #save as class object with type string
                 elif (dataFrame.iloc[rowIndex][0] == 'relativeIonizationEfficiencies') or (dataFrame.iloc[rowIndex][0] == 'knownIonizationFactorsRelativeToN2'):
                     dfrelativeIonizationEfficiencies = dataFrame.iloc[rowIndex][1::2] #select row of names
                     relativeIonizationEfficiencies = dfrelativeIonizationEfficiencies.values #convert to matrix
@@ -2919,7 +2941,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        molecules = dfmolecules.values
 #        #save as class object with type string
-#        molecules = molecules.astype(numpy.str)
+#        molecules = molecules.astype(str)
 #        
 #        '''generate list of molecular weights'''
 #        #select row of names
@@ -2935,7 +2957,7 @@ def readReferenceFile(referenceFileName, form):
 #        #convert to matrix
 #        sourceInfo = dfsourceInfo.values
 #        #save as class object with type string
-#        sourceInfo = sourceInfo.astype(numpy.str)
+#        sourceInfo = sourceInfo.astype(str)
         
         '''list of massfragments monitored is not part of reference file'''
         mass_fragment_numbers_monitored = None
@@ -3096,6 +3118,8 @@ class MSReference (object):
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         self.iterationSuffix = ''
+        if type(referenceFileName) != type(None):
+            self.referenceFileNameExtension = self.referenceFileName.split(".")[1]
         #This loops through the molecules, and removes whitespaces from before and after the molecule's names.
         for moleculeIndex, moleculeName in enumerate(self.molecules):
             self.molecules[moleculeIndex] = moleculeName.strip()     
@@ -3135,6 +3159,24 @@ class MSReference (object):
         self.AllMID_ObjectsDict = AllMID_ObjectsDict
         self.populateIonizationEfficiencies(self.AllMID_ObjectsDict)
         self.exportIonizationInfo()
+
+    #a small helper function to check if an extension exists in a filename and to return the delimiter based on that.
+    def getDelimiterFromExtension(self, filename=''):
+        if filename == '':
+            filename = self.referenceFileName
+        if ".tsv" in filename:
+            delimiter = '\t'
+        elif ".tab" in filename:
+            delimiter = '\t'
+        elif ".txt" in filename:
+            delimiter = '\t'        
+        elif ".skv" in filename:
+            delimiter = ';'
+        elif ".csv" in filename:
+            delimiter = ',' #it could be something else, but we will assume that a csv
+        else:
+            delimiter = '\t' #for MSRESOLVE, this is now the default delimiter.
+        return delimiter
 
     #This function allows adding molecules to an existing reference patterns. When using TuningCorrector it is used to create MixedReference patterns.
     #Though these variable names are plural, they are expected to be lists of one. "molecules" is supposed to be a list of variable names.
@@ -3231,7 +3273,8 @@ class MSReference (object):
                 print(self.runTimeAtExport[savePoint])
             if self.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
-                filename = 'Exported%s%s.csv'%(savePoint, self.labelToExport[savePoint])
+                delimiter = getDelimiterFromExtension(self.referenceFileNameExtension)
+                filename = 'Exported%s%s.%s'%(savePoint, self.labelToExport[savePoint], self.referenceFileNameExtension)
                 data = self.dataToExport[savePoint]
                 colIndex = ['%s'% y for y in self.moleculesToExport[savePoint]]
                 #colIndex = ['%s'% y for y in self.molecules]
@@ -5569,10 +5612,10 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
     if dataType == 'Experiment':
         extraLine = len(data[0,1:])
         
-#If future applications of Export XYYY are desired, the new formats can be 
-#specified by additional keywords and if statements.
+    #If future applications of Export XYYY are desired, the new formats can be 
+    #specified by additional keywords and if statements.
 
-#if iterative analysis is being used and the suffix is wanted
+    #if iterative analysis is being used and the suffix is wanted
     if not fileSuffix =='':
         #then the filename will have a suffix attached
         outputFileName = outputFileName[:-4] + fileSuffix + outputFileName[-4:]
@@ -5609,7 +5652,9 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
         lineToInsert = numpy.array(lineToInsert.split(','))
         fullArrayToExport = numpy.vstack((lineToInsert, fullArrayToExport))
     #save the file to the correct name
-    numpy.savetxt(filename, fullArrayToExport, delimiter = ',', fmt ="%s")
+    
+    delimiter = getDelimiterFromExtension(filename)
+    numpy.savetxt(filename, fullArrayToExport, delimiter = delimiter, fmt ="%s")
   
 
 '''This function inserts rows of percentages into arrays of data'''
