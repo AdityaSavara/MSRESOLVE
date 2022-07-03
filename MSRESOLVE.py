@@ -604,6 +604,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             elif ((G.referenceFileExistingTuningAndForm !=[]) or (G.referenceFileStandardTuningAndForm!=[])) : #in this case, we are going to overwrite any coefficients provided in order to apply the desired tuning to the external pattern.
                 referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuningAndForm
                 referenceFileExistingTuningAndForm = G.referenceFileExistingTuningAndForm
+                print("line 607", G.referenceFileExistingTuningAndForm)
                 if len(referenceFileExistingTuningAndForm) == 0: #Use the standard tuning file if blank.
                     referenceFileExistingTuningAndForm = G.referenceFileStandardTuningAndForm
                 ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
@@ -624,7 +625,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                 G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
                 referenceCorrectionCoefficients_cov = abcCoefficients_cov
                 G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
-
+                print("line 620", referenceFileExistingTuningAndForm, referenceFileDesiredTuningAndForm)
                             
             #if we are not returning a mixed pattern, we are applying the tuning correction directly to the original ReferenceData object.
             ReferenceData.standardized_reference_patterns_tuning_corrected, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
