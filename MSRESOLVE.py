@@ -397,6 +397,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         ReferencePatternExistingTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternExistingTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
     
     ReferencePatternDesiredTuningDict = {}
+    print("line 400", ReferencePatternDesiredTuning_FileNameAndForm)
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternDesiredTuning_FileNameAndForm)
     ReferencePatternDesiredTuningDict['molecules']=molecules
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = provided_reference_patterns
