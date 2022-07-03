@@ -54,7 +54,13 @@ def AppendColumnsToCSV(CSVName, YYYYData, columnheaders, rowIndex = [], rowIndex
     #make sure that the solved concentrations file exists
     try:
         #read in the previously solved data    
-        totalColumns = pandas.read_csv(CSVName)
+        if '.csv' in CSVName:
+            totalColumns = pandas.read_csv(CSVName)
+        if '.tsv' in CSVName:
+            try:
+                totalColumns = pandas.read_csv(CSVName, sep = '\t', encoding='utf8')
+            except:
+                totalColumns = pandas.read_csv(CSVName, sep = '\t', encoding='utf16')
     #If the file doesn't exist
     except FileNotFoundError:
         #then the times need to be included in this writing
