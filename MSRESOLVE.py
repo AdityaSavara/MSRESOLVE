@@ -573,7 +573,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         ReferenceData.exportReferencePattern('ExportedReferencePatternOriginalAnalysis.csv')
     if ReferenceData.referenceFileNameExtension == 'tsv':
         ReferenceData.exportReferencePattern('ExportedReferencePatternOriginalAnalysis.tsv')
-
+    print("line 576", ReferenceData.referenceFileNameExtension)
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None):
             ReferenceData.update_relative_standard_uncertainties()
@@ -593,7 +593,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
        G.createMixedTuningPattern =  False #override the mixed tuning pattern choice if there is no measured reference.
 
     resetReferenceFileDesiredTuningAndForm = False   #initializing. At end, will reset G.referenceFileDesiredTuningAndForm if it was originally blank.
-
+    print("line 596", G.referenceFileStandardTuningAndForm)
     if hasattr(G, 'tuningCorrectPatternInternalVsExternal') == False: #Check if the tuningCorrectPatternInternalVsExternal attribute has been filled. If not, then fill it with the default which is 'External'
         G.tuningCorrectPatternInternalVsExternal = 'External' 
     if ((G.createMixedTuningPattern == False) or (G.tuningCorrectPatternInternalVsExternal == 'Internal')):   
@@ -608,6 +608,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                 if len(referenceFileExistingTuningAndForm) == 0: #Use the standard tuning file if blank.
                     referenceFileExistingTuningAndForm = G.referenceFileStandardTuningAndForm
                 ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
+                print("line 611", ReferenceDataExistingTuning.referenceFileNameExtension)
                 if ReferenceDataExistingTuning.referenceFileNameExtension =='.csv':
                     ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternExistingOriginal.csv')
                 if ReferenceDataExistingTuning.referenceFileNameExtension =='.tsv':
