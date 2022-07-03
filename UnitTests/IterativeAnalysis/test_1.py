@@ -105,8 +105,8 @@ MSRESOLVE.main()
 
 #ITERATION 8 does not occur because there are no remaining molecules.
 
-arrayReadFromNonIterativeAnalysis = np.genfromtxt("ScaledConcentrations.tsv", skip_header = 1, delimiter=",", unpack=True)
-arrayReadFromIterativeAnalysis = np.genfromtxt("TotalConcentrations.tsv", skip_header = 1, delimiter=",", unpack=True)
+arrayReadFromNonIterativeAnalysis = np.genfromtxt("ScaledConcentrations.tsv", skip_header = 1, delimiter="\t", unpack=True)
+arrayReadFromIterativeAnalysis = np.genfromtxt("TotalConcentrations.tsv", skip_header = 1, delimiter="\t", unpack=True)
 # now I am going to rearrange the  columns  in a way that I know they're going to match.
 # I know from previous experience that for this set of files Scaled Concentrations has this order:
 # Time,
