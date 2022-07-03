@@ -397,6 +397,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
         ReferencePatternExistingTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternExistingTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
     
     ReferencePatternDesiredTuningDict = {}
+    print("line 400", ReferencePatternDesiredTuning_FileNameAndForm)
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form] = readReferenceFile(*ReferencePatternDesiredTuning_FileNameAndForm)
     ReferencePatternDesiredTuningDict['molecules']=molecules
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = provided_reference_patterns
@@ -517,6 +518,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
 def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=None,referenceFileDesiredTuningAndForm=None,measuredReferenceYorN="no"):
+    print("line 525", referenceFileExistingTuningAndForm, referenceFileDesiredTuningAndForm)
     #Tuning corrector is designed to work with standardized_reference_patterns, so first we make sure standardize the data.
     referenceDataArrayWithAbscissa=StandardizeReferencePattern(referenceDataArrayWithAbscissa)    
     if type(referenceCorrectionCoefficients) == type({}):#check if it's a dictionary. If it is, we need to make it a list.
@@ -571,7 +573,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         ReferenceData.exportReferencePattern('ExportedReferencePatternOriginalAnalysis.csv')
     if ReferenceData.referenceFileNameExtension == 'tsv':
         ReferenceData.exportReferencePattern('ExportedReferencePatternOriginalAnalysis.tsv')
-
+    print("line 576", ReferenceData.referenceFileNameExtension)
     if G.calculateUncertaintiesInConcentrations == True: 
         if type(G.referenceFileUncertainties) != type(None):
             ReferenceData.update_relative_standard_uncertainties()
@@ -591,7 +593,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
        G.createMixedTuningPattern =  False #override the mixed tuning pattern choice if there is no measured reference.
 
     resetReferenceFileDesiredTuningAndForm = False   #initializing. At end, will reset G.referenceFileDesiredTuningAndForm if it was originally blank.
-
+    print("line 596", G.referenceFileStandardTuningAndForm)
     if hasattr(G, 'tuningCorrectPatternInternalVsExternal') == False: #Check if the tuningCorrectPatternInternalVsExternal attribute has been filled. If not, then fill it with the default which is 'External'
         G.tuningCorrectPatternInternalVsExternal = 'External' 
     if ((G.createMixedTuningPattern == False) or (G.tuningCorrectPatternInternalVsExternal == 'Internal')):   
@@ -602,6 +604,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             elif ((G.referenceFileExistingTuningAndForm !=[]) or (G.referenceFileStandardTuningAndForm!=[])) : #in this case, we are going to overwrite any coefficients provided in order to apply the desired tuning to the external pattern.
                 referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuningAndForm
                 referenceFileExistingTuningAndForm = G.referenceFileExistingTuningAndForm
+                print("line 607", G.referenceFileExistingTuningAndForm)
                 if len(referenceFileExistingTuningAndForm) == 0: #Use the standard tuning file if blank.
                     referenceFileExistingTuningAndForm = G.referenceFileStandardTuningAndForm
                 ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)
@@ -615,13 +618,14 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                         referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
                     if ReferenceDataExistingTuning.referenceFileNameExtension =='tsv':
                         referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.tsv","xyyy" ]
+                print("line 620", ReferenceDataExistingTuning.referenceFileNameExtension, ReferenceDataExistingTuning.referenceFileNameExtension)
                 abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
                 referenceCorrectionCoefficients = numpy.zeros(3)
                 referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
                 G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
                 referenceCorrectionCoefficients_cov = abcCoefficients_cov
                 G.referenceCorrectionCoefficients_cov = referenceCorrectionCoefficients_cov
-
+                print("line 620", referenceFileExistingTuningAndForm, referenceFileDesiredTuningAndForm)
                             
             #if we are not returning a mixed pattern, we are applying the tuning correction directly to the original ReferenceData object.
             ReferenceData.standardized_reference_patterns_tuning_corrected, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
@@ -1421,6 +1425,7 @@ def CorrectionValuesObtain(ReferenceData):
                 referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
             else:
                 referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuningAndForm
+            print("line 1426", ReferenceData.referenceFileNameExtension)
             abcCoefficients, abcCoefficients_covmat = ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm=referenceFileDesiredTuningAndForm, ReferencePatternDesiredTuning_FileNameAndForm = G.referenceFileStandardTuningAndForm, exportCoefficients=False) #We will separately export the coefficents for this usage.
         #The above abcCoefficients and abcCoefficients_covmat are for the direction that if we multiply the existing tuning we will get the standard tuning. This factor is actually the same as what we want for our tuning factor intensity correction: if the "existing" pattern is low, that means that the actual amount of the ion is "higher".  The second question is whether the correctionValues should be multiplied by or divided by this factor.  In general, the equation is that "signals*correctionValue = concentration".  So to bring a small signal up, this is already in the right direction.
         #We will also use this to create a mixed pattern for getting the standard tuning correction values.
