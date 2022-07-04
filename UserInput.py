@@ -281,10 +281,10 @@ UserChoices['outputFiles'] = {} #initialize the outputFiles container
 #the last section designates the various output files, all are suppose to be csv values
 #If files do not exist they will be generated
 UserChoices['outputFiles']['preProcessedDataOutputName'] = 'PreProcessedData.csv'
-UserChoices['outputFiles']['resolvedScaledConcentrationsOutputName'] = 'ScaledConcentrations.csv'
-UserChoices['outputFiles']['scaledConcentrationsPercentages'] = 'ScaledConcentrationPercentages.csv'
-UserChoices['outputFiles']['concentrationsOutputName'] = 'ResolvedConcentrations.csv'
-UserChoices['outputFiles']['simulatedSignalsOutputName'] = 'SimulatedRawSignals.csv'
+UserChoices['outputFiles']['resolvedScaledConcentrationsOutputName'] = 'ScaledConcentrations.tsv'  #tsv makes a comma separated file, csv makes a comma separated file.
+UserChoices['outputFiles']['scaledConcentrationsPercentages'] = 'ScaledConcentrationPercentages.tsv'  #tsv makes a comma separated file, csv makes a comma separated file.
+UserChoices['outputFiles']['concentrationsOutputName'] = 'ResolvedConcentrations.tsv'  #tsv makes a comma separated file, csv makes a comma separated file.
+UserChoices['outputFiles']['simulatedSignalsOutputName'] = 'SimulatedRawSignals.csv' 
 
 UserChoices['ExportAtEachStep'] = {} #initialize the ExportAtEachStep container
 UserChoices['ExportAtEachStep']['on'] = 'yes'

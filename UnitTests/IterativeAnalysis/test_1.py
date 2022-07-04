@@ -41,11 +41,11 @@ for elem in listOfDirectoriesAndFiles:
 for directory in directoryList:
     shutil.rmtree(directory)
     
-#Also delete the old "ScaledConcentrations.csv" and "TotalConcentrations.csv"
-if os.path.isfile('ScaledConcentrations.csv'): #check if file is there
-    os.remove('ScaledConcentrations.csv') #remove it if present
-if os.path.isfile('TotalConcentrations.csv'):
-    os.remove('TotalConcentrations.csv')
+#Also delete the old "ScaledConcentrations.tsv" and "TotalConcentrations.tsv"
+if os.path.isfile('ScaledConcentrations.tsv'): #check if file is there
+    os.remove('ScaledConcentrations.tsv') #remove it if present
+if os.path.isfile('TotalConcentrations.tsv'):
+    os.remove('TotalConcentrations.tsv')
 
 #NON ITERATIVE WAY FIRST.    
 MSRESOLVE_var_list = G.__var_list__ #need to store this to reassign in the new namespace.
@@ -105,8 +105,8 @@ MSRESOLVE.main()
 
 #ITERATION 8 does not occur because there are no remaining molecules.
 
-arrayReadFromNonIterativeAnalysis = np.genfromtxt("ScaledConcentrations.csv", skip_header = 1, delimiter=",", unpack=True)
-arrayReadFromIterativeAnalysis = np.genfromtxt("TotalConcentrations.csv", skip_header = 1, delimiter=",", unpack=True)
+arrayReadFromNonIterativeAnalysis = np.genfromtxt("ScaledConcentrations.tsv", skip_header = 1, delimiter="\t", unpack=True)
+arrayReadFromIterativeAnalysis = np.genfromtxt("TotalConcentrations.tsv", skip_header = 1, delimiter="\t", unpack=True)
 # now I am going to rearrange the  columns  in a way that I know they're going to match.
 # I know from previous experience that for this set of files Scaled Concentrations has this order:
 # Time,

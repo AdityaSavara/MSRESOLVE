@@ -285,7 +285,23 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     if ((UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] == []) and (UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] == [])):                #This If statement sets createMixedTuningPattern to False if referenceFileStandardTuningAndForm pattern and referenceFileExistingTuningAndForm are both populated with a blank list.
             UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
             print("No Standard or External tuning pattern. Forcing createMixedTuningPattern to False.")
-
+    
+    #Will make sure that any referenceFileStandardTuning and referenceFileExistingTuning filenames have the same extension as the original reference pattern, and exit if that condition is not met.
+    #First get the regular reference filename extension.
+    if '.csv' in  UserChoices['inputFiles']['referenceFileNamesList'][0]:
+        referenceFileExtension = 'csv'
+    if '.tsv' in  UserChoices['inputFiles']['referenceFileNamesList'][0]:
+        referenceFileExtension = 'tsv'    
+    #Make sure all of the reference files match each other:
+    for referenceFileName in UserChoices['inputFiles']['referenceFileNamesList']:
+        if referenceFileExtension not in referenceFileName:
+            print("ERROR: All filenamese in referenceFileNamesList must have the same extension."); sys.exit()
+    if len (UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']) > 0:
+        if referenceFileExtension not in UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'][0]:
+            print("ERROR: All filenamese in referenceFileNamesList and referenceFileStandardTuningAndForm must have the same extension."); sys.exit()
+    if len (UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']) > 0:
+        if referenceFileExtension not in UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'][0]:
+            print("ERROR: All filenamese in referenceFileNamesList and referenceFileExistingTuningAndForm must have the same extension."); sys.exit()
 
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
     #The original variable names were single variables. Now, we are using a dictionary type structure (right side of equal signs) so they are being mapped to the single variables (left side of equal sign)
