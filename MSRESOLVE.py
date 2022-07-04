@@ -905,6 +905,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G, ExperimentData=None): #makin
         #Now to transpose the simulateddata to make the simulated_reference_pattern
         simulated_reference_pattern = numpy.vstack((ReferenceDataExistingTuningMassFragments, simulateddata_intensities)).transpose()
         ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical = MSReference(simulated_reference_pattern, electronnumbers=[1], molecules=["GasMixture"], molecularWeights=[1], SourceOfFragmentationPatterns=["simulated"], sourceOfIonizationData=["referenceFileExistingTuningAndForm"], relativeIonizationEfficiencies=['GasMixture'], moleculeIonizationType=["GasMixture"]) #We fill some variables with the word "GasMixture" because there is no single ionization factor for the gas mixture.
+        ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical.referenceFileNameExtension = ReferenceDataList[0].referenceFileNameExtension #This needs to be populated since there was no filename initially.
         if ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical.referenceFileNameExtension == 'csv':
             ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical.exportReferencePattern("ExportedReferencePatternGasMixtureSimulatedHypothetical.csv")
         if ReferenceDataTuningCorrectorGasMixtureSimulatedHypothetical.referenceFileNameExtension == 'tsv':
