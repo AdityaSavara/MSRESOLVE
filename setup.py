@@ -21,7 +21,7 @@ URL = 'https://github.com/AdityaSavara/MSRESOLVESG'
 EMAIL = 'AditySavara2008@u.northwestern.edu'  
 AUTHOR = 'Aditya Savara'
 REQUIRES_PYTHON = '>=3.5.0'
-VERSION = '43.1.1'
+VERSION = '43.1.2'
 LICENSE = 'BSD-3-Clause'
 
 # What packages are required for this module to be executed?
