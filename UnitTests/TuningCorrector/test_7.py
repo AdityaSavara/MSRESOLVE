@@ -23,12 +23,12 @@ suffix = ut.returnDigitFromFilename(__file__)
 
 #We can use the default user input, which is already in MSRESOLVE.G.
 #Need to change the "direct variable" version rather than the dictionary version.
-MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasured.csv']
+MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasured.tsv']
 
 MSRESOLVE.G.measuredReferenceYorN = 'yes'
 MSRESOLVE.G.createMixedTuningPattern = True
 MSRESOLVE.G.referenceFileStandardTuningAndForm = []
-MSRESOLVE.G.referenceFileExistingTuningAndForm = ['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileExistingTuningAndForm = ['ReferenceLiterature.tsv','xyyy']
 MSRESOLVE.G.referenceFileDesiredTuningAndForm =[]
 
 #apparently need to have dataAnalysis on to use this feature (should not need to, but as of Sep 2019, do need to.

@@ -21,13 +21,13 @@ import numpy as np
 suffix = ut.returnDigitFromFilename(__file__)
 
 
-MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasuredShortened.csv']
+MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasuredShortened.tsv']
 MSRESOLVE.G.tuningCorrectPatternInternalVsExternal = 'Internal'
 #We can use the default user input, which is already in MSRESOLVE.G.
 #Need to change the "direct variable" version rather than the dictionary version.
 MSRESOLVE.G.measuredReferenceYorN = 'yes'
 MSRESOLVE.G.createMixedTuningPattern = False
-MSRESOLVE.G.referenceFileStandardTuningAndForm = ['ReferenceLiterature.csv','xyyy']
+MSRESOLVE.G.referenceFileStandardTuningAndForm = ['ReferenceLiterature.tsv','xyyy']
 MSRESOLVE.G.referenceFileExistingTuningAndForm = []
 MSRESOLVE.G.referenceFileDesiredTuningAndForm =[]
 
