@@ -13,12 +13,12 @@ if str(__name__) != "DefaultUserInput":
 
 #//Input Files//
 UserChoices['inputFiles'] = {} #initialize the inputFiles container
-UserChoices['inputFiles']['referenceFileNamesList'] = ['ExtractedReferencePattern.csv'] #enter the file name of the file containing reference information
+UserChoices['inputFiles']['referenceFileNamesList'] = ['ExtractedReferencePattern.tsv'] #enter the file name of the file containing reference information
 UserChoices['inputFiles']['referenceFormsList'] = 'xyyy' #form is either 'xyyy' or 'xyxy' (if using reference pattern time chooser enter as list with forms for each individual reference file ['xyyy','xyyy','xyyy'])
 UserChoices['inputFiles']['referencePatternTimeRanges'] = [] #Leave empty if not using reference pattern time chooser []
-UserChoices['inputFiles']['collectedFileName'] = 'Collected_Data.csv'	#enter the file name with raw mass spectrometer data
+UserChoices['inputFiles']['collectedFileName'] = 'Collected_Data.tsv'	#enter the file name with raw mass spectrometer data
 
-UserChoices['inputFiles']['ionizationDataFileName'] = '181017ProvidedIonizationData.csv' #the name of the file containing the ionization data
+UserChoices['inputFiles']['ionizationDataFileName'] = '181017ProvidedIonizationData.tsv' #the name of the file containing the ionization data
 
 #Iterative Analysis
 UserChoices['iterativeAnalysis'] = {} #initialize the iterativeAnalysis container
@@ -27,7 +27,7 @@ UserChoices['iterativeAnalysis']['on'] = False
 #the chosenMoleculesNames argument is used for iterative analysis, so make sure that input is accurate
 #the chosenMassFragments argument is also used for iterative analysis, so make sure that input is accurate as well
 #Below are Only used in iterative analysis. Most are just initializing and should not be touched.
-UserChoices['iterativeAnalysis']['TotalConcentrationsOutputName'] = 'TotalConcentrations.csv'
+UserChoices['iterativeAnalysis']['TotalConcentrationsOutputName'] = 'TotalConcentrations.tsv'
 UserChoices['iterativeAnalysis']['iterationSuffix'] = ''
 UserChoices['iterativeAnalysis']['unusedMolecules'] =''
 UserChoices['iterativeAnalysis']['oldReferenceFileName'] = []
@@ -129,7 +129,7 @@ UserChoices['bruteSolvingRestrictions']['dataRangeSpecifierYorN'] = 'no'
 UserChoices['bruteSolvingRestrictions']['signalOrConcentrationRange'] = 'signal'	#'signal' or 'concentration'
 UserChoices['bruteSolvingRestrictions']['csvFile'] = 'yes'	#'yes' or 'no'
 UserChoices['bruteSolvingRestrictions']['moleculesToRestrict'] = []
-UserChoices['bruteSolvingRestrictions']['csvFileName'] = 'rangestemplate.csv'
+UserChoices['bruteSolvingRestrictions']['csvFileName'] = 'rangestemplate.tsv'
 #NOTE: The increment choice of the user is then possibly overridden based on 
 # the values of maxPermutations (the number of molecules and bruteIncrements might 
 # cause too large of a number of permutations, in which case larger bruteIncrements 
@@ -155,7 +155,7 @@ UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN 
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
 UserChoices['measuredReferenceYorN']['on'] ='yes'
-UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = ['LiteratureReference.csv','xyyy'] #This is the pattern that will be changed. Typically this is NIST patterns.
+UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = ['LiteratureReference.tsv','xyyy'] #This is the pattern that will be changed. Typically this is NIST patterns.
 UserChoices['measuredReferenceYorN']['referenceFileDesiredTuningAndForm'] =[] #normally to be left blank. #This is what the pattern will look more like after everything is done. Typically, this is a measured pattern.
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureSignals'] = [] #left blank to extract from the full dataset.
 UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] =['ethane', 'ethene', 'ethyne']  #Optional: Special case, When using tuning corrector with a measured gas mixture spectrum molecule names must be provided
@@ -230,7 +230,7 @@ UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent'] = []
 #//Uncertainties for Calculating Uncertainties in Concentrations//
 UserChoices['uncertainties'] = {}
 UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = True
-UserChoices['uncertainties']['referenceFileUncertainties'] = 2 #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _absolute_uncertainties.csv at end of file name) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
+UserChoices['uncertainties']['referenceFileUncertainties'] = 2 #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _absolute_uncertainties.tsv at end of file name) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
 UserChoices['uncertainties']['collectedFileUncertainties'] =  'None' # 'Auto' # Can be 'Auto' or 'File' or 'None' or an Integer like 3 (no quotation marks). Or, you can put in a list: one value for each mass, which will be used for all times. If 'File', will expect same file name as collected file with _uncertainties after that). An integer defines a point radius. 'Auto' without dataSmoother simply uses a point radius of 5. If dataSmoother is being used, it is strongly recommended to set this to 'auto', in which case the range used for each window will match that of dataSmoother. 
 UserChoices['uncertainties']['collectedFileUncertainties_radiusType'] = 'pointrange' #Can be 'pointrange' or 'timerange'.  If collectedFileUncertainties is set to auto, then the radiustype will be forced to match datasmoother choice (if dataSmoother is being used), or will be forced to 'pointrange' (if dataSmoother is not being used).
 UserChoices['uncertainties']['referenceCorrectionCoefficientsUncertainties'] = None #Else a dictionary of uncertainties for 'A', 'B', 'C'. Not yet implemented.
@@ -275,11 +275,11 @@ UserChoices['concentrationFinder']['unitsTSC'] = 'bar'	#this string is the unit 
 UserChoices['outputFiles'] = {} #initialize the outputFiles container
 #the last section designates the various output files, all are suppose to be csv values
 #If files do not exist they will be generated
-UserChoices['outputFiles']['preProcessedDataOutputName'] = 'PreProcessedData.csv'
-UserChoices['outputFiles']['resolvedScaledConcentrationsOutputName'] = 'ScaledConcentrations.csv'
-UserChoices['outputFiles']['scaledConcentrationsPercentages'] = 'ScaledConcentrationPercentages.csv'
-UserChoices['outputFiles']['concentrationsOutputName'] = 'ResolvedConcentrations.csv'
-UserChoices['outputFiles']['simulatedSignalsOutputName'] = 'SimulatedRawSignals.csv'
+UserChoices['outputFiles']['preProcessedDataOutputName'] = 'PreProcessedData.tsv'
+UserChoices['outputFiles']['resolvedScaledConcentrationsOutputName'] = 'ScaledConcentrations.tsv'
+UserChoices['outputFiles']['scaledConcentrationsPercentages'] = 'ScaledConcentrationPercentages.tsv'
+UserChoices['outputFiles']['concentrationsOutputName'] = 'ResolvedConcentrations.tsv'
+UserChoices['outputFiles']['simulatedSignalsOutputName'] = 'SimulatedRawSignals.tsv'
 
 UserChoices['ExportAtEachStep'] = {} #initialize the ExportAtEachStep container
 UserChoices['ExportAtEachStep']['on'] = 'yes'

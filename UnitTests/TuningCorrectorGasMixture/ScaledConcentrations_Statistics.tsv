@@ -1,0 +1,9 @@
+# molecules	'ethyne'	 'ethene'	 'ethane'	 '1butanal'
+ScaledConcentrations_Means	2.69E-07	8.08E-07	1.82E-06	1.60E-08
+ScaledConcentrations_StdDevs	0	0	0	0
+ScaledConcentrations_StdErrs	0	0	0	0
+ScaledConcentrations_absolute_uncertainties_Means	1.03E-07	2.50E-07	1.80E-07	1.72E-07
+ScaledConcentrations_absolute_uncertainties_StdDevs	0	0	0	0
+ScaledConcentrations_relative_uncertainties_Means	0.382630459	0.309247555	0.098696203	10.7145181
+ScaledConcentrations_relative_uncertainties_StdDevs	0	0	0	0
+ScaledConcentrations_absolute_uncertainties_Total	1.03E-07	2.50E-07	1.80E-07	1.72E-07
