@@ -15,7 +15,7 @@ Proc Doc type things:
   
      
      
- -- made  Collected_Data.tsv the transpose of TuningCorrectorGasMixtureHypotheticalReferenceMeasuredSignals.tsv
+ -- made  Collected_Data.csv the transpose of TuningCorrectorGasMixtureHypotheticalReferenceMeasuredSignals.tsv
  -- The reason Collected_Data was edited is because we need to compare the masses of the measured data and the reference data to remove unnecessary masses when creating a reference object.
 
 ###NEEDED TO MAKE THE NIST REFERENCE PATTERN THE LITERATURE PATTERN BECAUSE OTHERWISE THE EXPERIMENTAL DATA MASSES DID NOT GET TRIMMED.###

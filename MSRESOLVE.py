@@ -2714,8 +2714,7 @@ def getDelimiterFromExtension(filename):
     return delimiter
         
 def readDataFile(collectedFileName):
-
- #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
+    #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
     dataFrame = pandas.read_csv('%s' %collectedFileName, header=None)
     ''' generate mass fragment list'''
     #select only the 2nd row down, all columns except for the first. 
@@ -3573,19 +3572,20 @@ class MSReference (object):
     
     #This makes a full Reference data file, not just a pattern.
     def exportReferencePattern(self, referenceFileName):
+        delimiter = getDelimiterFromExtension(referenceFileName)#first find the delimiter needed, based on the filename.
         with open(referenceFileName, 'w') as the_file:          
             referenceFileHeader = ''
-            referenceFileHeader += "Source:,"  + DataFunctions.arrayLikeToCSVstring(self.SourceOfFragmentationPatterns) + "\n"
-            referenceFileHeader += "Molecules," + DataFunctions.arrayLikeToCSVstring(self.molecules) + "\n"
-            referenceFileHeader += "Electron Numbers," + DataFunctions.arrayLikeToCSVstring(self.electronnumbers) + "\n"
-            referenceFileHeader += "ionizationEfficiencies," + DataFunctions.arrayLikeToCSVstring(self.relativeIonizationEfficiencies) + "\n"
-            referenceFileHeader += "ionizationEfficienciesSources," + DataFunctions.arrayLikeToCSVstring(self.sourceOfIonizationData) + "\n"
-            referenceFileHeader += "Molecular Mass," + DataFunctions.arrayLikeToCSVstring(self.molecularWeights)# + "\n"
+            referenceFileHeader += "Source:" +delimiter  + DataFunctions.arrayLikeToCSVstring(self.SourceOfFragmentationPatterns, delimiter=delimiter) + "\n"
+            referenceFileHeader += "Molecules" +delimiter  + DataFunctions.arrayLikeToCSVstring(self.molecules, delimiter=delimiter) + "\n"
+            referenceFileHeader += "Electron Numbers" +delimiter  + DataFunctions.arrayLikeToCSVstring(self.electronnumbers, delimiter=delimiter) + "\n"
+            referenceFileHeader += "ionizationEfficiencies" +delimiter  + DataFunctions.arrayLikeToCSVstring(self.relativeIonizationEfficiencies, delimiter=delimiter) + "\n"
+            referenceFileHeader += "ionizationEfficienciesSources" +delimiter  + DataFunctions.arrayLikeToCSVstring(self.sourceOfIonizationData, delimiter=delimiter) + "\n"
+            referenceFileHeader += "Molecular Mass" +delimiter  + DataFunctions.arrayLikeToCSVstring(self.molecularWeights, delimiter=delimiter)# + "\n"
             if hasattr(self ,"standardized_reference_patterns"):
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.standardized_reference_patterns,len(self.molecules))
             else:
                 self.standardized_reference_patterns=StandardizeReferencePattern(self.provided_reference_patterns,len(self.molecules))
-            numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=",", header = referenceFileHeader, comments='')
+            numpy.savetxt(referenceFileName, self.standardized_reference_patterns.copy(), delimiter=delimiter, header = referenceFileHeader, comments='')
             
 '''
 The MolecularIonizationData class is used to generate a molecule's ionization factor based on its ionization type
