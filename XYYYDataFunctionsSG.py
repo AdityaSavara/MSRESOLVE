@@ -11,6 +11,22 @@ import copy
 import pandas 
 
 
+#a small helper function to check if an extension exists in a filename and to return the delimiter based on that.
+def getDelimiterFromExtension(filename):
+    if ".tsv" in filename:
+        delimiter = '\t'
+    elif ".tab" in filename:
+        delimiter = '\t'
+    elif ".txt" in filename:
+        delimiter = '\t'        
+    elif ".skv" in filename:
+        delimiter = ';'
+    elif ".csv" in filename:
+        delimiter = ',' #it could be something else, but we will assume that a csv
+    else:
+        delimiter = '\t' #for MSRESOLVE, this is now the default delimiter.
+    return delimiter
+
 #Function to retrieve Y values and Y Value uncertainties given  A, B, C coefficients and covMatrixOfParameters
 #list of Parameters is "A,B,C"
 def returnPolyvalEstimatesAndUncertainties(x_values, abcCoefficients, abcCoefficients_covMat):
@@ -21,7 +37,6 @@ def returnPolyvalEstimatesAndUncertainties(x_values, abcCoefficients, abcCoeffic
     Cov_y = numpy.dot(TT, numpy.dot(abcCoefficients_covMat, TT.T)) # Cov_y = TT*C_z*TT.T
     y_predicted_uncertainties = numpy.sqrt(numpy.diag(Cov_y))  # Standard deviations are sqrt of diagonal
     return y_predicted, y_predicted_uncertainties
-
 
 #Function to retrieve Y values uncertainties given  A, B, C coefficients and covMatrixOfParameters
 #list of Parameters is "A,B,C"

@@ -2695,24 +2695,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
 #########################  Functions to read data files #######################
 ###############################################################################
 #These functions read in the experimental data file and the reference file. The
-#returned variables can then be used to initialize the respective classes.
-
-#a small helper function to check if an extension exists in a filename and to return the delimiter based on that.
-def getDelimiterFromExtension(filename):
-    if ".tsv" in filename:
-        delimiter = '\t'
-    elif ".tab" in filename:
-        delimiter = '\t'
-    elif ".txt" in filename:
-        delimiter = '\t'        
-    elif ".skv" in filename:
-        delimiter = ';'
-    elif ".csv" in filename:
-        delimiter = ',' #it could be something else, but we will assume that a csv
-    else:
-        delimiter = '\t' #for MSRESOLVE, this is now the default delimiter.
-    return delimiter
-        
+#returned variables can then be used to initialize the respective classes.        
 def readDataFile(collectedFileName):
     #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
     dataFrame = pandas.read_csv('%s' %collectedFileName, header=None)
@@ -3366,7 +3349,7 @@ class MSReference (object):
                 print(self.runTimeAtExport[savePoint])
             if self.ExportAtEachStep == 'yes':
                 #inserting the data for a particular savePoint
-                delimiter = getDelimiterFromExtension(self.referenceFileNameExtension)
+                delimiter = self.getDelimiterFromExtension(self.referenceFileNameExtension)
                 filename = 'Exported%s%s.%s'%(savePoint, self.labelToExport[savePoint], self.referenceFileNameExtension)
                 data = self.dataToExport[savePoint]
                 colIndex = ['%s'% y for y in self.moleculesToExport[savePoint]]
@@ -3572,7 +3555,7 @@ class MSReference (object):
     
     #This makes a full Reference data file, not just a pattern.
     def exportReferencePattern(self, referenceFileName):
-        delimiter = getDelimiterFromExtension(referenceFileName)#first find the delimiter needed, based on the filename.
+        delimiter = self.getDelimiterFromExtension(referenceFileName)#first find the delimiter needed, based on the filename.
         with open(referenceFileName, 'w') as the_file:          
             referenceFileHeader = ''
             referenceFileHeader += "Source:" +delimiter  + DataFunctions.arrayLikeToCSVstring(self.SourceOfFragmentationPatterns, delimiter=delimiter) + "\n"
@@ -5760,7 +5743,7 @@ def ExportXYYYData(outputFileName, data, dataHeader, abscissaHeader = 'Mass', fi
         fullArrayToExport = numpy.vstack((lineToInsert, fullArrayToExport))
     #save the file to the correct name
     
-    delimiter = getDelimiterFromExtension(filename)
+    delimiter = DataFunctions.getDelimiterFromExtension(filename)
     numpy.savetxt(filename, fullArrayToExport, delimiter = delimiter, fmt ="%s")
   
 
