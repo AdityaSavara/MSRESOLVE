@@ -11,6 +11,22 @@ import copy
 import pandas 
 
 
+#a small helper function to check if an extension exists in a filename and to return the delimiter based on that.
+def getDelimiterFromExtension(filename):
+    if ".tsv" in filename:
+        delimiter = '\t'
+    elif ".tab" in filename:
+        delimiter = '\t'
+    elif ".txt" in filename:
+        delimiter = '\t'        
+    elif ".skv" in filename:
+        delimiter = ';'
+    elif ".csv" in filename:
+        delimiter = ',' #it could be something else, but we will assume that a csv
+    else:
+        delimiter = '\t' #for MSRESOLVE, this is now the default delimiter.
+    return delimiter
+
 #Function to retrieve Y values and Y Value uncertainties given  A, B, C coefficients and covMatrixOfParameters
 #list of Parameters is "A,B,C"
 def returnPolyvalEstimatesAndUncertainties(x_values, abcCoefficients, abcCoefficients_covMat):
@@ -22,7 +38,6 @@ def returnPolyvalEstimatesAndUncertainties(x_values, abcCoefficients, abcCoeffic
     y_predicted_uncertainties = numpy.sqrt(numpy.diag(Cov_y))  # Standard deviations are sqrt of diagonal
     return y_predicted, y_predicted_uncertainties
 
-
 #Function to retrieve Y values uncertainties given  A, B, C coefficients and covMatrixOfParameters
 #list of Parameters is "A,B,C"
 def returnPolyvalEstimatedUncertainties(arrayOfAbscissaValues, listOfParameters, covMatrixOfParameters):
@@ -33,16 +48,14 @@ def returnPolyvalEstimatedUncertainties(arrayOfAbscissaValues, listOfParameters,
     uncertaintiesArray = numpy.sqrt(numpy.diag(Cov_y))  # Standard deviations are sqrt of diagonal
     return uncertaintiesArray
 
-    #Takes a 1D array or list and returns a comma separated string.
-def arrayLikeToCSVstring(inputArray):
-    #First check if the objects are strings. If they are, we will have to remove single quotes from our final string.
-    if (type(inputArray[0]) == type("string") ) or (type(inputArray[0]) == type(numpy.str_("string"))) :
-        stringObjects = True
-    else:
-        stringObjects = False
-    listString = str(list(inputArray))
-    CSVstring = listString[1:-1]
-    if stringObjects == True:
+    #Takes a 1D array or list and returns a comma separated string or other delimiter.
+def arrayLikeToCSVstring(inputArray, delimiter=",", removeApostrophes = False):
+    #the delimter must be a string.
+    #First convert all the individual elments to strings. If they are, we will have to remove single quotes from our final string.
+    inputArrayAsStrings = numpy.array(inputArray, dtype=str)
+    listOfStrings = list(inputArrayAsStrings) #now convert to a list.
+    CSVstring =  delimiter.join(listOfStrings)
+    if removeApostrophes == True:
         CSVstring= CSVstring.replace("'","")
     return CSVstring
 def AppendColumnsToCSV(CSVName, YYYYData, columnheaders, rowIndex = [], rowIndexHeader = []):
