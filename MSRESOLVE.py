@@ -1943,8 +1943,9 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #One could move this function prior to threshold filtering however then correction values would not be correctly calculated for interpolated reference patterns
     #We are not sure there are any other reasons we can't move this function call. However, there may be some care needed when using uncertainties.
     ReferenceData.correction_values, ReferenceData.correction_values_relative_uncertainties = CorrectionValuesObtain(ReferenceData)
-    if G.implicitSLScorrection == True: #This feature requires us to have unfiltered reference patterns to do an implicit/recursive correction at the end. There is an implied return in global variable.
-            G.currentReferenceDataUnfiltered.correction_values, G.currentReferenceDataUnfiltered.correction_values_relative_uncertainties = CorrectionValuesObtain(G.currentReferenceDataUnfiltered)
+    if G.minimalReferenceValue == 'yes':
+        if G.implicitSLScorrection == True: #This feature requires us to have unfiltered reference patterns to do an implicit/recursive correction at the end. There is an implied return in global variable.
+                G.currentReferenceDataUnfiltered.correction_values, G.currentReferenceDataUnfiltered.correction_values_relative_uncertainties = CorrectionValuesObtain(G.currentReferenceDataUnfiltered)
     
     #Only print if not called from interpolating reference objects
     if verbose:
@@ -2242,8 +2243,9 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[
     # based on the massesOfInterest, which is typically the ExperimentData.mass_fragment_numbers
     if len(massesOfInterest) > 0:
         ReferenceData = Populate_reciprocal_matching_correction_values(massesOfInterest,ReferenceData)
-        if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
-            G.currentReferenceDataUnfiltered = Populate_reciprocal_matching_correction_values(massesOfInterest,G.currentReferenceDataUnfiltered)
+        if G.minimalReferenceValue == 'yes':
+            if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
+                G.currentReferenceDataUnfiltered = Populate_reciprocal_matching_correction_values(massesOfInterest,G.currentReferenceDataUnfiltered)
         #Exports the matching correction value 
         ReferenceData.ExportCollector('ReciprocalMatchingCorrectionValues', export_matching_correction_value = True)              #exports matching correction value 
         #Only print if not called from interpolating reference objects
@@ -2255,8 +2257,9 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[
     ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
     ## like ReferenceData.standardized_reference_patterns
     ReferenceData = UnnecessaryMoleculesDeleter(ReferenceData)
-    if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also.
-        G.currentReferenceDataUnfiltered = UnnecessaryMoleculesDeleter(G.currentReferenceDataUnfiltered)
+    if G.minimalReferenceValue == 'yes':
+        if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also.
+            G.currentReferenceDataUnfiltered = UnnecessaryMoleculesDeleter(G.currentReferenceDataUnfiltered)
     ReferenceData.ExportCollector('UnnecessaryMoleculesDeleter')
     # Export the reference data files that have been stored by ReferenceData.ExportCollector
     ReferenceData.ExportFragmentationPatterns(verbose)

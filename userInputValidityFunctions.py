@@ -268,6 +268,8 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
             print("Incompatible choice detected: forcing SLSUniqueExport to no.")
             
     if 'implicitSLScorrection' in UserChoices['dataAnalysisMethods']:
+        if UserChoices['minimalReferenceValue']['on'] =='no': #Turn off SLS implicit if the mnimalReferenceValue is not being used.
+            UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
         if UserChoices['dataAnalysisMethods']['implicitSLScorrection'] == True:
             if (UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique') or (UserChoices['dataAnalysisMethods']['answer'] != 'sls'):
                 UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
