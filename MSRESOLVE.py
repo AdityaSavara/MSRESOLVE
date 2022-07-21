@@ -1943,8 +1943,9 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #One could move this function prior to threshold filtering however then correction values would not be correctly calculated for interpolated reference patterns
     #We are not sure there are any other reasons we can't move this function call. However, there may be some care needed when using uncertainties.
     ReferenceData.correction_values, ReferenceData.correction_values_relative_uncertainties = CorrectionValuesObtain(ReferenceData)
-    if G.implicitSLScorrection == True: #This feature requires us to have unfiltered reference patterns to do an implicit/recursive correction at the end. There is an implied return in global variable.
-            G.currentReferenceDataUnfiltered.correction_values, G.currentReferenceDataUnfiltered.correction_values_relative_uncertainties = CorrectionValuesObtain(G.currentReferenceDataUnfiltered)
+    if G.minimalReferenceValue == 'yes':
+        if G.implicitSLScorrection == True: #This feature requires us to have unfiltered reference patterns to do an implicit/recursive correction at the end. There is an implied return in global variable.
+                G.currentReferenceDataUnfiltered.correction_values, G.currentReferenceDataUnfiltered.correction_values_relative_uncertainties = CorrectionValuesObtain(G.currentReferenceDataUnfiltered)
     
     #Only print if not called from interpolating reference objects
     if verbose:
@@ -2242,8 +2243,9 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[
     # based on the massesOfInterest, which is typically the ExperimentData.mass_fragment_numbers
     if len(massesOfInterest) > 0:
         ReferenceData = Populate_reciprocal_matching_correction_values(massesOfInterest,ReferenceData)
-        if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
-            G.currentReferenceDataUnfiltered = Populate_reciprocal_matching_correction_values(massesOfInterest,G.currentReferenceDataUnfiltered)
+        if G.minimalReferenceValue == 'yes':
+            if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also. 
+                G.currentReferenceDataUnfiltered = Populate_reciprocal_matching_correction_values(massesOfInterest,G.currentReferenceDataUnfiltered)
         #Exports the matching correction value 
         ReferenceData.ExportCollector('ReciprocalMatchingCorrectionValues', export_matching_correction_value = True)              #exports matching correction value 
         #Only print if not called from interpolating reference objects
@@ -2255,8 +2257,9 @@ def PrepareReferenceObjectsAndCorrectionValues(ReferenceData, massesOfInterest=[
     ## (monitored_reference_intensities) so that it can potentially be applied to other arrays
     ## like ReferenceData.standardized_reference_patterns
     ReferenceData = UnnecessaryMoleculesDeleter(ReferenceData)
-    if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also.
-        G.currentReferenceDataUnfiltered = UnnecessaryMoleculesDeleter(G.currentReferenceDataUnfiltered)
+    if G.minimalReferenceValue == 'yes':
+        if G.implicitSLScorrection == True: #if implicitSLS correction is being used, we need to do it for the unfiltered reference pattern also.
+            G.currentReferenceDataUnfiltered = UnnecessaryMoleculesDeleter(G.currentReferenceDataUnfiltered)
     ReferenceData.ExportCollector('UnnecessaryMoleculesDeleter')
     # Export the reference data files that have been stored by ReferenceData.ExportCollector
     ReferenceData.ExportFragmentationPatterns(verbose)
@@ -5133,7 +5136,8 @@ def SLSMethod(molecules,monitored_reference_intensities,reciprocal_matching_corr
         for molecule_iiii in range(len(molecules_unedited)):
             if len(solvedmolecules) == 0:
                 print("Warning: If you have chosen to use unique fragment SLS and your data has no unique fragments (not unique to any molecule), "\
-                "then the program may be about to crash. If autosolver has been turned on, the program will first attempt to use SLS common and then inverse.")
+                "then the program may be about to crash. If autosolver has been turned on, the program will first attempt to use SLS common and then inverse." \
+                " You may want to try using referenceValueThreshold within the feature Reference Mass Fragmentation Threshold, or to raise referenceValueThreshold if already using it.")
             try: 
                 #if the molecule wasn't solved for in the inital analysis, then it will have 0 for its solved molecules counter.
                 if solvedmolecules[molecule_iiii] == 0:
@@ -5146,7 +5150,7 @@ def SLSMethod(molecules,monitored_reference_intensities,reciprocal_matching_corr
                     except:
                         pass
             except IndexError:
-                print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the referenceValueThreshold within the feature Reference Mass Fragmentation Threshold. Alternatively, you can try using inverse.")
+                print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the referenceValueThreshold within the feature Reference Mass Fragmentation Threshold. Alternatively, you can try using 'inverse' rather than 'sls'.")
                 solutions = numpy.array([None]) #This is just creating a numpy array with an element that has a None object, so that the main function can know that SLSMethod failed.
         if len(uncertainties_dict) > 0: #Note: the indexing in the solutions must match the original indexing, or errors will occur.  Now we take the "filled up" solutions and put everything together.                      
                 uncertainties_dict['concentrations_relative_uncertainties_one_time'] = uncertainties_dict['concentrations_relative_uncertainties_one_time_after_finisher'].transpose()*1.0
