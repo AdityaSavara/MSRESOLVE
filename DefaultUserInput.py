@@ -95,7 +95,7 @@ UserChoices['linearBaselineCorrectionSemiAutomatic'] = {} #initialize the linear
 UserChoices['linearBaselineCorrectionSemiAutomatic']['on'] = 'no'  #selection can be 'yes' or 'no'
 UserChoices['linearBaselineCorrectionSemiAutomatic']['baselineType'] = ['linear'] 	#baselineType may be either 'flat' or 'linear'	
 # if you would like to apply this correction to all fragments, leave below as []
-UserChoices['linearBaselineCorrectionSemiAutomatic']['massesToBackgroundCorrect'] = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70]			#mflist: enter mass list delimited With commas [m1, m2, m3]
+UserChoices['linearBaselineCorrectionSemiAutomatic']['massesToBackgroundCorrect'] = [2, 18, 27, 28, 31, 39, 41, 44, 57, 70]			#mflist: enter mass list delimited With commas [m1, m2, m3]. Leave blank for all masses.
 # to apply a uniform time range to all fragments, only insert one time range as such [[x,y]]
 UserChoices['linearBaselineCorrectionSemiAutomatic']['earlyBaselineTimes'] = [[177.0, 177.1]]	# to apply different times for each fragment enter time pairs as such [[x,y],[z,w]..]
 # to apply a uniform time range to all fragments, only insert one time range [[x,y]]
@@ -250,7 +250,7 @@ UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerBaseNumberOfGridIntervals']
 #//Data Analysis Methods
 UserChoices['dataAnalysisMethods'] = {} #initialize the dataAnalysisMethods container
 #Below the path for the analysis of the data; sls or inverse
-UserChoices['dataAnalysisMethods']['answer'] = 'inverse'	#'inverse' or 'sls'; sls is suggested
+UserChoices['dataAnalysisMethods']['answer'] = 'inverse'	#'inverse' or 'sls'; sls is suggested. 'autosolver' is in development.
 UserChoices['dataAnalysisMethods']['uniqueOrCommon'] = 'unique'	#'unique' or 'common'; unique is suggested when uncertainties will be used.
 UserChoices['dataAnalysisMethods']['slsWeighting'] = [1,0,0,0] #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
 UserChoices['dataAnalysisMethods']['slsFinish'] = 'inverse'	#'brute' or 'inverse'; inverse is currently suggested if using the uncertainties feature.
