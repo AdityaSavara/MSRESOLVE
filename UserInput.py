@@ -189,8 +189,8 @@ UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] =
 UserChoices['minimalReferenceValue'] = {} #initialize the minimalReferenceValue container
 # if you want to exclude tiny fragmentation peaks
 UserChoices['minimalReferenceValue']['on'] = 'no'
-UserChoices['minimalReferenceValue']['referenceValueThreshold'] = [2.0]
-UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds'] = [6.0]
+UserChoices['minimalReferenceValue']['referenceValueThreshold'] = [2.0]  #typical values are between 1 and 5. This approximates smaller fragmentation peaks as '0', though implicitSLS will correct for the approximation.
+UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds'] = [6.0] #typical values are between 5 and 50. This setting causes MSRESOLVE to favor larger intensity reference peaks (above the number provided) during solving.
 
 #//Data Threshold Filter//
 UserChoices['lowerBoundThresholdChooser'] = {} #initialize the lowerBoundThresholdChooser container
