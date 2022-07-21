@@ -5136,7 +5136,8 @@ def SLSMethod(molecules,monitored_reference_intensities,reciprocal_matching_corr
         for molecule_iiii in range(len(molecules_unedited)):
             if len(solvedmolecules) == 0:
                 print("Warning: If you have chosen to use unique fragment SLS and your data has no unique fragments (not unique to any molecule), "\
-                "then the program may be about to crash. If autosolver has been turned on, the program will first attempt to use SLS common and then inverse.")
+                "then the program may be about to crash. If autosolver has been turned on, the program will first attempt to use SLS common and then inverse." \
+                " You may want to try using referenceValueThreshold within the feature Reference Mass Fragmentation Threshold, or to raise referenceValueThreshold if already using it.")
             try: 
                 #if the molecule wasn't solved for in the inital analysis, then it will have 0 for its solved molecules counter.
                 if solvedmolecules[molecule_iiii] == 0:
@@ -5149,7 +5150,7 @@ def SLSMethod(molecules,monitored_reference_intensities,reciprocal_matching_corr
                     except:
                         pass
             except IndexError:
-                print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the referenceValueThreshold within the feature Reference Mass Fragmentation Threshold. Alternatively, you can try using inverse.")
+                print("Warning: SLS could not solve this problem. If you are already using SLS Common, you can try raising the referenceValueThreshold within the feature Reference Mass Fragmentation Threshold. Alternatively, you can try using 'inverse' rather than 'sls'.")
                 solutions = numpy.array([None]) #This is just creating a numpy array with an element that has a None object, so that the main function can know that SLSMethod failed.
         if len(uncertainties_dict) > 0: #Note: the indexing in the solutions must match the original indexing, or errors will occur.  Now we take the "filled up" solutions and put everything together.                      
                 uncertainties_dict['concentrations_relative_uncertainties_one_time'] = uncertainties_dict['concentrations_relative_uncertainties_one_time_after_finisher'].transpose()*1.0
