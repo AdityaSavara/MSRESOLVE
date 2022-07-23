@@ -1148,7 +1148,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
     if not iterate:
         #record the old file names 
         G.oldReferenceFileName = G.referenceFileName
-        G.olddataToAnalyzeFileName = G.dataToAnalyzeFileName
+        G.oldDataToAnalyzeFileName = G.dataToAnalyzeFileName
         
         #construct the file names for the current run of the program
         referenceFileNameTemp = G.referenceFileName[:-18] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
@@ -1167,7 +1167,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
         G.nextExpFileName = G.dataToAnalyzeFileName[:-11] +  str('_remaining') + G.dataToAnalyzeFileName[-11:]
     
     return None
-    #implied returns: G.oldReferenceFileName, G.olddataToAnalyzeFileName, G.referenceFileName,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldDataToAnalyzeFileName, G.referenceFileName,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     #implied arguments for this function are G.referenceFileName and G.dataToAnalyzeFileName
@@ -1190,7 +1190,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     
     #record the old file names 
     G.oldReferenceFileName = G.referenceFileName
-    G.olddataToAnalyzeFileName = G.dataToAnalyzeFileName
+    G.oldDataToAnalyzeFileName = G.dataToAnalyzeFileName
     #construct the file names for the first run of the program
     G.referenceFileName = G.referenceFileName[:-4] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
     G.dataToAnalyzeFileName = G.dataToAnalyzeFileName[:-4] +  str(G.iterationSuffix) + G.dataToAnalyzeFileName[-4:]
@@ -1201,7 +1201,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     G.nextExpFileName = G.dataToAnalyzeFileName[:-11] + '_remaining_iter_1' + G.dataToAnalyzeFileName[-4:]
     
     return None 
-    #implied returns: G.oldReferenceFileName, G.olddataToAnalyzeFileName, G.referenceFileName,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldDataToAnalyzeFileName, G.referenceFileName,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
 def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy):

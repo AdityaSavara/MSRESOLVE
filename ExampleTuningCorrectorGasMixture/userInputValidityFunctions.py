@@ -296,7 +296,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['iterationSuffix']    = UserChoices['iterativeAnalysis']['iterationSuffix']
     SettingsVDictionary['unusedMolecules']    = UserChoices['iterativeAnalysis']['unusedMolecules']
     SettingsVDictionary['oldReferenceFileName']    = UserChoices['iterativeAnalysis']['oldReferenceFileName']
-    SettingsVDictionary['olddataToAnalyzeFileName']    = UserChoices['iterativeAnalysis']['olddataToAnalyzeFileName']
+    SettingsVDictionary['oldDataToAnalyzeFileName']    = UserChoices['iterativeAnalysis']['oldDataToAnalyzeFileName']
     SettingsVDictionary['nextRefFileName']    = UserChoices['iterativeAnalysis']['nextRefFileName']
     SettingsVDictionary['nextExpFileName']    = UserChoices['iterativeAnalysis']['nextExpFileName']
     SettingsVDictionary['iterationNumber']    = UserChoices['iterativeAnalysis']['iterationNumber']  

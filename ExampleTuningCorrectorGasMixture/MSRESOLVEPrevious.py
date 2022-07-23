@@ -2087,7 +2087,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber):
     
     #naming for collected file
     #record the old file names 
-    G.olddataToAnalyzeFileName = G.dataToAnalyzeFileName
+    G.oldDataToAnalyzeFileName = G.dataToAnalyzeFileName
     #construct the file names for the current run of the program
     #TODO FIXME, This syntax with -21 will not allow iterative to be compatible with more than 9 iterations
     dataToAnalyzeFileNameTemp = str(G.dataToAnalyzeFileName)[:-21] +  str(G.iterationSuffix) + str(G.dataToAnalyzeFileName)[-4:]      
@@ -2122,7 +2122,7 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber):
         #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
         G.nextRefFileName.append(RefName[:-18] + '_unused_iter_%s' %G.iterationNumber + RefName[-4:])
     return None
-    #implied returns: G.oldReferenceFileName, G.olddataToAnalyzeFileName, G.referencePatternsFileNamesList,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldDataToAnalyzeFileName, G.referencePatternsFileNamesList,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     #implied arguments for this function are G.referencePatternsFileNamesList and G.dataToAnalyzeFileName
@@ -2144,7 +2144,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     AppendListToFile("__var_list__", G.__var_list__, "UserInput_iter_1.py", float('Inf'))
     
     #record the old file names 
-    G.olddataToAnalyzeFileName = G.dataToAnalyzeFileName
+    G.oldDataToAnalyzeFileName = G.dataToAnalyzeFileName
     #construct the file names for the first run of the program
     G.dataToAnalyzeFileName = G.dataToAnalyzeFileName[:-4] +  str(G.iterationSuffix) + G.dataToAnalyzeFileName[-4:]
     #construct file names for the second run of the program 
@@ -2160,7 +2160,7 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
         G.nextRefFileName.append(RefName[:-4] + '_unused_iter_1' + RefName[-4:])
     
     return None 
-    #implied returns: G.oldReferenceFileName, G.olddataToAnalyzeFileName, G.referencePatternsFileNamesList,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldDataToAnalyzeFileName, G.referencePatternsFileNamesList,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
 def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataListFullCopy):
