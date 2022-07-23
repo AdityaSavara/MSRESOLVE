@@ -20,10 +20,10 @@ ReferenceLiterature.csv does not have as many molecules as ReferenceCollected.cs
 In the test_1.py, the reference threshold filter is off.
 In  test_2.py, the reference threshold filter is on.
 
-In test_3.py, the two files are referenceFileExistingTuning = ['ReferenceCollected.csv','xyyy'] and referenceFileDesiredTuning =['ReferenceLiterature.csv','xyyy'].  The original reference file is set as ReferenceLiterature.
+In test_3.py, the two files are referenceFileExistingTuning = ['ReferenceCollected.csv','xyyy'] and referenceFileDesiredTuning =['ReferenceLiterature.csv','xyyy'].  The original reference file is set as ReferenceLiterature. As of Sept 30th 2021, this is not the typical usage (this is essentially reverse of the current typical usage).
 
-test_4.py is a copy of test_1.py, only now the returnMixedPattern feature is set to true, so ReferenceLiterature is tuned to match ReferenceCollected.
-test_5.py is a copy of test_4.py, only now the desired pattern is set as blank, which should give the same output as test_4.
+test_4.py is a copy of test_1.py, only now the returnMixedPattern feature is set to true, so ReferenceLiterature is tuned to match ReferenceCollected. As of Sept 30th 2021, this is not the typical usage (this is essentially reverse of the current typical usage).
+test_5.py is a copy of test_4.py, only now the desired pattern is set as blank, which should give the same output as test_4. 
 test_6.py is a copy of test_5.py, only now the existing pattern is set as blank, but the new ReferencePatternStandard is populated, so that the existing pattern will be populated from that one. This also means that there is a tuningCorrectionIntensity feature usage. This test had output that matched test_5.py exactly before the tuningCorrectionIntensity feature was implemented. In test_6.py, the effects of tuningCorrectionIntensity are quite small. So test_7 and test_8 were created for checking the feature properly.
 
 test_7.py and test_8.py are copies of test_6.py but uses referenceThreshold filtering , specific mass fragments, and also SLSUniqueExport so that mass 70 ends up being used. We see that ExportedSLSUniqueMoleculesAndChosenMassFragments indicates the below, so that we know Crotonaldehyde is solved with mass 70.
