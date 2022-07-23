@@ -17,7 +17,7 @@ Suggested Procedure for Solving Time Series Data of Mass Signals
 2)	Create an MSRESOLVE run with SLS Unique and see what masse MSRESOLVE chooses, with ExportedSLSUniqueMassesUsedInSolvingMolecules.
 3)	If unsatisfied, start narrowing things down with chosen masses.
 4)	Also start using some reference file threshold filtering . 
-a.	UserChoices['applyReferenceMassFragmentsThresholds']['referenceValueThreshold'] = [1.0]  #this is what I am suggesting that you use.
+a.	UserChoices['applyReferenceMassFragmentsThresholds']['referenceMassFragmentFilterThreshold'] = [1.0]  #this is what I am suggesting that you use.
 5)	If the application warrants doing so, include more sophisticated features of MSRESOLVE, such as mass spectrum tuning correction.
 
 

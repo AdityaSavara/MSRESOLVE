@@ -145,7 +145,7 @@ rpcMoleculesToChangeMF = [
 #//Reference Mass Fragmentation Threshold//
 # if you want to exclude tiny fragmentation peaks
 applyReferenceMassFragmentsThresholds= 'no'
-referenceValueThreshold = [6.0]
+referenceMassFragmentFilterThreshold = [6.0]
 
 
 #//Data Threshold Filter//

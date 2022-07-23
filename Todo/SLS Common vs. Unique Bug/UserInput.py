@@ -145,7 +145,7 @@ rpcMoleculesToChangeMF = [
 #//Reference Mass Fragmentation Threshold//
 # if you want to exclude tiny fragmentation peaks
 applyReferenceMassFragmentsThresholds= 'yes'
-referenceValueThreshold = [4.9]
+referenceMassFragmentFilterThreshold = [4.9]
 
 
 #//Data Threshold Filter//
@@ -247,7 +247,7 @@ __var_list__ = ['referenceFileName','form','dataToAnalyzeFileName','referencePat
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',
 				'tuningCorrection','referenceFileExistingTuningAndForm','referenceFileDesiredTuningAndForm','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
-				'rpcTimeRanges','applyReferenceMassFragmentsThresholds','referenceValueThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
+				'rpcTimeRanges','applyReferenceMassFragmentsThresholds','referenceMassFragmentFilterThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','applyRawSignalThresholds',
 				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
 				'uniqueOrCommon','slsFinish','objectiveFunctionType','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',

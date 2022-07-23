@@ -358,11 +358,11 @@ def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,reference
 #this function eliminates any fragments that are below a certain threshold, for solving 
 #data that is giving negatives or over emphasizing small mass fragments, this will eliminate 
 #those below a certain user-input value
-def ReferenceThreshold(reference,referenceValueThreshold):
+def ReferenceThreshold(reference,referenceMassFragmentFilterThreshold):
     referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
     for rowcounter in range(len(referencedata[:,0])):#goes through all rows in references
         for columncounter in range(len(referencedata[0,:])):#goes through all columns in all rows in reference
-            if referencedata[rowcounter,columncounter] < referenceValueThreshold:#user input changes
+            if referencedata[rowcounter,columncounter] < referenceMassFragmentFilterThreshold:#user input changes
                 referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
     reference[:,1:] = referencedata #this puts changed reference back with mass fragment numbers
     return reference
@@ -929,7 +929,7 @@ def ReferenceInputPreProcessing(ReferenceData):
     ReferenceData.ExportCollector('CorrectionValueCorrector')
     
     if G.applyReferenceMassFragmentsThresholds == 'yes':
-        ReferenceData.standardized_reference_intensities = ReferenceThreshold(ReferenceData.standardized_reference_intensities,G.referenceValueThreshold)
+        ReferenceData.standardized_reference_intensities = ReferenceThreshold(ReferenceData.standardized_reference_intensities,G.referenceMassFragmentFilterThreshold)
         ReferenceData.ExportCollector('ReferenceThreshold')
     
     ReferenceData.correction_values = CorrectionValuesObtain(ReferenceData)
@@ -1688,7 +1688,7 @@ def CombinationMaker(reciprocal_matching_correction_values,rawsignalsarrayline,m
     if combinations == []:#This function will not work without enough mass fragments, so the user must know the problem
         print('****************************************')
         print('Not enough matching mass fragments input')
-        print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  applyReferenceMassFragmentsThresholds feature with referenceValueThreshold, such as referenceValueThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
+        print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  applyReferenceMassFragmentsThresholds feature with referenceMassFragmentFilterThreshold, such as referenceMassFragmentFilterThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
         print('****************************************')
     combinations_len = len(combinations) 
     correctionarray = numpy.zeros([1,moleculenum])
@@ -3064,7 +3064,7 @@ def PopulateLogFile():
         f6.write('rpcTimeRanges = %s \n'%(G.rpcTimeRanges))
     if G.applyReferenceMassFragmentsThresholds == 'yes':
         f6.write('applyReferenceMassFragmentsThresholds = %s \n'%(G.applyReferenceMassFragmentsThresholds))
-        f6.write('referenceValueThreshold = %s \n'%(G.referenceValueThreshold))
+        f6.write('referenceMassFragmentFilterThreshold = %s \n'%(G.referenceMassFragmentFilterThreshold))
     if G.lowerBoundThresholdChooser == 'yes':
         f6.write('lowerBoundThresholdChooser = %s \n'%(G.lowerBoundThresholdChooser))
         f6.write('massesToLowerBoundThresholdFilter  = %s \n'%(G.massesToLowerBoundThresholdFilter ))

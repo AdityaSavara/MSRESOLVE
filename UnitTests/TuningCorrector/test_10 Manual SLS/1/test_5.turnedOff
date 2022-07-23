@@ -41,7 +41,7 @@ MSRESOLVE.G.dataSmootherYorN = 'no'
 
 #will use applyReferenceMassFragmentsThresholds (single value means it will be applied to all molecules)
 MSRESOLVE.G.applyReferenceMassFragmentsThresholds= 'no'
-MSRESOLVE.G.referenceValueThreshold = [0.0]
+MSRESOLVE.G.referenceMassFragmentFilterThreshold = [0.0]
 MSRESOLVE.G.referenceSignificantFragmentThresholds = [0.0]
 
 #Now to get started with the test itself...

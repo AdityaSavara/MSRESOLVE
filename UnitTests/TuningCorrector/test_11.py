@@ -41,7 +41,7 @@ MSRESOLVE.G.dataSmootherYorN = 'no'
 
 #will use applyReferenceMassFragmentsThresholds (single value means it will be applied to all molecules)
 MSRESOLVE.G.applyReferenceMassFragmentsThresholds= 'yes'
-MSRESOLVE.G.referenceValueThreshold = [4.0]
+MSRESOLVE.G.referenceMassFragmentFilterThreshold = [4.0]
 MSRESOLVE.G.referenceSignificantFragmentThresholds = [6.0]
 MSRESOLVE.G.answer = 'sls'
 MSRESOLVE.G.implicitSLScorrection = True
