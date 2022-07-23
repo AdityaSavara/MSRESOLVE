@@ -255,6 +255,8 @@ UserChoices['dataAnalysisMethods']['distinguished'] = 'yes'
 UserChoices['dataAnalysisMethods']['fullBrute'] = 'yes'
 UserChoices['dataAnalysisMethods']['SLSUniqueExport'] = 'no'
 UserChoices['dataAnalysisMethods']['finalOptimization'] = 'None' #options are 'None' or... 'Nelder-Mead','Powell','CG','BFGS','Newton-CG','L-BFGS-B','TNC','COBYLA','SLSQP','dogleg','trust-ncg','trust-xact','trust-krylov' from scipy.optimize.minimze
+UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
+
 
 #//Concentration Finder//
 UserChoices['concentrationFinder'] = {} #initialize the concentrationFinder container

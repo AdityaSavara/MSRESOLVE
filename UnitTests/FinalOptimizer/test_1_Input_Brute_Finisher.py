@@ -237,6 +237,7 @@ UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerBaseNumberOfGridIntervals']
 UserChoices['dataAnalysisMethods'] = {} #initialize the dataAnalysisMethods container
 #Below the path for the analysis of the data; sls or inverse
 UserChoices['dataAnalysisMethods']['answer'] = 'sls'	#'inverse' or 'sls'; sls is suggested
+UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
 UserChoices['dataAnalysisMethods']['uniqueOrCommon'] = 'unique'	#'unique' or 'common'; common is suggested
 UserChoices['dataAnalysisMethods']['slsWeighting'] = [0,0,1,0] #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
 UserChoices['dataAnalysisMethods']['slsFinish'] = 'brute'	#'brute' or 'inverse'; brute is suggested
