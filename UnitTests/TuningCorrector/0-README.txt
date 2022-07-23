@@ -14,7 +14,7 @@ Note: Before approximately Sept 23rd-30th 2021, the regular reference file was l
 
 The file AcetaldehydeMeasured.csv is actually a mixed reference pattern. However, the columns source fields have been renamed to say "Measured". The tuning correction tests here are just a 'toy' model reference pattern to check the feature. In real life, the measured reference pattern will have more difference than the literature reference.
 
-test_1.py has AcetaldehydeMeasured.csv and ReferenceCollected.csv with the same tuning. It applies a TuningCorrection to AcetaldehydeMeasured.csv (and also to ReferenceCollected.csv).  The Desired tuning file is ReferenceLiterature.csv.
+test_1.py has AcetaldehydeMeasured.csv and ReferenceCollected.csv with the same tuning. It applies a TuningCorrection to AcetaldehydeMeasured.csv (and also to ReferenceCollected.csv).  The Desired tuning file is ReferenceLiterature.csv. As of Sept 30th 2021, this is not the typical usage (this is essentially reverse of the current typical usage).
 ReferenceLiterature.csv does not have as many molecules as ReferenceCollected.csv and the higher masses have lower intensity in ReferenceLiterature.csv (for one of the molecules, crotyl alcohol). So the feature uses a polynomial function and applies it to *all* molecules in ReferenceCollected.csv to make it look more like ReferenceLiterature.csv (lowers the intensity).
 
 In the test_1.py, the reference threshold filter is off.
