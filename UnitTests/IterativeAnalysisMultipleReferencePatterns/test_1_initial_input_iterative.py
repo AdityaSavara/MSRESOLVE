@@ -203,6 +203,7 @@ distinguished = 'yes'
 fullBrute = 'yes'
 SLSUniqueExport = 'yes'
 implicitSLSRecursion = 0 #Work in progress variable. Placed to prevent Unit test Error 
+implicitSLScorrection = False
 
 
 #//Concentration Finder//

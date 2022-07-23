@@ -202,6 +202,8 @@ objectiveFunctionType = 'ssr'	#objectiveFunctionType = 'ssr', 'sar', 'weightedSA
 distinguished = 'yes'
 fullBrute = 'yes'
 SLSUniqueExport = 'yes'
+implicitSLScorrection = False
+
 
 
 #//Concentration Finder//
