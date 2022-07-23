@@ -7,6 +7,7 @@ a)TuningCorrectorPattern which changes the pattern of External reference spectra
 
 b)TuningCorrectorIntensity which changes the sensitivityCorrectionValues as a function of mass fragment so that an accurate relative concentration of species can be determined. This involves two steps, each using a polynomial correction for the direction of converting one's own mass spectrometer patterns into the direction of the standard corrections. First, convert the patterns into the standard tunining version (that way the fragmentation pattern would be correct for summing up the fragments), that way standard tuning correction factors are calculated. The first step is necessary because otherwise the summation term and calculated ratios of the fragments will be incorrect.  Then, as a second step, we applying a tuning correction (actually the same factor) to the final correction factor, which is the equivalent of adding a tuning correction to the observed intensity. So ultimately, we have CorrectionFactor_standardTuning * Signal_standardTuningEquivalent = Concentration_standardTuning.
 
+The typical usage is shown in test_4.py
 
 #apparently needed to have dataAnalysis on to use this feature (as checked Sep 2019, ideally should not need to).
 
@@ -22,7 +23,7 @@ In  test_2.py, the reference threshold filter is on.
 
 In test_3.py, the two files are referenceFileExistingTuning = ['ReferenceCollected.csv','xyyy'] and referenceFileDesiredTuning =['ReferenceLiterature.csv','xyyy'].  The original reference file is set as ReferenceLiterature. As of Sept 30th 2021, this is not the typical usage (this is essentially reverse of the current typical usage).
 
-test_4.py is a copy of test_1.py, only now the returnMixedPattern feature is set to true, so ReferenceLiterature is tuned to match ReferenceCollected. As of Sept 30th 2021, this is not the typical usage (this is essentially reverse of the current typical usage).
+test_4.py is a copy of test_1.py, only now the returnMixedPattern feature is set to true, so ReferenceLiterature is tuned to match ReferenceCollected. This file **is** the typical usage.
 test_5.py is a copy of test_4.py, only now the desired pattern is set as blank, which should give the same output as test_4. 
 test_6.py is a copy of test_5.py, only now the existing pattern is set as blank, but the new ReferencePatternStandard is populated, so that the existing pattern will be populated from that one. This also means that there is a tuningCorrectionIntensity feature usage. This test had output that matched test_5.py exactly before the tuningCorrectionIntensity feature was implemented. In test_6.py, the effects of tuningCorrectionIntensity are quite small. So test_7 and test_8 were created for checking the feature properly.
 
