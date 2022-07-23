@@ -242,7 +242,7 @@ __var_list__ = ['referenceFileName','form','dataToAnalyzeFileName','iterativeAna
 				'tuningCorrection','referenceFileExistingTuningAndForm','referenceFileDesiredTuningAndForm','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF',
 				'rpcTimeRanges','applyReferenceMassFragmentsThresholds','referenceMassFragmentFilterThreshold','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute',
 				'dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','applyRawSignalThresholds',
-				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','answer',
+				'rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','solverChoice',
 				'uniqueOrCommon','slsFinish','objectiveFunctionType','distinguished','fullBrute','SLSUniquePrint','SLSUniqueExport','concentrationFinder','molecule','moleculeSignal','massNumber','moleculeConcentration',
 				'units','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName',
 				'ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint']

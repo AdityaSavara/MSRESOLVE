@@ -48,7 +48,7 @@ MSRESOLVE.G.answer = 'sls'
 MSRESOLVE.G.SLSUniqueExport = 'yes'
 MSRESOLVE.G.uniqueOrCommon = 'unique' 
 
-MSRESOLVE.G.UserChoices['dataAnalysisMethods']['answer'] = 'sls'
+MSRESOLVE.G.UserChoices['dataAnalysisMethods']['solverChoice'] = 'sls'
 MSRESOLVE.G.specificMolecules = 'yes'
 MSRESOLVE.G.chosenMoleculesNames = ['Acetaldehyde' , 'CO' , 'CO2' , 'Ethylene (Ethene)' , 'Ethanol' , 'Crotyl Alcohol' , 'H2' , 'H2O' , '1butanal']
 
