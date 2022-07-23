@@ -6793,8 +6793,12 @@ def main():
             if (G.calculateUncertaintiesInConcentrations == True):
                 concentrations_absolute_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_absolute_uncertainties_all_times_scaled_to_unit']))
                 concentrations_relative_uncertainties_all_times_with_abscissa = numpy.hstack((times_array_2D,resultsObjects['concentrations_relative_uncertainties_all_times']))
-                ExportXYYYData(G.concentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
-                ExportXYYYData(G.concentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
+                if '.tsv' in G.resolvedScaledConcentrationsOutputName:
+                    ExportXYYYData(G.concentrationsOutputName[:-4]+"_absolute_uncertainties.tsv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
+                    ExportXYYYData(G.concentrationsOutputName[:-4]+"_relative_uncertainties.tsv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
+                if '.csv' in G.resolvedScaledConcentrationsOutputName:
+                    ExportXYYYData(G.concentrationsOutputName[:-4]+"_absolute_uncertainties.csv" , concentrations_absolute_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
+                    ExportXYYYData(G.concentrationsOutputName[:-4]+"_relative_uncertainties.csv", concentrations_relative_uncertainties_all_times_with_abscissa, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'relative_uncertainty', units = None)
 
         
             #Graph the concentration/relative signal data
