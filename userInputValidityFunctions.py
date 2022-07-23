@@ -382,10 +382,10 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
 
     if 'tuningCorrectPatternInternalVsExternal' in UserChoices['measuredReferenceYorN']:
         SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal']
-        if UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal'] == 'External':             #This If statement sets createMixedTuningPattern to False if a 'External' pattern is used.
-            if 'createMixedTuningPattern' in UserChoices['measuredReferenceYorN']:
-                SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
-                UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
+        #if UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal'].lower() == 'internal':     #Create a warning if internal & createMixedTuningPattern are both chosen.
+            #if 'createMixedTuningPattern' in UserChoices['measuredReferenceYorN']:
+                #if UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] == True:
+                    #print("Warning: createMixedTuningPattern is on and tuningCorrectPatternInternalVsExternal is set to internal. This is not the typical set of choices.")
     else: #If not provided, then populate with the default for backwards compatibility.
         SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = 'External'
         
