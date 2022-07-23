@@ -271,9 +271,10 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
         if UserChoices['minimalReferenceValue']['on'] =='no': #Turn off SLS implicit if the mnimalReferenceValue is not being used.
             UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
         if UserChoices['dataAnalysisMethods']['implicitSLScorrection'] == True:
-            if (UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique') or (UserChoices['dataAnalysisMethods']['answer'] != 'sls'):
-                UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
-                print("Incompatible choice detected: forcing implicitSLScorrection to False.")
+            if (UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique'):
+                if (UserChoices['dataAnalysisMethods']['answer'] != 'sls') and (UserChoices['dataAnalysisMethods']['answer'] != 'autosolver'):
+                    UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
+                    print("Incompatible choice detected: implicitSLScorrection only works with sls unique. forcing implicitSLScorrection to False.")
 
     if UserChoices['measuredReferenceYorN']['on'] == 'no': #forcing the standard and external reference files to blank if measuredReferenceYorN is not on.
         UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []
@@ -470,7 +471,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     if 'implicitSLScorrection' in UserChoices['dataAnalysisMethods']:
         SettingsVDictionary['implicitSLScorrection'] = UserChoices['dataAnalysisMethods']['implicitSLScorrection']
     else:
-        SettingsVDictionary['implicitSLScorrection'] = False #This is maintain backwards compatibility with old unit tests.
+        SettingsVDictionary['implicitSLScorrection'] = True #This is maintain backwards compatibility with old unit tests.
     SettingsVDictionary['finalOptimization']   = UserChoices['dataAnalysisMethods']['finalOptimization']
 
     SettingsVDictionary['concentrationFinder']   = UserChoices['concentrationFinder']['on']
