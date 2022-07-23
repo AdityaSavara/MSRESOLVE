@@ -341,9 +341,9 @@ def ABCDetermination(ReferencePatternMeasured, ReferencePatternLiterature):
 #this function either creates or gets the three coefficients for the polynomial correction and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceFileDesiredTuningAndForm,referenceFileExistingTuningAndForm,measuredReferenceYorN):
+def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceFileDesiredTuningAndForm,referenceFileExistingTuningAndForm,tuningCorrection):
     
-    if measuredReferenceYorN =='yes':
+    if tuningCorrection =='yes':
         (referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C'])=ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm )
     
     referenceabscissa = reference[:,0] #gets arrays of just data and abscissa
@@ -925,7 +925,7 @@ def ReferenceInputPreProcessing(ReferenceData):
     print('beginning CorrectionValueCorrector')
     ReferenceData.standardized_reference_intensities = CorrectionValueCorrector(ReferenceData.standardized_reference_intensities, G.referenceCorrectionCoefficients,
                                                        G.referenceFileDesiredTuningAndForm, G.referenceFileExistingTuningAndForm,
-                                                       G.measuredReferenceYorN)
+                                                       G.tuningCorrection)
     ReferenceData.ExportCollector('CorrectionValueCorrector')
     
     if G.minimalReferenceValue == 'yes':
@@ -3031,8 +3031,8 @@ def PopulateLogFile():
         f6.write('backgroundMassFragment = %s \n'%(G.backgroundMassFragment))
         f6.write('backgroundSlopes = %s \n'%(G.backgroundSlopes))
         f6.write('backgroundIntercepts = %s \n'%(G.backgroundIntercepts))
-    if G.measuredReferenceYorN == 'yes':
-        f6.write('measuredReferenceYorN = %s \n'%G.measuredReferenceYorN)
+    if G.tuningCorrection == 'yes':
+        f6.write('tuningCorrection = %s \n'%G.tuningCorrection)
         f6.write('referenceCorrectionCoefficientA = %s \n'%(G.referenceCorrectionCoefficients['A']))
         f6.write('referenceCorrectionCoefficientB = %s \n'%(G.referenceCorrectionCoefficients['B']))
         f6.write('referenceCorrectionCoefficientC = %s \n'%(G.referenceCorrectionCoefficients['C']))

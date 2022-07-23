@@ -25,7 +25,7 @@ MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeMeasuredShortened.tsv
 MSRESOLVE.G.tuningCorrectPatternInternalVsExternal = 'Internal'
 #We can use the default user input, which is already in MSRESOLVE.G.
 #Need to change the "direct variable" version rather than the dictionary version.
-MSRESOLVE.G.measuredReferenceYorN = 'yes'
+MSRESOLVE.G.tuningCorrection = 'yes'
 MSRESOLVE.G.createMixedTuningPattern = False
 MSRESOLVE.G.referenceFileStandardTuningAndForm = ['ReferenceLiterature.tsv','xyyy']
 MSRESOLVE.G.referenceFileExistingTuningAndForm = []

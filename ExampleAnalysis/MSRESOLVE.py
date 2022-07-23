@@ -482,8 +482,8 @@ def ABCDetermination(ReferencePatternMeasuredFileNameAndForm, ReferencePatternLi
 #this function either creates or gets the three coefficients for the polynomial correction (Tuning Correction) and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,measuredReferenceYorN):
-    if measuredReferenceYorN =='yes':
+def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm,tuningCorrection):
+    if tuningCorrection =='yes':
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         referenceCorrectionCoefficients_cov = abcCoefficients_cov
@@ -1196,7 +1196,7 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     ReferenceData.standardized_reference_patterns, ReferenceData.standardized_reference_patterns_tuning_uncertainties = TuningCorrector(ReferenceData.standardized_reference_patterns,
                                                            G.referenceCorrectionCoefficients,G.referenceCorrectionCoefficients_cov,
                                                            G.referenceFileDesiredTuningAndForm, G.referenceFileExistingTuningAndForm,
-                                                           G.measuredReferenceYorN)
+                                                           G.tuningCorrection)
     #Now check if uncertainties already exist, and if they do then the two uncertainties need to be combined. Else, made equal.
     try:
         ReferenceData.absolute_standard_uncertainties = (ReferenceData.absolute_standard_uncertainties**2 + ReferenceData.standardized_reference_patterns_tuning_uncertainties**2)**0.5
@@ -4948,8 +4948,8 @@ def PopulateLogFile():
         f6.write('backgroundMassFragment = %s \n'%(G.backgroundMassFragment))
         f6.write('backgroundSlopes = %s \n'%(G.backgroundSlopes))
         f6.write('backgroundIntercepts = %s \n'%(G.backgroundIntercepts))
-    if G.measuredReferenceYorN == 'yes':
-        f6.write('measuredReferenceYorN = %s \n'%G.measuredReferenceYorN)
+    if G.tuningCorrection == 'yes':
+        f6.write('tuningCorrection = %s \n'%G.tuningCorrection)
         f6.write('referenceCorrectionCoefficientA = %s \n'%(G.referenceCorrectionCoefficients[0]))
         f6.write('referenceCorrectionCoefficientB = %s \n'%(G.referenceCorrectionCoefficients[1]))
         f6.write('referenceCorrectionCoefficientC = %s \n'%(G.referenceCorrectionCoefficients[2]))

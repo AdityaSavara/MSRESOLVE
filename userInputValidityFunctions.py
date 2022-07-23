@@ -53,18 +53,18 @@ def parseUserInput(currentUserInput):
     if currentUserInput.specificMolecules == 'yes': #if yes, use the user's chosen moleclues
         chosenMoleculesForParsing = copy.deepcopy(currentUserInput.chosenMoleculesNames)
         #If using specificMolecules, make sure all selected molecules are in the reference data
-        if currentUserInput.measuredReferenceYorN == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
+        if currentUserInput.tuningCorrection == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
             parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNames,'chosenMolecules','Molecules from Reference Data')
-        if (currentUserInput.measuredReferenceYorN == 'yes') and (currentUserInput.createMixedTuningPattern == True):#If using a making a mixed reference pattern, check the extended moleculesNames list.
+        if (currentUserInput.tuningCorrection == 'yes') and (currentUserInput.createMixedTuningPattern == True):#If using a making a mixed reference pattern, check the extended moleculesNames list.
             currentUserInput.moleculesNamesExtended = parse.stripListOfStrings(currentUserInput.moleculesNamesExtended)
             parse.compareElementsBetweenLists(currentUserInput.chosenMoleculesNames,currentUserInput.moleculesNamesExtended,'chosenMolecules','Molecules from Reference Data')
     elif currentUserInput.specificMolecules == 'no': #Otherwise use all molecules
-        if currentUserInput.measuredReferenceYorN == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
+        if currentUserInput.tuningCorrection == 'no': #If not making a mixed reference pattern, then use the regular moleculesNames object for comparison.
             currentUserInput.moleculesNames = parse.stripListOfStrings(list(currentUserInput.moleculesNames))
             chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNames)
-        if (currentUserInput.measuredReferenceYorN == 'yes') and (currentUserInput.createMixedTuningPattern == False):#If using tuning corrector and not making a mixed reference pattern, then we make the same chosenMoleculesForParsing as the normal case.
+        if (currentUserInput.tuningCorrection == 'yes') and (currentUserInput.createMixedTuningPattern == False):#If using tuning corrector and not making a mixed reference pattern, then we make the same chosenMoleculesForParsing as the normal case.
             chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNames)
-        if (currentUserInput.measuredReferenceYorN == 'yes') and (currentUserInput.createMixedTuningPattern == True):#If using a making a mixed reference pattern, check the extended moleculesNames list.
+        if (currentUserInput.tuningCorrection == 'yes') and (currentUserInput.createMixedTuningPattern == True):#If using a making a mixed reference pattern, check the extended moleculesNames list.
             currentUserInput.moleculesNamesExtended = parse.stripListOfStrings(currentUserInput.moleculesNamesExtended)
             chosenMoleculesForParsing = copy.deepcopy(currentUserInput.moleculesNamesExtended)
         
@@ -127,7 +127,7 @@ def parseUserInput(currentUserInput):
         currentUserInput.scaleRawDataFactor = float(currentUserInput.scaleRawDataFactor) #scaleRawDataFactor is a float
     
     #Reference Correction Changer
-    parse.strCheck(currentUserInput.measuredReferenceYorN,'measuredReferenceYorN')
+    parse.strCheck(currentUserInput.tuningCorrection,'tuningCorrection')
     #The below two variables are no longer strings. They are now lists with two elements, each of which are strings. TODO: Change their names to referenceFileExistingTuningAndForm and referenceFileDesiredTuningAndForm
     #parse.strCheck(currentUserInput.referenceFileExistingTuningAndForm,'referenceFileExistingTuningAndForm')
     #parse.strCheck(currentUserInput.referenceFileDesiredTuningAndForm,'referenceFileDesiredTuningAndForm')
@@ -276,17 +276,17 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
                     UserChoices['dataAnalysisMethods']['implicitSLScorrection'] = False
                     print("Incompatible choice detected: implicitSLScorrection only works with sls unique. forcing implicitSLScorrection to False.")
 
-    if UserChoices['measuredReferenceYorN']['on'] == 'no': #forcing the standard and external reference files to blank if measuredReferenceYorN is not on.
-        UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []
-        UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = []
+    if UserChoices['tuningCorrection']['on'] == 'no': #forcing the standard and external reference files to blank if tuningCorrection is not on.
+        UserChoices['tuningCorrection']['referenceFileStandardTuningAndForm'] = []
+        UserChoices['tuningCorrection']['referenceFileExistingTuningAndForm'] = []
 
-    if 'referenceFileStandardTuningAndForm' not in UserChoices['measuredReferenceYorN']:
-        UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
-    if 'referenceFileExistingTuningAndForm' not in UserChoices['measuredReferenceYorN']:
-        UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
+    if 'referenceFileStandardTuningAndForm' not in UserChoices['tuningCorrection']:
+        UserChoices['tuningCorrection']['referenceFileStandardTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
+    if 'referenceFileExistingTuningAndForm' not in UserChoices['tuningCorrection']:
+        UserChoices['tuningCorrection']['referenceFileExistingTuningAndForm'] = []     #set to default if not present, for backwards compatibility, to make sure old unit tests and analyses work.
 
-    if ((UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'] == []) and (UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] == [])):                #This If statement sets createMixedTuningPattern to False if referenceFileStandardTuningAndForm pattern and referenceFileExistingTuningAndForm are both populated with a blank list.
-            UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = False
+    if ((UserChoices['tuningCorrection']['referenceFileStandardTuningAndForm'] == []) and (UserChoices['tuningCorrection']['referenceFileExistingTuningAndForm'] == [])):                #This If statement sets createMixedTuningPattern to False if referenceFileStandardTuningAndForm pattern and referenceFileExistingTuningAndForm are both populated with a blank list.
+            UserChoices['tuningCorrection']['createMixedTuningPattern'] = False
             print("No Standard or External tuning pattern. Forcing createMixedTuningPattern to False.")
     
     #Will make sure that any referenceFileStandardTuning and referenceFileExistingTuning filenames have the same extension as the original reference pattern, and exit if that condition is not met.
@@ -299,11 +299,11 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     for referenceFileName in UserChoices['inputFiles']['referencePatternsFileNamesList']:
         if referenceFileExtension not in referenceFileName:
             print("ERROR: All filenamese in referencePatternsFileNamesList must have the same extension."); sys.exit()
-    if len (UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']) > 0:
-        if referenceFileExtension not in UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'][0]:
+    if len (UserChoices['tuningCorrection']['referenceFileStandardTuningAndForm']) > 0:
+        if referenceFileExtension not in UserChoices['tuningCorrection']['referenceFileStandardTuningAndForm'][0]:
             print("ERROR: All filenamese in referencePatternsFileNamesList and referenceFileStandardTuningAndForm must have the same extension."); sys.exit()
-    if len (UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']) > 0:
-        if referenceFileExtension not in UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'][0]:
+    if len (UserChoices['tuningCorrection']['referenceFileExistingTuningAndForm']) > 0:
+        if referenceFileExtension not in UserChoices['tuningCorrection']['referenceFileExistingTuningAndForm'][0]:
             print("ERROR: All filenamese in referencePatternsFileNamesList and referenceFileExistingTuningAndForm must have the same extension."); sys.exit()
 
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
@@ -375,47 +375,47 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['scaleRawDataOption']   = UserChoices['scaleRawDataYorN']['scaleRawDataOption']
     SettingsVDictionary['scaleRawDataFactor']   = UserChoices['scaleRawDataYorN']['scaleRawDataFactor']
 
-    SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
+    SettingsVDictionary['tuningCorrection']    = UserChoices['tuningCorrection']['on']
     
         
-    SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']
-    SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']
+    SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['tuningCorrection']['referenceFileStandardTuningAndForm']
+    SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['tuningCorrection']['referenceFileExistingTuningAndForm']
 
-    if 'tuningCorrectPatternInternalVsExternal' in UserChoices['measuredReferenceYorN']:
-        SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal']
-        #if UserChoices['measuredReferenceYorN']['tuningCorrectPatternInternalVsExternal'].lower() == 'internal':     #Create a warning if internal & createMixedTuningPattern are both chosen.
-            #if 'createMixedTuningPattern' in UserChoices['measuredReferenceYorN']:
-                #if UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] == True:
+    if 'tuningCorrectPatternInternalVsExternal' in UserChoices['tuningCorrection']:
+        SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = UserChoices['tuningCorrection']['tuningCorrectPatternInternalVsExternal']
+        #if UserChoices['tuningCorrection']['tuningCorrectPatternInternalVsExternal'].lower() == 'internal':     #Create a warning if internal & createMixedTuningPattern are both chosen.
+            #if 'createMixedTuningPattern' in UserChoices['tuningCorrection']:
+                #if UserChoices['tuningCorrection']['createMixedTuningPattern'] == True:
                     #print("Warning: createMixedTuningPattern is on and tuningCorrectPatternInternalVsExternal is set to internal. This is not the typical set of choices.")
     else: #If not provided, then populate with the default for backwards compatibility.
         SettingsVDictionary['tuningCorrectPatternInternalVsExternal']    = 'External'
         
-    if 'createMixedTuningPattern' not in UserChoices['measuredReferenceYorN']:
-        UserChoices['measuredReferenceYorN']['createMixedTuningPattern'] = True
-    SettingsVDictionary['createMixedTuningPattern']  = UserChoices['measuredReferenceYorN']['createMixedTuningPattern']
-    SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']
-    SettingsVDictionary['referenceFileDesiredTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileDesiredTuningAndForm']
-    SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients']
+    if 'createMixedTuningPattern' not in UserChoices['tuningCorrection']:
+        UserChoices['tuningCorrection']['createMixedTuningPattern'] = True
+    SettingsVDictionary['createMixedTuningPattern']  = UserChoices['tuningCorrection']['createMixedTuningPattern']
+    SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['tuningCorrection']['referenceFileExistingTuningAndForm']
+    SettingsVDictionary['referenceFileDesiredTuningAndForm']    = UserChoices['tuningCorrection']['referenceFileDesiredTuningAndForm']
+    SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['tuningCorrection']['referenceCorrectionCoefficients']
     if 'implicitSLSRecursion' not in UserChoices['dataAnalysisMethods']: #This variable is a work in progress. This if statement is to prevent errors thats created by old Unit Test. 
         UserChoices['dataAnalysisMethods']['implicitSLSRecursion'] = 0 
         SettingsVDictionary['implicitSLSRecursion']  = UserChoices['dataAnalysisMethods']['implicitSLSRecursion']
          
 
     #to make sure old unit tests and analyses work.
-    if 'referenceFileStandardTuningAndForm' in UserChoices['measuredReferenceYorN']:
-        SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']
+    if 'referenceFileStandardTuningAndForm' in UserChoices['tuningCorrection']:
+        SettingsVDictionary['referenceFileStandardTuningAndForm']    = UserChoices['tuningCorrection']['referenceFileStandardTuningAndForm']
     else:
         SettingsVDictionary['referenceFileStandardTuningAndForm'] = []
 
     try: #to make sure old unit tests and analyses work.
-        #if 'tuningCorrectorGasMixtureMoleculeNames' in UserChoices['measuredReferenceYorN'].keys():
-        SettingsVDictionary['tuningCorrectorGasMixtureMoleculeNames'] = UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']
+        #if 'tuningCorrectorGasMixtureMoleculeNames' in UserChoices['tuningCorrection'].keys():
+        SettingsVDictionary['tuningCorrectorGasMixtureMoleculeNames'] = UserChoices['tuningCorrection']['tuningCorrectorGasMixtureMoleculeNames']
     except: #to make sure old unit tests work.
         SettingsVDictionary['tuningCorrectorGasMixtureMoleculeNames'] = [] 
-        UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames'] = []
+        UserChoices['tuningCorrection']['tuningCorrectorGasMixtureMoleculeNames'] = []
     
     try:
-        SettingsVDictionary['referenceCorrectionCoefficients_cov']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients_cov']
+        SettingsVDictionary['referenceCorrectionCoefficients_cov']    = UserChoices['tuningCorrection']['referenceCorrectionCoefficients_cov']
     except:
         SettingsVDictionary['referenceCorrectionCoefficients_cov']    = [0,0,0] #TODO: This is to keep some old unit tests running. Ideally they should be fixed.
     SettingsVDictionary['extractReferencePatternFromDataOption']   = UserChoices['extractReferencePatternFromDataOption']['on']

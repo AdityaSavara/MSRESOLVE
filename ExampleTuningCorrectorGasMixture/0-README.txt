@@ -9,7 +9,7 @@ The reference pattern listed for analysis has internally collected spectra which
 
 Proc Doc type things:
  -- First added at line 5351 
-     if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
+     if len(G.UserChoices['tuningCorrection']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
  -- Now make a reference object from LiteratureReference.csv so that simulated signals can be made.
  -- GenerateReferenceDataList(referencePatternsFileNamesList,referencePatternsFormsList,AllMID_ObjectsDict={}):
  -- Need to be careful because "ReferenceInputPreProcessing" is being used.

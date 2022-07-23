@@ -25,7 +25,7 @@ suffix = ut.returnDigitFromFilename(__file__)
 #Need to change the "direct variable" version rather than the dictionary version.
 MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeMeasured.tsv']
 
-MSRESOLVE.G.measuredReferenceYorN = 'yes'
+MSRESOLVE.G.tuningCorrection = 'yes'
 MSRESOLVE.G.createMixedTuningPattern = True
 MSRESOLVE.G.referenceFileStandardTuningAndForm = []
 MSRESOLVE.G.referenceFileExistingTuningAndForm = ['ReferenceLiterature.tsv','xyyy']

@@ -500,13 +500,13 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
 #this function either creates or gets the three coefficients for the polynomial correction (Tuning Correction) and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=None,referenceFileDesiredTuningAndForm=None,measuredReferenceYorN="no"):
+def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficients, referenceCorrectionCoefficients_cov, referenceFileExistingTuningAndForm=None,referenceFileDesiredTuningAndForm=None,tuningCorrection="no"):
 
     #Tuning corrector is designed to work with standardized_reference_patterns, so first we make sure standardize the data.
     referenceDataArrayWithAbscissa=StandardizeReferencePattern(referenceDataArrayWithAbscissa)    
     if type(referenceCorrectionCoefficients) == type({}):#check if it's a dictionary. If it is, we need to make it a list.
         referenceCorrectionCoefficients = [referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C']]
-    if measuredReferenceYorN =='yes':
+    if tuningCorrection =='yes':
         print("line 520!!!!!")
         if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
             print("line 522!!!!!")
@@ -563,11 +563,11 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
         G.referenceCorrectionCoefficients_cov = None
     #Wanted to do something like "if list(G.referenceCorrectionCoefficients) != [0,0,1]:" but can't do it out here. Can do it inside function.       
 
-    if G.measuredReferenceYorN =='no':
+    if G.tuningCorrection =='no':
        G.createMixedTuningPattern =  False #override the mixed tuning pattern choice if there is no measured reference.
 
     if G.createMixedTuningPattern == False:   
-        if G.measuredReferenceYorN =='yes': #in this case, we are going to apply the external tuning to the current pattern.
+        if G.tuningCorrection =='yes': #in this case, we are going to apply the external tuning to the current pattern.
             
                 print("line 520!!!!!")
                 referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuningAndForm
@@ -619,7 +619,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                                                                
     if G.createMixedTuningPattern== True:  #in this case, we are going to apply the current tuning to the external pattern, and also create a mixed pattern. So the ReferenceData pointer will point to a mixed pattern by the end of this if statement.
         print("line 619!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-        if G.measuredReferenceYorN =='yes':
+        if G.tuningCorrection =='yes':
             #First read in the existing tuning patterns.
             referenceFileDesiredTuningAndForm = G.referenceFileDesiredTuningAndForm
             referenceFileExistingTuningAndForm = G.referenceFileExistingTuningAndForm
@@ -761,9 +761,9 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         for moleculeIndex,moleculeName in enumerate(ReferenceDataExistingTuning.molecules):
             desiredConcentrationIndex = moleculeIndex  
             #Take the concentration if it's named:
-            if moleculeName in G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']:
-                currentConcentrationIndex = list(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']).index(moleculeName)
-                knownConcentrationsArray[desiredConcentrationIndex] = G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureConcentrations'][currentConcentrationIndex]
+            if moleculeName in G.UserChoices['tuningCorrection']['tuningCorrectorGasMixtureMoleculeNames']:
+                currentConcentrationIndex = list(G.UserChoices['tuningCorrection']['tuningCorrectorGasMixtureMoleculeNames']).index(moleculeName)
+                knownConcentrationsArray[desiredConcentrationIndex] = G.UserChoices['tuningCorrection']['tuningCorrectorGasMixtureConcentrations'][currentConcentrationIndex]
             else: #else set it to zero.
                 knownConcentrationsArray[desiredConcentrationIndex] = 0
         #The first item in the concentrations array is supposed to be the time. We will simply put the integer "1" there, since we will have one point. 
@@ -790,7 +790,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
         TuningCorrectorGasMixtureSimulatedHypotheticalReferenceDataObject.exportReferencePattern("TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv")
         print('line 646')        
         
-        if G.measuredReferenceYorN =='yes':
+        if G.tuningCorrection =='yes':
             #we are using specific files for obtaining the tuning correction coefficients in the case of GasMixtureTuningCorrector
             referenceFileExistingTuningAndForm=["TuningCorrectorGasMixtureSimulatedHypotheticalReferenceData.csv","XYYY"]
             referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"]
@@ -5532,8 +5532,8 @@ def PopulateLogFile():
         f6.write('backgroundMassFragment = %s \n'%(G.backgroundMassFragment))
         f6.write('backgroundSlopes = %s \n'%(G.backgroundSlopes))
         f6.write('backgroundIntercepts = %s \n'%(G.backgroundIntercepts))
-    if G.measuredReferenceYorN == 'yes':
-        f6.write('measuredReferenceYorN = %s \n'%G.measuredReferenceYorN)
+    if G.tuningCorrection == 'yes':
+        f6.write('tuningCorrection = %s \n'%G.tuningCorrection)
         f6.write('referenceCorrectionCoefficientA = %s \n'%(G.referenceCorrectionCoefficients[0]))
         f6.write('referenceCorrectionCoefficientB = %s \n'%(G.referenceCorrectionCoefficients[1]))
         f6.write('referenceCorrectionCoefficientC = %s \n'%(G.referenceCorrectionCoefficients[2]))
@@ -5697,7 +5697,7 @@ def main():
     G.moleculesNames = getMoleculesFromReferenceData(G.referencePatternsFileNamesList[0])
     #If a tuning correction is going to be done, we'll make a mixed reference pattern.
     #G.moleculesNamesExtended needs to be populated before the first tuning correction and before parsing of userinput.
-    if str(G.measuredReferenceYorN).lower() == 'yes': 
+    if str(G.tuningCorrection).lower() == 'yes': 
         G.moleculesNamesExistingTuning = getMoleculesFromReferenceData(G.referenceFileExistingTuningAndForm[0])
         moleculesToAddToReferencePattern = []
         for moleculeName in list(G.moleculesNamesExistingTuning):
@@ -5848,8 +5848,8 @@ def main():
 
     #This codeblock is for the TuningCorrectorGasMixture feature. It should be before the prototypicalReferenceData is created.
     #A measured gas mixture spectrum is compared to a simulated gas mixture spectrum, and the tuning correction is then made accordingly.
-    if G.measuredReferenceYorN == 'yes':
-        if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
+    if G.tuningCorrection == 'yes':
+        if len(G.UserChoices['tuningCorrection']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
             ReferenceDataList = tuningCorrectorGasMixture(ReferenceDataList, G)
     #Creating prototypicalReferenceData which will be interrogated later for which molecules and masses to expect in the ReferenceDataObjects.
     prototypicalReferenceData = copy.deepcopy(ReferenceDataList[0])
