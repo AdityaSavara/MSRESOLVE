@@ -2684,7 +2684,7 @@ def RawSignalThresholdFilter (distinguished,reciprocal_matching_correction_value
     monitored_reference_intensities_copy = monitored_reference_intensities
     rawsignalsarray_copy = remaining_rawsignals_SLS
     summation = sum(rawsignalsarray_copy)
-    [rawSignalThresholdMethod,rawSignalThresholdValue,sensitivityThresholdValue,rawSignalThresholdDivider,rawSignalThresholdLimit,rawSignalThresholdLimitPercent] = ThresholdList
+    [applyRawSignalThresholds,rawSignalThresholdValue,sensitivityThresholdValue,rawSignalThresholdDivider,rawSignalThresholdLimit,rawSignalThresholdLimitPercent] = ThresholdList
     #this section of the code enables the function to eliminate from the raw signal array (for the purpose of this function only)
     #the highest value in the array, if it makes up over 90 percent of the raw signals present. This is useful because if one of 
     #the signals does become this great then it will eliminate all the other signals present when it becomes very high
@@ -3076,8 +3076,8 @@ def PopulateLogFile():
         f6.write('dataSmootherTimeRadius = %s \n'%(G.dataSmootherTimeRadius))
         f6.write('dataSmootherPointRadius = %s \n'%(G.dataSmootherPointRadius))
         f6.write('dataSmootherHeadersToConfineTo = %s \n'%(G.dataSmootherHeadersToConfineTo))
-    if G.rawSignalThresholdMethod == 'yes':
-        f6.write('rawSignalThresholdMethod = %s \n'%(G.rawSignalThresholdMethod))
+    if G.applyRawSignalThresholds == 'yes':
+        f6.write('applyRawSignalThresholds = %s \n'%(G.applyRawSignalThresholds))
         f6.write('rawSignalThresholdValue = %s \n'%(G.rawSignalThresholdValue))
         f6.write('sensitivityThresholdValue = %s \n'%(G.sensitivityThresholdValue))
         f6.write('rawSignalThresholdDivider = %s \n'%(G.rawSignalThresholdDivider))
@@ -3313,7 +3313,7 @@ def main():
                                   G.csvFile, G.moleculesRange, G.csvFileName,G.dataUpperBound,
                                   G.dataLowerBound, G.increments, G.permutationNum]
         SLSChoices = [G.uniqueOrCommon, G.slsFinish, G.distinguished]
-        ThresholdList = [G.rawSignalThresholdMethod, G.rawSignalThresholdValue, G.sensitivityThresholdValue,
+        ThresholdList = [G.applyRawSignalThresholds, G.rawSignalThresholdValue, G.sensitivityThresholdValue,
                          G.rawSignalThresholdDivider, G.rawSignalThresholdLimit, G.rawSignalThresholdLimitPercent]
         
         # Calculate a coefficient for doing a unit conversion on concentrations
@@ -3335,7 +3335,7 @@ def main():
                                                        timeIndex,currentReferenceData.referenceabscissa)#gets the collected values that will be solved
             
             
-            if G.rawSignalThresholdMethod == 'yes':#user input, this function calls either sls or inverse, deletes thresholds
+            if G.applyRawSignalThresholds == 'yes':#user input, this function calls either sls or inverse, deletes thresholds
                     solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline,
                                                          currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
                                                          ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,

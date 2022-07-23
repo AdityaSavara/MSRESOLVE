@@ -179,9 +179,9 @@ def parseUserInput(currentUserInput):
         parse.compareElementsBetweenLists(currentUserInput.dataSmootherHeadersToConfineTo,chosenMassFragmentsForParsing,'dataSmootherHeadersToConfineTo','chosenMolecules')
     
     #Raw Signal Threshold
-    parse.strCheck(currentUserInput.rawSignalThresholdMethod,'rawSignalThresholdMethod')
+    parse.strCheck(currentUserInput.applyRawSignalThresholds,'applyRawSignalThresholds')
     parse.strCheck(currentUserInput.rawSignalThresholdLimit,'rawSignalThresholdLimit')
-    if currentUserInput.rawSignalThresholdMethod == 'yes': #If using rawSignalThresholdMethod
+    if currentUserInput.applyRawSignalThresholds == 'yes': #If using applyRawSignalThresholds
         #raw signal threshold value, sensitivity value, raw signal threshold divider, and raw signal threshold limit percent are all lists
         currentUserInput.rawSignalThresholdValue = parse.listCast(currentUserInput.rawSignalThresholdValue)
         currentUserInput.sensitivityThresholdValue = parse.listCast(currentUserInput.sensitivityThresholdValue)
@@ -439,12 +439,12 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['dataSmootherHeadersToConfineTo']   = UserChoices['dataSmootherYorN']['dataSmootherHeadersToConfineTo']
     SettingsVDictionary['polynomialOrder']   = UserChoices['dataSmootherYorN']['polynomialOrder']
 
-    SettingsVDictionary['rawSignalThresholdMethod']   = UserChoices['rawSignalThresholdMethod']['on']
-    SettingsVDictionary['rawSignalThresholdValue']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdValue']
-    SettingsVDictionary['sensitivityThresholdValue']   = UserChoices['rawSignalThresholdMethod']['sensitivityThresholdValue']
-    SettingsVDictionary['rawSignalThresholdDivider']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdDivider']
-    SettingsVDictionary['rawSignalThresholdLimit']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimit']
-    SettingsVDictionary['rawSignalThresholdLimitPercent']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent']
+    SettingsVDictionary['applyRawSignalThresholds']   = UserChoices['applyRawSignalThresholds']['on']
+    SettingsVDictionary['rawSignalThresholdValue']   = UserChoices['applyRawSignalThresholds']['rawSignalThresholdValue']
+    SettingsVDictionary['sensitivityThresholdValue']   = UserChoices['applyRawSignalThresholds']['sensitivityThresholdValue']
+    SettingsVDictionary['rawSignalThresholdDivider']   = UserChoices['applyRawSignalThresholds']['rawSignalThresholdDivider']
+    SettingsVDictionary['rawSignalThresholdLimit']   = UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimit']
+    SettingsVDictionary['rawSignalThresholdLimitPercent']   = UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimitPercent']
  
     SettingsVDictionary['calculateUncertaintiesInConcentrations'] 	=	    UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] 
     SettingsVDictionary['referenceFileUncertainties'] 	=	    UserChoices['uncertainties']['referenceFileUncertainties'] 

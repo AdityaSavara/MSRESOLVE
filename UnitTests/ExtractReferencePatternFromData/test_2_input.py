@@ -169,7 +169,7 @@ polynomialOrder = 1  #During the local smoothing, a linear fit (or polynomial fi
 #To change the threshold at which raw signals are not longer relevant, change below (similar to above function, but for rows instead of columns)
 #These signals get converted into 0.
 #WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
-rawSignalThresholdMethod = 'yes'
+applyRawSignalThresholds = 'yes'
 rawSignalThresholdValue = [.0000001]
 sensitivityThresholdValue = [1] #this is the number in the Reference given, the relative intensity of the signal of the mass fragment
 rawSignalThresholdDivider = []

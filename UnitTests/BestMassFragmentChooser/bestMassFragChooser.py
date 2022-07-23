@@ -81,7 +81,7 @@ def bestMassFragChooser(chosenMolecules,
         
         G.uniqueOrCommon='unique'
         
-        G.excludeMoleculesIfSignificantFragmentNotObserved=G.rawSignalThresholdMethod
+        G.excludeMoleculesIfSignificantFragmentNotObserved=G.applyRawSignalThresholds
     #Initialize a ReferenceData class object
     [provided_reference_patterns, electronnumbers, molecules, molecularWeights, 
         SourceOfFragmentationPatterns, sourceOfIonizationData,
