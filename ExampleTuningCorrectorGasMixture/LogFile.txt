@@ -2,7 +2,7 @@ Sat Sep 25 20:00:41 2021
 
 referenceFileName = ['ExtractedReferencePattern.csv'] 
 form  = ['xyyy'] 
-collectedFileName = Collected_Data.csv 
+dataToAnalyzeFileName = Collected_Data.csv 
 timeRangeLimit = yes 
 timeRangeStart = 176.0 
 timeRangeFinish = 900.0 

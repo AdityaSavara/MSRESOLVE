@@ -14,8 +14,8 @@ def parseUserInput(currentUserInput):
     currentUserInput.referencePatternsFormsList = parse.stripListOfStrings(currentUserInput.referencePatternsFormsList)
     currentUserInput.referencePatternsFormsList = parse.parallelVectorize(currentUserInput.referencePatternsFormsList,len(currentUserInput.referencePatternsFileNamesList)) #form needs to be a list of the same length as referenceFileName
     currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
-    parse.strCheck(currentUserInput.collectedFileName,'collectedFileName') #collectedFileName must be a string
-    currentUserInput.collectedFileName = currentUserInput.collectedFileName.strip()
+    parse.strCheck(currentUserInput.dataToAnalyzeFileName,'dataToAnalyzeFileName') #dataToAnalyzeFileName must be a string
+    currentUserInput.dataToAnalyzeFileName = currentUserInput.dataToAnalyzeFileName.strip()
  
     
     #preProcessing, dataAnalysis, dataSimulation, grapher
@@ -277,7 +277,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['referencePatternsFileNamesList']   = UserChoices['inputFiles']['referencePatternsFileNamesList']
     SettingsVDictionary['referencePatternsFormsList']   = UserChoices['inputFiles']['referencePatternsFormsList']
     SettingsVDictionary['referencePatternTimeRanges']   = UserChoices['inputFiles']['referencePatternTimeRanges']
-    SettingsVDictionary['collectedFileName']   = UserChoices['inputFiles']['collectedFileName']
+    SettingsVDictionary['dataToAnalyzeFileName']   = UserChoices['inputFiles']['dataToAnalyzeFileName']
     SettingsVDictionary['ionizationDataFileName']   = UserChoices['inputFiles']['ionizationDataFileName']
     
     SettingsVDictionary['preProcessing'] = UserChoices['preProcessing']['on'] 
@@ -296,7 +296,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['iterationSuffix']    = UserChoices['iterativeAnalysis']['iterationSuffix']
     SettingsVDictionary['unusedMolecules']    = UserChoices['iterativeAnalysis']['unusedMolecules']
     SettingsVDictionary['oldReferenceFileName']    = UserChoices['iterativeAnalysis']['oldReferenceFileName']
-    SettingsVDictionary['oldCollectedFileName']    = UserChoices['iterativeAnalysis']['oldCollectedFileName']
+    SettingsVDictionary['olddataToAnalyzeFileName']    = UserChoices['iterativeAnalysis']['olddataToAnalyzeFileName']
     SettingsVDictionary['nextRefFileName']    = UserChoices['iterativeAnalysis']['nextRefFileName']
     SettingsVDictionary['nextExpFileName']    = UserChoices['iterativeAnalysis']['nextExpFileName']
     SettingsVDictionary['iterationNumber']    = UserChoices['iterativeAnalysis']['iterationNumber']  

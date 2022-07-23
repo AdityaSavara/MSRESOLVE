@@ -26,7 +26,7 @@ suffix = ut.returnDigitFromFilename(__file__)
 #Acetaldehyde and Acetaldheyde_copy are identical except Acetaldehyde has a signal of 9999 at m29 and 0 at m29.3.  Acetaldehyde_copy is the opposite having a signal of 0 at m29 and 9999 at m29.3.
 MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeNISTRefMixed2_test_3.csv']
 #Use the truncated reference data that contains only m29 and m29.2 with signals of 1 for each time for both mass fragments
-MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated3.csv'
+MSRESOLVE.G.dataToAnalyzeFileName = '2-CrotAcetExp#2Truncated3.csv'
 MSRESOLVE.G.concentrationFinder = 'yes' #Turn on concentrationFinder
 MSRESOLVE.G.TSC_List_Type = 'SeparateMolecularFactors' #Use factors for separate molecules rather than numerous reference files
 MSRESOLVE.G.moleculesTSC_List = ['Acetaldehyde','Acetaldehyde_Easy_To_Ionize'] #the conversion factor for both molecules are determined based on the known concentrations at a particular signal for both molecules

@@ -1951,24 +1951,24 @@ def IterativeDirectoryChange(iterativeAnalysis, iterationNumber):
     os.chdir(iterationDirectoryName) #this will be changed back at the end of the program    
 
 def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber):
-    #implied arguments for this function are G.referencePatternsFileNamesList and G.collectedFileName
+    #implied arguments for this function are G.referencePatternsFileNamesList and G.dataToAnalyzeFileName
     IterativeDirectoryChange(iterativeAnalysis, iterationNumber)
     
     #naming for collected file
     #record the old file names 
-    G.oldcollectedFileName = G.collectedFileName
+    G.olddataToAnalyzeFileName = G.dataToAnalyzeFileName
     #construct the file names for the current run of the program
     #TODO FIXME, This syntax with -21 will not allow iterative to be compatible with more than 9 iterations
-    collectedFileNameTemp = str(G.collectedFileName)[:-21] +  str(G.iterationSuffix) + str(G.collectedFileName)[-4:]      
+    dataToAnalyzeFileNameTemp = str(G.dataToAnalyzeFileName)[:-21] +  str(G.iterationSuffix) + str(G.dataToAnalyzeFileName)[-4:]      
     #copy the experimental and reference files into new names for this iterative run
-    shutil.copy(G.collectedFileName, collectedFileNameTemp)
+    shutil.copy(G.dataToAnalyzeFileName, dataToAnalyzeFileNameTemp)
     
     #change the globals to reflect the renaming of the ref and exp files
-    G.collectedFileName =  collectedFileNameTemp
+    G.dataToAnalyzeFileName =  dataToAnalyzeFileNameTemp
     
     #construct file names for the next run of the program 
     #TODO FIXME, This syntax with -11 will not allow iterative to be compatible with more than 9 iterations
-    G.nextExpFileName = G.collectedFileName[:-11] +  str('_remaining') + G.collectedFileName[-11:]
+    G.nextExpFileName = G.dataToAnalyzeFileName[:-11] +  str('_remaining') + G.dataToAnalyzeFileName[-11:]
     #naming for reference files
     
     G.oldReferenceFileName = []
@@ -1991,10 +1991,10 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber):
         #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
         G.nextRefFileName.append(RefName[:-18] + '_unused_iter_%s' %G.iterationNumber + RefName[-4:])
     return None
-    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referencePatternsFileNamesList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.olddataToAnalyzeFileName, G.referencePatternsFileNamesList,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
-    #implied arguments for this function are G.referencePatternsFileNamesList and G.collectedFileName
+    #implied arguments for this function are G.referencePatternsFileNamesList and G.dataToAnalyzeFileName
     #this global value is set so that each export statement can label the output files correctly
     G.iterationNumber = iterationNumber
     
@@ -2013,12 +2013,12 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     AppendListToFile("__var_list__", G.__var_list__, "UserInput_iter_1.py", float('Inf'))
     
     #record the old file names 
-    G.oldcollectedFileName = G.collectedFileName
+    G.olddataToAnalyzeFileName = G.dataToAnalyzeFileName
     #construct the file names for the first run of the program
-    G.collectedFileName = G.collectedFileName[:-4] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
+    G.dataToAnalyzeFileName = G.dataToAnalyzeFileName[:-4] +  str(G.iterationSuffix) + G.dataToAnalyzeFileName[-4:]
     #construct file names for the second run of the program 
     #TODO FIXME, This syntax with -11 will not allow iterative to be compatible with more than 9 iterations
-    G.nextExpFileName = G.collectedFileName[:-11] + '_remaining_iter_1' + G.collectedFileName[-4:]
+    G.nextExpFileName = G.dataToAnalyzeFileName[:-11] + '_remaining_iter_1' + G.dataToAnalyzeFileName[-4:]
     
     G.oldReferenceFileName = []
     for RefIndex, RefName in enumerate(G.referencePatternsFileNamesList): #a list
@@ -2029,11 +2029,11 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
         G.nextRefFileName.append(RefName[:-4] + '_unused_iter_1' + RefName[-4:])
     
     return None 
-    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referencePatternsFileNamesList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.olddataToAnalyzeFileName, G.referencePatternsFileNamesList,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
 def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataListFullCopy):
-    #implied arguments: G.dataSimulation, G.referencePatternsFileNamesList, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMoleculesNames, G.iterationNumber
+    #implied arguments: G.dataSimulation, G.referencePatternsFileNamesList, G.dataToAnalyzeFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMoleculesNames, G.iterationNumber
     #override data simulation to yes if it was not selected
     if G.dataSimulation != 'yes':
         print("Iterative analysis cannot find the remaining signals in the experiment without signal simulation being run.")
@@ -2067,7 +2067,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     
     #Export current Experimental Data
     #Experimental data is trimmed prior to this function, but it still needs to be exported  
-    ExportXYYYData(G.collectedFileName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers,
+    ExportXYYYData(G.dataToAnalyzeFileName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers,
               abscissaHeader = ExperimentData.abscissaHeader, dataType = 'preProcessed', rowIndex = ExperimentData.times)
    
     for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
@@ -2168,7 +2168,7 @@ def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
 
     G.nextUserInputModule.__var_list__ = G.__var_list__ 
     #save the new file name for the next user input file 
-    G.nextUserInputModule.collectedFileName = G.nextExpFileName 
+    G.nextUserInputModule.dataToAnalyzeFileName = G.nextExpFileName 
     G.nextUserInputModule.referencePatternsFileNamesList = G.nextRefFileName
     #updating the selected molecules for the next user input file
     G.nextUserInputModule.chosenMoleculesNames = G.unusedMolecules
@@ -2207,7 +2207,7 @@ def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
     #copy the experimental signals to the next iteration
     copyFromPath = os.path.join(os.curdir, os.pardir,
             str(iterationDirectoryName),
-            str(G.nextUserInputModule.collectedFileName))
+            str(G.nextUserInputModule.dataToAnalyzeFileName))
     shutil.copy(copyFromPath, os.getcwd())
     for RefIndex, RefName in enumerate(G.nextUserInputModule.referencePatternsFileNamesList): #a list
         #copy the next reference file from the previous iteration folder to the next iteration folder
@@ -2242,17 +2242,17 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     exportSimulatedSignalsSoFar(G.simulatedSignalsOutputName,iterationDirectoryName,G.iterationNumber) #subtract 1 from the iteration number since the iteration number has already been changed
     IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy)
     return None
-     #implied returns: G.referencePatternsFileNamesList, G.collectedFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
+     #implied returns: G.referencePatternsFileNamesList, G.dataToAnalyzeFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
 ###############################################################################
 #########################  Functions to read data files #######################
 ###############################################################################
 #These functions read in the experimental data file and the reference file. The
 #returned variables can then be used to initialize the respective classes.
 
-def readDataFile(collectedFileName):
+def readDataFile(dataToAnalyzeFileName):
 
  #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
-    dataFrame = pandas.read_csv('%s' %collectedFileName, header=None)
+    dataFrame = pandas.read_csv('%s' %dataToAnalyzeFileName, header=None)
     ''' generate mass fragment list'''
     #select only the 2nd row down, all columns except for the first. 
 		#"iloc" is a pandas dataframe function. All it does is select a portion of the data.
@@ -2295,7 +2295,7 @@ def readDataFile(collectedFileName):
         rawCollectedData = numpy.vstack((rawCollectedData,rawCollectedData))
 
         
-    return mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName
+    return mass_fragment_numbers, abscissaHeader, times, rawCollectedData, dataToAnalyzeFileName
 
 #readReferenceFile is a helper function that reads the reference file in a certain form and returns the
 #variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
@@ -2561,10 +2561,10 @@ def getMoleculesFromReferenceData(ReferenceFileName):
 '''
 getMassFragmentsFromCollectedData is a function that takes in the collected filename and returns the mass fragments present in the data
 '''
-def getMassFragmentsFromCollectedData(CollectedFileName):
+def getMassFragmentsFromCollectedData(dataToAnalyzeFileName):
     #Read the csv file
     #TODO CHange to use numpy.gen_from_text instead of pandas
-    DataInfo = pandas.read_csv(CollectedFileName,header=0)
+    DataInfo = pandas.read_csv(dataToAnalyzeFileName,header=0)
     #Convert the data into an array
     DataInfoArray = numpy.array(DataInfo)
     #Get the names of mass fragments in collected data
@@ -2635,9 +2635,9 @@ class MSData (object):
 		#self.mass_fragment_numbers , 1D and must be integers
 		#self.rawCollectedData, a 2D array of the signals.
 		
-    def __init__(self, mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName=None):
+    def __init__(self, mass_fragment_numbers, abscissaHeader, times, rawCollectedData, dataToAnalyzeFileName=None):
         
-        self.mass_fragment_numbers, self.abscissaHeader, self.times, self.rawCollectedData, self.collectedFileName=mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName
+        self.mass_fragment_numbers, self.abscissaHeader, self.times, self.rawCollectedData, self.dataToAnalyzeFileName=mass_fragment_numbers, abscissaHeader, times, rawCollectedData, dataToAnalyzeFileName
         #class object variable created to allow class to be used separately from the program. 
         self.ExportAtEachStep = ''
         
@@ -5384,7 +5384,7 @@ def PopulateLogFile():
     f6.write('\n')
     f6.write('referenceFileName = %s \n'%(G.referencePatternsFileNamesList))
     f6.write('form  = %s \n'%(G.referencePatternsFormsList))
-    f6.write('collectedFileName = %s \n'%(G.collectedFileName ))
+    f6.write('dataToAnalyzeFileName = %s \n'%(G.dataToAnalyzeFileName ))
     if G.timeRangeLimit == 'yes':#some of the lines in the backgroundinput file don't need to be printed unless a selection is made, so the if statements here make that happen
         f6.write('timeRangeLimit = %s \n'%(G.timeRangeLimit))
         f6.write('timeRangeStart = %s \n'%(G.timeRangeStart))
@@ -5549,7 +5549,7 @@ def main():
 
     #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
     if G.iterativeAnalysis and G.iterationNumber != 1:
-        #implied arguments for this function are G.referencePatternsFileNamesList and G.collectedFileName
+        #implied arguments for this function are G.referencePatternsFileNamesList and G.dataToAnalyzeFileName
         IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber) #This function also changes the working directory
 
     #Save an MSReference object containing all molecules and an MSData object containing all mass fragments
@@ -5559,14 +5559,14 @@ def main():
             AllMoleculesReferenceFileName = remove_iter_fromFileName(G.referencePatternsFileNamesList[referenceFileNameIndex]) #Remove the _iter_ from the name so the program has the original filename to access from the parent directory
             AllMoleculesReferenceDataFilePath = os.path.normpath(os.path.join(os.curdir, os.pardir,AllMoleculesReferenceFileName)) #This function will get the path of the reference file from the parent directory 
             AllMoleculesreferencePatternsFileNamesList.append(AllMoleculesReferenceDataFilePath) #Append the path to the list and the program will read the reference file from the path name
-        AllMassFragmentsExperimentDataFileName = remove_iter_fromFileName(G.collectedFileName) #Remove _iter_ from the data filename so the program has the original filename to access from the parent directory
+        AllMassFragmentsExperimentDataFileName = remove_iter_fromFileName(G.dataToAnalyzeFileName) #Remove _iter_ from the data filename so the program has the original filename to access from the parent directory
         AllMassFragmentsExperimentDataFileNamePath = os.path.normpath(os.path.join(os.curdir, os.pardir, AllMassFragmentsExperimentDataFileName)) #This function will get the path of the data file from the parent directory
     else: #Otherwise not running iterative or in the first iteration, just copy the filename
         AllMoleculesreferencePatternsFileNamesList = copy.copy(G.referencePatternsFileNamesList)
-        AllMassFragmentsExperimentDataFileNamePath = copy.copy(G.collectedFileName)
+        AllMassFragmentsExperimentDataFileNamePath = copy.copy(G.dataToAnalyzeFileName)
     #Create the MSReference and MSData objects containing all molecules and all mass fragments, respectively
-    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(AllMassFragmentsExperimentDataFileNamePath)
-    AllMassFragmentsExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)        
+    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_dataToAnalyzeFileName]=readDataFile(AllMassFragmentsExperimentDataFileNamePath)
+    AllMassFragmentsExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, dataToAnalyzeFileName=exp_dataToAnalyzeFileName)        
     AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesreferencePatternsFileNamesList,G.referencePatternsFormsList,G.AllMID_ObjectsDict)
     #Then prepare AllMoleculesReferenceDataList to get reciprocal_matching_correction_values, this value is fed into RatioFinder
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
@@ -5577,7 +5577,7 @@ def main():
     G.referencePatternsFileNamesList = parse.listCast(G.referencePatternsFileNamesList)
     G.moleculesNames = getMoleculesFromReferenceData(G.referencePatternsFileNamesList[0])
     #We are reading the experimental data in and this must be before user input processing so we have the mass fragments
-    G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.collectedFileName)
+    G.exp_mass_fragment_numbers = getMassFragmentsFromCollectedData(G.dataToAnalyzeFileName)
     
     #beforeParsedGDict this will be needed for iterative. This actually contains "UserChoices" when that's available, but we won't use that.
     beforeParsedGDict = {}
@@ -5609,8 +5609,8 @@ def main():
     global currentReferenceData
     global resultsObjects
     resultsObjects = {}
-    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
-    ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
+    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_dataToAnalyzeFileName]=readDataFile(G.dataToAnalyzeFileName)
+    ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, dataToAnalyzeFileName=exp_dataToAnalyzeFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referencePatternsFileNamesList,G.referencePatternsFormsList,G.AllMID_ObjectsDict)
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
@@ -5626,7 +5626,7 @@ def main():
    
     #if this is the first iterative run, then the reference and experimental files need to have been imported before the iteration can begin
     if G.iterativeAnalysis and G.iterationNumber == 1 :
-        #implied arguments for the following function are G.referencePatternsFileNamesList and G.collectedFileName
+        #implied arguments for the following function are G.referencePatternsFileNamesList and G.dataToAnalyzeFileName
         IterationFirstDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
 
     # Skip preProcessing all together if we are loading analyzed data

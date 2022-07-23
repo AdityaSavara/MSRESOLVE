@@ -9,7 +9,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 referenceFileName = '180710ReferenceFile14thiteration.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
-collectedFileName = '180710MassSpecSSITKAData.csv'	#enter the file name with raw mass spectrometer data
+dataToAnalyzeFileName = '180710MassSpecSSITKAData.csv'	#enter the file name with raw mass spectrometer data
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
@@ -238,11 +238,11 @@ timeSinceLastCheckpoint = ''
 iterationSuffix= ''
 unusedMolecules =''
 oldReferenceFileName = ''
-oldCollectedFileName ='' 
+olddataToAnalyzeFileName ='' 
 nextRefFileName = ''
 nextExpFileName = ''
 
-__var_list__ = ['referenceFileName','form','collectedFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+__var_list__ = ['referenceFileName','form','dataToAnalyzeFileName','referencePatternTimeRanges','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'olddataToAnalyzeFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
 				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',

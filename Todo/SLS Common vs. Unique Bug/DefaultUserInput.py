@@ -8,7 +8,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 #//Input Files//
 referenceFileName = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
-collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
+dataToAnalyzeFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
 exportSuffix = ''
 
 #Iterative Analysis
@@ -235,7 +235,7 @@ start = ''
 timeSinceLastCheckpoint = ''
 
 
-__var_list__ = ['referenceFileName','form','collectedFileName','iterativeAnalysis','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
+__var_list__ = ['referenceFileName','form','dataToAnalyzeFileName','iterativeAnalysis','preProcessing','dataAnalysis','dataSimulation','grapher','timeRangeLimit','timeRangeStart','timeRangeFinish',
 				'specificMolecules','chosenMolecules','specificMassFragments','chosenMassFragments', 'moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes',
 				'backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound',
 				'dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesRange','csvFileName','increments','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor',

@@ -9,7 +9,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 referenceFileNameList = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
 form = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
-collectedFileName = '2-CrotAcetExp#2ExclusionTest.csv'	#enter the file name with raw mass spectrometer data
+dataToAnalyzeFileName = '2-CrotAcetExp#2ExclusionTest.csv'	#enter the file name with raw mass spectrometer data
 
 #Iterative Analysis
 #Options are True, False, or '<name of iteration>'
@@ -238,7 +238,7 @@ timeSinceLastCheckpoint = ''
 iterationSuffix= ''
 unusedMolecules =''
 oldReferenceFileName = ''
-oldCollectedFileName ='' 
+olddataToAnalyzeFileName ='' 
 nextRefFileName = ''
 nextExpFileName = ''
 iterationNumber = None

@@ -26,7 +26,7 @@ suffix = ut.returnDigitFromFilename(__file__)
 MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeNISTRefMixed2_test_2.csv','AcetaldehydeNISTRefMixed2_test_2.csv'] #List the reference file twice
 MSRESOLVE.G.referencePatternTimeRanges = [[1,1],[8,8]] #Give time ranges for each reference file (Every point that is not at 1 or 8 will need to be interpolated)
 #Use the truncated reference data that contains only 8 points with a signal of 1 for m29
-MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated2.csv'
+MSRESOLVE.G.dataToAnalyzeFileName = '2-CrotAcetExp#2Truncated2.csv'
 MSRESOLVE.G.concentrationFinder = 'yes' #Turn on concentrationFinder
 MSRESOLVE.G.TSC_List_Type = 'MultipleReferencePatterns' #Use factors for numerous reference files
 MSRESOLVE.G.moleculesTSC_List = ['Acetaldehyde','Acetaldehyde'] #Use the same molecule

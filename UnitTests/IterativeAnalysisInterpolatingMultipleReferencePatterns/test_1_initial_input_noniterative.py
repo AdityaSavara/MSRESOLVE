@@ -9,7 +9,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 referencePatternsFileNamesList = ['AcetaldehydeNISTRefMixed2.csv','AcetaldehydeNISTRefMixed2Edit.csv'] #enter the file name of the file containing reference information
 referencePatternsFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [[176,200],[250,400]] #Leave empty if not using reference pattern time chooser []
-collectedFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
+dataToAnalyzeFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data
 
 ionizationDataFileName = '_ProvidedIonizationData.csv'
 

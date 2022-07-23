@@ -2,7 +2,7 @@ Thu May 21 16:26:45 2020
 
 referenceFileName = ['ExtractedReferencePattern.csv'] 
 form  = ['xyyy'] 
-collectedFileName = Collected_Reference.csv 
+dataToAnalyzeFileName = Collected_Reference.csv 
 linearBaselineCorrectionSemiAutomatic = yes 
 selection = ['linear'] 
 massesToBackgroundCorrect = [12.0 13.0 14.0 15.0 16.0 17.0 21.0 22.0 24.0 25.0 26.0 27.0 28.0 29.0
