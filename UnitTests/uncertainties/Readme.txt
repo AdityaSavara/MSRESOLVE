@@ -14,3 +14,4 @@ test 13 sls, chosen molecules, chosen fragments. --> ends up using inverse after
 test 14 inverse with  tuning corrector and tuning corrector uncertainties that are propagated (unfortunately, values are arbitrary)
 test 15 inverse with same tuning corrector as 14 but no tuning correctors to be propagated.  Comparing the relative uncertainties in the concentrations of of 14 and 15 shows that 14 does in fact have higher uncertainties.
 test 16: copy of test_14 but with Mixed Reference pattern as True but with no external pattern provided. Output matches 14 as expected.  However, for bizarre reasons that are not clear, test_16.py fails with pytest during datasmoothing (while test_14.py does not) if using the base package without uncertainties. Accordingly, test_16 has been changed to a manual test.
+test 17 dataForAnalysis file with _absolute_uncertainties based on test_6.py
