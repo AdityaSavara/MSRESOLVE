@@ -10,7 +10,7 @@ b)TuningCorrectorIntensity which changes the sensitivityCorrectionValues as a fu
 
 #apparently needed to have dataAnalysis on to use this feature (as checked Sep 2019, ideally should not need to).
 
-Note: Before approximately Sept 23rd-30th 2021, the regular input file was listed in the unit tests as the existing tuning. After Sept 30th 2021, the 'existing' tuning is the external (NIST/Literature) tuning.  The following files now get exported to try to bring clarity: 'ExportedReferencePatternOriginal" "ExportedReferencePatternExisting" "ExportedReferencePatternExternal" "ExportedReferencePatternExternalTuningCorrected"  "ExportedReferencePatternMixed"
+Note: Before approximately Sept 23rd-30th 2021, the regular reference file was listed in the unit tests as the existing tuning. After Sept 30th 2021, during standard usage, the 'existing' tuning is the external (NIST/Literature) tuning.  The following files now get exported to try to bring clarity: 'ExportedReferencePatternOriginal" "ExportedReferencePatternExisting" "ExportedReferencePatternExternal" "ExportedReferencePatternExternalTuningCorrected"  "ExportedReferencePatternMixed"
 
 The file AcetaldehydeMeasured.csv is actually a mixed reference pattern. However, the columns source fields have been renamed to say "Measured". The tuning correction tests here are just a 'toy' model reference pattern to check the feature. In real life, the measured reference pattern will have more difference than the literature reference.
 
