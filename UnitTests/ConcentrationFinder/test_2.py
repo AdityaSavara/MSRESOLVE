@@ -23,10 +23,10 @@ suffix = ut.returnDigitFromFilename(__file__)
 #Replace the global variables being pointed to in MSRESOLVE
 #This reference file has two molecules: Acetaldehyde and Acetaldehyde_easy_to_ionize
 #They are identical with the exceptions that Acetaldehyde has an ionization factor of 1 and signal peaks at m29 and m29.2 are 9999 and 0, respectively, and Acetaldehyde_easy_to_ionize has an ionization factor of 2 and signal peaks at m29 and m29.2 are 0 and 9999, respectively.
-MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefMixed2_test_2.csv','AcetaldehydeNISTRefMixed2_test_2.csv'] #List the reference file twice
+MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeNISTRefMixed2_test_2.csv','AcetaldehydeNISTRefMixed2_test_2.csv'] #List the reference file twice
 MSRESOLVE.G.referencePatternTimeRanges = [[1,4],[5,8]] #Give time ranges for each reference file
 #Use the truncated reference data that contains only m29 and m29.2 with signals of 1 for each time for both mass fragments
-MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated2.csv'
+MSRESOLVE.G.dataToAnalyzeFileName = '2-CrotAcetExp#2Truncated2.csv'
 MSRESOLVE.G.concentrationFinder = 'yes' #Turn on concentrationFinder
 MSRESOLVE.G.TSC_List_Type = 'MultipleReferencePatterns' #Use factors for numerous reference files
 MSRESOLVE.G.moleculesTSC_List = ['Acetaldehyde','Acetaldehyde'] 

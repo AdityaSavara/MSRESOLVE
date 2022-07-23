@@ -6,10 +6,10 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referenceFileNamesList = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
-referenceFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy'
+referencePatternsFileNamesList = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
+referencePatternsFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
-collectedFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
+dataToAnalyzeFileName = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
 
 iterativeAnalysis = False
 iterationNumber = None
@@ -108,7 +108,7 @@ scaleRawDataFactor = 1
 
 #//Reference Correction Coefficients//
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
-measuredReferenceYorN='no'
+tuningCorrection='no'
 referenceFileExistingTuningAndForm='AcetaldehydeMeasuredRef.csv'
 referenceFileDesiredTuningAndForm ='AcetaldehydeOnlyNISTRef.csv'
 referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
@@ -125,8 +125,8 @@ rpcTimeRanges = [[300,600]]
 
 #//Reference Mass Fragmentation Threshold//
 # if you want to exclude tiny fragmentation peaks
-minimalReferenceValue= 'no'
-referenceValueThreshold = [6.0]
+applyReferenceMassFragmentsThresholds= 'no'
+referenceMassFragmentFilterThreshold = [6.0]
 
 
 #//Data Threshold Filter//
@@ -158,7 +158,7 @@ polynomialOrder = 1  #During the local smoothing, a linear fit (or polynomial fi
 #To change the threshold at which raw signals are not longer relevant, change below (similar to above function, but for rows instead of columns)
 #These signals get converted into 0.
 #WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
-rawSignalThresholdMethod = 'no'
+applyRawSignalThresholds = 'no'
 rawSignalThresholdValue = [.0000001]
 sensitivityThresholdValue = [1] #this is the number in the Reference given, the relative intensity of the signal of the mass fragment
 rawSignalThresholdDivider = []

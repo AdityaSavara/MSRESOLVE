@@ -16,10 +16,10 @@ if str(__name__) != "DefaultUserInput":
 
 #//Input Files//
 UserChoices['inputFiles'] = {} #initialize the inputFiles container
-UserChoices['inputFiles']['referenceFileNamesList'] = ['ConvertedSpectra.csv'] #enter the file name of the file containing reference information
-UserChoices['inputFiles']['referenceFormsList'] = 'xyyy' #form is either 'xyyy' or 'xyxy' (if using reference pattern time chooser enter as list with forms for each individual reference file ['xyyy','xyyy','xyyy'])
+UserChoices['inputFiles']['referencePatternsFileNamesList'] = ['ConvertedSpectra.csv'] #enter the file name of the file containing reference information
+UserChoices['inputFiles']['referencePatternsFormsList'] = 'xyyy' #form is either 'xyyy' or 'xyxy' (if using reference pattern time chooser enter as list with forms for each individual reference file ['xyyy','xyyy','xyyy'])
 UserChoices['inputFiles']['referencePatternTimeRanges'] = [] #Leave empty if not using reference pattern time chooser []
-UserChoices['inputFiles']['collectedFileName'] = '20190817A-integer-data.csv'	#enter the file name with raw mass spectrometer data
+UserChoices['inputFiles']['dataToAnalyzeFileName'] = '20190817A-integer-data.csv'	#enter the file name with raw mass spectrometer data
 
 UserChoices['inputFiles']['ionizationDataFileName'] = '181017ProvidedIonizationData.csv' #the name of the file containing the ionization data
 
@@ -34,7 +34,7 @@ UserChoices['iterativeAnalysis']['TotalConcentrationsOutputName'] = 'TotalConcen
 UserChoices['iterativeAnalysis']['iterationSuffix'] = ''
 UserChoices['iterativeAnalysis']['unusedMolecules'] =''
 UserChoices['iterativeAnalysis']['oldReferenceFileName'] = []
-UserChoices['iterativeAnalysis']['oldCollectedFileName'] ='' 
+UserChoices['iterativeAnalysis']['oldDataToAnalyzeFileName'] ='' 
 UserChoices['iterativeAnalysis']['nextRefFileName'] = []
 UserChoices['iterativeAnalysis']['nextExpFileName'] = ''
 UserChoices['iterativeAnalysis']['iterationNumber'] = None #just initializing.
@@ -153,15 +153,15 @@ UserChoices['scaleRawDataYorN']['scaleRawDataFactor'] = 1
 #Note that 1 is the default and will make no alteration to the data
 
 #//Reference Correction Coefficients//
-UserChoices['measuredReferenceYorN'] = {} #initialize the measuredReferenceYorN container
+UserChoices['tuningCorrection'] = {} #initialize the tuningCorrection container
 #TODO Reference Correction Coefficients feature should be upgraded to enable separate coefficients for each molecule to allow mixing and matching of reference patterns
 #TODO This can be tested by looking at the exported reference file and comparing it to the existing reference file
 #To change reference data based on mass dependent 2nd degree polynomial fit, input polynomial below. If you do not wish to use this function, simply leave as default
-UserChoices['measuredReferenceYorN']['on'] ='no'
-UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'] ='AcetaldehydeMeasuredRef.csv'
-UserChoices['measuredReferenceYorN']['referenceFileDesiredTuningAndForm'] ='AcetaldehydeOnlyNISTRef.csv'
-#The reference correction coefficients are always used.  If measuredReferenceYorN is 'yes' then the coefficients are overwritten (Ashi thinks it will generate a new reference pattern)
-UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients'] = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
+UserChoices['tuningCorrection']['on'] ='no'
+UserChoices['tuningCorrection']['referenceFileExistingTuningAndForm'] ='AcetaldehydeMeasuredRef.csv'
+UserChoices['tuningCorrection']['referenceFileDesiredTuningAndForm'] ='AcetaldehydeOnlyNISTRef.csv'
+#The reference correction coefficients are always used.  If tuningCorrection is 'yes' then the coefficients are overwritten (Ashi thinks it will generate a new reference pattern)
+UserChoices['tuningCorrection']['referenceCorrectionCoefficients'] = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
                             
 #//Reference Pattern Changer // (rpc)
@@ -180,11 +180,11 @@ UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] =
                                                                                   ]
 
 #//Reference Mass Fragmentation Threshold//
-UserChoices['minimalReferenceValue'] = {} #initialize the minimalReferenceValue container
+UserChoices['applyReferenceMassFragmentsThresholds'] = {} #initialize the applyReferenceMassFragmentsThresholds container
 # if you want to exclude tiny fragmentation peaks
-UserChoices['minimalReferenceValue']['on'] = 'yes'
-UserChoices['minimalReferenceValue']['referenceValueThreshold'] = [2.0]
-UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds'] = [5.0]
+UserChoices['applyReferenceMassFragmentsThresholds']['on'] = 'yes'
+UserChoices['applyReferenceMassFragmentsThresholds']['referenceMassFragmentFilterThreshold'] = [2.0]
+UserChoices['applyReferenceMassFragmentsThresholds']['referenceSignificantFragmentThresholds'] = [5.0]
 
 #//Data Threshold Filter//
 UserChoices['lowerBoundThresholdChooser'] = {} #initialize the lowerBoundThresholdChooser container
@@ -212,18 +212,18 @@ UserChoices['dataSmootherYorN']['dataSmootherHeadersToConfineTo'] = [] #Masses o
 UserChoices['dataSmootherYorN']['polynomialOrder'] = 1  #During the local smoothing, a linear fit (or polynomial fit) is applied.
 
 #//Raw Signal Threshold//
-UserChoices['rawSignalThresholdMethod'] = {} #initialize the rawSignalThresholdMethod container
+UserChoices['applyRawSignalThresholds'] = {} #initialize the applyRawSignalThresholds container
 #To change the threshold at which raw signals are not longer relevant, change below (similar to above function, but for rows instead of columns)
 #We think the reference to the 'above function' in the previous line is referring to Data Threshold Filter
 #These signals get converted into 0.
 #WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
-UserChoices['rawSignalThresholdMethod']['on'] = 'no'
-UserChoices['rawSignalThresholdMethod']['rawSignalThresholdValue'] = [.0000001]
-UserChoices['rawSignalThresholdMethod']['sensitivityThresholdValue'] = [1] #this is the number in the Reference given the relative intensity of the signal of the mass fragment
-UserChoices['rawSignalThresholdMethod']['rawSignalThresholdDivider'] = []
+UserChoices['applyRawSignalThresholds']['on'] = 'no'
+UserChoices['applyRawSignalThresholds']['rawSignalThresholdValue'] = [.0000001]
+UserChoices['applyRawSignalThresholds']['sensitivityThresholdValue'] = [1] #this is the number in the Reference given the relative intensity of the signal of the mass fragment
+UserChoices['applyRawSignalThresholds']['rawSignalThresholdDivider'] = []
 #Part of previous entry function, but this function enables the user to change the sum of raw signals, allowing molecules with very high concentrations not to affect previous funciton
-UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimit'] = 'no'
-UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent'] = []
+UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimit'] = 'no'
+UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimitPercent'] = []
 
 #//Uncertainties for Calculating Uncertainties in Concentrations//
 UserChoices['uncertainties'] = {}
@@ -296,4 +296,4 @@ from userInputValidityFunctions import populateModuleVariablesFromDictionary
 SettingsVDictionary = userInputValidityCheck(UserChoices)
 populateModuleVariablesFromDictionary(thisModuleObject, SettingsVDictionary)
 ####End of temporary code####
-__var_list__ = ['referenceFileNamesList','referenceFormsList','collectedFileName','referencePatternTimeRanges','ionizationDataFileName','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldCollectedFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','stopAtGraphs','timeRangeLimit','timeRangeStart','timeRangeFinish','specificMolecules','chosenMoleculesNames','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes','backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound','dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','bruteIncrements','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor','measuredReferenceYorN','referenceFileExistingTuningAndForm','referenceFileDesiredTuningAndForm','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF','rpcTimeRanges','minimalReferenceValue','referenceValueThreshold','referenceSignificantFragmentThresholds','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute','dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','rawSignalThresholdMethod','rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','NegativeAnalyzerTopNContributors','NegativeAnalyzerBaseNumberOfGridIntervals','calculateUncertaintiesInConcentrations' , 'referenceFileUncertainties' ,'collectedFileUncertainties','referenceCorrectionCoefficientsUncertainties', 'referenceCorrectionCoefficientsIonizationUncertainties' ,'answer','uniqueOrCommon','slsFinish','slsUniquePositiveConcentrationsOnly','objectiveFunctionType','distinguished','fullBrute','SLSUniqueExport',  'finalOptimization', 'concentrationFinder','moleculesTSC_List','TSC_List_Type','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List','unitsTSC','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName','ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint', 'iterationNumber']
+__var_list__ = ['referencePatternsFileNamesList','referencePatternsFormsList','dataToAnalyzeFileName','referencePatternTimeRanges','ionizationDataFileName','iterativeAnalysis','iterationNumber','iterationSuffix','unusedMolecules','oldReferenceFileName', 'oldDataToAnalyzeFileName', 'nextRefFileName', 'nextExpFileName','preProcessing','dataAnalysis','dataSimulation','grapher','stopAtGraphs','timeRangeLimit','timeRangeStart','timeRangeFinish','specificMolecules','chosenMoleculesNames','specificMassFragments','chosenMassFragments','moleculeLikelihoods','sensitivityValues','linearBaselineCorrectionSemiAutomatic','baselineType','massesToBackgroundCorrect','earlyBaselineTimes','lateBaselineTimes','backgroundMassFragment','backgroundSlopes','backgroundIntercepts','interpolateYorN','marginalChangeRestriction','ignorableDeltaYThreshold','dataLowerBound','dataUpperBound','dataRangeSpecifierYorN','signalOrConcentrationRange','csvFile','moleculesToRestrict','csvFileName','bruteIncrements','permutationNum','maxPermutations','scaleRawDataOption','scaleRawDataFactor','tuningCorrection','referenceFileExistingTuningAndForm','referenceFileDesiredTuningAndForm','referenceCorrectionCoefficients','extractReferencePatternFromDataOption','rpcMoleculesToChange','rpcMoleculesToChangeMF','rpcTimeRanges','applyReferenceMassFragmentsThresholds','referenceMassFragmentFilterThreshold','referenceSignificantFragmentThresholds','lowerBoundThresholdChooser','massesToLowerBoundThresholdFilter','lowerBoundThresholdPercentage','lowerBoundThresholdAbsolute','dataSmootherYorN','dataSmootherChoice','dataSmootherTimeRadius','dataSmootherPointRadius','dataSmootherHeadersToConfineTo','polynomialOrder','applyRawSignalThresholds','rawSignalThresholdValue','sensitivityThresholdValue','rawSignalThresholdDivider','rawSignalThresholdLimit','rawSignalThresholdLimitPercent','negativeAnalyzerYorN','NegativeAnalyzerTopNContributors','NegativeAnalyzerBaseNumberOfGridIntervals','calculateUncertaintiesInConcentrations' , 'referenceFileUncertainties' ,'collectedFileUncertainties','referenceCorrectionCoefficientsUncertainties', 'referenceCorrectionCoefficientsIonizationUncertainties' ,'answer','uniqueOrCommon','slsFinish','slsUniquePositiveConcentrationsOnly','objectiveFunctionType','distinguished','fullBrute','SLSUniqueExport',  'finalOptimization', 'concentrationFinder','moleculesTSC_List','TSC_List_Type','moleculeSignalTSC_List','massNumberTSC_List','moleculeConcentrationTSC_List','unitsTSC','preProcessedDataOutputName','resolvedScaledConcentrationsOutputName','scaledConcentrationsPercentages','concentrationsOutputName','simulatedSignalsOutputName','TotalConcentrationsOutputName','ExportAtEachStep','generatePercentages','checkpoint','start','timeSinceLastCheckpoint', 'iterationNumber']

@@ -22,9 +22,9 @@ suffix = ut.returnDigitFromFilename(__file__)
 
 #We can use the default user input, which is already in MSRESOLVE.G.
 #Need to change the "direct variable" version rather than the dictionary version.
-MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasured.tsv']
+MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeMeasured.tsv']
 MSRESOLVE.G.tuningCorrectPatternInternalVsExternal = 'Internal'
-MSRESOLVE.G.measuredReferenceYorN = 'yes'
+MSRESOLVE.G.tuningCorrection = 'yes'
 MSRESOLVE.G.createMixedTuningPattern = False
 MSRESOLVE.G.referenceFileExistingTuningAndForm = ['ReferenceCollected.tsv','xyyy']
 MSRESOLVE.G.referenceFileDesiredTuningAndForm =['ReferenceLiterature.tsv','xyyy']
@@ -40,9 +40,9 @@ MSRESOLVE.G.timeRangeStart = 176  #start time (-int)
 MSRESOLVE.G.timeRangeFinish = 178  #start time (-int)
 MSRESOLVE.G.dataSmootherYorN = 'no'
 
-#will use minimalReferenceValue (single value means it will be applied to all molecules)
-MSRESOLVE.G.minimalReferenceValue= 'yes'
-MSRESOLVE.G.referenceValueThreshold = [6.0]
+#will use applyReferenceMassFragmentsThresholds (single value means it will be applied to all molecules)
+MSRESOLVE.G.applyReferenceMassFragmentsThresholds= 'yes'
+MSRESOLVE.G.referenceMassFragmentFilterThreshold = [6.0]
 MSRESOLVE.G.referenceSignificantFragmentThresholds = [0.0]
 
 #Now to get started with the test itself...

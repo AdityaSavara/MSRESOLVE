@@ -8,11 +8,11 @@ This function is designed to serve as a standard for parsing particular variable
 '''
 def parseUserInput(currentUserInput):
     #Input Files
-    currentUserInput.referenceFileNamesList = parse.listCast(currentUserInput.referenceFileNamesList) #referenceFileName needs to be a list
-    currentUserInput.referenceFormsList = parse.listCast(currentUserInput.referenceFormsList) #form needs to be a list
-    currentUserInput.referenceFormsList = parse.parallelVectorize(currentUserInput.referenceFormsList,len(currentUserInput.referenceFileNamesList)) #form needs to be a list of the same length as referenceFileName
+    currentUserInput.referencePatternsFileNamesList = parse.listCast(currentUserInput.referencePatternsFileNamesList) #referenceFileName needs to be a list
+    currentUserInput.referencePatternsFormsList = parse.listCast(currentUserInput.referencePatternsFormsList) #form needs to be a list
+    currentUserInput.referencePatternsFormsList = parse.parallelVectorize(currentUserInput.referencePatternsFormsList,len(currentUserInput.referencePatternsFileNamesList)) #form needs to be a list of the same length as referenceFileName
     currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
-    parse.strCheck(currentUserInput.collectedFileName,'collectedFileName') #collectedFileName must be a string
+    parse.strCheck(currentUserInput.dataToAnalyzeFileName,'dataToAnalyzeFileName') #dataToAnalyzeFileName must be a string
  
     
     #preProcessing, dataAnalysis, dataSimulation, grapher
@@ -106,7 +106,7 @@ def parseUserInput(currentUserInput):
         currentUserInput.scaleRawDataFactor = float(currentUserInput.scaleRawDataFactor) #scaleRawDataFactor is a float
     
     #Reference Correction Changer
-    parse.strCheck(currentUserInput.measuredReferenceYorN,'measuredReferenceYorN')
+    parse.strCheck(currentUserInput.tuningCorrection,'tuningCorrection')
     #The below two variables are no longer strings. They are now lists with two elements, each of which are strings. TODO: Change their names to referenceFileExistingTuningAndForm and referenceFileDesiredTuningAndForm
     #parse.strCheck(currentUserInput.referenceFileExistingTuningAndForm,'referenceFileExistingTuningAndForm')
     #parse.strCheck(currentUserInput.referenceFileDesiredTuningAndForm,'referenceFileDesiredTuningAndForm')
@@ -123,11 +123,11 @@ def parseUserInput(currentUserInput):
         parse.compareElementsBetweenLists(currentUserInput.rpcMoleculesToChange,chosenMoleculesForParsing,'rpcMoleculesToChange','chosenMolecules')
     
     #Reference Mass Fragmentation Threshold
-    parse.strCheck(currentUserInput.minimalReferenceValue,'minimalReferenceValue')
-    if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
-        currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
+    parse.strCheck(currentUserInput.applyReferenceMassFragmentsThresholds,'applyReferenceMassFragmentsThresholds')
+    if currentUserInput.applyReferenceMassFragmentsThresholds == 'yes': #If using reference mass fragmentation threshold
+        currentUserInput.referenceMassFragmentFilterThreshold = parse.listCast(currentUserInput.referenceMassFragmentFilterThreshold) #reference value threshold is a list
         #The length of the reference value thresholds needs to be the same length as the number of molecules
-        currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
+        currentUserInput.referenceMassFragmentFilterThreshold = parse.parallelVectorize(currentUserInput.referenceMassFragmentFilterThreshold,len(chosenMoleculesForParsing))
         currentUserInput.referenceSignificantFragmentThresholds = parse.parallelVectorize(currentUserInput.referenceSignificantFragmentThresholds,len(chosenMoleculesForParsing))
     
     #Data Threshold Filter
@@ -156,9 +156,9 @@ def parseUserInput(currentUserInput):
         parse.compareElementsBetweenLists(currentUserInput.dataSmootherHeadersToConfineTo,chosenMassFragmentsForParsing,'dataSmootherHeadersToConfineTo','chosenMolecules')
     
     #Raw Signal Threshold
-    parse.strCheck(currentUserInput.rawSignalThresholdMethod,'rawSignalThresholdMethod')
+    parse.strCheck(currentUserInput.applyRawSignalThresholds,'applyRawSignalThresholds')
     parse.strCheck(currentUserInput.rawSignalThresholdLimit,'rawSignalThresholdLimit')
-    if currentUserInput.rawSignalThresholdMethod == 'yes': #If using rawSignalThresholdMethod
+    if currentUserInput.applyRawSignalThresholds == 'yes': #If using applyRawSignalThresholds
         #raw signal threshold value, sensitivity value, raw signal threshold divider, and raw signal threshold limit percent are all lists
         currentUserInput.rawSignalThresholdValue = parse.listCast(currentUserInput.rawSignalThresholdValue)
         currentUserInput.sensitivityThresholdValue = parse.listCast(currentUserInput.sensitivityThresholdValue)
@@ -204,10 +204,10 @@ def parseUserInput(currentUserInput):
         
         if currentUserInput.TSC_List_Type == 'MultipleReferencePatterns': #If using multiple reference patterns then the user must input 1 value to use for each reference file or a value for each reference file
             #Then parallelize these variables to have the same length as number of reference patterns
-            currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referenceFileNamesList))
+            currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referencePatternsFileNamesList))
+            currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referencePatternsFileNamesList))
+            currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referencePatternsFileNamesList))
+            currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referencePatternsFileNamesList))
             #NOTE: vectorizing these lists for 'SeparateMoleculesFactors' occurs in RatioFinder
             
     #Output Files
@@ -248,10 +248,10 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     #TODO: Consider if G.iterativeAnalysis = True or False should be changed to G.IterativeAnalysis_On or something like that, but will break backwards compatibility unless special care is taken.
     #Also to consider if other variables should change to have names like G.specificMolecules_chosenMoleculesNames. Probably not necessary since we have the dictionaries.
     SettingsVDictionary = {}  
-    SettingsVDictionary['referenceFileNamesList']   = UserChoices['inputFiles']['referenceFileNamesList']
-    SettingsVDictionary['referenceFormsList']   = UserChoices['inputFiles']['referenceFormsList']
+    SettingsVDictionary['referencePatternsFileNamesList']   = UserChoices['inputFiles']['referencePatternsFileNamesList']
+    SettingsVDictionary['referencePatternsFormsList']   = UserChoices['inputFiles']['referencePatternsFormsList']
     SettingsVDictionary['referencePatternTimeRanges']   = UserChoices['inputFiles']['referencePatternTimeRanges']
-    SettingsVDictionary['collectedFileName']   = UserChoices['inputFiles']['collectedFileName']
+    SettingsVDictionary['dataToAnalyzeFileName']   = UserChoices['inputFiles']['dataToAnalyzeFileName']
     SettingsVDictionary['ionizationDataFileName']   = UserChoices['inputFiles']['ionizationDataFileName']
     
     SettingsVDictionary['preProcessing'] = UserChoices['preProcessing']['on'] 
@@ -270,7 +270,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['iterationSuffix']    = UserChoices['iterativeAnalysis']['iterationSuffix']
     SettingsVDictionary['unusedMolecules']    = UserChoices['iterativeAnalysis']['unusedMolecules']
     SettingsVDictionary['oldReferenceFileName']    = UserChoices['iterativeAnalysis']['oldReferenceFileName']
-    SettingsVDictionary['oldCollectedFileName']    = UserChoices['iterativeAnalysis']['oldCollectedFileName']
+    SettingsVDictionary['oldDataToAnalyzeFileName']    = UserChoices['iterativeAnalysis']['oldDataToAnalyzeFileName']
     SettingsVDictionary['nextRefFileName']    = UserChoices['iterativeAnalysis']['nextRefFileName']
     SettingsVDictionary['nextExpFileName']    = UserChoices['iterativeAnalysis']['nextExpFileName']
     SettingsVDictionary['iterationNumber']    = UserChoices['iterativeAnalysis']['iterationNumber']  
@@ -312,12 +312,12 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['scaleRawDataOption']   = UserChoices['scaleRawDataYorN']['scaleRawDataOption']
     SettingsVDictionary['scaleRawDataFactor']   = UserChoices['scaleRawDataYorN']['scaleRawDataFactor']
 
-    SettingsVDictionary['measuredReferenceYorN']    = UserChoices['measuredReferenceYorN']['on']
-    SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']
-    SettingsVDictionary['referenceFileDesiredTuningAndForm']    = UserChoices['measuredReferenceYorN']['referenceFileDesiredTuningAndForm']
-    SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients']
+    SettingsVDictionary['tuningCorrection']    = UserChoices['tuningCorrection']['on']
+    SettingsVDictionary['referenceFileExistingTuningAndForm']    = UserChoices['tuningCorrection']['referenceFileExistingTuningAndForm']
+    SettingsVDictionary['referenceFileDesiredTuningAndForm']    = UserChoices['tuningCorrection']['referenceFileDesiredTuningAndForm']
+    SettingsVDictionary['referenceCorrectionCoefficients']    = UserChoices['tuningCorrection']['referenceCorrectionCoefficients']
     try:
-        SettingsVDictionary['referenceCorrectionCoefficients_cov']    = UserChoices['measuredReferenceYorN']['referenceCorrectionCoefficients_cov']
+        SettingsVDictionary['referenceCorrectionCoefficients_cov']    = UserChoices['tuningCorrection']['referenceCorrectionCoefficients_cov']
     except:
         SettingsVDictionary['referenceCorrectionCoefficients_cov']    = [0,0,0] #TODO: This is to keep some old unit tests running. Ideally they should be fixed.
     SettingsVDictionary['extractReferencePatternFromDataOption']   = UserChoices['extractReferencePatternFromDataOption']['on']
@@ -325,9 +325,9 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['rpcTimeRanges']   = UserChoices['extractReferencePatternFromDataOption']['rpcTimeRanges']
     SettingsVDictionary['rpcMoleculesToChangeMF']    = UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] 
 
-    SettingsVDictionary['minimalReferenceValue']   = UserChoices['minimalReferenceValue']['on']
-    SettingsVDictionary['referenceValueThreshold']   = UserChoices['minimalReferenceValue']['referenceValueThreshold']
-    SettingsVDictionary['referenceSignificantFragmentThresholds']   = UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds']
+    SettingsVDictionary['applyReferenceMassFragmentsThresholds']   = UserChoices['applyReferenceMassFragmentsThresholds']['on']
+    SettingsVDictionary['referenceMassFragmentFilterThreshold']   = UserChoices['applyReferenceMassFragmentsThresholds']['referenceMassFragmentFilterThreshold']
+    SettingsVDictionary['referenceSignificantFragmentThresholds']   = UserChoices['applyReferenceMassFragmentsThresholds']['referenceSignificantFragmentThresholds']
     
     SettingsVDictionary['lowerBoundThresholdChooser']   = UserChoices['lowerBoundThresholdChooser']['on'] 
     SettingsVDictionary['massesToLowerBoundThresholdFilter']   = UserChoices['lowerBoundThresholdChooser']['massesToLowerBoundThresholdFilter']
@@ -341,12 +341,12 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['dataSmootherHeadersToConfineTo']   = UserChoices['dataSmootherYorN']['dataSmootherHeadersToConfineTo']
     SettingsVDictionary['polynomialOrder']   = UserChoices['dataSmootherYorN']['polynomialOrder']
 
-    SettingsVDictionary['rawSignalThresholdMethod']   = UserChoices['rawSignalThresholdMethod']['on']
-    SettingsVDictionary['rawSignalThresholdValue']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdValue']
-    SettingsVDictionary['sensitivityThresholdValue']   = UserChoices['rawSignalThresholdMethod']['sensitivityThresholdValue']
-    SettingsVDictionary['rawSignalThresholdDivider']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdDivider']
-    SettingsVDictionary['rawSignalThresholdLimit']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimit']
-    SettingsVDictionary['rawSignalThresholdLimitPercent']   = UserChoices['rawSignalThresholdMethod']['rawSignalThresholdLimitPercent']
+    SettingsVDictionary['applyRawSignalThresholds']   = UserChoices['applyRawSignalThresholds']['on']
+    SettingsVDictionary['rawSignalThresholdValue']   = UserChoices['applyRawSignalThresholds']['rawSignalThresholdValue']
+    SettingsVDictionary['sensitivityThresholdValue']   = UserChoices['applyRawSignalThresholds']['sensitivityThresholdValue']
+    SettingsVDictionary['rawSignalThresholdDivider']   = UserChoices['applyRawSignalThresholds']['rawSignalThresholdDivider']
+    SettingsVDictionary['rawSignalThresholdLimit']   = UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimit']
+    SettingsVDictionary['rawSignalThresholdLimitPercent']   = UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimitPercent']
  
     SettingsVDictionary['calculateUncertaintiesInConcentrations'] 	=	    UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] 
     SettingsVDictionary['referenceFileUncertainties'] 	=	    UserChoices['uncertainties']['referenceFileUncertainties'] 
