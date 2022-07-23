@@ -1,8 +1,8 @@
-Tue May 10 12:40:00 2022
+Sat Jul 23 16:02:42 2022
 
-referenceFileName = ['AcetaldehydeNISTRefMixed2_iter_3.csv'] 
+referenceFileName = ['AcetaldehydeNISTRefMixed2_iter_3.tsv'] 
 form  = ['xyyy'] 
-collectedFileName = 2-CrotAcetExp#2Truncated_iter_3.csv 
+dataToAnalyzeFileName = 2-CrotAcetExp#2Truncated_iter_3.csv 
 timeRangeLimit = yes 
 timeRangeStart = 176.0 
 timeRangeFinish = 200.0 
@@ -10,16 +10,16 @@ specificMolecules = yes
 chosenMoleculesNames = ['Ethanol'] 
 specificMassFragments = yes 
 chosenMassFragments = [31] 
-minimalReferenceValue = yes 
-referenceValueThreshold = [1.0] 
+applyReferenceMassFragmentsThresholds = yes 
+referenceMassFragmentFilterThreshold = [1.0] 
 referenceSignificantFragmentThresholds = [0.0] 
 answer = sls 
 uniqueOrCommon = common 
 slsFinish = brute 
 objectiveFunctionType = ssr 
 scaleRawDataFactor  = 1.0 
-resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
-concentrationsOutputName = ResolvedConcentrations.csv 
+resolvedScaledConcentrationsOutputName  = ScaledConcentrations.tsv 
+concentrationsOutputName = ResolvedConcentrations.tsv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.45561 seconds 
+Run Time 0.54236 seconds 
 ###################################################################### 

@@ -1,8 +1,8 @@
-Tue May 10 12:40:32 2022
+Sat Jul 23 16:03:45 2022
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2_iter_4.csv'] 
 form  = ['xyyy'] 
-collectedFileName = 2-CrotAcetExp#2Truncated_iter_4.csv 
+dataToAnalyzeFileName = 2-CrotAcetExp#2Truncated_iter_4.csv 
 timeRangeLimit = yes 
 timeRangeStart = 176.0 
 timeRangeFinish = 200.0 
@@ -10,8 +10,8 @@ specificMolecules = yes
 chosenMoleculesNames = ['(E) 2-Butenal (Crotonaldehyde'] 
 specificMassFragments = yes 
 chosenMassFragments = [39] 
-minimalReferenceValue = yes 
-referenceValueThreshold = [1.0] 
+applyReferenceMassFragmentsThresholds = yes 
+referenceMassFragmentFilterThreshold = [1.0] 
 referenceSignificantFragmentThresholds = [0.0] 
 answer = sls 
 uniqueOrCommon = unique 
@@ -21,5 +21,5 @@ scaleRawDataFactor  = 1000.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.30213 seconds 
+Run Time 0.61490 seconds 
 ###################################################################### 

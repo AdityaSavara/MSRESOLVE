@@ -1,15 +1,15 @@
-Tue May 10 12:41:09 2022
+Sat Jul 23 16:05:15 2022
 
 referenceFileName = ['ConvertedSpectra.csv'] 
 form  = ['xyyy'] 
-collectedFileName = 20190817A-integer-data.csv 
+dataToAnalyzeFileName = 20190817A-integer-data.csv 
 timeRangeLimit = yes 
 timeRangeStart = 5600.0 
 timeRangeFinish = 5670.0 
 specificMolecules = yes 
 chosenMoleculesNames = ['2buten1ol(crotyl alcohol)', '2butenalE(crotonaldehyde)', '13butadiene', 'acetaldehyde', 'diethylether', 'ethanol', '2buteneE', 'acetone'] 
-minimalReferenceValue = yes 
-referenceValueThreshold = [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0] 
+applyReferenceMassFragmentsThresholds = yes 
+referenceMassFragmentFilterThreshold = [2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0, 2.0] 
 referenceSignificantFragmentThresholds = [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0] 
 negativeAnalyzerYorN = yes 
 answer = sls 
@@ -20,5 +20,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 2.67186 seconds 
+Run Time 4.23075 seconds 
 ###################################################################### 

@@ -1,9 +1,9 @@
-# molecules,'2buten1ol(crotyl alcohol)', '2butenalE(crotonaldehyde)', '13butadiene'
+# molecules ,2buten1ol(crotyl alcohol), 2butenalE(crotonaldehyde), 13butadiene
 ScaledConcentrations_Means,0.00011938773852288151,-2.40143736921601e-06,-1.0031741228744793e-05
 ScaledConcentrations_StdDevs,4.821253802374341e-06,1.0105251753809415e-07,4.911840265906489e-07
 ScaledConcentrations_StdErrs,2.7835521806323326e-06,5.834269820290804e-08,2.8358522997375545e-07
-ScaledConcentrations_absolute_uncertainties_Means,2.252466600587259e-05,1.235565586240043e-06,3.5359760260154975e-06
-ScaledConcentrations_absolute_uncertainties_StdDevs,1.0935598530579857e-06,4.989550208071816e-08,1.5542284317458306e-07
-ScaledConcentrations_relative_uncertainties_Means,0.18866816881329548,-0.5145108517418526,-0.35247879160634327
-ScaledConcentrations_relative_uncertainties_StdDevs,0.009159733374532403,-0.020777348899591496,-0.01549310729120852
-ScaledConcentrations_absolute_uncertainties_Total,2.2696007169068644e-05,1.2369422736467119e-06,3.547329564505618e-06
+ScaledConcentrations_absolute_uncertainties_Means,2.2524666005872583e-05,1.235565586240043e-06,3.5359760260154966e-06
+ScaledConcentrations_absolute_uncertainties_StdDevs,1.093559853057983e-06,4.989550208071816e-08,1.554228431745823e-07
+ScaledConcentrations_relative_uncertainties_Means,0.18866816881329543,-0.5145108517418526,-0.35247879160634316
+ScaledConcentrations_relative_uncertainties_StdDevs,0.00915973337453238,-0.020777348899591496,-0.015493107291208444
+ScaledConcentrations_absolute_uncertainties_Total,2.2696007169068637e-05,1.2369422736467119e-06,3.5473295645056173e-06

@@ -1,8 +1,8 @@
-Tue May 10 12:39:54 2022
+Sat Jul 23 16:02:30 2022
 
 referenceFileName = ['AcetaldehydeNISTRefDefault.csv'] 
 form  = ['xyyy'] 
-collectedFileName = 2-CrotAcetExp#2Truncated.csv 
+dataToAnalyzeFileName = 2-CrotAcetExp#2Truncated.csv 
 timeRangeLimit = yes 
 timeRangeStart = 176.0 
 timeRangeFinish = 900.0 
@@ -14,8 +14,8 @@ dataSmootherHeadersToConfineTo = []
 answer = inverse 
 distinguished = yes 
 scaleRawDataFactor  = 1.0 
-resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
-concentrationsOutputName = ResolvedConcentrations.csv 
+resolvedScaledConcentrationsOutputName  = ScaledConcentrations.tsv 
+concentrationsOutputName = ResolvedConcentrations.tsv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.12812 seconds 
+Run Time 0.21922 seconds 
 ###################################################################### 
