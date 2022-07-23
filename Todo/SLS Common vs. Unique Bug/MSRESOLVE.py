@@ -341,9 +341,9 @@ def ABCDetermination(ReferencePatternMeasured, ReferencePatternLiterature):
 #this function either creates or gets the three coefficients for the polynomial correction and calculates
 #the correction factor for the relative intensities of each mass fragment, outputting a corrected set
 #of relative intensities
-def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceFileDesiredTuningAndForm,referenceFileExistingTuningAndForm,measuredReferenceYorN):
+def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,referenceFileDesiredTuningAndForm,referenceFileExistingTuningAndForm,tuningCorrection):
     
-    if measuredReferenceYorN =='yes':
+    if tuningCorrection =='yes':
         (referenceCorrectionCoefficients['A'],referenceCorrectionCoefficients['B'],referenceCorrectionCoefficients['C'])=ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm )
     
     referenceabscissa = reference[:,0] #gets arrays of just data and abscissa
@@ -358,11 +358,11 @@ def CorrectionValueCorrector(reference,referenceCorrectionCoefficients,reference
 #this function eliminates any fragments that are below a certain threshold, for solving 
 #data that is giving negatives or over emphasizing small mass fragments, this will eliminate 
 #those below a certain user-input value
-def ReferenceThreshold(reference,referenceValueThreshold):
+def ReferenceThreshold(reference,referenceMassFragmentFilterThreshold):
     referencedata = reference[:,1:] #all the data except the line of abscissa- mass fragment numbers
     for rowcounter in range(len(referencedata[:,0])):#goes through all rows in references
         for columncounter in range(len(referencedata[0,:])):#goes through all columns in all rows in reference
-            if referencedata[rowcounter,columncounter] < referenceValueThreshold:#user input changes
+            if referencedata[rowcounter,columncounter] < referenceMassFragmentFilterThreshold:#user input changes
                 referencedata[rowcounter,columncounter] = 0 #made to be equal to zero
     reference[:,1:] = referencedata #this puts changed reference back with mass fragment numbers
     return reference
@@ -925,11 +925,11 @@ def ReferenceInputPreProcessing(ReferenceData):
     print('beginning CorrectionValueCorrector')
     ReferenceData.standardized_reference_intensities = CorrectionValueCorrector(ReferenceData.standardized_reference_intensities, G.referenceCorrectionCoefficients,
                                                        G.referenceFileDesiredTuningAndForm, G.referenceFileExistingTuningAndForm,
-                                                       G.measuredReferenceYorN)
+                                                       G.tuningCorrection)
     ReferenceData.ExportCollector('CorrectionValueCorrector')
     
-    if G.minimalReferenceValue == 'yes':
-        ReferenceData.standardized_reference_intensities = ReferenceThreshold(ReferenceData.standardized_reference_intensities,G.referenceValueThreshold)
+    if G.applyReferenceMassFragmentsThresholds == 'yes':
+        ReferenceData.standardized_reference_intensities = ReferenceThreshold(ReferenceData.standardized_reference_intensities,G.referenceMassFragmentFilterThreshold)
         ReferenceData.ExportCollector('ReferenceThreshold')
     
     ReferenceData.correction_values = CorrectionValuesObtain(ReferenceData)
@@ -1131,7 +1131,7 @@ def SpecificIterationName(iterativeAnalysis, iterationNumber):
     return iterationDirectoryName
 
 def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = False):
-    #implied arguments for this function are G.referenceFileName and G.collectedFileName
+    #implied arguments for this function are G.referenceFileName and G.dataToAnalyzeFileName
     if iterate:
         iterationNumber += 1
     G.iterationNumber = iterationNumber
@@ -1148,29 +1148,29 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber, iterate = 
     if not iterate:
         #record the old file names 
         G.oldReferenceFileName = G.referenceFileName
-        G.oldcollectedFileName = G.collectedFileName
+        G.oldDataToAnalyzeFileName = G.dataToAnalyzeFileName
         
         #construct the file names for the current run of the program
         referenceFileNameTemp = G.referenceFileName[:-18] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
-        collectedFileNameTemp = G.collectedFileName[:-21] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
+        dataToAnalyzeFileNameTemp = G.dataToAnalyzeFileName[:-21] +  str(G.iterationSuffix) + G.dataToAnalyzeFileName[-4:]
         
         #copy the experimental and reference files into new names for this iterative run
         shutil.copy(G.referenceFileName, referenceFileNameTemp)
-        shutil.copy(G.collectedFileName, collectedFileNameTemp)
+        shutil.copy(G.dataToAnalyzeFileName, dataToAnalyzeFileNameTemp)
         
         #change the globals to reflect the renaming of the ref and exp files
         G.referenceFileName =  referenceFileNameTemp
-        G.collectedFileName =  collectedFileNameTemp
+        G.dataToAnalyzeFileName =  dataToAnalyzeFileNameTemp
         
         #construct file names for the next run of the program 
         G.nextRefFileName = G.referenceFileName[:-11] +  str('_unused') + G.referenceFileName[-11:]
-        G.nextExpFileName = G.collectedFileName[:-11] +  str('_remaining') + G.collectedFileName[-11:]
+        G.nextExpFileName = G.dataToAnalyzeFileName[:-11] +  str('_remaining') + G.dataToAnalyzeFileName[-11:]
     
     return None
-    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldDataToAnalyzeFileName, G.referenceFileName,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
-    #implied arguments for this function are G.referenceFileName and G.collectedFileName
+    #implied arguments for this function are G.referenceFileName and G.dataToAnalyzeFileName
     #this global value is set so that each export statement can label the output files correctly
     G.iterationNumber = iterationNumber
     
@@ -1190,22 +1190,22 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     
     #record the old file names 
     G.oldReferenceFileName = G.referenceFileName
-    G.oldcollectedFileName = G.collectedFileName
+    G.oldDataToAnalyzeFileName = G.dataToAnalyzeFileName
     #construct the file names for the first run of the program
     G.referenceFileName = G.referenceFileName[:-4] +  str(G.iterationSuffix) + G.referenceFileName[-4:]
-    G.collectedFileName = G.collectedFileName[:-4] +  str(G.iterationSuffix) + G.collectedFileName[-4:]
+    G.dataToAnalyzeFileName = G.dataToAnalyzeFileName[:-4] +  str(G.iterationSuffix) + G.dataToAnalyzeFileName[-4:]
     
     #construct file names for the second run of the program 
     G.nextRefFileName = G.referenceFileName[:-11] + '_unused_iter_1' + G.referenceFileName[-4:]
     
-    G.nextExpFileName = G.collectedFileName[:-11] + '_remaining_iter_1' + G.collectedFileName[-4:]
+    G.nextExpFileName = G.dataToAnalyzeFileName[:-11] + '_remaining_iter_1' + G.dataToAnalyzeFileName[-4:]
     
     return None 
-    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileName,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldDataToAnalyzeFileName, G.referenceFileName,G.dataToAnalyzeFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
 def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ReferenceData, ReferenceDataFullCopy):
-    #implied arguments: G.dataSimulation, G.referenceFileName, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMolecules, G.iterationNumber
+    #implied arguments: G.dataSimulation, G.referenceFileName, G.dataToAnalyzeFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMolecules, G.iterationNumber
     #override data simulation to yes if it was not selected
     if G.dataSimulation != 'yes':
         print("Iterative analysis cannot find the remaining signals in the experiment without signal simulation being run.")
@@ -1231,7 +1231,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     
     #Export current Experimental Data
     #Experimental data is trimmed prior to this function, but it still needs to be exported  
-    ExportXYYYData(G.collectedFileName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers,
+    ExportXYYYData(G.dataToAnalyzeFileName, ExperimentData.workingData, ExperimentData.mass_fragment_numbers,
               abscissaHeader = ExperimentData.abscissaHeader, dataType = 'preProcessed', rowIndex = ExperimentData.times)
    
     #export reference data for next iteration
@@ -1262,7 +1262,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber, iterate = True)
      
     #save the new file name for the next user input file 
-    G.collectedFileName = G.nextExpFileName 
+    G.dataToAnalyzeFileName = G.nextExpFileName 
     G.referenceFileName = G.nextRefFileName
     #updating the selected molecules for the next user input file
     G.chosenMolecules = G.unusedMolecules
@@ -1277,7 +1277,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     if not G.iterativeAnalysis == True:
         iterationDirectoryName = '%s_iter_%s' %(G.iterativeAnalysis, str(G.iterationNumber - 1))
     #copy the experimental signals to the next iteration
-    shutil.copy("..\%s\%s" %(iterationDirectoryName, G.collectedFileName), os.getcwd())
+    shutil.copy("..\%s\%s" %(iterationDirectoryName, G.dataToAnalyzeFileName), os.getcwd())
     #copy the next reference file from the previous iteration folder to the next iteration folder
     shutil.copy("..\%s\%s" %(iterationDirectoryName, G.referenceFileName), os.getcwd())
     
@@ -1289,17 +1289,17 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     DataFunctions.AppendColumnsToCSV(G.TotalConcentrationsOutputName, concdata, moleculeConcLabels, times, ["Time"])
     
     return None
-     #implied returns: G.referenceFileName, G.collectedFileName, G.nextRefFileName, G.chosenMolecules, G.iterationSuffix
+     #implied returns: G.referenceFileName, G.dataToAnalyzeFileName, G.nextRefFileName, G.chosenMolecules, G.iterationSuffix
 ###############################################################################
 #########################  Functions to read data files #######################
 ###############################################################################
 #These functions read in the experimental data file and the reference file. The
 #returned variables can then be used to initialize the respective classes.
 
-def readDataFile(collectedFileName):
+def readDataFile(dataToAnalyzeFileName):
 
  #read the csv file into a dataframe.  dataFrame means "dataframe" and is a pandas object.
-    dataFrame = pandas.read_csv('%s' %collectedFileName, header=None)
+    dataFrame = pandas.read_csv('%s' %dataToAnalyzeFileName, header=None)
     ''' generate mass fragment list'''
     #select only the 2nd row down, all columns except for the first. 
 		#"iloc" is a pandas dataframe function. All it does is select a portion of the data.
@@ -1341,7 +1341,7 @@ def readDataFile(collectedFileName):
         rawCollectedData = numpy.vstack((rawCollectedData,rawCollectedData))
 
         
-    return mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName
+    return mass_fragment_numbers, abscissaHeader, times, rawCollectedData, dataToAnalyzeFileName
 
 #readReferenceFile is a helper function that reads the reference file in a certain form and returns the
 #variables and data that are used to initialize the class. It can read files both in XYYY and XYXY form.
@@ -1502,9 +1502,9 @@ class MSData (object):
 		#self.mass_fragment_numbers , 1D and must be integers
 		#self.rawCollectedData, a 2D array of the signals.
 		
-    def __init__(self, mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName=None):
+    def __init__(self, mass_fragment_numbers, abscissaHeader, times, rawCollectedData, dataToAnalyzeFileName=None):
         
-        [self.mass_fragment_numbers, self.abscissaHeader, self.times, self.rawCollectedData, self.collectedFileName]=[mass_fragment_numbers, abscissaHeader, times, rawCollectedData, collectedFileName]
+        [self.mass_fragment_numbers, self.abscissaHeader, self.times, self.rawCollectedData, self.dataToAnalyzeFileName]=[mass_fragment_numbers, abscissaHeader, times, rawCollectedData, dataToAnalyzeFileName]
         
         
         '''create data set to work on'''
@@ -1688,7 +1688,7 @@ def CombinationMaker(reciprocal_matching_correction_values,rawsignalsarrayline,m
     if combinations == []:#This function will not work without enough mass fragments, so the user must know the problem
         print('****************************************')
         print('Not enough matching mass fragments input')
-        print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  minimalReferenceValue feature with referenceValueThreshold, such as referenceValueThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
+        print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  applyReferenceMassFragmentsThresholds feature with referenceMassFragmentFilterThreshold, such as referenceMassFragmentFilterThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
         print('****************************************')
     combinations_len = len(combinations) 
     correctionarray = numpy.zeros([1,moleculenum])
@@ -2684,7 +2684,7 @@ def RawSignalThresholdFilter (distinguished,reciprocal_matching_correction_value
     monitored_reference_intensities_copy = monitored_reference_intensities
     rawsignalsarray_copy = remaining_rawsignals_SLS
     summation = sum(rawsignalsarray_copy)
-    [rawSignalThresholdMethod,rawSignalThresholdValue,sensitivityThresholdValue,rawSignalThresholdDivider,rawSignalThresholdLimit,rawSignalThresholdLimitPercent] = ThresholdList
+    [applyRawSignalThresholds,rawSignalThresholdValue,sensitivityThresholdValue,rawSignalThresholdDivider,rawSignalThresholdLimit,rawSignalThresholdLimitPercent] = ThresholdList
     #this section of the code enables the function to eliminate from the raw signal array (for the purpose of this function only)
     #the highest value in the array, if it makes up over 90 percent of the raw signals present. This is useful because if one of 
     #the signals does become this great then it will eliminate all the other signals present when it becomes very high
@@ -3022,7 +3022,7 @@ def PopulateLogFile():
     f6.write('\n')
     f6.write('referenceFileName = %s \n'%(G.referenceFileName))
     f6.write('form  = %s \n'%(G.form))
-    f6.write('collectedFileName = %s \n'%(G.collectedFileName ))
+    f6.write('dataToAnalyzeFileName = %s \n'%(G.dataToAnalyzeFileName ))
     if G.timeRangeLimit == 'yes':#some of the lines in the backgroundinput file don't need to be printed unless a selection is made, so the if statements here make that happen
         f6.write('timeRangeLimit = %s \n'%(G.timeRangeLimit))
         f6.write('timeRangeStart = %s \n'%(G.timeRangeStart))
@@ -3031,8 +3031,8 @@ def PopulateLogFile():
         f6.write('backgroundMassFragment = %s \n'%(G.backgroundMassFragment))
         f6.write('backgroundSlopes = %s \n'%(G.backgroundSlopes))
         f6.write('backgroundIntercepts = %s \n'%(G.backgroundIntercepts))
-    if G.measuredReferenceYorN == 'yes':
-        f6.write('measuredReferenceYorN = %s \n'%G.measuredReferenceYorN)
+    if G.tuningCorrection == 'yes':
+        f6.write('tuningCorrection = %s \n'%G.tuningCorrection)
         f6.write('referenceCorrectionCoefficientA = %s \n'%(G.referenceCorrectionCoefficients['A']))
         f6.write('referenceCorrectionCoefficientB = %s \n'%(G.referenceCorrectionCoefficients['B']))
         f6.write('referenceCorrectionCoefficientC = %s \n'%(G.referenceCorrectionCoefficients['C']))
@@ -3062,9 +3062,9 @@ def PopulateLogFile():
         f6.write('rpcMoleculesToChange = %s \n'%(G.rpcMoleculesToChange))
         f6.write('rpcMoleculesToChangeMF = %s \n'%(G.rpcMoleculesToChangeMF))
         f6.write('rpcTimeRanges = %s \n'%(G.rpcTimeRanges))
-    if G.minimalReferenceValue == 'yes':
-        f6.write('minimalReferenceValue = %s \n'%(G.minimalReferenceValue))
-        f6.write('referenceValueThreshold = %s \n'%(G.referenceValueThreshold))
+    if G.applyReferenceMassFragmentsThresholds == 'yes':
+        f6.write('applyReferenceMassFragmentsThresholds = %s \n'%(G.applyReferenceMassFragmentsThresholds))
+        f6.write('referenceMassFragmentFilterThreshold = %s \n'%(G.referenceMassFragmentFilterThreshold))
     if G.lowerBoundThresholdChooser == 'yes':
         f6.write('lowerBoundThresholdChooser = %s \n'%(G.lowerBoundThresholdChooser))
         f6.write('massesToLowerBoundThresholdFilter  = %s \n'%(G.massesToLowerBoundThresholdFilter ))
@@ -3076,8 +3076,8 @@ def PopulateLogFile():
         f6.write('dataSmootherTimeRadius = %s \n'%(G.dataSmootherTimeRadius))
         f6.write('dataSmootherPointRadius = %s \n'%(G.dataSmootherPointRadius))
         f6.write('dataSmootherHeadersToConfineTo = %s \n'%(G.dataSmootherHeadersToConfineTo))
-    if G.rawSignalThresholdMethod == 'yes':
-        f6.write('rawSignalThresholdMethod = %s \n'%(G.rawSignalThresholdMethod))
+    if G.applyRawSignalThresholds == 'yes':
+        f6.write('applyRawSignalThresholds = %s \n'%(G.applyRawSignalThresholds))
         f6.write('rawSignalThresholdValue = %s \n'%(G.rawSignalThresholdValue))
         f6.write('sensitivityThresholdValue = %s \n'%(G.sensitivityThresholdValue))
         f6.write('rawSignalThresholdDivider = %s \n'%(G.rawSignalThresholdDivider))
@@ -3139,7 +3139,7 @@ def main():
     
     #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
     if G.iterativeAnalysis and G.iterationNumber != 1:
-        #implied arguments for this function are G.referenceFileName and G.collectedFileName
+        #implied arguments for this function are G.referenceFileName and G.dataToAnalyzeFileName
         IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
     
     #initalize the data classes with the data from given Excel files
@@ -3148,8 +3148,8 @@ def main():
     global ExperimentData
     global currentReferenceData
     
-    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
-    ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
+    [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_dataToAnalyzeFileName]=readDataFile(G.dataToAnalyzeFileName)
+    ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, dataToAnalyzeFileName=exp_dataToAnalyzeFileName)
     ReferenceDataList = GenerateReferenceDataList(G.referenceFileName,G.form)
     currentReferenceData = ReferenceDataList[0]
     #Prints a warning if the user has more reference files than specified time ranges
@@ -3158,7 +3158,7 @@ def main():
 
     #if this is the first iterative run, then the reference and experimental files need to have been imported before the iteration can begin
     if G.iterativeAnalysis and G.iterationNumber == 1 :
-        #implied arguments for the following function are G.referenceFileName and G.collectedFileName
+        #implied arguments for the following function are G.referenceFileName and G.dataToAnalyzeFileName
         IterationFirstDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
 
     # Skip preProcessing all together if we are loading analyzed data
@@ -3313,7 +3313,7 @@ def main():
                                   G.csvFile, G.moleculesRange, G.csvFileName,G.dataUpperBound,
                                   G.dataLowerBound, G.increments, G.permutationNum]
         SLSChoices = [G.uniqueOrCommon, G.slsFinish, G.distinguished]
-        ThresholdList = [G.rawSignalThresholdMethod, G.rawSignalThresholdValue, G.sensitivityThresholdValue,
+        ThresholdList = [G.applyRawSignalThresholds, G.rawSignalThresholdValue, G.sensitivityThresholdValue,
                          G.rawSignalThresholdDivider, G.rawSignalThresholdLimit, G.rawSignalThresholdLimitPercent]
         
         # Calculate a coefficient for doing a unit conversion on concentrations
@@ -3335,7 +3335,7 @@ def main():
                                                        timeIndex,currentReferenceData.referenceabscissa)#gets the collected values that will be solved
             
             
-            if G.rawSignalThresholdMethod == 'yes':#user input, this function calls either sls or inverse, deletes thresholds
+            if G.applyRawSignalThresholds == 'yes':#user input, this function calls either sls or inverse, deletes thresholds
                     solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline,
                                                          currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
                                                          ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,

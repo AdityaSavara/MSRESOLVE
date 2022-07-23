@@ -21,8 +21,8 @@ import numpy
 suffix = ut.returnDigitFromFilename(__file__)
 
 #This replaces the globals variables being pointed to in MSRESOLVE
-MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefKnownFactors.csv'] #Overwrite with desired reference file
-MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated.csv'
+MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeNISTRefKnownFactors.csv'] #Overwrite with desired reference file
+MSRESOLVE.G.dataToAnalyzeFileName = '2-CrotAcetExp#2Truncated.csv'
 MSRESOLVE.G.ionizationDataFileName = 'ProvidedIonizationDataExample.csv'
 MSRESOLVE.G.grapher = 'no'
 MSRESOLVE.G.exportAtEachStep = 'no'

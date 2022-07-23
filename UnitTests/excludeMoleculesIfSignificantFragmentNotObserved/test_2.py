@@ -17,7 +17,7 @@ import MSRESOLVE, importlib; importlib.reload(MSRESOLVE)
 
 import test_2_input
 MSRESOLVE.G = test_2_input
-#this input file uses the rawSignalThresholdMethod,which excludes molecules if they have significant mass fragments
+#this input file uses the applyRawSignalThresholds,which excludes molecules if they have significant mass fragments
 # that are not present above a particular signal threshold.
 # in this case, we set the signal threshold to be 0.02, and the significance to be at 1% for standardized reference patterns.
 # the mass 70 signal is always below 0.02 and a significant for both crotyl alcohol and 2-butenal (crotonaldehyde)
