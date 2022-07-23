@@ -24,7 +24,7 @@ suffix = ut.returnDigitFromFilename(__file__)
 #This reference file has three molecules: Acetaldehyde, Acetaldehyde_easy_to_ionize, and Acetaldehyde_copy
 #Acetaldehdye and Acetaldehyde_easy_to_ionize are identical with the exceptions that Acetaldehyde has an ionization factor of 1 and signal peaks at m29 and m29.2 are 9999 and 0, respectively, and Acetaldehyde_easy_to_ionize has an ionization factor of 2 and signal peaks at m29 and m29.2 are 0 and 9999, respectively.
 #Acetaldehyde and Acetaldheyde_copy are identical except Acetaldehyde has a signal of 9999 at m29 and 0 at m29.3.  Acetaldehyde_copy is the opposite having a signal of 0 at m29 and 9999 at m29.3.
-MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeNISTRefMixed2_test_3.csv']
+MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeNISTRefMixed2_test_3.csv']
 #Use the truncated reference data that contains only m29 and m29.2 with signals of 1 for each time for both mass fragments
 MSRESOLVE.G.collectedFileName = '2-CrotAcetExp#2Truncated3.csv'
 MSRESOLVE.G.concentrationFinder = 'yes' #Turn on concentrationFinder

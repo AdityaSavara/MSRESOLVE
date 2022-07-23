@@ -11,7 +11,7 @@ Proc Doc type things:
  -- First added at line 5351 
      if len(G.UserChoices['measuredReferenceYorN']['tuningCorrectorGasMixtureMoleculeNames']) > 0:
  -- Now make a reference object from LiteratureReference.csv so that simulated signals can be made.
- -- GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_ObjectsDict={}):
+ -- GenerateReferenceDataList(referencePatternsFileNamesList,referenceFormsList,AllMID_ObjectsDict={}):
  -- Need to be careful because "ReferenceInputPreProcessing" is being used.
   
      

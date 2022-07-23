@@ -21,7 +21,7 @@ import numpy as np
 suffix = ut.returnDigitFromFilename(__file__)
 
 
-MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasuredShortened.tsv']
+MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeMeasuredShortened.tsv']
 MSRESOLVE.G.tuningCorrectPatternInternalVsExternal = 'Internal'
 #We can use the default user input, which is already in MSRESOLVE.G.
 #Need to change the "direct variable" version rather than the dictionary version.

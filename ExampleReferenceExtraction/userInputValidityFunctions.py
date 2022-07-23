@@ -8,9 +8,9 @@ This function is designed to serve as a standard for parsing particular variable
 '''
 def parseUserInput(currentUserInput):
     #Input Files
-    currentUserInput.referenceFileNamesList = parse.listCast(currentUserInput.referenceFileNamesList) #referenceFileName needs to be a list
+    currentUserInput.referencePatternsFileNamesList = parse.listCast(currentUserInput.referencePatternsFileNamesList) #referenceFileName needs to be a list
     currentUserInput.referenceFormsList = parse.listCast(currentUserInput.referenceFormsList) #form needs to be a list
-    currentUserInput.referenceFormsList = parse.parallelVectorize(currentUserInput.referenceFormsList,len(currentUserInput.referenceFileNamesList)) #form needs to be a list of the same length as referenceFileName
+    currentUserInput.referenceFormsList = parse.parallelVectorize(currentUserInput.referenceFormsList,len(currentUserInput.referencePatternsFileNamesList)) #form needs to be a list of the same length as referenceFileName
     currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
     parse.strCheck(currentUserInput.collectedFileName,'collectedFileName') #collectedFileName must be a string
  
@@ -204,10 +204,10 @@ def parseUserInput(currentUserInput):
         
         if currentUserInput.TSC_List_Type == 'MultipleReferencePatterns': #If using multiple reference patterns then the user must input 1 value to use for each reference file or a value for each reference file
             #Then parallelize these variables to have the same length as number of reference patterns
-            currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referenceFileNamesList))
+            currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referencePatternsFileNamesList))
+            currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referencePatternsFileNamesList))
+            currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referencePatternsFileNamesList))
+            currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referencePatternsFileNamesList))
             #NOTE: vectorizing these lists for 'SeparateMoleculesFactors' occurs in RatioFinder
             
     #Output Files
@@ -248,7 +248,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     #TODO: Consider if G.iterativeAnalysis = True or False should be changed to G.IterativeAnalysis_On or something like that, but will break backwards compatibility unless special care is taken.
     #Also to consider if other variables should change to have names like G.specificMolecules_chosenMoleculesNames. Probably not necessary since we have the dictionaries.
     SettingsVDictionary = {}  
-    SettingsVDictionary['referenceFileNamesList']   = UserChoices['inputFiles']['referenceFileNamesList']
+    SettingsVDictionary['referencePatternsFileNamesList']   = UserChoices['inputFiles']['referencePatternsFileNamesList']
     SettingsVDictionary['referenceFormsList']   = UserChoices['inputFiles']['referenceFormsList']
     SettingsVDictionary['referencePatternTimeRanges']   = UserChoices['inputFiles']['referencePatternTimeRanges']
     SettingsVDictionary['collectedFileName']   = UserChoices['inputFiles']['collectedFileName']

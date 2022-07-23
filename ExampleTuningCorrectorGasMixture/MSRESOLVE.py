@@ -507,7 +507,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
     if measuredReferenceYorN =='yes':
         print("line 520!!!!!")
         if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
-            referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+            referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referencePatternsFileNamesList and from G.referenceFormsList.
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
@@ -570,7 +570,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
                 ReferenceDataExistingTuning = createReferenceDataObject ( G.referenceFileDesiredTuningAndForm[0],G.referenceFileDesiredTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
                 ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternOriginalTuning.csv')
                 if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
-                    referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+                    referenceFileDesiredTuningAndForm = [ "ExportedReferencePatternOriginalAnalysis.csv","xyyy" ] #Take the first item from G.referencePatternsFileNamesList and from G.referenceFormsList.
                 print("line 1489", referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
                 abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
                 referenceCorrectionCoefficients = numpy.zeros(3)
@@ -618,7 +618,7 @@ def createReferencePatternWithTuningCorrection(ReferenceData, verbose=True, retu
             referenceFileExistingTuningAndForm = G.referenceFileExistingTuningAndForm
             if referenceFileDesiredTuningAndForm == []:
                     print("line 622", G.referenceFormsList)
-                    referenceFileDesiredTuningAndForm = [G.referenceFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+                    referenceFileDesiredTuningAndForm = [G.referencePatternsFileNamesList[0],  G.referenceFormsList[0]] #Take the first item from G.referencePatternsFileNamesList and from G.referenceFormsList.
             #We don't use the function GenerateReferenceDataList because that function does more than just making a reference object.
             ReferenceDataExistingTuning = createReferenceDataObject ( referenceFileExistingTuningAndForm[0],referenceFileExistingTuningAndForm[1], AllMID_ObjectsDict=G.AllMID_ObjectsDict)   
             ReferenceDataExistingTuning.exportReferencePattern('ExportedReferencePatternExternal.csv')
@@ -789,7 +789,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
             referenceFileDesiredTuningAndForm=["TuningCorrectorGasMixtureMeasuredHypotheticalReferenceData.csv", "XYYY"]
             if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
                 print("line 522!!!!!")
-                referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referenceFileNamesList and from G.referenceFormsList.
+                referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referencePatternsFileNamesList and from G.referenceFormsList.
             abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
             referenceCorrectionCoefficients = numpy.zeros(3)
             referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
@@ -1640,22 +1640,22 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     return ReferenceData
 
 '''
-GenerateReferenceDataAndFormsList takes in the list of referenceFileNamesList and the
+GenerateReferenceDataAndFormsList takes in the list of referencePatternsFileNamesList and the
 list of forms.  A list is generated containing MSReference objects created based
 on the referenceFileName and the corresponding form
 It allows MSRESOLVE to be backwards compatible with previous user input files
 '''
-def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_ObjectsDict={}):
+def GenerateReferenceDataList(referencePatternsFileNamesList,referenceFormsList,AllMID_ObjectsDict={}):
     #referenceFormsList can take values of 'xyyy' or 'xyxy' and must be a string
-    ##If referenceFileNamesList is a string or if form is a string then make them lists
-    if isinstance(referenceFileNamesList,str):
-        referenceFileNamesList = [referenceFileNamesList]
+    ##If referencePatternsFileNamesList is a string or if form is a string then make them lists
+    if isinstance(referencePatternsFileNamesList,str):
+        referencePatternsFileNamesList = [referencePatternsFileNamesList]
     if isinstance(referenceFormsList,str):
         referenceFormsList = [referenceFormsList]
-    #If referenceFileNamesList and forms are lists of 1 then create a list of the single MSReference object
+    #If referencePatternsFileNamesList and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
-    if len(referenceFormsList) == 1 and len(referenceFileNamesList) == 1:
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[0],referenceFormsList[0])
+    if len(referenceFormsList) == 1 and len(referencePatternsFileNamesList) == 1:
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referencePatternsFileNamesList[0],referenceFormsList[0])
         ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
         #save each global variable into the class objects
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
@@ -1676,7 +1676,7 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[0].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[0])
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referencePatternsFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[0])
                     ReferenceDataList[0].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[0].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[0].absolute_standard_uncertainties[:,1:] = 100*ReferenceDataList[0].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
@@ -1687,22 +1687,22 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                 ReferenceDataList[0].update_relative_standard_uncertainties()
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
-    #If just one form is used, make a list of forms that is the same length as referenceFileNamesList
+    #If just one form is used, make a list of forms that is the same length as referencePatternsFileNamesList
     if len(referenceFormsList) == 1:
-        #Generate a copy of referenceFileNamesList to be overwritten with forms
-        listOfForms = copy.copy(referenceFileNamesList)
+        #Generate a copy of referencePatternsFileNamesList to be overwritten with forms
+        listOfForms = copy.copy(referencePatternsFileNamesList)
         #replace each value with the given form
-        for i in range(len(referenceFileNamesList)):
+        for i in range(len(referencePatternsFileNamesList)):
             listOfForms[i] = referenceFormsList[0]
-    #If list of forms is the same length of referenceFileNamesList then each form should correspond to the referenceFile of the same index
-    elif len(referenceFormsList) == len(referenceFileNamesList):
+    #If list of forms is the same length of referencePatternsFileNamesList then each form should correspond to the referenceFile of the same index
+    elif len(referenceFormsList) == len(referencePatternsFileNamesList):
         #So just set listOfForms equal to forms
         listOfForms = referenceFormsList
     #Initialize ReferenceDataList so it can be appended to
     ReferenceDataList = []
     #For loop to generate each MSReferenceObject and append it to a list
-    for i in range(len(referenceFileNamesList)):
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referenceFileNamesList[i],listOfForms[i])
+    for i in range(len(referencePatternsFileNamesList)):
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referencePatternsFileNamesList[i],listOfForms[i])
         ReferenceDataList.append(MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict))
         #save each global variable into the class objects 
         ReferenceDataList[i].ExportAtEachStep = G.ExportAtEachStep
@@ -1723,7 +1723,7 @@ def GenerateReferenceDataList(referenceFileNamesList,referenceFormsList,AllMID_O
                     ReferenceDataList[i].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referenceFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[i])
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referencePatternsFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[i])
                     ReferenceDataList[i].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[i].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[i].absolute_standard_uncertainties[:,1:] = ReferenceDataList[i].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
@@ -2079,7 +2079,7 @@ def IterativeDirectoryChange(iterativeAnalysis, iterationNumber):
     os.chdir(iterationDirectoryName) #this will be changed back at the end of the program    
 
 def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber):
-    #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
+    #implied arguments for this function are G.referencePatternsFileNamesList and G.collectedFileName
     IterativeDirectoryChange(iterativeAnalysis, iterationNumber)
     
     #naming for collected file
@@ -2101,28 +2101,28 @@ def IterationDirectoryPreparation(iterativeAnalysis, iterationNumber):
     
     G.oldReferenceFileName = []
     G.nextRefFileName = []
-    for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
+    for RefIndex, RefName in enumerate(G.referencePatternsFileNamesList): #a list
         #record the old file names 
         G.oldReferenceFileName.append(RefName)
         
         #construct the file names for the current run of the program
         #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
-        referenceFileNameTemp = G.referenceFileNamesList[RefIndex][:-18] +  str(G.iterationSuffix) + G.referenceFileNamesList[RefIndex][-4:]
+        referenceFileNameTemp = G.referencePatternsFileNamesList[RefIndex][:-18] +  str(G.iterationSuffix) + G.referencePatternsFileNamesList[RefIndex][-4:]
         
         #copy the experimental and reference files into new names for this iterative run
         shutil.copy(RefName, referenceFileNameTemp)
         
         #change the globals to reflect the renaming of the ref and exp files
-        G.referenceFileNamesList[RefIndex] =  referenceFileNameTemp
+        G.referencePatternsFileNamesList[RefIndex] =  referenceFileNameTemp
         
         #construct file names for the next run of the program 
         #TODO FIXME, This syntax with -18 will not allow iterative to be compatible with more than 9 iterations
         G.nextRefFileName.append(RefName[:-18] + '_unused_iter_%s' %G.iterationNumber + RefName[-4:])
     return None
-    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileNamesList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referencePatternsFileNamesList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
-    #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
+    #implied arguments for this function are G.referencePatternsFileNamesList and G.collectedFileName
     #this global value is set so that each export statement can label the output files correctly
     G.iterationNumber = iterationNumber
     
@@ -2149,19 +2149,19 @@ def IterationFirstDirectoryPreparation(iterativeAnalysis,iterationNumber):
     G.nextExpFileName = G.collectedFileName[:-11] + '_remaining_iter_1' + G.collectedFileName[-4:]
     
     G.oldReferenceFileName = []
-    for RefIndex, RefName in enumerate(G.referenceFileNamesList): #a list
+    for RefIndex, RefName in enumerate(G.referencePatternsFileNamesList): #a list
         G.oldReferenceFileName.append(RefName)
         #construct the file names for the first run of the program
-        G.referenceFileNamesList[RefIndex] = G.referenceFileNamesList[RefIndex][:-4] +  str(G.iterationSuffix) + G.referenceFileNamesList[RefIndex][-4:]
+        G.referencePatternsFileNamesList[RefIndex] = G.referencePatternsFileNamesList[RefIndex][:-4] +  str(G.iterationSuffix) + G.referencePatternsFileNamesList[RefIndex][-4:]
         #construct file names for the second run of the program 
         G.nextRefFileName.append(RefName[:-4] + '_unused_iter_1' + RefName[-4:])
     
     return None 
-    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referenceFileNamesList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
+    #implied returns: G.oldReferenceFileName, G.oldcollectedFileName, G.referencePatternsFileNamesList,G.collectedFileName, G.nextRefFileName, G. nextExpFileName, G.iterationNumber 
 
 #The IterativeAnalysisDirectory and Variable Population function is used to shrink the size of the program analysis and redirect the output. 
 def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecules, ExperimentData, ExperimentDataFullCopy, ReferenceDataList, ReferenceDataListFullCopy):
-    #implied arguments: G.dataSimulation, G.referenceFileNamesList, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMoleculesNames, G.iterationNumber
+    #implied arguments: G.dataSimulation, G.referencePatternsFileNamesList, G.collectedFileName, G.nextRefFileName, G.oldReferenceFileName, G.chosenMoleculesNames, G.iterationNumber
     #override data simulation to yes if it was not selected
     if G.dataSimulation != 'yes':
         print("Iterative analysis cannot find the remaining signals in the experiment without signal simulation being run.")
@@ -2191,7 +2191,7 @@ def IADirandVarPopulation(iterativeAnalysis, chosenMassFragments, chosenMolecule
     for RefObjectIndex, RefObject in enumerate(ReferenceDataList): #a list
         #Export current Reference Data  
         #Reference data is trimmed prior to this function
-        ExportXYYYData(G.referenceFileNamesList[RefObjectIndex], RefObject.provided_reference_patterns, RefObject.molecules, abscissaHeader = 'M/Z')
+        ExportXYYYData(G.referencePatternsFileNamesList[RefObjectIndex], RefObject.provided_reference_patterns, RefObject.molecules, abscissaHeader = 'M/Z')
     
     #Export current Experimental Data
     #Experimental data is trimmed prior to this function, but it still needs to be exported  
@@ -2297,7 +2297,7 @@ def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
     G.nextUserInputModule.__var_list__ = G.__var_list__ 
     #save the new file name for the next user input file 
     G.nextUserInputModule.collectedFileName = G.nextExpFileName 
-    G.nextUserInputModule.referenceFileNamesList = G.nextRefFileName
+    G.nextUserInputModule.referencePatternsFileNamesList = G.nextRefFileName
     #updating the selected molecules for the next user input file
     G.nextUserInputModule.chosenMoleculesNames = G.unusedMolecules
     #Updating the selected masses for the next user input file
@@ -2337,12 +2337,12 @@ def IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy):
             str(iterationDirectoryName),
             str(G.nextUserInputModule.collectedFileName))
     shutil.copy(copyFromPath, os.getcwd())
-    for RefIndex, RefName in enumerate(G.nextUserInputModule.referenceFileNamesList): #a list
+    for RefIndex, RefName in enumerate(G.nextUserInputModule.referencePatternsFileNamesList): #a list
         #copy the next reference file from the previous iteration folder to the next iteration folder
         copyFromPath = os.path.join(os.curdir,
             os.pardir,
             str(iterationDirectoryName),
-            str(G.nextUserInputModule.referenceFileNamesList[RefIndex]))
+            str(G.nextUserInputModule.referencePatternsFileNamesList[RefIndex]))
         shutil.copy(copyFromPath, os.getcwd())
     #returning to the parent directory
     os.chdir('..')
@@ -2370,7 +2370,7 @@ def IterativeAnalysisPostProcessing(ExperimentData, simulateddata, mass_fragment
     exportSimulatedSignalsSoFar(G.simulatedSignalsOutputName,iterationDirectoryName,G.iterationNumber) #subtract 1 from the iteration number since the iteration number has already been changed
     IterativePrepareNextIterationInputFiles(ExperimentDataFullCopy)
     return None
-     #implied returns: G.referenceFileNamesList, G.collectedFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
+     #implied returns: G.referencePatternsFileNamesList, G.collectedFileName, G.nextRefFileName, G.chosenMoleculesNames, G.iterationSuffix
 ###############################################################################
 #########################  Functions to read data files #######################
 ###############################################################################
@@ -5517,7 +5517,7 @@ def PopulateLogFile():
     filename6 = 'LogFile.txt' #the log file is printed here
     f6 = open(filename6,'a')
     f6.write('\n')
-    f6.write('referenceFileName = %s \n'%(G.referenceFileNamesList))
+    f6.write('referenceFileName = %s \n'%(G.referencePatternsFileNamesList))
     f6.write('form  = %s \n'%(G.referenceFormsList))
     f6.write('collectedFileName = %s \n'%(G.collectedFileName ))
     if G.timeRangeLimit == 'yes':#some of the lines in the backgroundinput file don't need to be printed unless a selection is made, so the if statements here make that happen
@@ -5685,13 +5685,13 @@ def main():
 
     #if this is not the first iterative run, then the required files are all stored in the highest iteration directory
     if G.iterativeAnalysis and G.iterationNumber != 1:
-        #implied arguments for this function are G.referenceFileNamesList and G.collectedFileName
+        #implied arguments for this function are G.referencePatternsFileNamesList and G.collectedFileName
         IterationDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber) #This function also changes the working directory
 
     #Read in the molecules used before parsing the user input file    
-    G.referenceFileNamesList = parse.listCast(G.referenceFileNamesList)
+    G.referencePatternsFileNamesList = parse.listCast(G.referencePatternsFileNamesList)
     G.referenceFormsList = parse.listCast(G.referenceFormsList)
-    G.moleculesNames = getMoleculesFromReferenceData(G.referenceFileNamesList[0])
+    G.moleculesNames = getMoleculesFromReferenceData(G.referencePatternsFileNamesList[0])
     #If a tuning correction is going to be done, we'll make a mixed reference pattern.
     #G.moleculesNamesExtended needs to be populated before the first tuning correction and before parsing of userinput.
     if str(G.measuredReferenceYorN).lower() == 'yes': 
@@ -5708,20 +5708,20 @@ def main():
 
     #Save an MSReference object containing all molecules and an MSData object containing all mass fragments
     if G.iterativeAnalysis and G.iterationNumber != 1: #If using iterative and not on the first iteration we will need to remove _iter_x from the file names
-        AllMoleculesReferenceFileNamesList = [] #Initialize AllMoleculesReferenceDataList as an empty list
-        for referenceFileNameIndex in range(len(G.referenceFileNamesList)): #Loop through the reference file names list
-            AllMoleculesReferenceFileName = remove_iter_fromFileName(G.referenceFileNamesList[referenceFileNameIndex]) #Remove the _iter_ from the name so the program has the original filename to access from the parent directory
+        AllMoleculesreferencePatternsFileNamesList = [] #Initialize AllMoleculesReferenceDataList as an empty list
+        for referenceFileNameIndex in range(len(G.referencePatternsFileNamesList)): #Loop through the reference file names list
+            AllMoleculesReferenceFileName = remove_iter_fromFileName(G.referencePatternsFileNamesList[referenceFileNameIndex]) #Remove the _iter_ from the name so the program has the original filename to access from the parent directory
             AllMoleculesReferenceDataFilePath = os.path.normpath(os.path.join(os.curdir, os.pardir,AllMoleculesReferenceFileName)) #This function will get the path of the reference file from the parent directory 
-            AllMoleculesReferenceFileNamesList.append(AllMoleculesReferenceDataFilePath) #Append the path to the list and the program will read the reference file from the path name
+            AllMoleculesreferencePatternsFileNamesList.append(AllMoleculesReferenceDataFilePath) #Append the path to the list and the program will read the reference file from the path name
         AllMassFragmentsExperimentDataFileName = remove_iter_fromFileName(G.collectedFileName) #Remove _iter_ from the data filename so the program has the original filename to access from the parent directory
         AllMassFragmentsExperimentDataFileNamePath = os.path.normpath(os.path.join(os.curdir, os.pardir, AllMassFragmentsExperimentDataFileName)) #This function will get the path of the data file from the parent directory
     else: #Otherwise not running iterative or in the first iteration, just copy the filename
-        AllMoleculesReferenceFileNamesList = copy.copy(G.referenceFileNamesList)
+        AllMoleculesreferencePatternsFileNamesList = copy.copy(G.referencePatternsFileNamesList)
         AllMassFragmentsExperimentDataFileNamePath = copy.copy(G.collectedFileName)
     #Create the MSReference and MSData objects containing all molecules and all mass fragments, respectively
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(AllMassFragmentsExperimentDataFileNamePath)
     AllMassFragmentsExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)        
-    AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesReferenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
+    AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesreferencePatternsFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
     #Then prepare AllMoleculesReferenceDataList to get reciprocal_matching_correction_values, this value is fed into RatioFinder
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
         AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
@@ -5759,7 +5759,7 @@ def main():
     resultsObjects = {}
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
-    ReferenceDataList = GenerateReferenceDataList(G.referenceFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
+    ReferenceDataList = GenerateReferenceDataList(G.referencePatternsFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
     if type(G.collectedFileUncertainties) != type(None):
@@ -5767,14 +5767,14 @@ def main():
             G.collectedFileUncertainties = int(G.collectedFileUncertainties)
 
     #Prints a warning if the user has more reference files than specified time ranges
-    if len(G.referencePatternTimeRanges) > 0 and (len(G.referenceFileNamesList) > len(G.referencePatternTimeRanges)):
+    if len(G.referencePatternTimeRanges) > 0 and (len(G.referencePatternsFileNamesList) > len(G.referencePatternTimeRanges)):
         print("WARNING: There are more reference files given than time ranges")
     #save global variable into the class objects 
     ExperimentData.ExportAtEachStep = G.ExportAtEachStep
    
     #if this is the first iterative run, then the reference and experimental files need to have been imported before the iteration can begin
     if G.iterativeAnalysis and G.iterationNumber == 1 :
-        #implied arguments for the following function are G.referenceFileNamesList and G.collectedFileName
+        #implied arguments for the following function are G.referencePatternsFileNamesList and G.collectedFileName
         IterationFirstDirectoryPreparation(G.iterativeAnalysis, G.iterationNumber)
 
     # Skip preProcessing all together if we are loading analyzed data

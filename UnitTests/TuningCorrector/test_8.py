@@ -21,7 +21,7 @@ import numpy as np
 suffix = ut.returnDigitFromFilename(__file__)
 
 
-MSRESOLVE.G.referenceFileNamesList = ['AcetaldehydeMeasured.tsv']
+MSRESOLVE.G.referencePatternsFileNamesList = ['AcetaldehydeMeasured.tsv']
 #We can use the default user input, which is already in MSRESOLVE.G.
 #Need to change the "direct variable" version rather than the dictionary version.
 MSRESOLVE.G.measuredReferenceYorN = 'yes'

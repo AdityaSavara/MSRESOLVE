@@ -8,11 +8,11 @@ This function is designed to serve as a standard for parsing particular variable
 '''
 def parseUserInput(currentUserInput):
     #Input Files
-    currentUserInput.referenceFileNamesList = parse.listCast(currentUserInput.referenceFileNamesList) #referenceFileName needs to be a list
-    currentUserInput.referenceFileNamesList = parse.stripListOfStrings(currentUserInput.referenceFileNamesList)
+    currentUserInput.referencePatternsFileNamesList = parse.listCast(currentUserInput.referencePatternsFileNamesList) #referenceFileName needs to be a list
+    currentUserInput.referencePatternsFileNamesList = parse.stripListOfStrings(currentUserInput.referencePatternsFileNamesList)
     currentUserInput.referenceFormsList = parse.listCast(currentUserInput.referenceFormsList) #form needs to be a list
     currentUserInput.referenceFormsList = parse.stripListOfStrings(currentUserInput.referenceFormsList)
-    currentUserInput.referenceFormsList = parse.parallelVectorize(currentUserInput.referenceFormsList,len(currentUserInput.referenceFileNamesList)) #form needs to be a list of the same length as referenceFileName
+    currentUserInput.referenceFormsList = parse.parallelVectorize(currentUserInput.referenceFormsList,len(currentUserInput.referencePatternsFileNamesList)) #form needs to be a list of the same length as referenceFileName
     currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
     parse.strCheck(currentUserInput.collectedFileName,'collectedFileName') #collectedFileName must be a string
     currentUserInput.collectedFileName = currentUserInput.collectedFileName.strip()
@@ -228,10 +228,10 @@ def parseUserInput(currentUserInput):
         
         if currentUserInput.TSC_List_Type == 'MultipleReferencePatterns': #If using multiple reference patterns then the user must input 1 value to use for each reference file or a value for each reference file
             #Then parallelize these variables to have the same length as number of reference patterns
-            currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referenceFileNamesList))
-            currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referenceFileNamesList))
+            currentUserInput.moleculesTSC_List = parse.parallelVectorize(currentUserInput.moleculesTSC_List,len(currentUserInput.referencePatternsFileNamesList))
+            currentUserInput.moleculeSignalTSC_List = parse.parallelVectorize(currentUserInput.moleculeSignalTSC_List,len(currentUserInput.referencePatternsFileNamesList))
+            currentUserInput.massNumberTSC_List = parse.parallelVectorize(currentUserInput.massNumberTSC_List,len(currentUserInput.referencePatternsFileNamesList))
+            currentUserInput.moleculeConcentrationTSC_List = parse.parallelVectorize(currentUserInput.moleculeConcentrationTSC_List,len(currentUserInput.referencePatternsFileNamesList))
             #NOTE: vectorizing these lists for 'SeparateMoleculesFactors' occurs in RatioFinder
             
     #Output Files
@@ -291,27 +291,27 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     
     #Will make sure that any referenceFileStandardTuning and referenceFileExistingTuning filenames have the same extension as the original reference pattern, and exit if that condition is not met.
     #First get the regular reference filename extension.
-    if '.csv' in  UserChoices['inputFiles']['referenceFileNamesList'][0]:
+    if '.csv' in  UserChoices['inputFiles']['referencePatternsFileNamesList'][0]:
         referenceFileExtension = 'csv'
-    if '.tsv' in  UserChoices['inputFiles']['referenceFileNamesList'][0]:
+    if '.tsv' in  UserChoices['inputFiles']['referencePatternsFileNamesList'][0]:
         referenceFileExtension = 'tsv'    
     #Make sure all of the reference files match each other:
-    for referenceFileName in UserChoices['inputFiles']['referenceFileNamesList']:
+    for referenceFileName in UserChoices['inputFiles']['referencePatternsFileNamesList']:
         if referenceFileExtension not in referenceFileName:
-            print("ERROR: All filenamese in referenceFileNamesList must have the same extension."); sys.exit()
+            print("ERROR: All filenamese in referencePatternsFileNamesList must have the same extension."); sys.exit()
     if len (UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm']) > 0:
         if referenceFileExtension not in UserChoices['measuredReferenceYorN']['referenceFileStandardTuningAndForm'][0]:
-            print("ERROR: All filenamese in referenceFileNamesList and referenceFileStandardTuningAndForm must have the same extension."); sys.exit()
+            print("ERROR: All filenamese in referencePatternsFileNamesList and referenceFileStandardTuningAndForm must have the same extension."); sys.exit()
     if len (UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm']) > 0:
         if referenceFileExtension not in UserChoices['measuredReferenceYorN']['referenceFileExistingTuningAndForm'][0]:
-            print("ERROR: All filenamese in referenceFileNamesList and referenceFileExistingTuningAndForm must have the same extension."); sys.exit()
+            print("ERROR: All filenamese in referencePatternsFileNamesList and referenceFileExistingTuningAndForm must have the same extension."); sys.exit()
 
     #Filling settings variables dictionary so that variables can be populated from it. This is basically a mapping. See user input file for details.
     #The original variable names were single variables. Now, we are using a dictionary type structure (right side of equal signs) so they are being mapped to the single variables (left side of equal sign)
     #TODO: Consider if G.iterativeAnalysis = True or False should be changed to G.IterativeAnalysis_On or something like that, but will break backwards compatibility unless special care is taken.
     #Also to consider if other variables should change to have names like G.specificMolecules_chosenMoleculesNames. Probably not necessary since we have the dictionaries.
     SettingsVDictionary = {}  
-    SettingsVDictionary['referenceFileNamesList']   = UserChoices['inputFiles']['referenceFileNamesList']
+    SettingsVDictionary['referencePatternsFileNamesList']   = UserChoices['inputFiles']['referencePatternsFileNamesList']
     SettingsVDictionary['referenceFormsList']   = UserChoices['inputFiles']['referenceFormsList']
     SettingsVDictionary['referencePatternTimeRanges']   = UserChoices['inputFiles']['referencePatternTimeRanges']
     SettingsVDictionary['collectedFileName']   = UserChoices['inputFiles']['collectedFileName']
