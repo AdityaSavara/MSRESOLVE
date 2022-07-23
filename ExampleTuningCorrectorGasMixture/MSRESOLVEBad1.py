@@ -381,7 +381,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
 
     '''
     
-    if G.minimalReferenceValue !='yes':
+    if G.applyReferenceMassFragmentsThresholds !='yes':
         print("Warning: The ABCDetermination will occur without threshold filtering, since that setting is off.")
         
     if G.extractReferencePatternFromDataOption == 'yes':
@@ -393,7 +393,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     ReferencePatternExistingTuningDict['molecules']=molecules
     ReferencePatternExistingTuningDict['provided_reference_patterns'] = provided_reference_patterns
     ReferencePatternExistingTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternExistingTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
-    if G.minimalReferenceValue =='yes':
+    if G.applyReferenceMassFragmentsThresholds =='yes':
         ReferencePatternExistingTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternExistingTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
     
     ReferencePatternDesiredTuningDict = {}
@@ -401,7 +401,7 @@ def ABCDetermination(ReferencePatternExistingTuning_FileNameAndForm, ReferencePa
     ReferencePatternDesiredTuningDict['molecules']=molecules
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = provided_reference_patterns
     ReferencePatternDesiredTuningDict['provided_reference_patterns'] = StandardizeReferencePattern(ReferencePatternDesiredTuningDict['provided_reference_patterns'],len(molecules)) #this does have the molecular weight as the first column.
-    if G.minimalReferenceValue =='yes':
+    if G.applyReferenceMassFragmentsThresholds =='yes':
         ReferencePatternDesiredTuningDict['provided_reference_patterns'] = ReferenceThresholdFilter(ReferencePatternDesiredTuningDict['provided_reference_patterns'],G.referenceValueThreshold)
     
     '''
@@ -697,7 +697,7 @@ def tuningCorrectorGasMixture(ReferenceDataList, G): #making it clear that there
                 if ReferenceDataList[ReferenceDataIndex].ExportAtEachStep == 'yes':
                     print("line 685", ReferenceDataList[ReferenceDataIndex].relativeIonizationEfficiencies)
                     print("line 686", ReferenceDataList[ReferenceDataIndex].sourceOfIonizationData)
-                    print(G.UserChoices['minimalReferenceValue']['referenceValueThreshold'])
+                    print(G.UserChoices['applyReferenceMassFragmentsThresholds']['referenceValueThreshold'])
                     ReferenceDataList[ReferenceDataIndex].ExportCollector('StandardizedReferencePattern', use_provided_reference_patterns=False)
                 ReferenceDataList[ReferenceDataIndex].exportReferencePattern("TuningCorrectorMixedPattern.csv")
                 
@@ -1495,7 +1495,7 @@ def ReferenceInputPreProcessing(ReferenceData, verbose=True):
     #TODO: the minimal reference value can cause inaccuracies if interpolating between multiple reference patterns if one pattern has a value rounded to 0 and the other does not
     #TODO: option 1: this issue can be fixed by moving this to after interpolation
     #TODO: option 2: Or we can below assign to preprocessed_reference_pattern rather than standardized_reference_patterns and then use that in data analysis (Note that interpolate would continue to use standardized_reference_patterns as well as preprocess the output)
-    if G.minimalReferenceValue == 'yes':
+    if G.applyReferenceMassFragmentsThresholds == 'yes':
         if G.implicitSLScorrection == True: #This feature requires us to have unfiltered reference patterns to do an implicit/recursive correction at the end.
             G.currentReferenceDataUnfiltered = copy.deepcopy(ReferenceData) #Make a copy before any filtering occurs. There is an implied return in global variable.
         ReferenceData.standardized_reference_patterns = ReferenceThresholdFilter(ReferenceData.standardized_reference_patterns,G.referenceValueThreshold)
@@ -3095,7 +3095,7 @@ def CombinationMaker(reciprocal_matching_correction_values,rawsignalsarrayline,m
     if combinations == []:#This function will not work without enough mass fragments, so the user must know the problem
         print('****************************************')
         print('Not enough matching mass fragments input')
-        print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  minimalReferenceValue feature with referenceValueThreshold, such as referenceValueThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
+        print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  applyReferenceMassFragmentsThresholds feature with referenceValueThreshold, such as referenceValueThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
         print('****************************************')
     combinations_len = len(combinations) 
     correctionarray = numpy.zeros([1,num_molecules])
@@ -3890,7 +3890,7 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
         chosenMolecule = None
         tuplesOfUniqueFragmentsList = []
         
-        if G.minimalReferenceValue == "yes": #We only will do some filtering things if it's requested.
+        if G.applyReferenceMassFragmentsThresholds == "yes": #We only will do some filtering things if it's requested.
         #Before going forward, we're going to make a variable called remaining_referenceSignificantFragmentThresholds, using a function.       
             def get_remaining_referenceSignificantFragmentThresholds(referenceSignificantFragmentThresholds, molecules_unedited, remaining_molecules_SLS):
                 remaining_referenceSignificantFragmentThresholds = list(copy.deepcopy(referenceSignificantFragmentThresholds))
@@ -3932,12 +3932,12 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
                 #consideredMolecule = remaining_molecules_SLS[moleculeIndexOfUniqueIntensity] #This is for debugging purposes, this can be printed.
                 #For debugging, also print remaining_reference_intensities_SLS and massFragmentIndex_i.
                 #However, now we have a few lines of code to check if we are above the referenceSignificantFragmentThresholds.
-                if G.minimalReferenceValue == "yes": #We only check for the remaining_referenceSignificantFragmentThresholds if this option has been chosen. 
+                if G.applyReferenceMassFragmentsThresholds == "yes": #We only check for the remaining_referenceSignificantFragmentThresholds if this option has been chosen. 
                     if (max(remaining_reference_intensities_SLS[massFragmentIndex_i]) < remaining_referenceSignificantFragmentThresholds[moleculeIndexOfUniqueIntensity]): #This allows separate referenceSignificantFragmentThresholds for each molecule.
                         significantFragment = False  #Set to false if the fragment is too small.
                     else: 
                         significantFragment = True #This means the fragment is greater than or equal to the threshold for significance.
-                if G.minimalReferenceValue != "yes": #if the option is not selected, then all fragments are considered significant.
+                if G.applyReferenceMassFragmentsThresholds != "yes": #if the option is not selected, then all fragments are considered significant.
                     significantFragment = True 
                 if significantFragment == True:
                     #now make a tuple with the unique standardized intensity in the front so we can sort by that
@@ -4818,7 +4818,7 @@ def subtract_simulated_signals_of_specific_molecules(moleculeIndicesToSubtract, 
 
 
 
-#This function is intended to add back any concentration / intensity that was removed or distorted by reference fragmentation pattern high pass filtering (which is UserChoices['minimalReferenceValue']['referenceValueThreshold']). It also adds half of the difference to the uncertainties.  As of 5/17/20, only a single recursion iteration is performed.
+#This function is intended to add back any concentration / intensity that was removed or distorted by reference fragmentation pattern high pass filtering (which is UserChoices['applyReferenceMassFragmentsThresholds']['referenceValueThreshold']). It also adds half of the difference to the uncertainties.  As of 5/17/20, only a single recursion iteration is performed.
 #The corrections are performed from largest to smallest (in percentage), with only one molecule's correction per sls mass. That is, the effect of molecule A's filtering on molecule B's concentration, for example. A molecule can be its largest self correction (A to A). Each molecule is corrected in kind, so serial (stacked) correction is among the possibilities that can occur.
 #TODO: May 17 2020. Right now, we only take the LARGEST correction for each sls when deciding which sls mass to correct, then we apply that correction. But maybe we should take a single recursion of all molecules affecting? Then apply all molecules to that sls mass before moving to the next one? This would still be a single recursion, but would matter if (for example) a single molecule's sls was able to occur due to filtering out 20 other molecule's contributions at that mass.
 class referenceThresholdFilterCorrectingSandbox():
@@ -5437,8 +5437,8 @@ def PopulateLogFile():
         f6.write('rpcMoleculesToChange = %s \n'%(G.rpcMoleculesToChange))
         f6.write('rpcMoleculesToChangeMF = %s \n'%(G.rpcMoleculesToChangeMF))
         f6.write('rpcTimeRanges = %s \n'%(G.rpcTimeRanges))
-    if G.minimalReferenceValue == 'yes':
-        f6.write('minimalReferenceValue = %s \n'%(G.minimalReferenceValue))
+    if G.applyReferenceMassFragmentsThresholds == 'yes':
+        f6.write('applyReferenceMassFragmentsThresholds = %s \n'%(G.applyReferenceMassFragmentsThresholds))
         f6.write('referenceValueThreshold = %s \n'%(G.referenceValueThreshold))
         f6.write('referenceSignificantFragmentThresholds = %s \n'%(G.referenceSignificantFragmentThresholds))
     if G.lowerBoundThresholdChooser == 'yes':
@@ -5950,7 +5950,7 @@ def main():
                         referenceAfterFiltering = currentReferenceData
                         slsSolvedMasses = G.massesUsedInSolvingMoleculesForThisPoint
                         if 0 in slsSolvedMasses:
-                            print("The concentrations are currently not completely solvable by SLS at this time so implicitSLScorrection is being skipped and changed to False. One option to consider is increasing UserChoices['minimalReferenceValue']['referenceValueThreshold'] to a highernumber." )
+                            print("The concentrations are currently not completely solvable by SLS at this time so implicitSLScorrection is being skipped and changed to False. One option to consider is increasing UserChoices['applyReferenceMassFragmentsThresholds']['referenceValueThreshold'] to a highernumber." )
                             G.implicitSLScorrection = False
                         else:
                             #Now need to move the class out of this area. Currently test 2 is taking 0.08 to 0.20 anlaysis time versus 0.014 for test_1.

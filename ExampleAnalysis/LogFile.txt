@@ -9,7 +9,7 @@ massesToBackgroundCorrect = [12.0 13.0 14.0 15.0 16.0 17.0 21.0 22.0 24.0 25.0 2
  30.0] 
 earlyBaselineTimes = [[850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870], [850, 870]] 
 lateBaselineTimes = [[1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070], [1050, 1070]] 
-minimalReferenceValue = yes 
+applyReferenceMassFragmentsThresholds = yes 
 referenceValueThreshold = [1.01, 1.01, 1.01] 
 referenceSignificantFragmentThresholds = [20.0, 20.0, 20.0] 
 answer = sls 

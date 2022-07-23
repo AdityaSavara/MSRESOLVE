@@ -928,7 +928,7 @@ def ReferenceInputPreProcessing(ReferenceData):
                                                        G.tuningCorrection)
     ReferenceData.ExportCollector('CorrectionValueCorrector')
     
-    if G.minimalReferenceValue == 'yes':
+    if G.applyReferenceMassFragmentsThresholds == 'yes':
         ReferenceData.standardized_reference_intensities = ReferenceThreshold(ReferenceData.standardized_reference_intensities,G.referenceValueThreshold)
         ReferenceData.ExportCollector('ReferenceThreshold')
     
@@ -1688,7 +1688,7 @@ def CombinationMaker(reciprocal_matching_correction_values,rawsignalsarrayline,m
     if combinations == []:#This function will not work without enough mass fragments, so the user must know the problem
         print('****************************************')
         print('Not enough matching mass fragments input')
-        print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  minimalReferenceValue feature with referenceValueThreshold, such as referenceValueThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
+        print("This means that at some point in the analysis, there were not enough masses in the reference file to apply the inverse method. It could mean you have too many overlapping masses for the molecules you are trying to resolve.  You can get around this by using the '#//Reference Mass Fragmentation Threshold//' feature to exclude tiny fragementation peaks. This would be done by setting the value to 'yes' for  applyReferenceMassFragmentsThresholds feature with referenceValueThreshold, such as referenceValueThreshold = 5.0 .  Alternatively, to be more targeted, if you know *which* fragmentation patterns could be overlapping, you could set those minor fragments to 0 in your reference pattern csv file. TODO: Print out the relevant masses here. This requires keeping track of when they are selected prior to combination maker, and possibly passing them as an additional argument.")
         print('****************************************')
     combinations_len = len(combinations) 
     correctionarray = numpy.zeros([1,moleculenum])
@@ -3062,8 +3062,8 @@ def PopulateLogFile():
         f6.write('rpcMoleculesToChange = %s \n'%(G.rpcMoleculesToChange))
         f6.write('rpcMoleculesToChangeMF = %s \n'%(G.rpcMoleculesToChangeMF))
         f6.write('rpcTimeRanges = %s \n'%(G.rpcTimeRanges))
-    if G.minimalReferenceValue == 'yes':
-        f6.write('minimalReferenceValue = %s \n'%(G.minimalReferenceValue))
+    if G.applyReferenceMassFragmentsThresholds == 'yes':
+        f6.write('applyReferenceMassFragmentsThresholds = %s \n'%(G.applyReferenceMassFragmentsThresholds))
         f6.write('referenceValueThreshold = %s \n'%(G.referenceValueThreshold))
     if G.lowerBoundThresholdChooser == 'yes':
         f6.write('lowerBoundThresholdChooser = %s \n'%(G.lowerBoundThresholdChooser))

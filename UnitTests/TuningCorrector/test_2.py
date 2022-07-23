@@ -40,8 +40,8 @@ MSRESOLVE.G.timeRangeStart = 176  #start time (-int)
 MSRESOLVE.G.timeRangeFinish = 178  #start time (-int)
 MSRESOLVE.G.dataSmootherYorN = 'no'
 
-#will use minimalReferenceValue (single value means it will be applied to all molecules)
-MSRESOLVE.G.minimalReferenceValue= 'yes'
+#will use applyReferenceMassFragmentsThresholds (single value means it will be applied to all molecules)
+MSRESOLVE.G.applyReferenceMassFragmentsThresholds= 'yes'
 MSRESOLVE.G.referenceValueThreshold = [6.0]
 MSRESOLVE.G.referenceSignificantFragmentThresholds = [0.0]
 

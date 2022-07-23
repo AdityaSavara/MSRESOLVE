@@ -125,7 +125,7 @@ rpcTimeRanges = [[300,600]]
 
 #//Reference Mass Fragmentation Threshold//
 # if you want to exclude tiny fragmentation peaks
-minimalReferenceValue= 'no'
+applyReferenceMassFragmentsThresholds= 'no'
 referenceValueThreshold = [6.0]
 
 

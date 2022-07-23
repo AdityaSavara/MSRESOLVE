@@ -140,8 +140,8 @@ def parseUserInput(currentUserInput):
         parse.compareElementsBetweenLists(currentUserInput.rpcMoleculesToChange,chosenMoleculesForParsing,'rpcMoleculesToChange','chosenMolecules')
     
     #Reference Mass Fragmentation Threshold
-    parse.strCheck(currentUserInput.minimalReferenceValue,'minimalReferenceValue')
-    if currentUserInput.minimalReferenceValue == 'yes': #If using reference mass fragmentation threshold
+    parse.strCheck(currentUserInput.applyReferenceMassFragmentsThresholds,'applyReferenceMassFragmentsThresholds')
+    if currentUserInput.applyReferenceMassFragmentsThresholds == 'yes': #If using reference mass fragmentation threshold
         currentUserInput.referenceValueThreshold = parse.listCast(currentUserInput.referenceValueThreshold) #reference value threshold is a list
         #The length of the reference value thresholds needs to be the same length as the number of molecules
         currentUserInput.referenceValueThreshold = parse.parallelVectorize(currentUserInput.referenceValueThreshold,len(chosenMoleculesForParsing))
@@ -361,9 +361,9 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['rpcTimeRanges']   = UserChoices['extractReferencePatternFromDataOption']['rpcTimeRanges']
     SettingsVDictionary['rpcMoleculesToChangeMF']    = UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] 
 
-    SettingsVDictionary['minimalReferenceValue']   = UserChoices['minimalReferenceValue']['on']
-    SettingsVDictionary['referenceValueThreshold']   = UserChoices['minimalReferenceValue']['referenceValueThreshold']
-    SettingsVDictionary['referenceSignificantFragmentThresholds']   = UserChoices['minimalReferenceValue']['referenceSignificantFragmentThresholds']
+    SettingsVDictionary['applyReferenceMassFragmentsThresholds']   = UserChoices['applyReferenceMassFragmentsThresholds']['on']
+    SettingsVDictionary['referenceValueThreshold']   = UserChoices['applyReferenceMassFragmentsThresholds']['referenceValueThreshold']
+    SettingsVDictionary['referenceSignificantFragmentThresholds']   = UserChoices['applyReferenceMassFragmentsThresholds']['referenceSignificantFragmentThresholds']
     
     SettingsVDictionary['lowerBoundThresholdChooser']   = UserChoices['lowerBoundThresholdChooser']['on'] 
     SettingsVDictionary['massesToLowerBoundThresholdFilter']   = UserChoices['lowerBoundThresholdChooser']['massesToLowerBoundThresholdFilter']
