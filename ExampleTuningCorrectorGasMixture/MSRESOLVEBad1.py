@@ -509,7 +509,7 @@ def TuningCorrector(referenceDataArrayWithAbscissa,referenceCorrectionCoefficien
         print("line 520!!!!!")
         if referenceFileDesiredTuningAndForm == []:#TODO: this isn't very good logic, but it allows automatic population of referenceFileDesiredTuningAndForm. The problem is it is reading from file again instead of using the already made ReferenceData object. ABCDetermination and possibly TuningCorrector should be changed so that it can take *either* a ReferenceData object **or** a ReferenceData filename. The function can check if it is receiving a string, and if it's not receiving a string it can assume it's receiving an object.
             print("line 522!!!!!")
-            referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referencePatternsFileNamesList and from G.referenceFormsList.
+            referenceFileDesiredTuningAndForm = [ "ExportedDesiredTuningReferencePattern.csv","xyyy" ] #Take the first item from G.referencePatternsFileNamesList and from G.referencePatternsFormsList.
         abcCoefficients, abcCoefficients_cov = ABCDetermination(referenceFileExistingTuningAndForm,referenceFileDesiredTuningAndForm)
         referenceCorrectionCoefficients[0],referenceCorrectionCoefficients[1],referenceCorrectionCoefficients[2]= abcCoefficients
         G.referenceCorrectionCoefficients = referenceCorrectionCoefficients #TODO: Maybe this logic should be changed, since it will result in an exporting of the last coefficients used, whether a person is doing forward tuning or reverse tuning.
@@ -1520,17 +1520,17 @@ list of forms.  A list is generated containing MSReference objects created based
 on the referenceFileName and the corresponding form
 It allows MSRESOLVE to be backwards compatible with previous user input files
 '''
-def GenerateReferenceDataList(referencePatternsFileNamesList,referenceFormsList,AllMID_ObjectsDict={}):
-    #referenceFormsList can take values of 'xyyy' or 'xyxy' and must be a string
+def GenerateReferenceDataList(referencePatternsFileNamesList,referencePatternsFormsList,AllMID_ObjectsDict={}):
+    #referencePatternsFormsList can take values of 'xyyy' or 'xyxy' and must be a string
     ##If referencePatternsFileNamesList is a string or if form is a string then make them lists
     if isinstance(referencePatternsFileNamesList,str):
         referencePatternsFileNamesList = [referencePatternsFileNamesList]
-    if isinstance(referenceFormsList,str):
-        referenceFormsList = [referenceFormsList]
+    if isinstance(referencePatternsFormsList,str):
+        referencePatternsFormsList = [referencePatternsFormsList]
     #If referencePatternsFileNamesList and forms are lists of 1 then create a list of the single MSReference object
     #This allows MSRESOLVE to be backwards compatible with previous user input files while still incorporating the reference pattern time chooser feature
-    if len(referenceFormsList) == 1 and len(referencePatternsFileNamesList) == 1:
-        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referencePatternsFileNamesList[0],referenceFormsList[0])
+    if len(referencePatternsFormsList) == 1 and len(referencePatternsFileNamesList) == 1:
+        [provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form]=readReferenceFile(referencePatternsFileNamesList[0],referencePatternsFormsList[0])
         ReferenceDataList = [MSReference(provided_reference_patterns, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName=referenceFileName, form=form, AllMID_ObjectsDict=AllMID_ObjectsDict)]
         #save each global variable into the class objects
         ReferenceDataList[0].ExportAtEachStep = G.ExportAtEachStep
@@ -1551,7 +1551,7 @@ def GenerateReferenceDataList(referencePatternsFileNamesList,referenceFormsList,
                     ReferenceDataList[0].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referencePatternsFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[0])
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referencePatternsFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referencePatternsFormsList[0])
                     ReferenceDataList[0].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[0].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[0].absolute_standard_uncertainties[:,1:] = 100*ReferenceDataList[0].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
@@ -1563,16 +1563,16 @@ def GenerateReferenceDataList(referencePatternsFileNamesList,referenceFormsList,
         return ReferenceDataList
     #Otherwise we have multiple reference files and forms
     #If just one form is used, make a list of forms that is the same length as referencePatternsFileNamesList
-    if len(referenceFormsList) == 1:
+    if len(referencePatternsFormsList) == 1:
         #Generate a copy of referencePatternsFileNamesList to be overwritten with forms
         listOfForms = copy.copy(referencePatternsFileNamesList)
         #replace each value with the given form
         for i in range(len(referencePatternsFileNamesList)):
-            listOfForms[i] = referenceFormsList[0]
+            listOfForms[i] = referencePatternsFormsList[0]
     #If list of forms is the same length of referencePatternsFileNamesList then each form should correspond to the referenceFile of the same index
-    elif len(referenceFormsList) == len(referencePatternsFileNamesList):
+    elif len(referencePatternsFormsList) == len(referencePatternsFileNamesList):
         #So just set listOfForms equal to forms
-        listOfForms = referenceFormsList
+        listOfForms = referencePatternsFormsList
     #Initialize ReferenceDataList so it can be appended to
     ReferenceDataList = []
     #For loop to generate each MSReferenceObject and append it to a list
@@ -1598,7 +1598,7 @@ def GenerateReferenceDataList(referencePatternsFileNamesList,referenceFormsList,
                     ReferenceDataList[i].absolute_standard_uncertainties = absolute_standard_uncertainties
                     #We can't convert to relative uncertainties yet because the file may not be standardized yet.
                 if type(G.referenceFileUncertainties) == type('string'):
-                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referencePatternsFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referenceFormsList[i])
+                    provided_reference_patterns_absolute_uncertainties, electronnumbers, molecules, molecularWeights, SourceOfFragmentationPatterns, sourceOfIonizationData, relativeIonizationEfficiencies, moleculeIonizationType, mass_fragment_numbers_monitored, referenceFileName, form = readReferenceFile(referencePatternsFileNamesList[0][:-4]+"_absolute_uncertainties.csv",referencePatternsFormsList[i])
                     ReferenceDataList[i].absolute_standard_uncertainties = provided_reference_patterns_absolute_uncertainties #Just initializing the variable before filling it properly.
                     maximum_absolute_intensities = numpy.amax(ReferenceDataList[i].provided_reference_patterns[:,1:], axis = 0) #Find the maximum intensity for each molecule.
                     ReferenceDataList[i].absolute_standard_uncertainties[:,1:] = ReferenceDataList[i].absolute_standard_uncertainties[:,1:]/maximum_absolute_intensities
@@ -5383,7 +5383,7 @@ def PopulateLogFile():
     f6 = open(filename6,'a')
     f6.write('\n')
     f6.write('referenceFileName = %s \n'%(G.referencePatternsFileNamesList))
-    f6.write('form  = %s \n'%(G.referenceFormsList))
+    f6.write('form  = %s \n'%(G.referencePatternsFormsList))
     f6.write('collectedFileName = %s \n'%(G.collectedFileName ))
     if G.timeRangeLimit == 'yes':#some of the lines in the backgroundinput file don't need to be printed unless a selection is made, so the if statements here make that happen
         f6.write('timeRangeLimit = %s \n'%(G.timeRangeLimit))
@@ -5567,7 +5567,7 @@ def main():
     #Create the MSReference and MSData objects containing all molecules and all mass fragments, respectively
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(AllMassFragmentsExperimentDataFileNamePath)
     AllMassFragmentsExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)        
-    AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesreferencePatternsFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
+    AllMoleculesReferenceDataList = GenerateReferenceDataList(AllMoleculesreferencePatternsFileNamesList,G.referencePatternsFormsList,G.AllMID_ObjectsDict)
     #Then prepare AllMoleculesReferenceDataList to get reciprocal_matching_correction_values, this value is fed into RatioFinder
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
         AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
@@ -5611,7 +5611,7 @@ def main():
     resultsObjects = {}
     [exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, exp_collectedFileName]=readDataFile(G.collectedFileName)
     ExperimentData = MSData(exp_mass_fragment_numbers, exp_abscissaHeader, exp_times, exp_rawCollectedData, collectedFileName=exp_collectedFileName)
-    ReferenceDataList = GenerateReferenceDataList(G.referencePatternsFileNamesList,G.referenceFormsList,G.AllMID_ObjectsDict)
+    ReferenceDataList = GenerateReferenceDataList(G.referencePatternsFileNamesList,G.referencePatternsFormsList,G.AllMID_ObjectsDict)
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
     if type(G.collectedFileUncertainties) != type(None):

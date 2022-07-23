@@ -10,9 +10,9 @@ def parseUserInput(currentUserInput):
     #Input Files
     currentUserInput.referencePatternsFileNamesList = parse.listCast(currentUserInput.referencePatternsFileNamesList) #referenceFileName needs to be a list
     currentUserInput.referencePatternsFileNamesList = parse.stripListOfStrings(currentUserInput.referencePatternsFileNamesList)
-    currentUserInput.referenceFormsList = parse.listCast(currentUserInput.referenceFormsList) #form needs to be a list
-    currentUserInput.referenceFormsList = parse.stripListOfStrings(currentUserInput.referenceFormsList)
-    currentUserInput.referenceFormsList = parse.parallelVectorize(currentUserInput.referenceFormsList,len(currentUserInput.referencePatternsFileNamesList)) #form needs to be a list of the same length as referenceFileName
+    currentUserInput.referencePatternsFormsList = parse.listCast(currentUserInput.referencePatternsFormsList) #form needs to be a list
+    currentUserInput.referencePatternsFormsList = parse.stripListOfStrings(currentUserInput.referencePatternsFormsList)
+    currentUserInput.referencePatternsFormsList = parse.parallelVectorize(currentUserInput.referencePatternsFormsList,len(currentUserInput.referencePatternsFileNamesList)) #form needs to be a list of the same length as referenceFileName
     currentUserInput.referencePatternTimeRanges = parse.listCast(currentUserInput.referencePatternTimeRanges) #RefPatternTimeRanges needs to be a list
     parse.strCheck(currentUserInput.collectedFileName,'collectedFileName') #collectedFileName must be a string
     currentUserInput.collectedFileName = currentUserInput.collectedFileName.strip()
@@ -275,7 +275,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     #Also to consider if other variables should change to have names like G.specificMolecules_chosenMoleculesNames. Probably not necessary since we have the dictionaries.
     SettingsVDictionary = {}  
     SettingsVDictionary['referencePatternsFileNamesList']   = UserChoices['inputFiles']['referencePatternsFileNamesList']
-    SettingsVDictionary['referenceFormsList']   = UserChoices['inputFiles']['referenceFormsList']
+    SettingsVDictionary['referencePatternsFormsList']   = UserChoices['inputFiles']['referencePatternsFormsList']
     SettingsVDictionary['referencePatternTimeRanges']   = UserChoices['inputFiles']['referencePatternTimeRanges']
     SettingsVDictionary['collectedFileName']   = UserChoices['inputFiles']['collectedFileName']
     SettingsVDictionary['ionizationDataFileName']   = UserChoices['inputFiles']['ionizationDataFileName']
