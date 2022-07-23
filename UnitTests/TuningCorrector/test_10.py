@@ -43,7 +43,7 @@ MSRESOLVE.G.dataSmootherYorN = 'no'
 MSRESOLVE.G.applyReferenceMassFragmentsThresholds= 'yes'
 MSRESOLVE.G.referenceMassFragmentFilterThreshold = [4.0]
 MSRESOLVE.G.referenceSignificantFragmentThresholds = [6.0]
-MSRESOLVE.G.answer = 'sls'
+MSRESOLVE.G.solverChoice = 'sls'
 
 MSRESOLVE.G.SLSUniqueExport = 'yes'
 MSRESOLVE.G.uniqueOrCommon = 'unique' 
