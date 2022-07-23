@@ -1,8 +1,8 @@
-Tue May 10 12:39:32 2022
+Sat Jul 23 16:01:32 2022
 
 referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] 
 form  = ['xyyy'] 
-collectedFileName = 2-CrotAcetExp#2.csv 
+dataToAnalyzeFileName = 2-CrotAcetExp#2.csv 
 timeRangeLimit = yes 
 timeRangeStart = 176.0 
 timeRangeFinish = 900.0 
@@ -17,7 +17,7 @@ dataSmootherChoice = timerange
 dataSmootherTimeRadius = 7 
 dataSmootherPointRadius = 5 
 dataSmootherHeadersToConfineTo = [] 
-rawSignalThresholdMethod = yes 
+applyRawSignalThresholds = yes 
 rawSignalThresholdValue = [1e-07, 1e-07, 1e-07, 1e-07, 1e-07, 1e-07, 1e-07, 1e-07, 1e-07, 1e-07] 
 sensitivityThresholdValue = [1] 
 rawSignalThresholdDivider = [] 
@@ -27,5 +27,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
 concentrationsOutputName = ResolvedConcentrations.csv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 4.60006 seconds 
+Run Time 6.28822 seconds 
 ###################################################################### 

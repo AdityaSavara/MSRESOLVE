@@ -1,27 +1,27 @@
-Tue May 10 12:41:34 2022
+Sat Jul 23 16:05:58 2022
 
-referenceFileName = ['ExtractedReferencePattern.csv'] 
+referenceFileName = ['ExtractedReferencePattern.tsv'] 
 form  = ['xyyy'] 
-collectedFileName = Collected_Data.csv 
+dataToAnalyzeFileName = Collected_Data.csv 
 timeRangeLimit = yes 
 timeRangeStart = 176.0 
 timeRangeFinish = 900.0 
-measuredReferenceYorN = yes 
-referenceCorrectionCoefficientA = -0.0012715441767880092 
-referenceCorrectionCoefficientB = 0.006693032231767845 
-referenceCorrectionCoefficientC = 1.7789487072814294 
-referenceCorrection_abcCoefficients = [-0.0012715441767880092, 0.006693032231767845, 1.7789487072814294] 
-referenceCorrection_abcCoefficients_cov = [[8.296099773267501e-06, -0.00035701742624925757, 0.0035299836645729965], [-0.00035701742624925746, 0.015483767296141112, -0.15481116889143168], [0.003529983664572996, -0.15481116889143168, 1.5758759513849672]] 
-minimalReferenceValue = yes 
-referenceValueThreshold = [2.0, 2.0, 2.0, 2.0] 
+tuningCorrection = yes 
+referenceCorrectionCoefficientA = -0.001271544176788167 
+referenceCorrectionCoefficientB = 0.0066930322317745854 
+referenceCorrectionCoefficientC = 1.778948707281361 
+referenceCorrection_abcCoefficients = [-0.001271544176788167, 0.0066930322317745854, 1.778948707281361] 
+referenceCorrection_abcCoefficients_cov = [[8.296099773265594e-06, -0.0003570174262491746, 0.0035299836645721642], [-0.00035701742624917474, 0.015483767296137516, -0.1548111688913956], [0.003529983664572168, -0.15481116889139568, 1.5758759513846061]] 
+applyReferenceMassFragmentsThresholds = yes 
+referenceMassFragmentFilterThreshold = [2.0, 2.0, 2.0, 2.0] 
 referenceSignificantFragmentThresholds = [6.0, 6.0, 6.0, 6.0] 
 answer = sls 
 uniqueOrCommon = unique 
 slsFinish = inverse 
 distinguished = yes 
 scaleRawDataFactor  = 1.0 
-resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
-concentrationsOutputName = ResolvedConcentrations.csv 
-simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.34028 seconds 
+resolvedScaledConcentrationsOutputName  = ScaledConcentrations.tsv 
+concentrationsOutputName = ResolvedConcentrations.tsv 
+simulatedSignalsOutputName = SimulatedRawSignals.tsv 
+Run Time 0.40295 seconds 
 ###################################################################### 

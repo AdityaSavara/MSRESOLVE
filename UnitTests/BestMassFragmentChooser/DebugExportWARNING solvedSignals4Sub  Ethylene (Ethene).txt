@@ -1438,3 +1438,723 @@ objectName =  Ethylene (Ethene)
 prefix =  solvedSignals4Sub  
 Object  = [100.] Ethylene (Ethene)0 45.0 
 objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1222.10522114] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [68.22835204] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [34.95842898] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-30.26710071] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [56.44231747] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [55.30482777] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [183.11645638] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [73.15814488] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1222.10522114] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [183.11645638] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [183.11645638] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-410.99402903] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1222.10522114] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-410.99402903] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.22605563] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.22605563] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1222.10522114] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-410.99402903] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [270.54457765] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [34.95842898] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [157.91437755] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [183.11645638] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [157.91437755] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.0573152] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [55.35763402] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [157.91437755] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [85.56746105] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [73.79092309] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1222.10522114] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-410.99402903] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [55.35763402] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-30.26710071] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.22605563] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-134.99988277] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [15.4295563] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-134.99988277] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [55.30482777] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.22605563] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [34.95842898] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [44.2615027] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [183.11645638] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-134.99988277] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [157.91437755] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [40.53756051] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [34.95842898] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.0573152] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [428.41478161] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [55.35763402] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [55.35763402] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [34.95842898] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [84.83369566] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [73.15814488] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1222.10522114] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1222.10522114] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [34.95842898] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [73.15814488] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [44.2615027] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [183.11645638] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [68.22835204] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-410.99402903] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [183.11645638] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1222.10522114] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [15.4295563] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.22605563] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.0573152] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [15.4295563] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.0573152] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [102.97567833] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [15.4295563] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [85.4225149] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [73.66592569] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [55.35763402] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [528.02174539] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [68.22835204] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.22605563] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-410.99402903] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [157.91437755] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [64.19234229] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [55.35763402] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [44.2615027] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [34.95842898] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-156.54496145] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-134.99988277] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [15.4295563] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-30.26710071] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [157.91437755] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [73.66592569] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [295.39788292] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [44.2615027] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [183.11645638] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-134.99988277] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-134.99988277] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-30.26710071] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-30.26710071] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [68.22835204] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [183.11645638] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [157.91437755] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [79.11714084] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [68.22835204] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1.0573152] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [1222.10522114] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [157.91437755] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 46.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [8.18260149] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [-134.99988277] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 43.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [157.91437755] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 
+
+prefix =  solvedSignals4Sub  
+Object  = [100.] Ethylene (Ethene)0 45.0 
+objectName =  Ethylene (Ethene) 

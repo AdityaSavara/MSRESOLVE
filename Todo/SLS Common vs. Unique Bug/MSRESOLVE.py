@@ -3087,15 +3087,15 @@ def PopulateLogFile():
     if G.negativeAnalyzerYorN == 'yes':
         f6.write('negativeAnalyzerYorN = %s \n'%(G.negativeAnalyzerYorN))
     if G.dataAnalysis == 'yes':
-        f6.write('answer = %s \n'%(G.answer))
-        if G.answer == 'sls':
+        f6.write('answer = %s \n'%(G.solverChoice))
+        if G.solverChoice == 'sls':
             f6.write('uniqueOrCommon = %s \n'%(G.uniqueOrCommon))
             f6.write('slsFinish = %s \n'%(G.slsFinish))
             if G.slsFinish == 'brute':
                 f6.write('objectiveFunctionType = %s \n'%(G.objectiveFunctionType))
             if G.slsFinish == 'inverse':
                 f6.write('distinguished = %s \n'%(G.distinguished))
-        if G.answer == 'inverse':
+        if G.solverChoice == 'inverse':
             f6.write('distinguished = %s \n'%(G.distinguished))
     if G.concentrationFinder == 'yes':
         f6.write('concentrationFinder = %s \n'%(G.concentrationFinder))
@@ -3338,18 +3338,18 @@ def main():
             if G.applyRawSignalThresholds == 'yes':#user input, this function calls either sls or inverse, deletes thresholds
                     solutions =RawSignalThresholdFilter(G.distinguished, currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline,
                                                          currentReferenceData.monitored_reference_intensities,currentReferenceData.molecules,timeIndex,ExperimentData.mass_fragment_numbers,
-                                                         ThresholdList,G.answer,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
+                                                         ThresholdList,G.solverChoice,ExperimentData.times[timeIndex],ExperimentData.conversionfactor,ExperimentData.datafromcsv,
                                                          DataRangeSpecifierlist,SLSChoices,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType, G.maxPermutations)
             else:#otherwise the main analysis functions are called
                 
-                if G.answer == 'inverse':#user input, the inverse method
+                if G.solverChoice == 'inverse':#user input, the inverse method
                     if G.distinguished == 'yes':#user input, choosing between distinguished inverse method or combinations method
 
                         solutions = InverseMethodDistinguished(currentReferenceData.monitored_reference_intensities,currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline)
                     else:
                         solutions = InverseMethod(currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline,currentReferenceData.monitored_reference_intensities,ExperimentData.mass_fragment_numbers,currentReferenceData.molecules,'composition')
     
-                elif G.answer == 'sls':#user input, the SLS method is chosen)
+                elif G.solverChoice == 'sls':#user input, the SLS method is chosen)
                     solutions = SLSMethod(currentReferenceData.molecules,currentReferenceData.monitored_reference_intensities,currentReferenceData.reciprocal_matching_correction_values,rawsignalsarrayline, timeIndex, ExperimentData.conversionfactor, ExperimentData.datafromcsv,currentReferenceData.molecules,DataRangeSpecifierlist,SLSChoices,ExperimentData.mass_fragment_numbers,G.permutationNum,concentrationsScaledToCOarray,G.objectiveFunctionType,ExperimentData.times[timeIndex],G.maxPermutations)
             
             arrayline = []

@@ -182,7 +182,7 @@ def parseUserInput(currentUserInput):
 
     #Data Analysis Methods
     #All must be strings
-    parse.strCheck(currentUserInput.answer,'answer')
+    parse.strCheck(currentUserInput.solverChoice,'solverChoice')
     parse.strCheck(currentUserInput.uniqueOrCommon,'uniqueOrCommon')
     parse.strCheck(currentUserInput.slsFinish,'slsFinish')
     parse.strCheck(currentUserInput.objectiveFunctionType,'objectiveFunctionType')
@@ -234,12 +234,12 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     #The dependencies dictionary is hardcoded.
     dependenciesDict = {}
     #Note the form below: in right hand side, there are tuples. Each tuple must have index 0 and index 1 matching, or there is a problem.
-    dependenciesDict['SLSUniqueExport']={'yes':[(UserChoices['dataAnalysisMethods']['uniqueOrCommon'],'unique'),(UserChoices['dataAnalysisMethods']['answer'],'sls')]}
+    dependenciesDict['SLSUniqueExport']={'yes':[(UserChoices['dataAnalysisMethods']['uniqueOrCommon'],'unique'),(UserChoices['dataAnalysisMethods']['solverChoice'],'sls')]}
     settingsDependenciesCheck(UserChoices, dependenciesDict)
 
     #Forcing of choices:
     if UserChoices['dataAnalysisMethods']['SLSUniqueExport'] == 'yes':
-        if UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique' or UserChoices['dataAnalysisMethods']['answer'] != 'sls':
+        if UserChoices['dataAnalysisMethods']['uniqueOrCommon'] != 'unique' or UserChoices['dataAnalysisMethods']['solverChoice'] != 'sls':
             UserChoices['dataAnalysisMethods']['SLSUniqueExport'] = 'no'
             print("Incompatible choice detected: forcing SLSUniqueExport to no.")
             
@@ -361,7 +361,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     if 'NegativeAnalyzerBaseNumberOfGridIntervals' in UserChoices['negativeAnalyzerYorN']:
         SettingsVDictionary['NegativeAnalyzerBaseNumberOfGridIntervals']   = UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerBaseNumberOfGridIntervals']
     
-    SettingsVDictionary['answer']   = UserChoices['dataAnalysisMethods']['answer']
+    SettingsVDictionary['solverChoice']   = UserChoices['dataAnalysisMethods']['solverChoice']
     SettingsVDictionary['uniqueOrCommon']   = UserChoices['dataAnalysisMethods']['uniqueOrCommon']
     SettingsVDictionary['slsWeighting']= UserChoices['dataAnalysisMethods']['slsWeighting']
     SettingsVDictionary['slsFinish']   = UserChoices['dataAnalysisMethods']['slsFinish']

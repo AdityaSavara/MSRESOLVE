@@ -1,4 +1,4 @@
-# molecules	'Acetaldehyde'	 '(E) 2-Butenal (Crotonaldehyde'	 'CO'	 'CO2'	 'Ethylene (Ethene)'	 'Ethanol'	 'Crotyl Alcohol'	 'H2'	 'H2O'
-ScaledConcentrations_Means	0	0	0	0	0	0.109663616	0.025401362	0.996374761	0.213500731
-ScaledConcentrations_StdDevs	0	0	0	0	0	0.031224248	0.040253211	0.037253515	0.014973144
-ScaledConcentrations_StdErrs	0	0	0	0	0	0.003328516	0.004291007	0.003971238	0.001596143
+# molecules 	Acetaldehyde	(E) 2-Butenal (Crotonaldehyde	CO	CO2	Ethylene (Ethene)	Ethanol	Crotyl Alcohol	H2	H2O
+ScaledConcentrations_Means	0.0	0.0	0.0	0.0	0.0	0.10966361629654399	0.025401362393306173	0.996374760613163	0.21350073142161022
+ScaledConcentrations_StdDevs	0.0	0.0	0.0	0.0	0.0	0.03122424807934361	0.04025321116286418	0.03725351450055908	0.014973143946191193
+ScaledConcentrations_StdErrs	0.0	0.0	0.0	0.0	0.0	0.0033285160290906753	0.004291006727768149	0.003971237989141658	0.0015961425077118169

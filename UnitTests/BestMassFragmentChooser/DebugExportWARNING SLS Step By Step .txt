@@ -12866,3 +12866,6437 @@ Object  =  solvedSignals4Sub  Ethylene (Ethene)
 0.8382192934885577 Ethanol 0 
  
 objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[4.1194724] Ethanol0 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.1711283867999162 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[116.22428962] Ethanol0 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol0 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[20.17795707] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[20.17795707] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[68.22835204] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.3483185] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.3483185] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[47.72146295] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[47.72146295] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[20.17795707] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[20.17795707] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[111.44560201] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[111.44560201] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[34.95842898] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol0 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[25.9057363] Ethanol0 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[116.22428962] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[116.22428962] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-30.26710071] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol1 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[3.47657598] Ethanol1 43.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[4.48032511] Ethanol1 43.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol1 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[3.47657598] Ethanol1 43.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[4.48032511] Ethanol1 43.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[56.44231747] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+15.03783773996984 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+15.03783773996984 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.61406569] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[5.94622826] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.61406569] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[5.94622826] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[55.30482777] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+14.734778148920556 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+14.734778148920556 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol0 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol0 43.0 
+ solvedSignals4Sub  Ethanol 
+[3.47657598] Ethanol0 43.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol0 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol0 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[505.1244864] Ethanol0 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[5.70174264] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[2.05974087] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[5.70174264] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[2.05974087] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[73.15814488] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+22.60210790933414 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+22.60210790933414 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[-123.19756292] Ethanol0 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+-6.595388449416157 Ethanol0 45.0 
+ Solutions  Ethanol 
+-6.595388449416157 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol0 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol0 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[162.67182567] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[162.67182567] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-410.99402903] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol0 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[505.1244864] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[505.1244864] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-410.99402903] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[72.52854178] Ethanol0 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+3.142124368942603 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[58.69283782] Ethanol0 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+3.142124368942603 Ethanol0 46.0 
+ Solutions  Ethanol 
+3.142124368942603 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[58.69283782] Ethanol0 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+3.142124368942603 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[75.6385007] Ethanol0 45.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+3.142124368942603 Ethanol0 45.0 
+ Solutions  Ethanol 
+3.142124368942603 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[162.67182567] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[162.67182567] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol0 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[114.25382805] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[114.25382805] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-410.99402903] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[270.54457765] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[34.95842898] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol0 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[114.25382805] Ethanol0 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol0 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol0 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[-185.25002385] Ethanol0 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+-9.91737042995275 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[-82.6964918] Ethanol0 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+-9.91737042995275 Ethanol0 45.0 
+ Solutions  Ethanol 
+-9.91737042995275 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[606.87383223] Ethanol0 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol0 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol0 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol0 43.0 
+ solvedSignals4Sub  Ethanol 
+[4.48032511] Ethanol0 43.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol0 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.0573152] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.0573152] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[74.16057055] Ethanol0 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+8.89370072970261 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[178.19768697] Ethanol0 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+8.89370072970261 Ethanol0 45.0 
+ Solutions  Ethanol 
+8.89370072970261 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[25.9057363] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[25.9057363] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[55.35763402] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol0 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol0 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[3.19656687] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[1.42696265] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.1194724] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.1711283867999162 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[3.19656687] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[1.42696265] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.1194724] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.1711283867999162 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[85.56746105] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+22.797603866028158 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[73.79092309] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+22.797603866028158 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+22.797603866028158 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol0 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol0 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[606.87383223] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[606.87383223] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-410.99402903] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[54.97683991] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[54.97683991] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[55.35763402] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[111.44560201] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[111.44560201] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-30.26710071] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[58.69283782] Ethanol0 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+3.142124368942603 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[62.9568401] Ethanol0 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+3.142124368942603 Ethanol0 45.0 
+ Solutions  Ethanol 
+3.142124368942603 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[114.25382805] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[114.25382805] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-134.99988277] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol0 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol0 43.0 
+ solvedSignals4Sub  Ethanol 
+[4.48032511] Ethanol0 43.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol0 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[25.9057363] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[25.9057363] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[15.4295563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[581.92155699] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[581.92155699] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-134.99988277] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[505.1244864] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[505.1244864] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[5.70174264] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.61406569] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[5.70174264] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.61406569] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[55.30482777] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+14.734778148920556 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+14.734778148920556 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[96.73795686] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[96.73795686] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[34.95842898] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[16.79489155] Ethanol0 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol0 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[16.79489155] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[16.79489155] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[44.2615027] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+11.79252244568768 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+11.79252244568768 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[3.19656687] Ethanol0 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.1194724] Ethanol0 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.1711283867999162 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[505.1244864] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[505.1244864] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-134.99988277] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol0 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol0 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[40.53756051] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[34.95842898] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.0573152] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[114.25382805] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[114.25382805] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol0 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[57.33419757] Ethanol0 45.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[5.70174264] Ethanol0 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol0 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[96.73795686] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[96.73795686] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[428.41478161] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[55.35763402] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[5.70174264] Ethanol0 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol0 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[111.44560201] Ethanol0 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol0 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[57.33419757] Ethanol1 45.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[57.33419757] Ethanol1 45.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[55.35763402] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[52.51448395] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[52.51448395] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[34.95842898] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.61406569] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[2.05974087] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.61406569] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[2.05974087] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[84.83369566] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+22.60210790933414 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[73.15814488] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+22.60210790933414 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+22.60210790933414 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[25.9057363] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[25.9057363] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol0 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol0 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[116.22428962] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[116.22428962] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[20.17795707] Ethanol0 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol0 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[111.44560201] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[111.44560201] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol0 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[47.72146295] Ethanol0 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[116.22428962] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[116.22428962] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[34.95842898] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol0 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[52.51448395] Ethanol0 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 45.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[31.15378581] Ethanol0 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol0 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[2.05974087] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[5.94622826] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[2.05974087] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[5.94622826] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[73.15814488] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+22.60210790933414 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+22.60210790933414 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[20.17795707] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[20.17795707] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[44.2615027] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+11.79252244568768 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+11.79252244568768 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[4.61406569] Ethanol0 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol0 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[5.94622826] Ethanol0 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol0 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.3483185] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.3483185] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[68.22835204] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[581.92155699] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[581.92155699] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-410.99402903] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol0 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol0 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol0 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[54.97683991] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[54.97683991] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[15.4295563] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.0573152] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.0573152] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[166.12854022] Ethanol0 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+8.89370072970261 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[74.16057055] Ethanol0 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+8.89370072970261 Ethanol0 46.0 
+ Solutions  Ethanol 
+8.89370072970261 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[57.33419757] Ethanol1 45.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[57.33419757] Ethanol1 45.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[15.4295563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.0573152] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.0573152] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[205.29013787] Ethanol0 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+8.89370072970261 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[74.16057055] Ethanol0 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+8.89370072970261 Ethanol0 46.0 
+ Solutions  Ethanol 
+8.89370072970261 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[102.97567833] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[15.4295563] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol0 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[274.20831074] Ethanol0 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol1 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[3.47657598] Ethanol1 43.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[1.55196005] Ethanol1 43.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol1 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[3.47657598] Ethanol1 43.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[1.55196005] Ethanol1 43.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[85.4225149] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+22.758986091736546 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[73.66592569] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+22.758986091736546 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+22.758986091736546 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[47.72146295] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[47.72146295] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[55.35763402] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[528.02174539] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[68.22835204] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.22605563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[52.51448395] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[52.51448395] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[57.33419757] Ethanol1 45.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[57.33419757] Ethanol1 45.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[274.20831074] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[274.20831074] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-410.99402903] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-109.50049178094075 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[581.92155699] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[581.92155699] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[1.42696265] Ethanol0 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.1194724] Ethanol0 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.1711283867999162 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.1711283867999162 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[19.86025172] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[64.19234229] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[55.35763402] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+17.10266464388829 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[54.97683991] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[54.97683991] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.3483185] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[19.3483185] Ethanol1 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[44.2615027] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+11.79252244568768 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+11.79252244568768 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[31.15378581] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[31.15378581] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[34.95842898] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+10.800358394159627 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-156.54496145] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-134.99988277] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[47.72146295] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol1 45.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[47.72146295] Ethanol1 45.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol1 45.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[15.4295563] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+4.110872380114004 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[52.51448395] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 45.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 45.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[52.51448395] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 45.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-30.26710071] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[54.97683991] Ethanol0 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol0 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol0 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol0 43.0 
+ solvedSignals4Sub  Ethanol 
+[1.55196005] Ethanol0 43.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol0 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[581.92155699] Ethanol0 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol0 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol1 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[1.55196005] Ethanol1 43.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[4.48032511] Ethanol1 43.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[4.29611168] Ethanol1 43.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[1.55196005] Ethanol1 43.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ solvedSignals4Sub  Ethanol 
+[4.48032511] Ethanol1 43.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 43.0 
+ ConcentrationSLS  Ethanol 
+0.18611869041537718 Ethanol1 43.0 
+ Solutions  Ethanol 
+0.18611869041537718 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[73.66592569] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+22.758986091736546 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+22.758986091736546 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[295.39788292] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+11.79252244568768 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[44.2615027] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+11.79252244568768 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+11.79252244568768 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[44.48933716] Ethanol0 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[15.36836505] Ethanol0 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+2.3817391632476936 Ethanol0 46.0 
+ Solutions  Ethanol 
+2.3817391632476936 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[274.20831074] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[274.20831074] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-134.99988277] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[606.87383223] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[606.87383223] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-134.99988277] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[31.15378581] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[31.15378581] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-30.26710071] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[96.73795686] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[90.18599416] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[96.73795686] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-30.26710071] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-8.064015966124751 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[16.79489155] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[16.79489155] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[68.22835204] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[183.11645638] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[470.91292249] Ethanol0 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol0 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[96.73795686] Ethanol0 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol0 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[40.25945677] Ethanol0 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol0 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol0 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[274.20831074] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 45.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ solvedSignals4Sub  Ethanol 
+[274.20831074] Ethanol1 45.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 45.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 45.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[606.87383223] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[606.87383223] Ethanol1 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[15.65739076] Ethanol1 46.0 
+ RRCF  Ethanol 
+18.679349043152477 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[6.98953371] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[79.11714084] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.753353271256954 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[68.22835204] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+21.07905521435703 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[16.79489155] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[16.79489155] Ethanol1 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol1 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol1 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.0573152] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[1.0573152] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[74.16057055] Ethanol0 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+8.89370072970261 Ethanol0 45.0 
+ solvedSignals4Sub  Ethanol 
+[214.09279514] Ethanol0 45.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+8.89370072970261 Ethanol0 45.0 
+ Solutions  Ethanol 
+8.89370072970261 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[162.67182567] Ethanol0 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol0 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol0 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[1222.10522114] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 46.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 46.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 46.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[-82.6964918] Ethanol0 45.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 45.0 
+ ConcentrationSLS  Ethanol 
+-9.91737042995275 Ethanol0 45.0 
+ Solutions  Ethanol 
+-9.91737042995275 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[31.15378581] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[31.15378581] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[21.88110493] Ethanol1 46.0 
+ RRCF  Ethanol 
+4.532020744599774 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+4.82811226200913 Ethanol1 46.0 
+ Solutions  Ethanol 
+4.82811226200913 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[8.18260149] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+25.04959259431421 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+0.3266560706090043 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[162.67182567] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethanol 
+[210.21776852] Ethanol1 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[162.67182567] Ethanol1 46.0 
+ RRCF  Ethanol 
+6.452581074151398 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ solvedSignals4Sub  Ethanol 
+[50.] Ethanol1 46.0 
+ RRCF  Ethanol 
+1.9833124290310162 Ethanol1 46.0 
+ ConcentrationSLS  Ethanol 
+25.210349750305564 Ethanol1 46.0 
+ Solutions  Ethanol 
+25.210349750305564 Ethanol 1 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[-134.99988277] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+-41.70802749799208 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 43.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 43.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 43.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[5.94622826] Ethanol0 46.0 
+ RRCF  Ethanol 
+24.072408286385294 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol0 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[157.91437755] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+3.2367841605782632 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[2.05974087] Ethanol0 46.0 
+ RRCF  Ethanol 
+8.338550262248614 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[4.94927501] Ethanol0 46.0 
+ RRCF  Ethanol 
+20.03639344185694 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.24701426578167224 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.24701426578167224 Ethanol 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ 
+objectName =  
+
+prefix =  SLS Step By Step  
+Object  =  solvedSignals4Sub  Ethylene (Ethene) 
+[100.] Ethylene (Ethene)0 45.0 
+ RRCF  Ethylene (Ethene) 
+2.0497083361636763 Ethylene (Ethene)0 45.0 
+ ConcentrationSLS  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene)0 45.0 
+ Solutions  Ethylene (Ethene) 
+48.787429038398884 Ethylene (Ethene) 0 
+ solvedSignals4Sub  Ethanol 
+[19.3483185] Ethanol0 46.0 
+ RRCF  Ethanol 
+23.082645134177774 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ solvedSignals4Sub  Ethanol 
+[9.1171562] Ethanol0 46.0 
+ RRCF  Ethanol 
+10.876815016693833 Ethanol0 46.0 
+ ConcentrationSLS  Ethanol 
+0.8382192934885577 Ethanol0 46.0 
+ Solutions  Ethanol 
+0.8382192934885577 Ethanol 0 
+ 
+objectName =  

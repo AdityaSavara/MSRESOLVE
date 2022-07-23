@@ -1,27 +1,27 @@
-Tue May 10 12:41:28 2022
+Sat Jul 23 16:05:47 2022
 
-referenceFileName = ['AcetaldehydeMeasuredShortened.csv'] 
+referenceFileName = ['AcetaldehydeMeasuredShortened.tsv'] 
 form  = ['xyyy'] 
-collectedFileName = 2-CrotAcetExp#2.csv 
+dataToAnalyzeFileName = 2-CrotAcetExp#2.csv 
 timeRangeLimit = yes 
 timeRangeStart = 176.0 
 timeRangeFinish = 178.0 
-measuredReferenceYorN = yes 
-referenceCorrectionCoefficientA = -0.000594063037632884 
-referenceCorrectionCoefficientB = 0.05136153011636842 
-referenceCorrectionCoefficientC = 0.035082939270643265 
-referenceCorrection_abcCoefficients = [-0.000594063037632884, 0.05136153011636842, 0.035082939270643265] 
-referenceCorrection_abcCoefficients_cov = [[2.473901035558921e-07, -1.96108346497385e-05, 0.00035949535148714574], [-1.96108346497385e-05, 0.001576726891341222, -0.029260978861604486], [0.00035949535148714574, -0.029260978861604493, 0.5507218596258738]] 
-minimalReferenceValue = yes 
-referenceValueThreshold = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
+tuningCorrection = yes 
+referenceCorrectionCoefficientA = -0.0005940630376328838 
+referenceCorrectionCoefficientB = 0.05136153011636841 
+referenceCorrectionCoefficientC = 0.035082939270643154 
+referenceCorrection_abcCoefficients = [-0.0005940630376328838, 0.05136153011636841, 0.035082939270643154] 
+referenceCorrection_abcCoefficients_cov = [[2.4739010355592863e-07, -1.9610834649741445e-05, 0.0003594953514872006], [-1.961083464974144e-05, 0.001576726891341459, -0.029260978861608906], [0.0003594953514872005, -0.029260978861608902, 0.5507218596259561]] 
+applyReferenceMassFragmentsThresholds = yes 
+referenceMassFragmentFilterThreshold = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
 referenceSignificantFragmentThresholds = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0] 
 answer = sls 
 uniqueOrCommon = unique 
 slsFinish = inverse 
 distinguished = yes 
 scaleRawDataFactor  = 1.0 
-resolvedScaledConcentrationsOutputName  = ScaledConcentrations.csv 
-concentrationsOutputName = ResolvedConcentrations.csv 
+resolvedScaledConcentrationsOutputName  = ScaledConcentrations.tsv 
+concentrationsOutputName = ResolvedConcentrations.tsv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 0.57036 seconds 
+Run Time 0.62182 seconds 
 ###################################################################### 
