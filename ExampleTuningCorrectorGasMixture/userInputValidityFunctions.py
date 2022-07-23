@@ -201,7 +201,7 @@ def parseUserInput(currentUserInput):
 
     #Data Analysis Methods
     #All must be strings
-    parse.strCheck(currentUserInput.answer,'solverChoice')
+    parse.strCheck(currentUserInput.solverChoice,'solverChoice')
     parse.strCheck(currentUserInput.uniqueOrCommon,'uniqueOrCommon')
     parse.strCheck(currentUserInput.slsFinish,'slsFinish')
     parse.strCheck(currentUserInput.objectiveFunctionType,'objectiveFunctionType')
