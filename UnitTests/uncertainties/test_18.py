@@ -6,7 +6,7 @@ sys.path.insert(1, os.path.join(os.curdir, os.pardir, os.pardir))
 #import the functions from UnitTesterSG
 import UnitTesterSG as ut
 import MSRESOLVE, importlib; importlib.reload(MSRESOLVE)
-import test_17_Input as G, importlib; importlib.reload(G) #This is needed because we need the __var_list__
+import test_18_Input as G, importlib; importlib.reload(G) #This is needed because we need the __var_list__
 MSRESOLVE.G = G #This is because we need to overwrite whatever user input the user has with the default user input.
     
 #get the suffix argument for check_results
@@ -32,7 +32,7 @@ try:
     import uncertainties
     from uncertainties import unumpy
     expected_output1 = np.genfromtxt("ScaledConcentrationsExpected_test_6.csv", skip_header = 1, delimiter =",", dtype = 'f8')
-    expected_output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties_test_6.csv", skip_header = 1, delimiter =",", dtype = 'f8')
+    expected_output2 = np.genfromtxt("ScaledConcentrations_relative_uncertainties_test_18.csv", skip_header = 1, delimiter =",", dtype = 'f8')
     print("THE UNCERTAINTIES MODULE ***IS*** PRESENT, RUNNING THE UNIT TEST ACCORDINGLY.")
 except:
     print("THE UNCERTAINTIES MODULE ***IS NOT*** PRESENT, RUNNING THE UNIT TEST ACCORDINGLY.")

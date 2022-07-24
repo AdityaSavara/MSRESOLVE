@@ -2178,10 +2178,20 @@ def DataInputPreProcessing(ExperimentData):
                 UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsChoice=G.UserChoices['uncertainties']['collectedFileUncertainties_radiusType'], UncertaintiesWindowsPointRadius=UncertaintiesWindowsPointRadius,  UncertaintiesWindowsTimeRadius=UncertaintiesWindowsTimeRadius,UncertaintiesType=UncertaintiesType)
                 ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
                 ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
+            if G.collectedFileUncertainties.lower() == 'file':
+                if ".csv" in G.dataToAnalyzeFileName:
+                    G.dataToAnalyzeFileName_absolute_uncertainties_FileName = G.dataToAnalyzeFileName.replace(".csv","") + "_absolute_uncertainties.csv"
+                    ExperimentData.rawsignals_absolute_uncertainties = genfromtxt( G.dataToAnalyzeFileName_absolute_uncertainties_FileName, delimiter=',',skip_header=2)  #only one line is a header, but we are skipping the masses also.
+                    ExperimentData.rawsignals_absolute_uncertainties = ExperimentData.rawsignals_absolute_uncertainties[:,1:] #This takes all rows, and only position 1 and forward. We are removing the mass fragment column.
+                if ".tsv" in G.dataToAnalyzeFileName:
+                    G.dataToAnalyzeFileName_absolute_uncertainties_FileName = G.dataToAnalyzeFileName.replace(".tsv","") + "_absolute_uncertainties.tsv"
+                    ExperimentData.rawsignals_absolute_uncertainties = genfromtxt( G.dataToAnalyzeFileName_absolute_uncertainties_FileName, delimiter='\t',skip_header=2) #only one line is a header, but we are skipping the masses also.
+                    ExperimentData.rawsignals_absolute_uncertainties = ExperimentData.rawsignals_absolute_uncertainties[:,1:] #This takes all rows, and only position 1 and forward. We are removing the mass fragment column.
             if G.collectedFileUncertainties.lower() == 'none' :
                 ExperimentData.rawsignals_absolute_uncertainties = None
                 ExperimentData.rawsignals_average_residuals = None
                 G.collectedFileUncertainties = None
+                    
         if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the pointradius/timeradius.
                 if G.UserChoices['dataSmootherYorN']['on'].lower() == "yes": #If smoothing, we don't use the residuals for errors.
                     UncertaintiesType = "standardDeviation"
@@ -2197,6 +2207,9 @@ def DataInputPreProcessing(ExperimentData):
         elif type(G.collectedFileUncertainties) == type(None):
             ExperimentData.rawsignals_absolute_uncertainties = None
             ExperimentData.rawsignals_average_residuals = None
+        if G.ExportAtEachStep.lower() == 'yes':
+            if type(ExperimentData.rawsignals_absolute_uncertainties) != type(None):
+                numpy.savetxt('ExportedRawsignals_absolute_uncertainties.csv',ExperimentData.rawsignals_absolute_uncertainties,delimiter=',')
 
     if G.interpolateYorN == 'yes':
         [ExperimentData.workingData, ExperimentData.times] = DataFunctions.marginalChangeRestrictor(ExperimentData.workingData, ExperimentData.times, G.marginalChangeRestriction, G.ignorableDeltaYThreshold)
