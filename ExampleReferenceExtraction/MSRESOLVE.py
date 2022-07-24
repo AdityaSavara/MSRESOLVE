@@ -763,7 +763,7 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                             trimmedExperimentData.mass_fragment_numbers,
                                                                                                             chosenMassFragments, header_dtype_casting=float)
-    if type(G.collectedFileUncertainties) != type(None): #TODO: As of Feb 5th 2020, this if statement has been added but not tested. It simply mimics the above code.   The below function   trimDataMassesToMatchReference is similar and has been tested.
+    if type(G.dataToAnalyze_uncertainties) != type(None): #TODO: As of Feb 5th 2020, this if statement has been added but not tested. It simply mimics the above code.   The below function   trimDataMassesToMatchReference is similar and has been tested.
             (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
                                                                                                             trimmedExperimentData2.mass_fragment_numbers,
                                                                                                             chosenMassFragments, header_dtype_casting=float)
@@ -782,7 +782,7 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
     (trimmedExperimentData.workingData, trimmedExperimentData.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData.workingData,
                                                                                                         trimmedExperimentData.mass_fragment_numbers,
                                                                                                         ReferenceData.provided_mass_fragments, header_dtype_casting=float)
-    if type(G.collectedFileUncertainties) != type(None): #Note: As of Feb 5th 2020, this code has been added and tested.
+    if type(G.dataToAnalyze_uncertainties) != type(None): #Note: As of Feb 5th 2020, this code has been added and tested.
         (trimmedExperimentData2.rawsignals_absolute_uncertainties, trimmedExperimentData2.mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(trimmedExperimentData2.rawsignals_absolute_uncertainties,
                                                                                                             trimmedExperimentData2.mass_fragment_numbers,
                                                                                                             ReferenceData.provided_mass_fragments, header_dtype_casting=float)
@@ -1439,24 +1439,24 @@ def DataInputPreProcessing(ExperimentData):
         G.lastFigureNumber = G.lastFigureNumber+1
 
     #Need to add uncertainties somewhere before interpolation and before datasmoother for the case that it is going to be provided as an input file.
-    if type(G.collectedFileUncertainties) == type("String"):
-        if G.collectedFileUncertainties.lower() == 'auto' :
+    if type(G.dataToAnalyze_uncertainties) == type("String"):
+        if G.dataToAnalyze_uncertainties.lower() == 'auto' :
             UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers)
             ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
             ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
-        if G.collectedFileUncertainties.lower() == 'none' :
+        if G.dataToAnalyze_uncertainties.lower() == 'none' :
             ExperimentData.rawsignals_absolute_uncertainties = None
             ExperimentData.rawsignals_average_residuals = None
-            G.collectedFileUncertainties = None
-    if type(G.collectedFileUncertainties) == type(1): #If it's an integer then we will use that as the point radius.
-            UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsPointRadius=G.collectedFileUncertainties)
+            G.dataToAnalyze_uncertainties = None
+    if type(G.dataToAnalyze_uncertainties) == type(1): #If it's an integer then we will use that as the point radius.
+            UncertaintiesFromData, AverageResidualsFromData = DataFunctions.UncertaintiesFromLocalWindows(ExperimentData.workingData, ExperimentData.times, ExperimentData.mass_fragment_numbers, UncertaintiesWindowsPointRadius=G.dataToAnalyze_uncertainties)
             ExperimentData.rawsignals_absolute_uncertainties = UncertaintiesFromData
             ExperimentData.rawsignals_average_residuals = AverageResidualsFromData
-    elif type(G.collectedFileUncertainties) == type([1]) or type(G.collectedFileUncertainties) == type(numpy.array([1])): #if it's a list or a numpy array, it should be the same length as the number of mass fragments and will be populated for all times.
+    elif type(G.dataToAnalyze_uncertainties) == type([1]) or type(G.dataToAnalyze_uncertainties) == type(numpy.array([1])): #if it's a list or a numpy array, it should be the same length as the number of mass fragments and will be populated for all times.
             ExperimentData.rawsignals_absolute_uncertainties = numpy.ones(numpy.shape(ExperimentData.workingData)) #just initializing as an array of ones.
-            uncertaintiesPerTime = numpy.array(G.collectedFileUncertainties)
+            uncertaintiesPerTime = numpy.array(G.dataToAnalyze_uncertainties)
             ExperimentData.rawsignals_absolute_uncertainties = ExperimentData.rawsignals_absolute_uncertainties*uncertaintiesPerTime        
-    elif type(G.collectedFileUncertainties) == type(None):
+    elif type(G.dataToAnalyze_uncertainties) == type(None):
         ExperimentData.rawsignals_absolute_uncertainties = None
         ExperimentData.rawsignals_average_residuals = None
 
@@ -5171,9 +5171,9 @@ def main():
     ReferenceDataList = GenerateReferenceDataList(G.referencePatternsFileNamesList,G.referencePatternsFormsList,G.AllMID_ObjectsDict)
     ExperimentData.provided_mass_fragment_numbers = ExperimentData.mass_fragment_numbers
     #This is where the experimental uncertainties object first gets populated, but it does get modified later as masses are removed and time-points are removed.
-    if type(G.collectedFileUncertainties) != type(None):
-        if type(G.collectedFileUncertainties) != type("str") and type(G.collectedFileUncertainties) != type(['list']) : # if it's not a string or a list, then it's assumed to be an integer for which local region to use during/like datasmoother.
-            G.collectedFileUncertainties = int(G.collectedFileUncertainties)
+    if type(G.dataToAnalyze_uncertainties) != type(None):
+        if type(G.dataToAnalyze_uncertainties) != type("str") and type(G.dataToAnalyze_uncertainties) != type(['list']) : # if it's not a string or a list, then it's assumed to be an integer for which local region to use during/like datasmoother.
+            G.dataToAnalyze_uncertainties = int(G.dataToAnalyze_uncertainties)
 
 
     prototypicalReferenceData = ReferenceDataList[0]
@@ -5386,11 +5386,11 @@ def main():
                     uncertainties_dict['reciprocal_matching_correction_values_relative_uncertainties_one_time'] = currentReferenceData.reciprocal_matching_correction_values_relative_uncertainties*1.0
                 elif type(G.referenceFileUncertainties) == type(None):
                     uncertainties_dict['correction_values_relative_uncertainties'] = None
-                #G.collectedFileUncertainties = None
-                if type(G.collectedFileUncertainties) != type(None):
+                #G.dataToAnalyze_uncertainties = None
+                if type(G.dataToAnalyze_uncertainties) != type(None):
                     uncertainties_dict['rawsignals_absolute_uncertainties'] = ExperimentData.rawsignals_absolute_uncertainties #This is for *all* times.
                     uncertainties_dict['rawsignals_absolute_uncertainties_one_time']=uncertainties_dict['rawsignals_absolute_uncertainties'][timeIndex] #This is for one time.                                                                                                                                         
-                elif type(G.collectedFileUncertainties) == type(None):
+                elif type(G.dataToAnalyze_uncertainties) == type(None):
                     uncertainties_dict['rawsignals_absolute_uncertainties'] = None
                     uncertainties_dict['rawsignals_absolute_uncertainties_one_time']= ExperimentData.workingData[timeIndex]*0.0                                                                                                             
                 uncertainties_dict['concentrations_relative_uncertainties_one_time'] = numpy.zeros(len(currentReferenceData.molecules))

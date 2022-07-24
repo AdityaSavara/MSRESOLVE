@@ -448,7 +448,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
  
     SettingsVDictionary['calculateUncertaintiesInConcentrations'] 	=	    UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] 
     SettingsVDictionary['referenceFileUncertainties'] 	=	    UserChoices['uncertainties']['referenceFileUncertainties'] 
-    SettingsVDictionary['collectedFileUncertainties']	=	    UserChoices['uncertainties']['collectedFileUncertainties']
+    SettingsVDictionary['dataToAnalyze_uncertainties']	=	    UserChoices['uncertainties']['dataToAnalyze_uncertainties']
     SettingsVDictionary['referenceCorrectionCoefficientsUncertainties'] 	=	    UserChoices['uncertainties']['referenceCorrectionCoefficientsUncertainties'] 
     SettingsVDictionary['referenceCorrectionCoefficientsIonizationUncertainties'] 	=	    UserChoices['uncertainties']['referenceCorrectionCoefficientsIonizationUncertainties'] 
 
