@@ -447,7 +447,7 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['rawSignalThresholdLimitPercent']   = UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimitPercent']
  
     SettingsVDictionary['calculateUncertaintiesInConcentrations'] 	=	    UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] 
-    SettingsVDictionary['referenceFileUncertainties'] 	=	    UserChoices['uncertainties']['referenceFileUncertainties'] 
+    SettingsVDictionary['referencePatterns_uncertainties'] 	=	    UserChoices['uncertainties']['referencePatterns_uncertainties'] 
     SettingsVDictionary['dataToAnalyze_uncertainties']	=	    UserChoices['uncertainties']['dataToAnalyze_uncertainties']
     SettingsVDictionary['referenceCorrectionCoefficientsUncertainties'] 	=	    UserChoices['uncertainties']['referenceCorrectionCoefficientsUncertainties'] 
     SettingsVDictionary['referenceCorrectionCoefficientsIonizationUncertainties'] 	=	    UserChoices['uncertainties']['referenceCorrectionCoefficientsIonizationUncertainties'] 

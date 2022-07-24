@@ -645,7 +645,7 @@ def Populate_reciprocal_matching_correction_values(mass_fragment_numbers, Refere
     referenceDataArray = ReferenceData.standardized_reference_patterns[:,1:]
     correction_values = numpy.array(list(zip(*ReferenceData.correction_values)))
     if G.calculateUncertaintiesInConcentrations == True:
-        if type(G.referenceFileUncertainties) != type(None): #Just mimicing the above lines. 
+        if type(G.referencePatterns_uncertainties) != type(None): #Just mimicing the above lines. 
             correction_values_relative_uncertainties = numpy.array(list(zip(*ReferenceData.correction_values_relative_uncertainties)))
     #This function has inputs that are very general so that it could be easily understood and used in various 
     #circumstances, the function first gets the size of the data array and then uses that to index the loops
@@ -677,7 +677,7 @@ def Populate_reciprocal_matching_correction_values(mass_fragment_numbers, Refere
     ReferenceData.matching_correction_values, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values)
     ReferenceData.monitored_reference_intensities, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,referenceDataArray)
     if G.calculateUncertaintiesInConcentrations == True:
-        if type(G.referenceFileUncertainties) != type(None): #Just mimicing the above lines.
+        if type(G.referencePatterns_uncertainties) != type(None): #Just mimicing the above lines.
             ReferenceData.reciprocal_matching_correction_values_relative_uncertainties, ReferenceData.matching_abscissa = ArrayRowReducer(mass_fragment_numbers,ReferenceData.referenceabscissa,correction_values_relative_uncertainties)
     ReferenceData.reciprocal_matching_correction_values = ArrayElementsInverser(ReferenceData.matching_correction_values)
     return ReferenceData
