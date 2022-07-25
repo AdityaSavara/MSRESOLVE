@@ -5178,7 +5178,7 @@ def SLSMethod(molecules,monitored_reference_intensities,reciprocal_matching_corr
 #altering the numbers in order that data is not skewed, of course, this can result in less mass fragments than 
 #present molecules, which will give an error later on in the function (the inverse method section of the sls most likely)
 def RawSignalThresholdFilter (distinguished,reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,timeIndex,
-                              mass_fragment_numbers,ThresholdList,answer,time,
+                              mass_fragment_numbers,ThresholdList,solverChoice,time,
                               conversionfactor = [],datafromcsv = [],DataRangeSpecifierlist = [],
                               SLSChoices = [],permutationNum = [],scaledConcentrationsarray = [],objectiveFunctionType = [],
                               maxPermutations = 100001, uncertainties_dict={}):
@@ -5271,12 +5271,12 @@ def RawSignalThresholdFilter (distinguished,reciprocal_matching_correction_value
     if any(absentmolecules) == 0:#everything is below threshold-not probable
         print('No Significant Peaks')
     else:
-        if answer == 'inverse':#if the inverse method is wanted
+        if solverChoice == 'inverse':#if the inverse method is wanted
             if distinguished == 'yes':#distinguished method
                 solutions = InverseMethodDistinguished(remaining_reference_intensities_filter,remaining_reciprocal_correction_factors_SLS,remaining_rawsignals_SLS)
             else:#combinations method
                 solutions = InverseMethod(remaining_reciprocal_correction_factors_SLS,remaining_rawsignals_SLS,remaining_reference_intensities_filter,mass_fragment_numbers,remaining_molecules_SLS,'composition')
-        if answer == 'sls' or answer == 'autosolver':#sls method
+        if solverChoice == 'sls' or solverChoice == 'autosolver':#sls method
             solutions = SLSMethod(remaining_molecules_SLS,remaining_reference_intensities_filter,remaining_reciprocal_correction_factors_SLS,remaining_rawsignals_SLS,timeIndex,conversionfactor,datafromcsv,molecules_unedited,DataRangeSpecifierlist,SLSChoices,mass_fragment_numbers,permutationNum,scaledConcentrationsarray,objectiveFunctionType, time, maxPermutations)
         timeIndex = 0
         for moleculecounter in range(len(molecules_unedited)):#array-indexed for loop
@@ -6061,7 +6061,7 @@ def PopulateLogFile():
     if G.negativeAnalyzerYorN == 'yes':
         f6.write('negativeAnalyzerYorN = %s \n'%(G.negativeAnalyzerYorN))
     if G.dataAnalysis == 'yes':
-        f6.write('answer = %s \n'%(G.solverChoice))
+        f6.write('solverChoice = %s \n'%(G.solverChoice))
         if G.solverChoice == 'sls':
             f6.write('uniqueOrCommon = %s \n'%(G.uniqueOrCommon))
             f6.write('slsFinish = %s \n'%(G.slsFinish))
