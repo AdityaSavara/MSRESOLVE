@@ -126,7 +126,8 @@ referenceFileExistingTuningAndForm='AcetaldehydeMeasuredRef.csv'
 referenceFileDesiredTuningAndForm ='AcetaldehydeOnlyNISTRef.csv'
 referenceCorrectionCoefficients = {'A': 0.0, 'B': 0.0, 'C': 1.0}	
                             #default is 'A': 0.0, 'B': 0.0, 'C': 1.0
-
+tuningCorrectorGasMixtureConcentrations = []
+tuningCorrectorGasMixtureSignals = []
 
 #//Reference Pattern Changer // (rpc)
 #To change reference data based on collected data at a certain time, enter mass fragments for the molecule and times below
