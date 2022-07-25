@@ -87,7 +87,9 @@ interpolateYorN = 'no'
 # However, it is also needed for the interpolater which allows the data ranges to be small enough to be solvable by brute force
 marginalChangeRestriction = 2.0
 ignorableDeltaYThreshold = 0.01
-
+dataToAnalyze_uncertainties_radiusType = 'pointrange'
+referenceCorrectionCoefficientsUncertainties = None
+referenceCorrectionCoefficientsIonizationUncertainties = None
 #//Data Solving Restrictions - Brute Solving Restrictions 
 #dataLowerBound and dataUpperbound put absolute bounds on the values brute searches for across all time points.
 #I believe (if I am not mistaken) that dataRangeSpecifier puts bounds for each time point.
