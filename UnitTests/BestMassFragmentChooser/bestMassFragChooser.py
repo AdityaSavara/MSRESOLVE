@@ -60,6 +60,7 @@ def bestMassFragChooser(chosenMolecules,
     #The below options are only relevant if SLS is going to be used.  So they do not matter if the person is using useExtentOfSLSUniqueSolvable.
     if useExtentOfSLSUniqueSolvable == False:
         import UserInput as G
+        G.applyReferenceMassFragmentsThresholds = 'no' #The applyReferenceMassFragmentsThresholds must be turned off for BestMassFragChooser to work in some cases. significantPeakThreshold should be used instead.
         G.uncertainties_dict = {} #FIXME: This is only a temporary solution.
         #The 4th "theoretical" case of having no limits post-loop SLS does not make sense, because there is a risk of too many combinations (which is why we make limits).
         #So if someone tries to choose that, we force it into on the fly SLS (without limits).
