@@ -4603,21 +4603,21 @@ def SLSUniqueFragments(molecules,monitored_reference_intensities,reciprocal_matc
                  
                         Filename = " " + str(chosenMolecule)
                         Prefix = " solvedSignals4Sub "     #solvedSignals4Sub stands for solved signals for subtraction.
-                        debuggingExportIndividualItem (Prefix, ObjectforExport1, Filename) 
+                        debuggingExportIndividualItemFunction(Prefix, ObjectforExport1, Filename) 
                         combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport1) + ' \n'
 
                         ObjectforExport2= str(remaining_reciprocal_correction_factors_SLS[massFragmentIndex_jj,moleculeIndexForThisSLS]) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
                  
                         Filename = " " + str(chosenMolecule)
                         Prefix = " RRCF "    #RRCF stands for Reciprocal Remaining Correction factor
-                        debuggingExportIndividualItem (Prefix, ObjectforExport2, Filename) 
+                        debuggingExportIndividualItemFunction(Prefix, ObjectforExport2, Filename) 
                         combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport2) + ' \n'
                         
                         ObjectforExport3= str(concentrationOfMoleculeForThisSLS) + " " + str(chosenMolecule) + str(moleculeIndexForThisSLS) + " " + str(original_list_of_mass_fragments[massFragmentIndexForThisSLS])
                  
                         Filename = " " + str(chosenMolecule)
                         Prefix = " ConcentrationSLS "       #ConcentrationSLS stands for solved concetrations for SLS
-                        debuggingExportIndividualItem (Prefix, ObjectforExport3, Filename) 
+                        debuggingExportIndividualItemFunction(Prefix, ObjectforExport3, Filename) 
                         combinedString = combinedString + Prefix + Filename + ' \n' + str(ObjectforExport3) + ' \n'
                     
                     if len(uncertainties_dict) > 0: #Just propagating the error to make the concentration uncertainties, including the signal associated with massFragmentIndexForThisSLS.
@@ -6088,7 +6088,7 @@ def PopulateLogFile():
     return None
     
     
-def debuggingExportIndividualItem (prefix, objectToExport, objectName = ""):
+def debuggingExportIndividualItemFunction(prefix, objectToExport, objectName = ""):
 
     prefix = str(prefix)
     objectName = str(objectName)
