@@ -52,7 +52,7 @@ UserChoices['dataSimulation']['on'] = 'yes'
 UserChoices['grapher'] = {} #initialize grapher container
 #option allowing you to view a graph of determined concentrations
 UserChoices['grapher']['on'] = 'yes' #yes will graph function no will not
-UserChoices['grapher']['stopAtGraphs'] = True #True will cause stopping at graphs.
+UserChoices['grapher']['stopAtGraphs'] = False #True will cause stopping at graphs.
 
 #//Time Range//
 UserChoices['timeRangeLimit'] = {} #initialize the timeRangeLimit container
@@ -196,9 +196,9 @@ UserChoices['applyReferenceMassFragmentsThresholds']['referenceSignificantFragme
 UserChoices['lowerBoundThresholdChooser'] = {} #initialize the lowerBoundThresholdChooser container
 #To change the lower bound below which data is eliminated, change below; lowerBoundThresholdChooser ='yes' or 'no'
 #The idea is that below an absolute (or percent based) threshold the intensity will be set to 0.
-UserChoices['lowerBoundThresholdChooser']['on'] = 'no' 
+UserChoices['lowerBoundThresholdChooser']['on'] = 'yes' 
 UserChoices['lowerBoundThresholdChooser']['massesToLowerBoundThresholdFilter'] = [] # leave as [ ] to apply identical percentages or absolute thresholds to all masses.
-UserChoices['lowerBoundThresholdChooser']['lowerBoundThresholdPercentage'] = [0.25]  # 1.0 is max value. leave as [ ] to only use the absolute threshold. Always include a decimal. 
+UserChoices['lowerBoundThresholdChooser']['lowerBoundThresholdPercentage'] = [0.02]  # 1.0 is max value. leave as [ ] to only use the absolute threshold. Always include a decimal. 
 UserChoices['lowerBoundThresholdChooser']['lowerBoundThresholdAbsolute'] = []  # leave as [ ] to only use the percentage threshold. Always include a decimal.
 
 #TODO change the name option from point/timerange to 
@@ -208,10 +208,10 @@ UserChoices['dataSmootherYorN'] = {} #initialize the dataSmootherYorN container
 #This section is for the data smoother function which, by default, is enabled. 
 #Data smoothing can be conducted by a time basis or by a data point basis
 UserChoices['dataSmootherYorN']['on'] = 'yes'
-UserChoices['dataSmootherYorN']['dataSmootherChoice'] = 'timerange'	#options are 'pointrange' or 'timerange'
+UserChoices['dataSmootherYorN']['dataSmootherChoice'] = 'pointrange'	#options are 'pointrange' or 'timerange'
 # abscissaPointRadius and absc
 UserChoices['dataSmootherYorN']['dataSmootherTimeRadius'] = 7
-UserChoices['dataSmootherYorN']['dataSmootherPointRadius'] = 5
+UserChoices['dataSmootherYorN']['dataSmootherPointRadius'] = 2
 UserChoices['dataSmootherYorN']['dataSmootherHeadersToConfineTo'] = [] #Masses on which to perform smoothing.
                            #Should be a subset of 'choosenMassFragments' above.
                            # leave array empty [], to smooth all masses
