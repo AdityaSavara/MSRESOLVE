@@ -35,7 +35,7 @@ def bestMassFragChooser(chosenMolecules,
     keep_N_ValuesInSignificanceFactorCheck=1000,
     finalNumberOfCombinationsToKeep=10,
     exportToFile=True,
-    useExtentOfSLSUniqueSolvable=True, printProgress=False,
+    useExtentOfSLSUniqueSolvable=True, printProgress=True,
     minimizeDependencies = False):
     
     #The below code is to allow replacing MSRESOLVE with the "standalone" dependencies file.
@@ -228,11 +228,14 @@ def bestMassFragChooser(chosenMolecules,
         printProgress=True
     if printProgress==True:
             try:
-                from tqdm import tqdm #this is a module for a progress bar. It's a bit weird that you import the function with same name as module.
+                from tqdm import tqdm #this is a module for a progress bar. It's a bit weird that one imports the function with same name as module.
                 t = tqdm(total=combinationsToConsider, position = 0) #position = 0 shouldn't be required, but helps prevent buggy bar behaviour.
                 tqdm_Failed = False
             except:
                 tqdm_Failed = True
+                print("Warning: tqdm import or initialization failed. Progress will be printed in lines instead of a progress bar. Use pip tqdm to install the dependency required for the progress bar.")
+                
+
     
     if useExtentOfSLSUniqueSolvable:
         
