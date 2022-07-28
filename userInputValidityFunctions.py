@@ -423,7 +423,16 @@ def userInputValidityCheck(UserChoices): #Right now, currentUserInputModule is t
     SettingsVDictionary['rpcTimeRanges']   = UserChoices['extractReferencePatternFromDataOption']['rpcTimeRanges']
     SettingsVDictionary['rpcMoleculesToChangeMF']    = UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] 
 
-    SettingsVDictionary['applyReferenceMassFragmentsThresholds']   = UserChoices['applyReferenceMassFragmentsThresholds']['on']
+    if UserChoices['applyReferenceMassFragmentsThresholds']['on'].lower() != 'auto': #if the setting is not set to auto, then we take whatever the user provided.
+        SettingsVDictionary['applyReferenceMassFragmentsThresholds']   = UserChoices['applyReferenceMassFragmentsThresholds']['on']
+    else: #else, it is set to auto and we will then make a decision based on what solverChoice has.
+        if UserChoices['dataAnalysisMethods']['solverChoice'].lower() == 'sls':
+            SettingsVDictionary['applyReferenceMassFragmentsThresholds'] = 'yes'
+        elif UserChoices['dataAnalysisMethods']['solverChoice'].lower() == 'inverse':
+            SettingsVDictionary['applyReferenceMassFragmentsThresholds'] = 'no'
+        else:
+            print("ERROR: Invalid value found in UserChoices['dataAnalysisMethods']['solverChoice']. Line 434 of userInputValidityFunctions.")
+        
     SettingsVDictionary['referenceMassFragmentFilterThreshold']   = UserChoices['applyReferenceMassFragmentsThresholds']['referenceMassFragmentFilterThreshold']
     SettingsVDictionary['referenceSignificantFragmentThresholds']   = UserChoices['applyReferenceMassFragmentsThresholds']['referenceSignificantFragmentThresholds']
     

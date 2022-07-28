@@ -1,6 +1,6 @@
 Sat Jul 23 16:01:32 2022
 
-referenceFileName = ['AcetaldehydeNISTRefMixed2.csv'] 
+referenceFileName = ['AcetaldehydeNISTRefMixed2.tsv'] 
 form  = ['xyyy'] 
 dataToAnalyzeFileName = 2-CrotAcetExp#2.csv 
 timeRangeLimit = yes 

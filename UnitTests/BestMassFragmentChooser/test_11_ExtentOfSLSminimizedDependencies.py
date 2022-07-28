@@ -43,7 +43,7 @@ numberOfMassFragsToMonitor=3
 #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, 
     moleculesLikelihood, numberOfMassFragsToMonitor,
-    'AcetaldehydeNISTRefMixed2.csv','xyyy' , useExtentOfSLSUniqueSolvable = True, minimizeDependencies = True)[0]
+    'AcetaldehydeNISTRefMixed2.tsv','xyyy' , useExtentOfSLSUniqueSolvable = True, minimizeDependencies = True)[0]
 resultObj=topBestMassFragments
 
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.

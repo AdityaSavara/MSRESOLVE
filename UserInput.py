@@ -13,7 +13,7 @@ if str(__name__) != "DefaultUserInput":
 
 #//Input Files//
 UserChoices['inputFiles'] = {} #initialize the inputFiles container
-UserChoices['inputFiles']['referencePatternsFileNamesList'] = ['AcetaldehydeNISTRefMixed2.tsv'] #enter the file name of the file containing reference information. tsv is tab-separated, csv is comma separated. tsv supports commas in molecule names.
+UserChoices['inputFiles']['referencePatternsFileNamesList'] = ['AcetaldehydeNISTRefMixed3.tsv'] #enter the file name of the file containing reference information. tsv is tab-separated, csv is comma separated. tsv supports commas in molecule names.
 UserChoices['inputFiles']['referencePatternsFormsList'] = 'xyyy' #form is either 'xyyy' or 'xyxy' (if using reference pattern time chooser enter as list with forms for each individual reference file ['xyyy','xyyy','xyyy'])
 UserChoices['inputFiles']['referencePatternTimeRanges'] = [] #Leave empty if not using reference pattern time chooser []
 UserChoices['inputFiles']['dataToAnalyzeFileName'] = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
@@ -57,15 +57,15 @@ UserChoices['grapher']['stopAtGraphs'] = False #True will cause stopping at grap
 #//Time Range//
 UserChoices['timeRangeLimit'] = {} #initialize the timeRangeLimit container
 #This function limits the data analyzed and proccessed to a certain subset of the total data
-UserChoices['timeRangeLimit']['on'] = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
-UserChoices['timeRangeLimit']['timeRangeStart'] = 176  #start time (-int)
-UserChoices['timeRangeLimit']['timeRangeFinish'] = 900	#finish time (-int)
+UserChoices['timeRangeLimit']['on'] = 'no'	#if you wish to enable this function enter 'yes' otherwise 'no'
+UserChoices['timeRangeLimit']['timeRangeStart'] = 450  #start time (-int)
+UserChoices['timeRangeLimit']['timeRangeFinish'] = 650	#finish time (-int)
 
 #//Chosen Molecules
 UserChoices['specificMolecules'] = {} #initialize the specificMolecules container
 #To choose only specific molecules to solve, input in a list of strings  below
 UserChoices['specificMolecules']['on'] = 'no'
-UserChoices['specificMolecules']['chosenMoleculesNames'] = ['Crotyl Alcohol']
+UserChoices['specificMolecules']['chosenMoleculesNames'] = ['Crotyl Alcohol']  #use commas to separate molecule names, such as ['hydrogen', 'acetone']
 
 #//Chosen Mass Fragments//
 UserChoices['specificMassFragments'] = {} #initialize the specificMassFragments container
@@ -188,7 +188,7 @@ UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] =
 #//Reference Mass Fragmentation Threshold//
 UserChoices['applyReferenceMassFragmentsThresholds'] = {} #initialize the applyReferenceMassFragmentsThresholds container
 # if you want to exclude tiny fragmentation peaks
-UserChoices['applyReferenceMassFragmentsThresholds']['on'] = 'yes'
+UserChoices['applyReferenceMassFragmentsThresholds']['on'] = 'auto'  #'auto','yes', or 'no'.  Auto will turn this on when solverChoice = 'sls' is used, and will turn this off when solverChoice = 'inverse'
 UserChoices['applyReferenceMassFragmentsThresholds']['referenceMassFragmentFilterThreshold'] = [5.0]  #typical values are between 1 and 5. Can be a list (one value for each molecule) or a single value across all molecules. The list case has not been tested with all features. This approximates smaller fragmentation peaks as '0', though implicitSLS will correct for the approximation.
 UserChoices['applyReferenceMassFragmentsThresholds']['referenceSignificantFragmentThresholds'] = [6.0] #typical values are between 5 and 50. Can be a list (one value for each molecule) or a single value across all molecules. The list case has not been tested with all features. This setting causes MSRESOLVE to favor larger intensity reference peaks (above the number provided) during solving.
 
@@ -231,9 +231,9 @@ UserChoices['applyRawSignalThresholds']['rawSignalThresholdDivider'] = []
 UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimit'] = 'no'
 UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimitPercent'] = []
 
-#//Uncertainties for Calculating Uncertainties in Concentrations//
-UserChoices['uncertainties'] = {}
-UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = False
+#//Uncertainties// 
+UserChoices['uncertainties'] = {} #initialize the uncertainties settings container
+UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = False #for Calculating Uncertainties in Concentrations
 UserChoices['uncertainties']['referencePatterns_uncertainties'] = 2 #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _absolute_uncertainties.tsv at end of file name) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
 UserChoices['uncertainties']['dataToAnalyze_uncertainties'] =  'Auto' # Can be 'Auto' or 'File' or 'None' or an Integer like 3 (no quotation marks). Or, you can put in a list: one value for each mass, which will be used for all times. If 'File', will expect same file name as collected file with _absolute_uncertainties.csv after that). An integer defines a point radius. 'Auto' without dataSmoother simply uses a point radius of 5. If dataSmoother is being used, it is recommended to set this to 'auto', in which case the range used for each window will match that of dataSmoother. 
 UserChoices['uncertainties']['dataToAnalyze_uncertainties_radiusType'] = 'pointrange' #Can be 'pointrange' or 'timerange'.  If dataToAnalyze_uncertainties is set to auto, then the radiustype will be forced to match datasmoother choice (if dataSmoother is being used), or will be forced to 'pointrange' (if dataSmoother is not being used).
@@ -250,9 +250,9 @@ UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerBaseNumberOfGridIntervals']
 #//Data Analysis Methods
 UserChoices['dataAnalysisMethods'] = {} #initialize the dataAnalysisMethods container
 #Below the path for the analysis of the data; sls or inverse
-UserChoices['dataAnalysisMethods']['solverChoice'] = 'inverse'	#'inverse' or 'sls'; sls is suggested. 'autosolver' is in development.
+UserChoices['dataAnalysisMethods']['solverChoice'] = 'sls'	#'inverse' or 'sls'; sls is suggested. 'autosolver' is in development.
 UserChoices['dataAnalysisMethods']['uniqueOrCommon'] = 'unique'	#'unique' or 'common'; unique is suggested when uncertainties will be used.
-UserChoices['dataAnalysisMethods']['slsWeighting'] = [1,0,0,0] #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
+UserChoices['dataAnalysisMethods']['slsWeighting'] = [1,1,1,1] #The first includes uncertainties weighting. The second includes solved concentration weighting. The third includes reference fragment intensity weighitng. The fourth includes signal intensity weighting.  All can be on at the same time. 
 UserChoices['dataAnalysisMethods']['slsFinish'] = 'inverse'	#'brute' or 'inverse'; inverse is currently suggested if using the uncertainties feature.
 UserChoices['dataAnalysisMethods']['slsUniquePositiveConcentrationsOnly'] = False #Can be true or false. This is faster but less accurate than NegativeAnalyzer
 UserChoices['dataAnalysisMethods']['objectiveFunctionType'] = 'ssr'	#objectiveFunctionType = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 

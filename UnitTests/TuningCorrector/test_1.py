@@ -45,6 +45,7 @@ MSRESOLVE.G.applyReferenceMassFragmentsThresholds= 'no'
 MSRESOLVE.G.referenceMassFragmentFilterThreshold = [6.0]
 MSRESOLVE.G.referenceSignificantFragmentThresholds = [0.0]
 
+MSRESOLVE.G.solverChoice='inverse'
 #Now to get started with the test itself...
 
 #these are the tuning coefficients before doing anything (should be 0,0,1)

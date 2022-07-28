@@ -298,8 +298,14 @@ def readReferenceFile(referenceFileName, form):
         provided_reference_patterns = reference_holder
         return provided_reference_patterns
     
-     #read the csv file into a dataframe
-    dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+    #read the csv file into a dataframe
+    if '.csv' in referenceFileName:
+        dataFrame = pandas.read_csv('%s' %referenceFileName, header = None)
+    elif '.tsv' in referenceFileName:
+        try: #no easy way to assess utf16 vs utf8, so try both.
+            dataFrame = pandas.read_csv('%s' %referenceFileName, header = None, delimiter = '\t', encoding = 'utf8') #need to specify encoding for cases of tab delimited files.
+        except: #no easy way to assess utf16 vs utf8, so try both.
+            dataFrame = pandas.read_csv('%s' %referenceFileName, header = None, delimiter = '\t', encoding = 'utf16') #need to use utf16 for some cases of tab delimited files.
     
     if form == 'xyyy':
         for rowIndex in range(len(dataFrame)): #Loop through each row and check the abscissa value

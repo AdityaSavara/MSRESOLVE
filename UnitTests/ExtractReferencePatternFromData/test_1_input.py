@@ -6,7 +6,7 @@ if os.path.basename(__file__) != "DefaultUserInput.py":
 
 #USER INPUT FILE
 #//Input Files//
-referencePatternsFileNamesList = 'AcetaldehydeNISTRefMixed2.csv' #enter the file name of the file containing reference information
+referencePatternsFileNamesList = 'AcetaldehydeNISTRefMixed2.tsv' #enter the file name of the file containing reference information
 referencePatternsFormsList = 'xyyy'	#form is either 'xyyy' or 'xyxy'
 referencePatternTimeRanges = [] #Leave empty if not using reference pattern time chooser []
 dataToAnalyzeFileName = '2-CrotAcetExp#2Truncated.csv'	#enter the file name with raw mass spectrometer data

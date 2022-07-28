@@ -1,4 +1,4 @@
-referencePatternsFileNamesList = ['AcetaldehydeNISTRefMixed2.csv']
+referencePatternsFileNamesList = ['AcetaldehydeNISTRefMixed2.tsv']
 referencePatternsFormsList = ['xyyy']
 dataToAnalyzeFileName = '2-CrotAcetExp#2Truncated.csv'
 referencePatternTimeRanges = []
