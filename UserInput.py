@@ -57,7 +57,7 @@ UserChoices['grapher']['stopAtGraphs'] = False #True will cause stopping at grap
 #//Time Range//
 UserChoices['timeRangeLimit'] = {} #initialize the timeRangeLimit container
 #This function limits the data analyzed and proccessed to a certain subset of the total data
-UserChoices['timeRangeLimit']['on'] = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
+UserChoices['timeRangeLimit']['on'] = 'no'	#if you wish to enable this function enter 'yes' otherwise 'no'
 UserChoices['timeRangeLimit']['timeRangeStart'] = 450  #start time (-int)
 UserChoices['timeRangeLimit']['timeRangeFinish'] = 650	#finish time (-int)
 
