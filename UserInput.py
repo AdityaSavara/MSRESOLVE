@@ -188,7 +188,7 @@ UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] =
 #//Reference Mass Fragmentation Threshold//
 UserChoices['applyReferenceMassFragmentsThresholds'] = {} #initialize the applyReferenceMassFragmentsThresholds container
 # if you want to exclude tiny fragmentation peaks
-UserChoices['applyReferenceMassFragmentsThresholds']['on'] = 'yes'  #'auto','yes', or 'no'.  Auto will turn this on when solverChoice = 'sls' is used, and will turn this off when solverChoice = 'inverse'
+UserChoices['applyReferenceMassFragmentsThresholds']['on'] = 'auto'  #'auto','yes', or 'no'.  Auto will turn this on when solverChoice = 'sls' is used, and will turn this off when solverChoice = 'inverse'
 UserChoices['applyReferenceMassFragmentsThresholds']['referenceMassFragmentFilterThreshold'] = [5.0]  #typical values are between 1 and 5. Can be a list (one value for each molecule) or a single value across all molecules. The list case has not been tested with all features. This approximates smaller fragmentation peaks as '0', though implicitSLS will correct for the approximation.
 UserChoices['applyReferenceMassFragmentsThresholds']['referenceSignificantFragmentThresholds'] = [6.0] #typical values are between 5 and 50. Can be a list (one value for each molecule) or a single value across all molecules. The list case has not been tested with all features. This setting causes MSRESOLVE to favor larger intensity reference peaks (above the number provided) during solving.
 
