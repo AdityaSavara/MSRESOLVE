@@ -13,7 +13,7 @@ if str(__name__) != "DefaultUserInput":
 
 #//Input Files//
 UserChoices['inputFiles'] = {} #initialize the inputFiles container
-UserChoices['inputFiles']['referencePatternsFileNamesList'] = ['AcetaldehydeNISTRefMixed2.tsv'] #enter the file name of the file containing reference information. tsv is tab-separated, csv is comma separated. tsv supports commas in molecule names.
+UserChoices['inputFiles']['referencePatternsFileNamesList'] = ['AcetaldehydeNISTRefMixed3.tsv'] #enter the file name of the file containing reference information. tsv is tab-separated, csv is comma separated. tsv supports commas in molecule names.
 UserChoices['inputFiles']['referencePatternsFormsList'] = 'xyyy' #form is either 'xyyy' or 'xyxy' (if using reference pattern time chooser enter as list with forms for each individual reference file ['xyyy','xyyy','xyyy'])
 UserChoices['inputFiles']['referencePatternTimeRanges'] = [] #Leave empty if not using reference pattern time chooser []
 UserChoices['inputFiles']['dataToAnalyzeFileName'] = '2-CrotAcetExp#2.csv'	#enter the file name with raw mass spectrometer data
@@ -252,7 +252,7 @@ UserChoices['dataAnalysisMethods'] = {} #initialize the dataAnalysisMethods cont
 #Below the path for the analysis of the data; sls or inverse
 UserChoices['dataAnalysisMethods']['solverChoice'] = 'sls'	#'inverse' or 'sls'; sls is suggested. 'autosolver' is in development.
 UserChoices['dataAnalysisMethods']['uniqueOrCommon'] = 'unique'	#'unique' or 'common'; unique is suggested when uncertainties will be used.
-UserChoices['dataAnalysisMethods']['slsWeighting'] = [1,0,0,0] #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
+UserChoices['dataAnalysisMethods']['slsWeighting'] = [1,1,1,1] #The first includes uncertainties weighting. The second includes solved concentration weighting. The third includes reference fragment intensity weighitng. The fourth includes signal intensity weighting.  All can be on at the same time. 
 UserChoices['dataAnalysisMethods']['slsFinish'] = 'inverse'	#'brute' or 'inverse'; inverse is currently suggested if using the uncertainties feature.
 UserChoices['dataAnalysisMethods']['slsUniquePositiveConcentrationsOnly'] = False #Can be true or false. This is faster but less accurate than NegativeAnalyzer
 UserChoices['dataAnalysisMethods']['objectiveFunctionType'] = 'ssr'	#objectiveFunctionType = 'ssr', 'sar', 'weightedSAR' or 'weightedSSR' 

@@ -1,11 +1,11 @@
-Thu Jul 28 16:37:47 2022
+Thu Jul 28 17:58:10 2022
 
-referenceFileName = ['AcetaldehydeNISTRefMixed2.tsv'] 
+referenceFileName = ['AcetaldehydeNISTRefMixed3.tsv'] 
 form  = ['xyyy'] 
 dataToAnalyzeFileName = 2-CrotAcetExp#2.csv 
 applyReferenceMassFragmentsThresholds = yes 
-referenceMassFragmentFilterThreshold = [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0] 
-referenceSignificantFragmentThresholds = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
+referenceMassFragmentFilterThreshold = [5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0, 5.0] 
+referenceSignificantFragmentThresholds = [6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0, 6.0] 
 lowerBoundThresholdChooser = yes 
 massesToLowerBoundThresholdFilter  = [2.0 18.0 26.0 27.0 28.0 29.0 31.0 39.0 41.0 44.0 45.0 56.0 57.0 70.0] 
 lowerBoundThresholdPercentage = [0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02, 0.02] 
@@ -23,5 +23,5 @@ scaleRawDataFactor  = 1.0
 resolvedScaledConcentrationsOutputName  = ScaledConcentrations.tsv 
 concentrationsOutputName = ResolvedConcentrations.tsv 
 simulatedSignalsOutputName = SimulatedRawSignals.csv 
-Run Time 17.90740 seconds 
+Run Time 16.68039 seconds 
 ###################################################################### 
