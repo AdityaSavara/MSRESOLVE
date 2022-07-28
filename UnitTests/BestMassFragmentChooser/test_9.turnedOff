@@ -39,7 +39,7 @@ numberOfMassFragsToMonitor=8
 
 #4) get the output of the function, which is what will typically be checked.
 
-topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor,'AcetaldehydeNISTRefMixed2.csv','xyyy', onTheFlySLS=False, useExtentOfSLSUniqueSolvable = False, printProgress=True, keep_N_ValuesInSignificanceFactorCheck=False )[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
+topBestMassFragments= bmfc.bestMassFragChooser(moleculesToMonitor, moleculesLikelihood, numberOfMassFragsToMonitor,'AcetaldehydeNISTRefMixed2.tsv','xyyy', onTheFlySLS=False, useExtentOfSLSUniqueSolvable = False, printProgress=True, keep_N_ValuesInSignificanceFactorCheck=False )[0] #, output[1], output[2]]  #You can alternatively populate resultObj with whatever you want, such as a list.
 resultObj=topBestMassFragments
 
 #5) A string is also typically provided, but is an optional argument. You can provide whatever string you want.

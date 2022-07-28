@@ -19,5 +19,5 @@ A poly1d object is made for each ionization type's polynomial coefficients.  An 
 The expected results is just simply the populated ionization array.  The objects match within the defined tolerances but the strings do not due to rounding.
 
 Test 4 uses AcetaldehydeNISTRefDefault.csv
-This reference pattern is the same as AcetaldehydeNISTRefMixed2.csv from the main directory.
+This reference pattern is the same as AcetaldehydeNISTRefMixed2.tsv from the main directory.
 Using this reference pattern should default populateIonizationEfficiencies to using the Madix and Ko equation.  An array of zeros having the same length as ElectronNumbers is initialized.  It is populated using a for loop and calculating the ionization factor using the Madix and Ko equation.
