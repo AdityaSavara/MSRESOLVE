@@ -58,14 +58,14 @@ UserChoices['grapher']['stopAtGraphs'] = False #True will cause stopping at grap
 UserChoices['timeRangeLimit'] = {} #initialize the timeRangeLimit container
 #This function limits the data analyzed and proccessed to a certain subset of the total data
 UserChoices['timeRangeLimit']['on'] = 'yes'	#if you wish to enable this function enter 'yes' otherwise 'no'
-UserChoices['timeRangeLimit']['timeRangeStart'] = 176  #start time (-int)
-UserChoices['timeRangeLimit']['timeRangeFinish'] = 900	#finish time (-int)
+UserChoices['timeRangeLimit']['timeRangeStart'] = 450  #start time (-int)
+UserChoices['timeRangeLimit']['timeRangeFinish'] = 650	#finish time (-int)
 
 #//Chosen Molecules
 UserChoices['specificMolecules'] = {} #initialize the specificMolecules container
 #To choose only specific molecules to solve, input in a list of strings  below
 UserChoices['specificMolecules']['on'] = 'no'
-UserChoices['specificMolecules']['chosenMoleculesNames'] = ['Crotyl Alcohol']
+UserChoices['specificMolecules']['chosenMoleculesNames'] = ['Crotyl Alcohol']  #use commas to separate molecule names, such as ['hydrogen', 'acetone']
 
 #//Chosen Mass Fragments//
 UserChoices['specificMassFragments'] = {} #initialize the specificMassFragments container
@@ -250,7 +250,7 @@ UserChoices['negativeAnalyzerYorN']['NegativeAnalyzerBaseNumberOfGridIntervals']
 #//Data Analysis Methods
 UserChoices['dataAnalysisMethods'] = {} #initialize the dataAnalysisMethods container
 #Below the path for the analysis of the data; sls or inverse
-UserChoices['dataAnalysisMethods']['solverChoice'] = 'inverse'	#'inverse' or 'sls'; sls is suggested. 'autosolver' is in development.
+UserChoices['dataAnalysisMethods']['solverChoice'] = 'sls'	#'inverse' or 'sls'; sls is suggested. 'autosolver' is in development.
 UserChoices['dataAnalysisMethods']['uniqueOrCommon'] = 'unique'	#'unique' or 'common'; unique is suggested when uncertainties will be used.
 UserChoices['dataAnalysisMethods']['slsWeighting'] = [1,0,0,0] #The first uses uncertainties weighting. The second solves for largest concentrations first. The third uses reference peak height. The fourth uses the signal intensity.  All can be on at the same time. 
 UserChoices['dataAnalysisMethods']['slsFinish'] = 'inverse'	#'brute' or 'inverse'; inverse is currently suggested if using the uncertainties feature.
