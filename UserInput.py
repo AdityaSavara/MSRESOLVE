@@ -188,7 +188,7 @@ UserChoices['extractReferencePatternFromDataOption']['rpcMoleculesToChangeMF'] =
 #//Reference Mass Fragmentation Threshold//
 UserChoices['applyReferenceMassFragmentsThresholds'] = {} #initialize the applyReferenceMassFragmentsThresholds container
 # if you want to exclude tiny fragmentation peaks
-UserChoices['applyReferenceMassFragmentsThresholds']['on'] = 'yes'
+UserChoices['applyReferenceMassFragmentsThresholds']['on'] = 'yes'  #'auto','yes', or 'no'.  Auto will turn this on when solverChoice = 'sls' is used, and will turn this off when solverChoice = 'inverse'
 UserChoices['applyReferenceMassFragmentsThresholds']['referenceMassFragmentFilterThreshold'] = [5.0]  #typical values are between 1 and 5. Can be a list (one value for each molecule) or a single value across all molecules. The list case has not been tested with all features. This approximates smaller fragmentation peaks as '0', though implicitSLS will correct for the approximation.
 UserChoices['applyReferenceMassFragmentsThresholds']['referenceSignificantFragmentThresholds'] = [6.0] #typical values are between 5 and 50. Can be a list (one value for each molecule) or a single value across all molecules. The list case has not been tested with all features. This setting causes MSRESOLVE to favor larger intensity reference peaks (above the number provided) during solving.
 
@@ -231,9 +231,9 @@ UserChoices['applyRawSignalThresholds']['rawSignalThresholdDivider'] = []
 UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimit'] = 'no'
 UserChoices['applyRawSignalThresholds']['rawSignalThresholdLimitPercent'] = []
 
-#//Uncertainties for Calculating Uncertainties in Concentrations//
-UserChoices['uncertainties'] = {}
-UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = False
+#//Uncertainties// 
+UserChoices['uncertainties'] = {} #initialize the uncertainties settings container
+UserChoices['uncertainties']['calculateUncertaintiesInConcentrations'] = False #for Calculating Uncertainties in Concentrations
 UserChoices['uncertainties']['referencePatterns_uncertainties'] = 2 #which can be a float/integer for absolute uncertainties or the value True (or the value 'File'. Will expect same file name as reference file with _absolute_uncertainties.tsv at end of file name) or the value None (False will also be set to None) . For example, the value 2 would mean a 2% uncertainty for the value 100, but a 50% uncertainty for the value of 4.
 UserChoices['uncertainties']['dataToAnalyze_uncertainties'] =  'Auto' # Can be 'Auto' or 'File' or 'None' or an Integer like 3 (no quotation marks). Or, you can put in a list: one value for each mass, which will be used for all times. If 'File', will expect same file name as collected file with _absolute_uncertainties.csv after that). An integer defines a point radius. 'Auto' without dataSmoother simply uses a point radius of 5. If dataSmoother is being used, it is recommended to set this to 'auto', in which case the range used for each window will match that of dataSmoother. 
 UserChoices['uncertainties']['dataToAnalyze_uncertainties_radiusType'] = 'pointrange' #Can be 'pointrange' or 'timerange'.  If dataToAnalyze_uncertainties is set to auto, then the radiustype will be forced to match datasmoother choice (if dataSmoother is being used), or will be forced to 'pointrange' (if dataSmoother is not being used).
