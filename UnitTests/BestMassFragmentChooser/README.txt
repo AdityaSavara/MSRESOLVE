@@ -1,5 +1,7 @@
 This directory test the Best Mass Fragment Chooser. 
 
+
+
 NOTE: Now, by default, it uses ExtentOfSLSUniqueSolvable.py and does not do on the fly SLS, nor does it do the significance checks etc.
 
 The Best Mass Fragment Chooser selects mass fragment combinaitons that have unique fragments and can therefore pass the SLS Unique Fragments solution method. It ranks the mass fragment combination in terms the sum of the significance factors across the reference data for the selected masss fragments and returns the fragment combinations having the largest significance sum. It also returns a reference file containing refernce data for only the specified mass fragments and molecules.
@@ -22,5 +24,7 @@ There are 4 unit tests:
 	5) moleculesToMonitor=['Ethylene (Ethene)', 'Ethanol', 'Crotyl Alcohol' , 'Acetaldehyde' ] and 6 fragments. Without pre-check.
 	
 	The unit tests above "10" have useExtentOfSLSUniqueSolvable = True, and add progressively more molecules to check.
-
-	
+    
+    
+    
+WARNING: If a pytest is done to run all tests at once, the following tests may fail:  test_2.py,test_3.py,test_4.py,test_5.py,test_8.py,test_9.py. However, when running them individually, these tests pass. These tets are presently turned off for convenience by having their extensions changed from ".py" to ".turnedOff".  To run these tests, either use commands like "python test_2.turnedOff" or change the file extensions back to ".py" and run them individually (such as "python test_2.py"). Test_5.py takes around 15 minutes. Test_8.py takes around 1-2 hours. Test_9.py takes around 15 minutes. (those longer tests have progress bars when run directly /individually). 

@@ -21,7 +21,7 @@ URL = 'https://github.com/AdityaSavara/MSRESOLVESG'
 EMAIL = 'AditySavara2008@u.northwestern.edu'  
 AUTHOR = 'Aditya Savara'
 REQUIRES_PYTHON = '>=3.5.0'
-VERSION = '44.7.2'
+VERSION = '44.8.0'
 LICENSE = 'BSD-3-Clause'
 
 # What packages are required for this module to be executed?
@@ -32,7 +32,7 @@ REQUIRED = [
 
 # What packages are optional?
 EXTRAS = {
-    'COMPLETE': ['matplotlib', 'scipy', 'pandas']# 'uncertainties': ['uncertainties'], #pymc...
+    'COMPLETE': ['matplotlib', 'scipy', 'pandas', 'tqdm']# 'uncertainties': ['uncertainties'], #pymc...
 }
 
 # The rest you shouldn't have to touch too much :)
