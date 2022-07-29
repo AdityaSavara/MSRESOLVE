@@ -20,7 +20,7 @@ UserChoices['inputFiles']['dataToAnalyzeFileName'] = '2-CrotAcetExp#2.csv'	#ente
 
 UserChoices['inputFiles']['ionizationDataFileName'] = '181017ProvidedIonizationData.csv' #the name of the file containing the ionization data
 
-#Iterative Analysis
+#//Iterative Analysis//
 UserChoices['iterativeAnalysis'] = {} #initialize the iterativeAnalysis container
 #Options are True, False, or '<name of iteration>'
 UserChoices['iterativeAnalysis']['on'] = False
@@ -61,7 +61,7 @@ UserChoices['timeRangeLimit']['on'] = 'no'	#if you wish to enable this function 
 UserChoices['timeRangeLimit']['timeRangeStart'] = 450  #start time (-int)
 UserChoices['timeRangeLimit']['timeRangeFinish'] = 650	#finish time (-int)
 
-#//Chosen Molecules
+#//Chosen Molecules//
 UserChoices['specificMolecules'] = {} #initialize the specificMolecules container
 #To choose only specific molecules to solve, input in a list of strings  below
 UserChoices['specificMolecules']['on'] = 'no'
@@ -85,10 +85,7 @@ UserChoices['sensitivityValues']['sensitivityValues'] = []
 
 #TODO 2/3/18: 
 # Change so that late baseline times are omitted with a blank list for that mass (or all masses) rather than with zeros, 
-# since this is not a good way of doing things.  Furthermore, after looking at the code, it does not even look like the code 
-# is programmed to expect 0s, it looks like the code expects a blank list in order to skip the late baseline times.  
-# I think maybe  the idea was that by putting [0,0] as the range, it cannot have any points in that range (not a finite range) 
-# and therefore gets excluded from being fit.  Even if that's true, it needs to be checked that it's working.
+# or allow "None, None".
 #//Baseline Correction - Linear Semiautomatic//
 UserChoices['linearBaselineCorrectionSemiAutomatic'] = {} #initialize the linearBaselineCorrectionSemiAutomatic container
 #To change delete background average/slope based on time-interval, input below information below. 'yes' enables 'no' disables
@@ -140,7 +137,7 @@ UserChoices['bruteSolvingRestrictions']['bruteIncrements'] = []
 UserChoices['bruteSolvingRestrictions']['permutationNum'] = 1000
 UserChoices['bruteSolvingRestrictions']['maxPermutations'] = 100001
 
-#// Set Scaling Factor?
+#//Scaling Raw Data Factor//
 UserChoices['scaleRawDataYorN'] = {} #initialize the scaleRawDataYorN container
 UserChoices['scaleRawDataYorN']['on'] = 'no' #This variable is currently unused, but later choosing "no" will set things to "manual" and change "scaleRawDataFactor" to 1.
 UserChoices['scaleRawDataYorN']['scaleRawDataOption'] = 'manual' #Choices are 'manual' or 'auto'
@@ -201,9 +198,8 @@ UserChoices['lowerBoundThresholdChooser']['massesToLowerBoundThresholdFilter'] =
 UserChoices['lowerBoundThresholdChooser']['lowerBoundThresholdPercentage'] = [0.02]  # 1.0 is max value. leave as [ ] to only use the absolute threshold. Always include a decimal. 
 UserChoices['lowerBoundThresholdChooser']['lowerBoundThresholdAbsolute'] = []  # leave as [ ] to only use the percentage threshold. Always include a decimal.
 
-#TODO change the name option from point/timerange to 
-# abscissaPointradius / abscissaDistanceRadius
 #//Data Smoothing//
+#TODO consider changing the name option from # point/timerange to # abscissaPointradius / abscissaDistanceRadius
 UserChoices['dataSmootherYorN'] = {} #initialize the dataSmootherYorN container
 #This section is for the data smoother function which, by default, is enabled. 
 #Data smoothing can be conducted by a time basis or by a data point basis
@@ -218,11 +214,12 @@ UserChoices['dataSmootherYorN']['dataSmootherHeadersToConfineTo'] = [] #Masses o
 UserChoices['dataSmootherYorN']['polynomialOrder'] = 1  #During the local smoothing, a linear fit (or polynomial fit) is applied.
 
 #//Raw Signal Threshold//
+#WARNING: This feature has not been maintained and should not be used. 7/18/17.
+#The function is highly complex and is not trivial to make work with all other features.
 UserChoices['applyRawSignalThresholds'] = {} #initialize the applyRawSignalThresholds container
 #To change the threshold at which raw signals are not longer relevant, change below (similar to above function, but for rows instead of columns)
 #We think the reference to the 'above function' in the previous line is referring to Data Threshold Filter
 #These signals get converted into 0.
-#WARNING: This function is highly complex and should be considered a work in progress. It cannot be confirmed to work properly (as of 7/18/17).
 UserChoices['applyRawSignalThresholds']['on'] = 'no'
 UserChoices['applyRawSignalThresholds']['rawSignalThresholdValue'] = [.0000001]
 UserChoices['applyRawSignalThresholds']['sensitivityThresholdValue'] = [1] #this is the number in the Reference given the relative intensity of the signal of the mass fragment
@@ -270,10 +267,10 @@ UserChoices['concentrationFinder'] = {} #initialize the concentrationFinder cont
 #TODO Note: Concentration Finder is not compatible with simultaneous use of multiple reference files AND separate molecules' factors as of 181022. Currently, it a user may use either one or the other.
 UserChoices['concentrationFinder']['on'] = 'no'
 UserChoices['concentrationFinder']['TSC_List_Type'] = 'MultipleReferencePatterns' #Options are 'MultipleReferencePatterns' or 'SeparateMolecularFactors'
-UserChoices['concentrationFinder']['moleculesTSC_List'] = 'Acetaldehyde' #Default concentration factors will be calculated for each molecule to match the first moleculeTSC input
-UserChoices['concentrationFinder']['massNumberTSC_List'] = 29
-UserChoices['concentrationFinder']['moleculeSignalTSC_List'] = 1.66945 #This is the list of intensity values that correspond to a known concentration to scale with for the same mass fragments
-UserChoices['concentrationFinder']['moleculeConcentrationTSC_List'] = 0.05	#this is the concentration/pressure associated with the signal.
+UserChoices['concentrationFinder']['moleculesTSC_List'] = ['Acetaldehyde'] #Default concentration factors will be calculated for each molecule to match the first moleculeTSC input
+UserChoices['concentrationFinder']['massNumberTSC_List'] = [29]
+UserChoices['concentrationFinder']['moleculeSignalTSC_List'] = [1.66945] #This is the list of intensity values that correspond to a known concentration to scale with for the same mass fragments
+UserChoices['concentrationFinder']['moleculeConcentrationTSC_List'] = [0.05]	#this is the concentration/pressure associated with the signal.
 UserChoices['concentrationFinder']['unitsTSC'] = 'bar'	#this string is the unit for the concentration. The unit will not be used in calculations so any units may be used
 
 #//Output Files//
