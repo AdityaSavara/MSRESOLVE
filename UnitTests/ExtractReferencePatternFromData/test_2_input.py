@@ -194,6 +194,8 @@ fullBrute = 'yes'
 SLSUniqueExport = 'no'
 
 
+calculateUncertaintiesInConcentrations = False
+
 #//Concentration Finder//
 #this last set of inputs is where you enter your conversion factors from raw signal to concentration, unlike most rows, do not leave brackets around chosen numbers
 #here you put in a known raw signal intensity and the known concentration it corresponds to. 
@@ -205,6 +207,7 @@ moleculeConcentrationTSC_List = 0.05	#pressure can also be used in subsitute
 unitsTSC = 'bar'	#the units will not be used in calculations so any units may be used
 
 
+calculateUncertaintiesInConcentrations = False
 
 #//Output Files//
 #the last section designates the various output files, all are suppose to be csv values
