@@ -218,7 +218,7 @@ massNumberTSC_List = 29
 moleculeConcentrationTSC_List = 0.05	#pressure can also be used in subsitute
 unitsTSC = 'bar'	#the units will not be used in calculations so any units may be used
 
-
+calculateUncertaintiesInConcentrations = False
 
 #//Output Files//
 #the last section designates the various output files, all are suppose to be csv values

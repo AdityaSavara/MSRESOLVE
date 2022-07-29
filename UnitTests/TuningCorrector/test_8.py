@@ -40,7 +40,7 @@ MSRESOLVE.G.timeRangeLimit = 'yes'
 MSRESOLVE.G.timeRangeStart = 176  #start time (-int)
 MSRESOLVE.G.timeRangeFinish = 178  #start time (-int)
 MSRESOLVE.G.dataSmootherYorN = 'no'
-
+MSRESOLVE.G.calculateUncertaintiesInConcentrations = False
 #will use applyReferenceMassFragmentsThresholds (single value means it will be applied to all molecules)
 MSRESOLVE.G.applyReferenceMassFragmentsThresholds= 'yes'
 MSRESOLVE.G.referenceMassFragmentFilterThreshold = [6.0]
