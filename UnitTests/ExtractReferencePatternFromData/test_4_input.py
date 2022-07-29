@@ -182,6 +182,7 @@ distinguished = 'yes'
 fullBrute = 'yes'
 SLSUniqueExport = 'no'
 
+calculateUncertaintiesInConcentrations = False                                              
 
 #//Concentration Finder//
 #this last set of inputs is where you enter your conversion factors from raw signal to concentration, unlike most rows, do not leave brackets around chosen numbers

@@ -42,9 +42,13 @@ def bestMassFragChooser(chosenMolecules,
     global MSRESOLVE
     if minimizeDependencies == False:
         import MSRESOLVE, importlib; importlib.reload(MSRESOLVE)
+        MSRESOLVE.G.calculateUncertaintiesInConcentrations = False #need to turn the uncertainties off for bestMassFragChooser.
     elif minimizeDependencies == True:
         import MSResolveDependenciesForExtentOfSLSsolvable
         MSRESOLVE = MSResolveDependenciesForExtentOfSLSsolvable
+        #The minimizeDependencies case does not have any calculateUncertaintiesInConcentrations feature, so that does not need to be turned off for this elif block. 
+        
+    
     
     progressCounter = 0 #just initializing here.
     
