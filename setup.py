@@ -32,7 +32,7 @@ REQUIRED = [
 
 # What packages are optional?
 EXTRAS = {
-    'COMPLETE': ['matplotlib', 'scipy', 'pandas >= 1.0.0', 'tqdm', 'UnitTesterSG >= 6.0.0']# 'uncertainties': ['uncertainties'], #pymc...
+    'COMPLETE': ['matplotlib', 'scipy', 'pandas >= 1.0.0', 'tqdm', 'UnitTesterSG >= 6.2.0']# 'uncertainties': ['uncertainties'], #pymc...
 }
 
 # The rest you shouldn't have to touch too much :)
