@@ -26,13 +26,13 @@ LICENSE = 'BSD-3-Clause'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'numpy', 'timeit', 'copy'
+    'numpy', 'timeit', 'copy', 'pandas >= 1.0.0', 
     # 'requests', 'maya', 'records', #numpy...
 ]
 
 # What packages are optional?
 EXTRAS = {
-    'COMPLETE': ['matplotlib', 'scipy', 'pandas >= 1.0.0', 'tqdm', 'UnitTesterSG >= 6.2.0']# 'uncertainties': ['uncertainties'], #pymc...
+    'COMPLETE': ['matplotlib', 'scipy','tqdm', 'UnitTesterSG >= 6.2.0']# 'uncertainties': ['uncertainties'], #pymc...
 }
 
 # The rest you shouldn't have to touch too much :)

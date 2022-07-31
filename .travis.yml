@@ -11,6 +11,10 @@ install:
 # command to run tests
 #remove the test_13.py before running the runPytestDriver.py since that python file is designed to give an error as downloaded.
   - pip install UnitTesterSG
+  - pip install numpy
+  - pip install pandas
+  - pip install timeit
+  - pip install copy
 script: 
   - cd UnitTests
   - python3 runPytestDriver.py failWithError #The "failWithError" optional argument will cause an error exitCode if any unit tests fail.
