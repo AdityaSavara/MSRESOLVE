@@ -21,18 +21,18 @@ URL = 'https://github.com/AdityaSavara/MSRESOLVESG'
 EMAIL = 'AditySavara2008@u.northwestern.edu'  
 AUTHOR = 'Aditya Savara'
 REQUIRES_PYTHON = '>=3.5.0'
-VERSION = '44.10.0'
+VERSION = '44.10.1'
 LICENSE = 'BSD-3-Clause'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'numpy', 'timeit', 'copy', 'pandas >= 1.0.0', 
+    'numpy', 'timeit', 'copy','matplotlib', 'pandas >= 1.0.0', 
     # 'requests', 'maya', 'records', #numpy...
 ]
 
 # What packages are optional?
 EXTRAS = {
-    'COMPLETE': ['matplotlib', 'scipy','tqdm', 'UnitTesterSG >= 6.2.0']# 'uncertainties': ['uncertainties'], #pymc...
+    'COMPLETE': ['scipy','tqdm', 'UnitTesterSG >= 6.2.2']# 'uncertainties': ['uncertainties'], #pymc...
 }
 
 # The rest you shouldn't have to touch too much :)
