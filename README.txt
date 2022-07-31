@@ -1,3 +1,5 @@
+[![Build Status](https://app.travis-ci.com/AdityaSavara/MSRESOLVE.svg?token=y4tqTpJqeGU3KrxyM1Zw&branch=master)](https://app.travis-ci.com/AdityaSavara/MSRESOLVE)
+
 INTRODUCTION TO THE MSRESOLVE PROGRAM: 
 A program for converting mass spectrometry signals to concentrations. Baseline corrections, smoothing, solving overlapping patterns, mass spectrometer tuning, and more. 
 
