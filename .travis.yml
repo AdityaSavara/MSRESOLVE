@@ -10,6 +10,6 @@ install:
   #- python setup.py install  #now overwrite old installations with the current version.
 # command to run tests
 #remove the test_13.py before running the runPytestDriver.py since that python file is designed to give an error as downloaded.
-  - pip install UnitTesterSG >= 6.2.0
+  - pip install UnitTesterSG
 script: 
   - python3 runPytestDriver.py failWithError #The "failWithError" optional argument will cause an error exitCode if any unit tests fail.
