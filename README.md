@@ -1,7 +1,10 @@
-INTRODUCTION TO THE MSRESOLVE PROGRAM: 
+[![Build Status](https://app.travis-ci.com/AdityaSavara/MSRESOLVE.svg?token=y4tqTpJqeGU3KrxyM1Zw&branch=master)](https://app.travis-ci.com/AdityaSavara/MSRESOLVE) [![UnitTests:<UnitTests>](http://img.shields.io/badge/UnitTests-Passing-blue.svg)](<Passing-blue>) 
+[![Open Source Love](https://badges.frapsoft.com/os/v3/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
+
+# INTRODUCTION TO THE MSRESOLVE PROGRAM: 
 A program for converting mass spectrometry signals to concentrations. Baseline corrections, smoothing, solving overlapping patterns, mass spectrometer tuning, and more. 
 
-The Need for MSRESOLVE and what it offers
+# The Need for MSRESOLVE and what it offers
 During “solving” of collected mass spectrometry spectra to extract concentrations, there are several sources of challenges.
 A)	For time dependent signal collection, pre-processing may be required (such as baseline corrections, smoothing, etc.)
 B)	There may be overlapping signals, making solution difficult.
@@ -11,7 +14,10 @@ A)	MSRESOLVE has various pre-processing functions, including baseline correction
 B)	MSRESOLVE has several methods for resolving the signals: Sequential Linear Subtraction (SLS), the Matrix Inverse Method, and also brute force grid (regression).  
 a.	For the SLS and the inverse methods, it is possible to extract error bars for the final solved concentrations.
 C)	MSRESOLVE is able to convert mass spectrometry signals into a common concentration scale even for uncalibrated signals, provided that reference concentration patterns are available. Furthermore, MSRESOLVE can also correct for differences in mass spectrometers tuning.
-Suggested Procedure for Solving Time Series Data of Mass Signals
+
+* * * 
+
+#  Suggested Procedure for Solving Time Series Data of Mass Signals
 
 1)	Create the files for the reference spectra and collected data – don’t delete any signals.
 2)	Create an MSRESOLVE run with SLS Unique and see what masse MSRESOLVE chooses, with ExportedSLSUniqueMassesUsedInSolvingMolecules.
@@ -20,5 +26,6 @@ Suggested Procedure for Solving Time Series Data of Mass Signals
 a.	UserChoices['applyReferenceMassFragmentsThresholds']['referenceMassFragmentFilterThreshold'] = [1.0]  #this is what I am suggesting that you use.
 5)	If the application warrants doing so, include more sophisticated features of MSRESOLVE, such as mass spectrum tuning correction.
 
+* * * 
 
 There is a manual in the documentation directory, and also there is an example analysis under ExampleAnalysis.  
