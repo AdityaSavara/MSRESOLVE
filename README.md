@@ -29,3 +29,7 @@ a.	UserChoices['applyReferenceMassFragmentsThresholds']['referenceMassFragmentFi
 * * * 
 
 There is a manual in the documentation directory, and also there is an example analysis under ExampleAnalysis.  
+
+* * *
+
+To install dependencies, use 'pip install -r requirements.txt'
