@@ -1,9 +1,11 @@
+#install these requirements using: pip install -r requirements.txt
 numpy > 1.15.00
 matplotlib
 scipy
 pandas
-export_import
-ParsingFunctions
+#Below are modules included with MSRESOLVE as distributed.
+#export_import
+#ParsingFunctions
 #Below are not required but are recommended.
 #UnitTesterSG
 #pytest
