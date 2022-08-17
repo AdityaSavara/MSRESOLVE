@@ -6791,14 +6791,14 @@ def main():
                 moleculesHeader = 'molecules ,' + ', '.join(currentReferenceData.molecules)
                 numpy.savetxt(G.resolvedScaledConcentrationsOutputName.replace(".csv",'') + "_Statistics.csv", np.array(ScaledConcentrations_Statistics), delimiter = ',', fmt ="%s", header=moleculesHeader)
 
-            
+        
         #Graph the concentration/relative signal data
         if G.grapher == 'yes':
-            Draw(times, data, currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Relative Concentrations Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
+            #We set concentrationFinder to 'no' in the below lines, rather than G.concentrationFinder, because this block is for plotting scaled concentrations relative to CO.
+            Draw(times, data, currentReferenceData.molecules, concentrationFinder='no', units=G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis', fileSuffix = G.iterationSuffix, label="Relative Concentrations Graph", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
             G.lastFigureNumber = G.lastFigureNumber+1
             if (G.calculateUncertaintiesInConcentrations == True):
-                G.lastFigureNumber = DrawUncertaintiesConcentrations(times, data, resultsObjects['concentrations_absolute_uncertainties_all_times'], currentReferenceData.molecules, G.concentrationFinder, G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis_uncertainties', fileSuffix = G.iterationSuffix, label="Concentrations With Uncertainties", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
-
+                G.lastFigureNumber = DrawUncertaintiesConcentrations(times, data, resultsObjects['concentrations_absolute_uncertainties_all_times'], currentReferenceData.molecules, concentrationFinder='no', units=G.unitsTSC, graphFileName='scaledConcentrationsAfterAnalysis_uncertainties', fileSuffix = G.iterationSuffix, label="Concentrations With Uncertainties", stopAtGraphs=G.stopAtGraphs, figureNumber= G.lastFigureNumber+1)
             
         if G.concentrationFinder == 'yes':
             ExportXYYYData(G.concentrationsOutputName, concentrationsarray, currentReferenceData.molecules, abscissaHeader = ExperimentData.abscissaHeader, fileSuffix = G.iterationSuffix, dataType = 'concentration', units = G.unitsTSC)
