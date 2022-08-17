@@ -6282,7 +6282,7 @@ def main():
     for referenceObjectIndex in range(len(AllMoleculesReferenceDataList)):
         PreparingAllMoleculesReferenceDataList = True #Set flag to true before doing each preparation.  
         AllMoleculesReferenceDataList[referenceObjectIndex].ExportAtEachStep = 'no'
-        PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],AllMassFragmentsExperimentData.mass_fragment_numbers, AllMassFragmentsExperimentData)
+        AllMoleculesReferenceDataList[referenceObjectIndex] = PrepareReferenceObjectsAndCorrectionValues(AllMoleculesReferenceDataList[referenceObjectIndex],AllMassFragmentsExperimentData.mass_fragment_numbers, AllMassFragmentsExperimentData)
         PreparingAllMoleculesReferenceDataList = False #Set flag to false after doing each preparation.                                 
     #beforeParsedGDict this will be needed for iterative. This actually contains "UserChoices" when that's available, but we won't use that.
     beforeParsedGDict = {}
