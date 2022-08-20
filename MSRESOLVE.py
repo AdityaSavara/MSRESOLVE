@@ -5315,6 +5315,8 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
             conversionFactorForEachReferenceFile = numpy.zeros(len(ReferenceData))
             #Get the conversion factor for each reference pattern
             for referencePatternIndex in range(len(AllMoleculesReferenceDataList)): #loop through all reference patterns containing all molecules
+                if moleculesTSC_List[referencePatternIndex] not in  AllMoleculesReferenceDataList[referencePatternIndex].molecules:
+                    print("Warning: concentrationFinder is on with MultipleReferencePatterns/UniformMolecularFactors chosen, but the molecule named",moleculesTSC_List[referencePatternIndex], " at index ", referencePatternIndex," in moleculesTSC_List, was not found in the reference pattern with the same index in referencePatternsFileNamesList . This likely means there is a typographical error in your moleculesTSC_List (such as a capitalization error).")
                 for moleculecounter in range(len(AllMoleculesReferenceDataList[referencePatternIndex].molecules)):#array-indexed for loop
                     for masscounter in range(len(AllMoleculesReferenceDataList[referencePatternIndex].matching_abscissa)):#array-indexed for loop
                         if moleculesTSC_List[referencePatternIndex] == AllMoleculesReferenceDataList[referencePatternIndex].molecules[moleculecounter]:#gets molecule index
@@ -5342,6 +5344,8 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                     conversionFactorsAtEachTime[index] = conversionFactorForEachReferenceFile[0]
             
         elif TSC_List_Type == 'SeparateMolecularFactors':
+            if moleculesTSC_List[0] not in AllMoleculesReferenceDataList[0].molecules: #The first molecule in the list is different, so hardcode an error.
+                print("Warning: concentrationFinder is on with SeparateMolecularFactors chosen, but the molecule named",moleculesTSC_List[0], " at index ", 0," in moleculesTSC_List, was not found in the first reference pattern of referencePatternsFileNamesList. This likely means there is a typographical error in your moleculesTSC_List (such as a capitalization error). As the concentration factor at each molecule is going to be set to match the first moleculeTSC input, MSRESOLVE may now also crash.")
             #Default concentration factors at each molecule to match the first moleculeTSC input
             for moleculecounter in range(len(AllMoleculesReferenceDataList[0].molecules)): #loop over ALL molecules
                 for masscounter in range(len(AllMoleculesReferenceDataList[0].matching_abscissa)): #loop over ALL mass fragments
@@ -5357,6 +5361,8 @@ def RatioFinder (AllMoleculesReferenceDataList, AllMassFragmentsExperimentData, 
                 
             #Now populate the conversion factors for the molecules that were listed
             for moleculeTSC_Index in range(len(moleculesTSC_List)): #Loop through the moleculesTSC_List
+                if moleculesTSC_List[moleculeTSC_Index] not in AllMoleculesReferenceDataList[0].molecules:
+                    print("Warning: concentrationFinder is on with SeparateMolecularFactors chosen, but the molecule named",moleculesTSC_List[moleculeTSC_Index], " at index ", moleculeTSC_Index," in moleculesTSC_List, was not found in the first reference pattern of referencePatternsFileNamesList. This likely means there is a typographical error in your moleculesTSC_List (such as a capitalization error).")
                 for moleculecounter in range(len(AllMoleculesReferenceDataList[0].molecules)): #Looping through ALL molecules
                     for masscounter in range(len(AllMoleculesReferenceDataList[0].matching_abscissa)): #Looping through ALL mass fragments
                         if moleculesTSC_List[moleculeTSC_Index] == AllMoleculesReferenceDataList[0].molecules[moleculecounter]: #Gets the molecule index from all molecules
