@@ -3086,7 +3086,7 @@ def getMassFragmentsFromCollectedData(dataToAnalyzeFileName):
     #Convert the data into an array
     DataInfoArray = numpy.array(DataInfo)
     #Get the names of mass fragments in collected data
-    massFragments = DataInfoArray[0,1:] #First row, all but the first column
+    massFragments = numpy.array(DataInfoArray[0,1:]).astype(str) #First row, all but the first column
     #Remove the 'm' from each fragment and convert to float (i.e. 'm28' now becomes 28.)
     for i in range(0,len(massFragments)):
         massFragments[i] == str(massFragments[i])
