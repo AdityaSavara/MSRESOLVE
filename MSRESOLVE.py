@@ -13,6 +13,7 @@ import os
 import shutil
 import importlib
 from numpy import genfromtxt
+import numpy as np
 import export_import as ei
 #G stands for Global, and is used to draw data from the UserInput File, and to store data during processing.
 import UserInput as G; importlib.reload(G) #import the user input and reload the module to get rid of any unwanted variables in the namespace
@@ -6745,7 +6746,6 @@ def main():
         G.generateStatistics = True #FIXME: This variable needs to be added to user Input somehow. Also does not work with iterative.
         if G.generateStatistics == True and G.iterativeAnalysis == False:
             ScaledConcentrations_Statistics = []
-            import numpy as np
             if '.csv' in G.resolvedScaledConcentrationsOutputName:
                 ScaledConcentrations = numpy.genfromtxt(G.resolvedScaledConcentrationsOutputName, delimiter=',',skip_header=1)
             if '.tsv' in G.resolvedScaledConcentrationsOutputName:
