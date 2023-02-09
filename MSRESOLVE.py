@@ -2297,17 +2297,19 @@ def signalThresholdFilter(ReferenceDataObject, rawsignalsarrayline, minimumSigna
     #the below line creates a Boolean array which is true when the standardized reference intensity is above the threshold to be declared a significant peak
     signiciant_Peaks_locations_monitored_reference_intensities = ReferenceDataObject.monitored_reference_intensities > minimumStandardizedReferenceHeightToBeSignificant
     indexesOfMoleculesSetToZero = []
+    namesOfMoleculesSetToZero = []
     #now we are going to loop across each molecules, if we find the case where the signals are negligible but the peak is significant, then we store that as a molecule that is not present.
     for moleculeIndex in range(len(signiciant_Peaks_locations_monitored_reference_intensities[0])): #just using the first fragment's row to get the number of molecules.
         moleculeFragmentationPattern = ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex]
         moleculeFragmentationPatternSignificantPeakLocations = signiciant_Peaks_locations_monitored_reference_intensities[:,moleculeIndex]
         #Below is a Boolean array with values of true anytime there was a negligble signal for a significant peak
-        negligibleSignalForSignificantPeak = signalsNegligible*moleculeFragmentationPatternSignificantPeakLocations
+        negligibleSignalForSignificantPeak = signalsNegligible.flatten()*moleculeFragmentationPatternSignificantPeakLocations
         #the sum of the Boolean array will be > 0 if there was any cases with negligible signals for significant peaks.
         if sum(negligibleSignalForSignificantPeak) > 0:
             ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex] = ReferenceDataObject.monitored_reference_intensities[:,moleculeIndex]*0 #note that this changes the reference object directly.
             ReferenceDataObject.reciprocal_matching_correction_values[:,moleculeIndex] = ReferenceDataObject.reciprocal_matching_correction_values[:,moleculeIndex]*0 #note that this changes the reference object directly.
             indexesOfMoleculesSetToZero.append(moleculeIndex)
+            namesOfMoleculesSetToZero.append(ReferenceDataObject.molecules[moleculeIndex])
     return ReferenceDataObject
 
 
