@@ -1385,7 +1385,8 @@ def trimDataMassesToMatchChosenMassFragments(ExperimentData, chosenMassFragments
 def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
     
     trimmedExperimentData = copy.deepcopy(ExperimentData)
-    trimmedExperimentData2 = copy.deepcopy(ExperimentData) #needed to make a separate temporary data structure because it gets modified during DataFunctions.
+    trimmedExperimentData2 = copy.deepcopy(ExperimentData) #needed to make a separate temporary data structure for G.calculateUncertaintiesInConcentrations because it gets modified during DataFunctions.KeepOnlySelectedYYYYColumns
+    trimmedExperimentData3 = copy.deepcopy(ExperimentData) #needed to make a separate temporary data structure for G.rawSignalThresholdValue because it gets modified during DataFunctions.KeepOnlySelectedYYYYColumns
     
     # Remove elements of ExperimentData.mass_fragment_numbers for which there is no matching mass in the reference data.
     # Also remove the corresponding mass data column from Experiment.workingData.
@@ -1399,7 +1400,13 @@ def trimDataMassesToMatchReference(ExperimentData, ReferenceData):
                                                                                                                     trimmedExperimentData2.mass_fragment_numbers,
                                                                                                                     ReferenceData.standardized_reference_patterns[:,0], header_dtype_casting=float)
                 trimmedExperimentData.rawsignals_absolute_uncertainties = trimmedExperimentData2.rawsignals_absolute_uncertainties
-                                                                                                            
+
+    #The function  KeepOnlySelectedYYYYColumns takes in YYYYData and DataHeaders, and HeaderValuesToKeep, and *does* modify the original mass fragment array. That means we need to use a fresh copy of the header arrays for trimming thresholds.
+
+    if len(np.array(G.rawSignalThresholdValue))> 1: #this means that the rawSignalThresholdValue is a float that has been vectorized to the number of masses.
+        (G.trimmed_rawSignalThresholdValue, G.trimmed_mass_fragment_numbers) = DataFunctions.KeepOnlySelectedYYYYColumns(np.array([G.rawSignalThresholdValue]),
+                                                                                                        trimmedExperimentData3.mass_fragment_numbers,
+                                                                                                        ReferenceData.standardized_reference_patterns[:,0], header_dtype_casting=float)
     return trimmedExperimentData
     
 #The correction values are calculated based on each molecule's molecular weight, number of electrons and mass fragmentation pattern
@@ -5179,7 +5186,7 @@ def SLSMethod(molecules,monitored_reference_intensities,reciprocal_matching_corr
 #five, then the molecule is not present for that particular time. This whole row is then deleted instead of 
 #altering the numbers in order that data is not skewed, of course, this can result in less mass fragments than 
 #present molecules, which will give an error later on in the function (the inverse method section of the sls most likely)
-def RawSignalThresholdFilter (distinguished,reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,timeIndex,
+def RawSignalThresholdFilter(distinguished,reciprocal_matching_correction_values,rawsignalsarrayline,monitored_reference_intensities,molecules,timeIndex,
                               mass_fragment_numbers,ThresholdList,solverChoice,time,
                               conversionfactor = [],datafromcsv = [],DataRangeSpecifierlist = [],
                               SLSChoices = [],permutationNum = [],scaledConcentrationsarray = [],objectiveFunctionType = [],
@@ -6589,7 +6596,7 @@ def main():
             #This feature is intended to remove molecules that have major fragments not observed. previously, it was done in a more complicated way.
             # now, to simplify things, is being used as a filter that simply sets standardized intensities in the reference patterns to zero.
             G.excludeMoleculesIfSignificantFragmentNotObserved = G.applyRawSignalThresholds
-            G.minimumSignalRequired = G.rawSignalThresholdValue 
+            G.minimumSignalRequired = G.trimmed_rawSignalThresholdValue 
             G.minimumStandardizedReferenceHeightToBeSignificant = G.sensitivityThresholdValue
             if G.excludeMoleculesIfSignificantFragmentNotObserved == 'yes':
                 #FIXME: Check if this is compatible with uncertainties. I don't think it is, as of Feb 2nd 2020.                                                                                                
