@@ -196,7 +196,7 @@ def significanceFactorCheck(chosenReferenceIntensities,largestMagnitudeSigFactor
 #of which they are being changed by and finally the intercept of that line which is being subtracted
 #from all of their values, so much of this function is going to be prompting and getting values from
 #the user
-def SlopeEliminator (ExperimentData,backgroundMassFragment,backgroundSlopes,backgroundIntercepts): 
+def SlopeEliminator(ExperimentData,backgroundMassFragment,backgroundSlopes,backgroundIntercepts): 
     for mf_counter in range(len(backgroundMassFragment)):#array-indexed for loop
         for mass_fragment_numbers_counter in range(len(ExperimentData.mass_fragment_numbers)):#array-indexed for loop
             for times_counter in range(len(ExperimentData.times)): #array-indexed for loop
@@ -314,7 +314,7 @@ def LinearBaselineCorrectorSemiAutomatic(ExperimentData,baselineType,massesToBac
 #setting them to 0, this serves to eliminate negatives and insignificant values - this means that the rest of the
 #script can solve for the signals more easily and eliminate a good range of possibilities. There are two tests:
 #either an absolute threshold, or one that is a percentage of the max signal. The signal should pass both checks.
-def LowerBoundThresholdFilter (ExperimentData,massesToLowerBoundThresholdFilter,lowerBoundThresholdPercentage,lowerBoundThresholdAbsolute):
+def LowerBoundThresholdFilter(ExperimentData,massesToLowerBoundThresholdFilter,lowerBoundThresholdPercentage,lowerBoundThresholdAbsolute):
     #test case for whether all masses should be filtered
     #if no masses are listed
     if len(massesToLowerBoundThresholdFilter) == 0:
@@ -2142,7 +2142,7 @@ def DataInputPreProcessing(ExperimentData):
         G.lastFigureNumber = G.lastFigureNumber+1
         
     if len(G.backgroundMassFragment) != 0:
-        SlopeEliminator (ExperimentData,G.backgroundMassFragment,G.backgroundSlopes,G.backgroundIntercepts)
+        SlopeEliminator(ExperimentData,G.backgroundMassFragment,G.backgroundSlopes,G.backgroundIntercepts)
         print('Linear Baseline Correction, Manual, Complete')
         ExperimentData.ExportCollector("SlopeEliminator")
 
@@ -2152,7 +2152,7 @@ def DataInputPreProcessing(ExperimentData):
         ExperimentData.ExportCollector("LinearBaselineCorrectorSemiAutomatic")
         
     if G.lowerBoundThresholdChooser == 'yes':#calls above function if option is desired in data edit file
-        LowerBoundThresholdFilter (ExperimentData, G.massesToLowerBoundThresholdFilter, G.lowerBoundThresholdPercentage, G.lowerBoundThresholdAbsolute)
+        LowerBoundThresholdFilter(ExperimentData, G.massesToLowerBoundThresholdFilter, G.lowerBoundThresholdPercentage, G.lowerBoundThresholdAbsolute)
         print('LowerBound Threshold Filter Complete')
         ExperimentData.ExportCollector("LowerBoundThresholdFilter")
         
