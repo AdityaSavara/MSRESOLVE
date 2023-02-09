@@ -6598,7 +6598,10 @@ def main():
             #This feature is intended to remove molecules that have major fragments not observed. previously, it was done in a more complicated way.
             # now, to simplify things, is being used as a filter that simply sets standardized intensities in the reference patterns to zero.
             G.excludeMoleculesIfSignificantFragmentNotObserved = G.applyRawSignalThresholds
-            G.minimumSignalRequired = G.trimmed_rawSignalThresholdValue 
+            if hasattr(G, "trimmed_rawSignalThresholdValue"):
+                G.minimumSignalRequired = G.trimmed_rawSignalThresholdValue 
+            else:
+                G.minimumSignalRequired = G.rawSignalThresholdValue 
             G.minimumStandardizedReferenceHeightToBeSignificant = G.sensitivityThresholdValue
             if G.excludeMoleculesIfSignificantFragmentNotObserved == 'yes':
                 #FIXME: Check if this is compatible with uncertainties. I don't think it is, as of Feb 2nd 2020.                                                                                                
